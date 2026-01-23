@@ -1,9 +1,9 @@
 /**
  * PEER-2-PEER RESOURCES - GITHUB STATIC VERSION
- * No Cloudflare R2 required. Files are hosted in your GitHub /uploads folder.
  */
 
-// 1. YOUR MANUAL DATABASE - Add your files here after uploading them to GitHub
+// 1. YOUR MANUAL DATABASE 
+// IMPORTANT: Ensure these filenames exactly match the files in your GitHub "uploads" folder.
 const MANUAL_DOCUMENTS = [
     {
         key: "Introduction-to-Peer-2-Peer.pdf",
@@ -20,6 +20,7 @@ const MANUAL_DOCUMENTS = [
 // 2. YOUR GITHUB INFO
 const GITHUB_USERNAME = "ssfdffd";
 const REPO_NAME = "Peer-2-Peer-PRO-Tutoring";
+// Note: Ensure the folder name "uploads" is lowercase if it is lowercase on GitHub.
 const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/uploads/`;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -28,19 +29,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeNav = document.getElementById('closeNav');
     const sideMenu = document.getElementById('side-menu');
 
-    if (openNav) openNav.onclick = () => sideMenu.style.width = "280px";
+    // Sets sidebar width to 280px as per original logic
+    if (openNav) openNav.onclick = () => sideMenu.style.width = "280px"; 
     if (closeNav) closeNav.onclick = () => sideMenu.style.width = "0";
 
-    // Load Documents from our static list
+    // Load Documents
     fetchDocuments();
 
-    // UI Event Listeners
     setupUploadListeners();
 });
 
-// --- LIST DOCUMENTS ---
 async function fetchDocuments() {
-    const fileGrid = document.getElementById('fileGrid');
+    // IMPORTANT: Make sure your HTML has an id="fileGrid" or id="documentGrid"
+    // If your HTML uses "documentGrid", change 'fileGrid' to 'documentGrid' below.
+    const fileGrid = document.getElementById('fileGrid') || document.getElementById('documentGrid');
+    
+    if (!fileGrid) {
+        console.error("Could not find the document grid element in HTML.");
+        return;
+    }
+
     fileGrid.innerHTML = ''; 
 
     if (MANUAL_DOCUMENTS.length === 0) {
@@ -54,8 +62,10 @@ async function fetchDocuments() {
         card.className = 'file-card';
         card.setAttribute('data-filetype', extension);
 
-        // Point to the GitHub Raw URL
         const publicUrl = RAW_URL + file.key;
+
+        // Clean up title display by removing dashes
+        const displayTitle = file.key.split('-').join(' ').split('.')[0]; 
 
         card.innerHTML = `
             <div class="file-type-badge">${extension}</div>
@@ -63,7 +73,7 @@ async function fetchDocuments() {
                 <i class="fas ${getIcon(extension)}"></i>
             </div>
             <div class="file-info">
-                <h3>${file.key.split('-').join(' ')}</h3>
+                <h3>${displayTitle}</h3>
                 <div class="badge-container">
                     <span class="badge grade-badge">Size: ${(file.size / 1024 / 1024).toFixed(2)} MB</span>
                 </div>
@@ -89,30 +99,32 @@ function getIcon(ext) {
     return icons[ext] || 'fa-file-alt';
 }
 
-// --- UPLOAD LOGIC (REDIRECT TO GITHUB) ---
 function setupUploadListeners() {
     const uploadBtn = document.getElementById('uploadBtn');
     if (uploadBtn) {
         uploadBtn.onclick = () => {
-            alert("Direct upload is disabled for this version. Please upload your files directly to the 'uploads' folder in your GitHub repository.");
-            window.open(`https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/upload/main`, '_blank');
+            alert("Upload via website is disabled. Redirecting to GitHub to add files manually.");
+            window.open(`https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/upload/main/uploads`, '_blank');
         };
     }
 }
 
-// --- VIEWER LOGIC ---
 function viewFile(url, title) {
     const container = document.getElementById('viewerContainer');
     const content = document.getElementById('viewerContent');
     const titleEl = document.getElementById('viewerTitle');
 
-    container.style.display = 'flex';
-    titleEl.innerText = title;
-    content.innerHTML = `<iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>`;
+    if (container && content) {
+        container.style.display = 'flex';
+        if (titleEl) titleEl.innerText = title;
+        content.innerHTML = `<iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>`;
+    }
 }
 
-if (document.getElementById('closeViewer')) {
-    document.getElementById('closeViewer').onclick = () => {
+// Close viewer logic
+const closeViewer = document.getElementById('closeViewer');
+if (closeViewer) {
+    closeViewer.onclick = () => {
         document.getElementById('viewerContainer').style.display = 'none';
         document.getElementById('viewerContent').innerHTML = '';
     };

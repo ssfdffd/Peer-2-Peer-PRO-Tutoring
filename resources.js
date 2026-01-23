@@ -1,9 +1,29 @@
 /**
- * PEER-2-PEER RESOURCES - CLOUDFLARE COMPATIBLE
+ * PEER-2-PEER RESOURCES - GITHUB STATIC VERSION
+ * No Cloudflare R2 required. Files are hosted in your GitHub /uploads folder.
  */
 
+// 1. YOUR MANUAL DATABASE - Add your files here after uploading them to GitHub
+const MANUAL_DOCUMENTS = [
+    {
+        key: "Introduction-to-Peer-2-Peer.pdf",
+        size: 1048576, // 1.0 MB
+        category: "Study Guide"
+    },
+    {
+        key: "Calculus-Cheat-Sheet.png",
+        size: 524288, // 0.5 MB
+        category: "Handouts"
+    }
+];
+
+// 2. YOUR GITHUB INFO
+const GITHUB_USERNAME = "ssfdffd";
+const REPO_NAME = "Peer-2-Peer-PRO-Tutoring";
+const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/uploads/`;
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Sidebar Logic
+    // Sidebar Logic
     const openNav = document.getElementById('openNav');
     const closeNav = document.getElementById('closeNav');
     const sideMenu = document.getElementById('side-menu');
@@ -11,60 +31,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (openNav) openNav.onclick = () => sideMenu.style.width = "280px";
     if (closeNav) closeNav.onclick = () => sideMenu.style.width = "0";
 
-    // 2. Load Documents from R2
+    // Load Documents from our static list
     fetchDocuments();
 
-    // 3. UI Event Listeners
+    // UI Event Listeners
     setupUploadListeners();
-    setupSearchAndFilters();
 });
 
-// --- FETCH & LIST DOCUMENTS ---
+// --- LIST DOCUMENTS ---
 async function fetchDocuments() {
     const fileGrid = document.getElementById('fileGrid');
-    fileGrid.innerHTML = '<div class="no-docs"><h3>Loading Library...</h3></div>';
+    fileGrid.innerHTML = ''; 
 
-    try {
-        // This calls your Cloudflare Worker / API endpoint
-        const response = await fetch('/api/list'); 
-        const files = await response.json();
-
-        if (!files || files.length === 0) {
-            fileGrid.innerHTML = '<div class="no-docs"><h3>No documents shared yet.</h3></div>';
-            return;
-        }
-
-        fileGrid.innerHTML = ''; // Clear loader
-        files.forEach(file => {
-            const extension = file.key.split('.').pop().toLowerCase();
-            const card = document.createElement('div');
-            card.className = 'file-card';
-            card.setAttribute('data-filetype', extension);
-
-            // Replace with your R2 Public Bucket URL or custom domain
-            const publicUrl = `/api/download/${file.key}`;
-
-            card.innerHTML = `
-                <div class="file-type-badge">${extension}</div>
-                <div class="file-icon-box">
-                    <i class="fas ${getIcon(extension)}"></i>
-                </div>
-                <div class="file-info">
-                    <h3>${file.key.split('-').slice(1).join('-') || file.key}</h3>
-                    <div class="badge-container">
-                        <span class="badge grade-badge">Size: ${(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                    </div>
-                </div>
-                <div class="card-actions">
-                    <button onclick="viewFile('${publicUrl}', '${file.key}')" class="btn-view" title="View"><i class="fas fa-eye"></i></button>
-                    <a href="${publicUrl}" download class="btn-download" title="Download"><i class="fas fa-download"></i></a>
-                </div>
-            `;
-            fileGrid.appendChild(card);
-        });
-    } catch (err) {
-        fileGrid.innerHTML = '<div class="no-docs"><h3>Error connecting to storage.</h3></div>';
+    if (MANUAL_DOCUMENTS.length === 0) {
+        fileGrid.innerHTML = '<div class="no-docs"><h3>No documents shared yet.</h3></div>';
+        return;
     }
+
+    MANUAL_DOCUMENTS.forEach(file => {
+        const extension = file.key.split('.').pop().toLowerCase();
+        const card = document.createElement('div');
+        card.className = 'file-card';
+        card.setAttribute('data-filetype', extension);
+
+        // Point to the GitHub Raw URL
+        const publicUrl = RAW_URL + file.key;
+
+        card.innerHTML = `
+            <div class="file-type-badge">${extension}</div>
+            <div class="file-icon-box">
+                <i class="fas ${getIcon(extension)}"></i>
+            </div>
+            <div class="file-info">
+                <h3>${file.key.split('-').join(' ')}</h3>
+                <div class="badge-container">
+                    <span class="badge grade-badge">Size: ${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button onclick="viewFile('${publicUrl}', '${file.key}')" class="btn-view" title="View"><i class="fas fa-eye"></i></button>
+                <a href="${publicUrl}" target="_blank" download class="btn-download" title="Download"><i class="fas fa-download"></i></a>
+            </div>
+        `;
+        fileGrid.appendChild(card);
+    });
 }
 
 function getIcon(ext) {
@@ -79,52 +89,13 @@ function getIcon(ext) {
     return icons[ext] || 'fa-file-alt';
 }
 
-// --- UPLOAD LOGIC ---
+// --- UPLOAD LOGIC (REDIRECT TO GITHUB) ---
 function setupUploadListeners() {
-    const fileInput = document.getElementById('fileInput');
     const uploadBtn = document.getElementById('uploadBtn');
-    const browseBtn = document.getElementById('browseBtn');
-
-    if (browseBtn) browseBtn.onclick = () => fileInput.click();
-
     if (uploadBtn) {
-        uploadBtn.onclick = async () => {
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please select a file first!");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('filename', document.getElementById('fileName').value || file.name);
-
-            const progressSection = document.getElementById('uploadProgress');
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-
-            progressSection.style.display = 'flex';
-            uploadBtn.disabled = true;
-
-            try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    progressFill.style.width = '100%';
-                    progressText.innerText = '100%';
-                    alert("Upload Successful!");
-                    location.reload(); // Refresh to show new file
-                } else {
-                    alert("Upload failed. Check file size limits.");
-                }
-            } catch (err) {
-                alert("Connection error occurred.");
-            } finally {
-                uploadBtn.disabled = false;
-            }
+        uploadBtn.onclick = () => {
+            alert("Direct upload is disabled for this version. Please upload your files directly to the 'uploads' folder in your GitHub repository.");
+            window.open(`https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/upload/main`, '_blank');
         };
     }
 }
@@ -137,8 +108,6 @@ function viewFile(url, title) {
 
     container.style.display = 'flex';
     titleEl.innerText = title;
-    
-    // Simple PDF/Image viewer using iframe
     content.innerHTML = `<iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>`;
 }
 

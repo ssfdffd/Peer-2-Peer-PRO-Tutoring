@@ -6,14 +6,34 @@
 // IMPORTANT: Ensure these filenames exactly match the files in your GitHub "uploads" folder.
 const MANUAL_DOCUMENTS = [
     {
-        key: "Introduction-to-Peer-2-Peer.pdf",
-        size: 1048576, // 1.0 MB
-        category: "Study Guide"
+        key: "1767009003422-gr-11-term-3-2019-physical-sciences-resource-pack.pdf",
+        size: 5242880, // Approx 5.0 MB
+        category: "Physical Sciences"
     },
     {
-        key: "Calculus-Cheat-Sheet.png",
-        size: 524288, // 0.5 MB
-        category: "Handouts"
+        key: "1767618188895-_Geography Grade12 Economic Geog - IDZ and SDI.pdf",
+        size: 3145728, // Approx 3.0 MB
+        category: "Geography"
+    },
+    {
+        key: "1767626669264-1 - DNA - the Code of Life - Term 1 - G12 [Autosaved].pdf",
+        size: 2097152, // Approx 2.0 MB
+        category: "Life Sciences"
+    },
+    {
+        key: "1767626714511-My Chrildren My Africa_Act 1_Scene 1-3.pdf",
+        size: 1572864, // Approx 1.5 MB
+        category: "English Literature"
+    },
+    {
+        key: "Accounting P1 May-June 2023 Answer Book Eng.pdf",
+        size: 1048576, // Approx 1.0 MB
+        category: "Accounting"
+    },
+    {
+        key: "1766686987412-c468a512e80d4a5eb8d64e90bf419f64-1.pdf",
+        size: 512000, // Approx 0.5 MB
+        category: "General Resources"
     }
 ];
 

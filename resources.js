@@ -6,12 +6,12 @@
 // IMPORTANT: Ensure these filenames exactly match the files in your GitHub "uploads" folder.
 const MANUAL_DOCUMENTS = [
     {
-        key: "1767009003422-gr-11-term-3-2019-physical-sciences-resource-pack.pdf",
+        key: "physical-sciences-resource-pack.pdf",
         size: 5242880, // Approx 5.0 MB
         category: "Physical Sciences"
     },
     {
-        key: "1767618188895-_Geography Grade12 Economic Geog - IDZ and SDI.pdf",
+        key: "Geography Grade12 Economic Geog - IDZ and SDI.pdf",
         size: 3145728, // Approx 3.0 MB
         category: "Geography"
     },

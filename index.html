@@ -1,244 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources Library | Peer-2-Peer</title>
-    <link rel="stylesheet" href="resources.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+	<meta name="google-site-verification" content="ZdR8iWtr7ZZRbiCcS5XCFZ54NSkF8KQjyZDikRTOp7M" />
+  <title>Peer-2-Peer Learning</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="index.css">
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E21MVX6TQ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E21MVX6TQ1');
+</script>
+	
 </head>
-<body class="resources-body">
+<body>
 
-  <nav id="navbar">
-    <div class="logo">Peer-2-Peer PRO | Library</div>
-    <div class="nav-right">
-        <div class="nav-links">
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="resources.html" class="nav-link active">Resources</a>
-            <a href="school-dashboard.html" class="nav-link">Dashboard</a>
-        </div>
-        
-        <a href="login.html" class="auth-btn login-btn">Login</a>
-        <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
-        
-        <button class="menu-toggle" id="openNav">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-  </nav>
+<nav id="navbar">
+	<div class="logo">Peer-2-Peer <span>PRO</span></div>
+  <div class="nav-right">
+   <a href="login.html"> <button  class="auth-btn login">Login</button></a>
+   <a href="login.html"><button class="auth-btn signup">Sign Up</button></a>
+    <span id="openNav" class="menu-toggle">☰</span>
+  </div>
+</nav>
 
-  <div id="side-menu" class="side-nav">
-    <button class="close-btn" id="closeNav">&times;</button>
-    <ul>
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="resources.html" class="active"><i class="fas fa-book"></i> Resources</a></li>
-      <li><a href="school-dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="terms.html"><i class="fas fa-file-contract"></i> T's & C's</a></li>
-    </ul>
-    <a href="login.html" class="auth-btn login-btn">Login</a>
-    <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
+<div id="side-menu" class="side-nav">
+  <a href="javascript:void(0)" id="closeNav" class="close-btn">×</a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="school-dashboard.html">Dashboard for Schools</a></li>
+    <li><a href="terms.html">T's & C's</a></li>
+  </ul>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Empowering Students Through Peer-to-Peer Learning</h1>
+    <p>A smarter, more relatable way to learn.</p>
+  </div>
+</section>
+
+<section class="upload-section">
+  <h2>Upload Study Materials</h2>
+  <p>Drag and drop files here to share them with the community.</p>
+
+  <input type="text" id="customFileName" placeholder="Enter document name" />
+  <input type="file" id="fileInput" hidden />
+
+  <div id="drop-zone" class="drop-zone">
+    <p id="drop-text">Drop files here or click to select</p>
   </div>
 
-  <header class="resources-hero">
-    <div class="hero-content">
-        <h1>Study Material Hub</h1>
-        <p>Explore documents shared by your peers</p>
-        <div class="search-wrapper">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by document title...">
-        </div>
+  <div id="progress-container" style="display:none;">
+    <div id="progress-bar"></div>
+  </div>
+</section>
+
+<script src="script.js"></script>
+<footer class="footer">
+  <div class="footer-inner">
+
+    <div class="footer-box">
+      <h4>Contact</h4>
+      <p>Email Support</p>
+      <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
+
+      <p style="margin-top:12px;">Tutor Applications</p>
+      <a href="mailto:hr@peer-2-peer.co.za">hr@peer-2-peer.co.za</a>
     </div>
-  </header>
-
-  <main class="content-container">
-    <div class="upload-section">
-        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
-       
-            <div class="upload-card">
-    <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
-        <i class="fas fa-file-upload"></i>
-        <p>Drag & drop files here or click to browse</p>
-        <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName(this)">
-        <button class="browse-btn" id="browseBtn">Browse Files</button>
-        <p id="selectedFileName" style="margin-top: 10px; color: #2ecc71; font-weight: bold;"></p>
-    </div>
-    
-    <form class="upload-form" id="uploadForm">
-        <div class="form-group">
-            <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
-            <input type="text" id="fileName" name="title" placeholder="Enter document title" required>
-        </div>
-        
-        <div class="form-group-row">
-            <div class="form-group">
-                <label for="fileCategory"><i class="fas fa-tag"></i> Category</label>
-                <select id="fileCategory" name="type" required>
-                    <option value="">Select Category</option>
-                    <option value="Past Paper">Past Paper</option>
-                    <option value="Notes">Study Notes</option>
-                    <option value="Assignment">Assignments</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                <select id="fileGrade" name="grade" required>
-                    <option value="">Select Grade</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
-            <input type="text" id="fileSubject" name="subject" placeholder="e.g. Mathematics" required>
-        </div>
-
-        <input type="hidden" name="role" value="Student">
-        
-        <button type="submit" class="upload-btn" id="uploadBtn">
-            <i class="fas fa-upload"></i> Upload Document
-        </button>
-    </form>
-</div>
-                
-                <div class="form-group">
-                    <label for="fileDescription"><i class="fas fa-align-left"></i> Description</label>
-                    <textarea id="fileDescription" rows="3" placeholder="Brief description of the document"></textarea>
-                </div>
-                
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label for="fileCategory"><i class="fas fa-tag"></i> Category</label>
-                        <select id="fileCategory">
-                            <option value="">Select Category</option>
-                            <option value="academic">Academic</option>
-                            <option value="notes">Study Notes</option>
-                            <option value="assignment">Assignments</option>
-                            <option value="project">Projects</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                        <select id="fileGrade">
-                            <option value="">Select Grade</option>
-                            <option value="10">Grade 1</option>
-                            <option value="10">Grade 2</option>
-                            <option value="10">Grade 3</option>
-                            <option value="10">Grade 4</option>
-                            <option value="10">Grade 5</option>
-                            <option value="10">Grade 6</option>
-                            <option value="10">Grade 7</option>
-                            <option value="10">Grade 8/option>
-                            <option value="10">Grade 9</option>
-                            <option value="10">Grade 10</option>
-                            <option value="11">Grade 11</option>
-                            <option value="12">Grade 12</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
-                    <select id="fileSubject">
-                        <option value="">Select Subject</option>
-                        <option value="physics">Acounting</option>
-                        <option value="mathematics">Mathematics</option>
-                        <option value="physics">Physics</option>
-                        <option value="chemistry">Chemistry</option>
-                        <option value="physics">English</option>
-                        <option value="physics">Math Lit</option>
-                        <option value="physics">English</option>
-                        <option value="physics">Tourism</option>
-                        <option value="physics">Life Science</option>
-                        <option value="physics">Life Orientation</option>
-                        <option value="physics">IT</option>
-                        <option value="physics">CAT</option>
-                        <option value="physics">History</option>
-                        <option value="physics">Geography</option>
-                        <option value="physics">Business Studies</option>
-                        <option value="physics">Economics</option>
-                        <option value="physics">IsiZulu</option>
-                    </select>
-                </div>
-                
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-                
-                <button class="upload-btn" id="uploadBtn">
-                    <i class="fas fa-upload"></i> Upload Document
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="documents-section">
-        <h2><i class="fas fa-folder-open"></i> Library Documents</h2>
-        
-        <div id="viewerContainer">
-            <div class="viewer-header">
-                <h3 id="viewerTitle">Document View</h3>
-                <button id="closeViewer"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="viewerContent">
-                </div>
-        </div>
-        
-        <div class="filter-controls">
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="academic">Academic</option>
-                <option value="notes">Study Notes</option>
-                <option value="assignment">Assignments</option>
-            </select>
-            
-            <select id="gradeFilter">
-                <option value="">All Grades</option>
-                <option value="12">Grade 12</option>
-                <option value="university">University</option>
-            </select>
-            
-            <select id="sortFilter">
-                <option value="newest">Newest First</option>
-                <option value="name">Name A-Z</option>
-            </select>
-        </div>
-        
-        <div id="fileGrid" class="file-grid"></div>
-        
-        <div class="pagination-container">
-            <button class="pagination-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
-            <div class="pagination-info" id="pageInfo">Page 1 of 1</div>
-            <button class="pagination-btn" id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
-            <div class="page-dots" id="pageDots"></div>
-        </div>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-        <div class="footer-box">
-            <h4>Contact</h4>
-            <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
-        </div>
-        <div class="footer-box">
+     <div class="footer-box">
             <h4>Quick Links</h4>
             <a href="index.html">Home</a>
             <a href="https://wa.me/27732792426">WhatsApp Us</a>
         </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
-    </div>
-  </footer>
 
-  <script src="resources.js"></script>
+    <div class="footer-box">
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a>
+           <a href="resources.html">Resources</a>
+
+      <a href="https://wa.me/27732792426">WhatsApp Us</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Peer-2-Peer PRO. All rights reserved.</p>
+  </div>
+</footer>
+
 </body>
 </html>
+
+
+

@@ -17,27 +17,13 @@
             <a href="resources.html" class="nav-link active">Resources</a>
             <a href="school-dashboard.html" class="nav-link">Dashboard</a>
         </div>
-        
         <a href="login.html" class="auth-btn login-btn">Login</a>
         <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
-        
         <button class="menu-toggle" id="openNav">
             <i class="fas fa-bars"></i>
         </button>
     </div>
   </nav>
-
-  <div id="side-menu" class="side-nav">
-    <button class="close-btn" id="closeNav">&times;</button>
-    <ul>
-      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-      <li><a href="resources.html" class="active"><i class="fas fa-book"></i> Resources</a></li>
-      <li><a href="school-dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a href="terms.html"><i class="fas fa-file-contract"></i> T's & C's</a></li>
-    </ul>
-    <a href="login.html" class="auth-btn login-btn">Login</a>
-    <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
-  </div>
 
   <header class="resources-hero">
     <div class="hero-content">
@@ -53,107 +39,101 @@
   <main class="content-container">
     <div class="upload-section">
         <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
-       
-            <div class="upload-card">
-    <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
-        <i class="fas fa-file-upload"></i>
-        <p>Drag & drop files here or click to browse</p>
-        <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName(this)">
-        <button class="browse-btn" id="browseBtn">Browse Files</button>
-        <p id="selectedFileName" style="margin-top: 10px; color: #2ecc71; font-weight: bold;"></p>
-    </div>
-    
-    <form class="upload-form" id="uploadForm">
-        <div class="form-group">
-            <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
-            <input type="text" id="fileName" name="title" placeholder="Enter document title" required>
-        </div>
-    <div class="form-group">
-                    <label for="fileDescription"><i class="fas fa-align-left"></i> Description</label>
-                    <textarea id="fileDescription" rows="3" placeholder="Brief description of the document"></textarea>
+        
+        <div class="upload-card">
+            <form id="uploadForm">
+                
+                <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-file-upload"></i>
+                    <p>Drag & drop files here or click to browse</p>
+                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName(this)" required>
+                    <button type="button" class="browse-btn" id="browseBtn">Browse Files</button>
+                    <p id="selectedFileName" style="margin-top: 10px; color: #2ecc71; font-weight: bold;"></p>
                 </div>
                 
-                <div class="form-group-row">
+                <div class="upload-form-inputs">
                     <div class="form-group">
-                        <label for="fileCategory"><i class="fas fa-tag"></i> Category</label>
-                        <select id="fileCategory">
-                            <option value="">Select Category</option>
-                            <option value="academic">Academic</option>
-                            <option value="notes">Study Notes</option>
-                            <option value="assignment">Assignments</option>
-                            <option value="project">Projects</option>
+                        <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
+                        <input type="text" id="fileName" name="title" placeholder="Enter document title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileDescription"><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="fileDescription" name="description" rows="3" placeholder="Brief description of the document"></textarea>
+                    </div>
+                    
+                    <div class="form-group-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="fileCategory"><i class="fas fa-tag"></i> Category</label>
+                            <select id="fileCategory" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="academic">Academic</option>
+                                <option value="notes">Study Notes</option>
+                                <option value="assignment">Assignments</option>
+                                <option value="project">Projects</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
+                            <select id="fileGrade" name="grade" required>
+                                <option value="">Select Grade</option>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4">Grade 4</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="10">Grade 10</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
+                        <select id="fileSubject" name="subject" required>
+                            <option value="">Select Subject</option>
+                            <option value="accounting">Accounting</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                            <option value="math_lit">Math Lit</option>
+                            <option value="tourism">Tourism</option>
+                            <option value="life_science">Life Science</option>
+                            <option value="life_orientation">Life Orientation</option>
+                            <option value="it">IT</option>
+                            <option value="cat">CAT</option>
+                            <option value="history">History</option>
+                            <option value="geography">Geography</option>
+                            <option value="business">Business Studies</option>
+                            <option value="economics">Economics</option>
+                            <option value="isizulu">IsiZulu</option>
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                        <select id="fileGrade">
-                            <option value="">Select Grade</option>
-                            <option value="10">Grade 1</option>
-                            <option value="10">Grade 2</option>
-                            <option value="10">Grade 3</option>
-                            <option value="10">Grade 4</option>
-                            <option value="10">Grade 5</option>
-                            <option value="10">Grade 6</option>
-                            <option value="10">Grade 7</option>
-                            <option value="10">Grade 8/option>
-                            <option value="10">Grade 9</option>
-                            <option value="10">Grade 10</option>
-                            <option value="11">Grade 11</option>
-                            <option value="12">Grade 12</option>
-                        </select>
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span id="progressText">0%</span>
                     </div>
+                    
+                    <button type="submit" class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-upload"></i> Upload Document
+                    </button>
                 </div>
-
-                <div class="form-group">
-                    <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
-                    <select id="fileSubject">
-                        <option value="">Select Subject</option>
-                        <option value="physics">Acounting</option>
-                        <option value="mathematics">Mathematics</option>
-                        <option value="physics">Physics</option>
-                        <option value="chemistry">Chemistry</option>
-                        <option value="physics">English</option>
-                        <option value="physics">Math Lit</option>
-                        <option value="physics">English</option>
-                        <option value="physics">Tourism</option>
-                        <option value="physics">Life Science</option>
-                        <option value="physics">Life Orientation</option>
-                        <option value="physics">IT</option>
-                        <option value="physics">CAT</option>
-                        <option value="physics">History</option>
-                        <option value="physics">Geography</option>
-                        <option value="physics">Business Studies</option>
-                        <option value="physics">Economics</option>
-                        <option value="physics">IsiZulu</option>
-                    </select>
-                </div>
-                
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span id="progressText">0%</span>
-                </div>
-                
-                <button class="upload-btn" id="uploadBtn">
-                    <i class="fas fa-upload"></i> Upload Document
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 
     <div class="documents-section">
         <h2><i class="fas fa-folder-open"></i> Library Documents</h2>
-        
-        <div id="viewerContainer">
-            <div class="viewer-header">
-                <h3 id="viewerTitle">Document View</h3>
-                <button id="closeViewer"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="viewerContent">
-                </div>
-        </div>
         
         <div class="filter-controls">
             <select id="categoryFilter">
@@ -181,7 +161,6 @@
             <button class="pagination-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
             <div class="pagination-info" id="pageInfo">Page 1 of 1</div>
             <button class="pagination-btn" id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
-            <div class="page-dots" id="pageDots"></div>
         </div>
     </div>
   </main>

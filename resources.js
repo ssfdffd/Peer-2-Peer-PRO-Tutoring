@@ -1,18 +1,18 @@
 
-const API_URL = "https://1ce953f8e3aba7222394fec1bbc2db60.r2.cloudflarestorage.com/p2p-resources"; 
-
+const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
 // 2. Visual Feedback: Show filename when file is picked
 function updateFileName(input) {
-    const uploadText = document.getElementById('uploadText');
-    if (input.files.length > 0) {
-        uploadText.innerHTML = `<b style="color: #2ecc71;">Selected: ${input.files[0].name}</b>`;
+    const fileNameDisplay = document.getElementById('selectedFileName');
+    if (input.files && input.files[0]) {
+        // This confirms the file is "attached" to the browser session
+        fileNameDisplay.innerText = "Selected: " + input.files[0].name;
     }
 }
 
-// 3. LOAD LIBRARY (Fetch from D1 Database)
+// 3. LOAD LIBRARY (Fetch from D1 via Worker)
 async function loadLibrary() {
     const fileGrid = document.getElementById('fileGrid');
-    fileGrid.innerHTML = '<div class="loader">Loading Library...</div>';
+    fileGrid.innerHTML = '<div class="loader">Accessing Library...</div>';
 
     try {
         const response = await fetch(`${API_URL}/get-resources`);
@@ -20,10 +20,12 @@ async function loadLibrary() {
 
         if (data.success) {
             renderCards(data.resources);
+        } else {
+            fileGrid.innerHTML = '<p>No documents found yet.</p>';
         }
     } catch (error) {
         console.error("Connection Error:", error);
-        fileGrid.innerHTML = '<p class="error">Database connection failed. Check your API_URL.</p>';
+        fileGrid.innerHTML = '<p class="error">Could not connect to database. Check API_URL.</p>';
     }
 }
 
@@ -32,23 +34,17 @@ function renderCards(resources) {
     const fileGrid = document.getElementById('fileGrid');
     fileGrid.innerHTML = '';
 
-    if (!resources || resources.length === 0) {
-        fileGrid.innerHTML = '<p>The library is empty. Be the first to upload!</p>';
-        return;
-    }
-
     resources.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
         card.innerHTML = `
             <div class="card-header">
                 <span class="grade-pill">Grade ${item.grade_level}</span>
-                <span class="role-pill">${item.uploader_role}</span>
+                <span class="role-pill">Student</span>
             </div>
             <div class="file-info">
                 <h3>${item.display_title}</h3>
                 <p><strong>Subject:</strong> ${item.subject}</p>
-                <p><strong>Category:</strong> ${item.doc_type}</p>
             </div>
             <div class="card-actions">
                 <a href="${item.file_url}" target="_blank" class="btn-view">View</a>
@@ -59,25 +55,29 @@ function renderCards(resources) {
     });
 }
 
-// 5. HANDLE UPLOAD (Sends to Cloudflare R2 and D1)
+// 5. HANDLE UPLOAD (The "Workhorse" function)
 async function handleUpload(event) {
-    event.preventDefault();
+    event.preventDefault(); // Stops the page from refreshing instantly
     
     const btn = document.getElementById('uploadBtn');
     const fileInput = document.getElementById('fileInput');
 
-    if (fileInput.files.length === 0) {
-        alert("Please select a document to upload!");
+    if (!fileInput.files[0]) {
+        alert("Please select a file first!");
         return;
     }
 
-    // Change button state
-    const originalText = btn.innerHTML;
+    // Visual loading state
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
     btn.disabled = true;
 
-    // Capture form data
-    const formData = new FormData(event.target);
+    // Create the "Envelope" (FormData) to send to Cloudflare
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('title', document.getElementById('fileName').value);
+    formData.append('category', document.getElementById('fileCategory').value);
+    formData.append('grade', document.getElementById('fileGrade').value);
+    formData.append('subject', document.getElementById('fileSubject').value);
 
     try {
         const response = await fetch(`${API_URL}/upload`, {
@@ -88,16 +88,16 @@ async function handleUpload(event) {
         const result = await response.json();
 
         if (result.success) {
-            alert("Success! Your document is now in the library.");
+            alert("Success! Document uploaded to R2 and D1.");
             location.reload(); 
         } else {
-            alert("Upload Error: " + (result.error || "Unknown error"));
+            alert("Upload failed: " + result.error);
         }
     } catch (error) {
-        console.error("Upload failed:", error);
-        alert("Server connection failed. Is your Worker deployed?");
+        console.error("Error:", error);
+        alert("Connection to Worker failed. Ensure CORS is enabled in the Worker code.");
     } finally {
-        btn.innerHTML = originalText;
+        btn.innerHTML = '<i class="fas fa-upload"></i> Upload Document';
         btn.disabled = false;
     }
 }
@@ -106,5 +106,7 @@ async function handleUpload(event) {
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     const form = document.getElementById('uploadForm');
-    if (form) form.addEventListener('submit', handleUpload);
+    if (form) {
+        form.addEventListener('submit', handleUpload);
+    }
 });

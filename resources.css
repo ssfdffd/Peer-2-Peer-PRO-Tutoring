@@ -2,8 +2,8 @@
    1. BRAND COLORS & GLOBAL STYLES
 ================================= */
 :root {
-  --hero-blue: #000080;       /* Your signature Navy Blue */
-  --pro-green: #32cd32;       /* Lime Green PRO color */
+  --hero-blue: #000080;        /* Signature Navy Blue */
+  --pro-green: #32cd32;        /* Lime Green PRO color */
   --white: #ffffff;
   --bg-light: #f4f7f9;
   --text-dark: #333333;
@@ -22,55 +22,111 @@ body {
   background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* =================================
-   2. NAVBAR & FOOTER (MATCHING HERO BLUE)
+   2. NAVBAR (BLUE WITH WHITE TEXT)
 ================================= */
-#navbar, .footer {
-  background-color: var(--hero-blue) !important;
-  color: var(--white);
-  padding: 1rem 5%;
-}
-
 #navbar {
+  background-color: var(--hero-blue);
+  padding: 15px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--white);
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
-/* Green PRO Text Styling */
-.pro-text {
+.logo span.pro-text {
   color: var(--pro-green);
-  font-weight: 800;
   margin-left: 5px;
 }
 
-.nav-links a {
-  color: var(--white);
-  text-decoration: none;
-  margin-left: 20px;
-  font-weight: 500;
-  transition: var(--transition);
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
-.nav-links a:hover {
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  position: relative;
+}
+
+.nav-link:hover, .nav-link.active {
   color: var(--pro-green);
 }
 
+/* Underline for Active Link */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: var(--pro-green);
+}
+
 /* =================================
-   3. PROFESSIONAL SEARCH & HERO
+   3. AUTH BUTTONS (PILL SHAPED)
+================================= */
+.auth-btn {
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.login-btn {
+  color: var(--white);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.login-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--white);
+}
+
+.signup-btn {
+  background-color: var(--pro-green);
+  color: var(--hero-blue);
+  box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2);
+}
+
+.signup-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.3);
+}
+
+/* =================================
+   4. HERO & SEARCH BAR
 ================================= */
 .resources-hero {
   background: linear-gradient(rgba(0, 0, 128, 0.7), rgba(0, 0, 128, 0.7)), 
@@ -78,23 +134,23 @@ body {
   background-size: cover;
   background-position: center;
   color: white;
-  padding: 100px 20px;
+  padding: 80px 20px;
   text-align: center;
 }
 
 .search-wrapper {
-  max-width: 650px;
+  max-width: 600px;
   margin: 25px auto 0;
   position: relative;
 }
 
 .search-wrapper input {
   width: 100%;
-  padding: 18px 20px 18px 50px;
-  border-radius: 50px; /* Beautiful Rounded Search */
+  padding: 16px 20px 16px 50px;
+  border-radius: 50px;
   border: none;
-  font-size: 1.1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  font-size: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   outline: none;
 }
 
@@ -104,37 +160,6 @@ body {
   top: 50%;
   transform: translateY(-50%);
   color: var(--hero-blue);
-  font-size: 1.2rem;
-}
-
-/* =================================
-   4. BEAUTIFUL BUTTONS (PILL SHAPE)
-================================= */
-.upload-btn, .pagination-btn {
-  background: linear-gradient(135deg, var(--hero-blue) 0%, #0000cc 100%);
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 50px; /* Pill Shape */
-  font-weight: 600;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(0,0,128,0.2);
-}
-
-.upload-btn:hover, .pagination-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,128,0.3);
-  filter: brightness(1.1);
-}
-
-.pagination-btn:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 /* =================================
@@ -142,19 +167,18 @@ body {
 ================================= */
 .file-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
-  margin-top: 40px;
+  padding: 40px 0;
 }
 
 .file-card {
-  background: white;
-  border-radius: 16px;
+  background: var(--white);
+  border-radius: 15px;
   overflow: hidden;
   box-shadow: var(--card-shadow);
   transition: var(--transition);
-  display: flex;
-  flex-direction: column;
+  border-bottom: 4px solid var(--pro-green);
 }
 
 .file-card:hover {
@@ -162,23 +186,21 @@ body {
 }
 
 .card-icon-header {
-  background-color: var(--bg-light);
-  padding: 40px;
+  background-color: #f8faff;
+  padding: 30px;
   text-align: center;
   color: var(--hero-blue);
-  font-size: 3.5rem;
-  border-bottom: 1px solid #eee;
+  font-size: 3rem;
 }
 
 .card-body {
-  padding: 25px;
-  flex-grow: 1;
+  padding: 20px;
 }
 
 .card-body h3 {
   color: var(--hero-blue);
-  margin-bottom: 12px;
-  font-size: 1.25rem;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
 }
 
 .card-footer {
@@ -193,10 +215,9 @@ body {
   text-decoration: none;
   font-weight: bold;
   font-size: 0.9rem;
-  transition: var(--transition);
+  cursor: pointer;
   border: none;
   background: transparent;
-  cursor: pointer;
 }
 
 .view-link { color: var(--hero-blue); border-right: 1px solid #eee; }
@@ -206,29 +227,25 @@ body {
 .down-link:hover { background: #f0fff0; }
 
 /* =================================
-   6. PAGINATION INFO (1 OF 10)
+   6. PAGINATION & VIEWER (POPUP)
 ================================= */
 .pagination-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  margin-top: 50px;
-  padding: 20px;
+  margin-bottom: 50px;
 }
 
 .pagination-info {
-  font-weight: bold;
+  font-weight: 700;
   color: var(--hero-blue);
   background: white;
-  padding: 8px 20px;
+  padding: 8px 18px;
   border-radius: 20px;
-  box-shadow: var(--shadow-pro);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* =================================
-   7. DOCUMENT VIEWER POPUP (MODAL)
-================================= */
 .modal {
   display: none;
   position: fixed;
@@ -242,7 +259,7 @@ body {
   margin: 2% auto;
   width: 90%;
   height: 90vh;
-  border-radius: 12px;
+  border-radius: 15px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -255,27 +272,67 @@ body {
   padding: 15px 25px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.close-modal {
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  color: white;
 }
 
 #docViewer {
-  flex-grow: 1; /* This fills the white box with the document */
+  flex-grow: 1;
   width: 100%;
-  height: 100%;
   border: none;
+}
+
+/* =================================
+   7. FOOTER (MATCHING HERO BLUE)
+================================= */
+.footer {
+  background-color: var(--hero-blue) !important;
+  color: var(--white);
+  padding: 60px 5% 20px;
+  margin-top: auto;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-box h4 {
+  color: var(--pro-green);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-box a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+.footer-box a:hover {
+  color: var(--pro-green);
+  padding-left: 5px;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
 /* =================================
    8. MOBILE RESPONSIVENESS
 ================================= */
 @media (max-width: 768px) {
-  .form-grid { grid-template-columns: 1fr; }
-  .modal-content { width: 95%; height: 80vh; margin-top: 10vh; }
+  .nav-right, .nav-links { display: none; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .modal-content { width: 95%; height: 85vh; }
 }

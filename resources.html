@@ -1,31 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources Library | Peer-2-Peer</title>
-    <link rel="stylesheet" href="resources.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="resources-body">
-
-  <nav id="navbar">
-    <div class="logo">Peer-2-Peer PRO | Library</div>
-    <div class="nav-right">
-        <div class="nav-links">
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="resources.html" class="nav-link active">Resources</a>
-            <a href="school-dashboard.html" class="nav-link">Dashboard</a>
-        </div>
-        <a href="login.html" class="auth-btn login-btn">Login</a>
-        <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
-        <button class="menu-toggle" id="openNav">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-  </nav>
-
-  <header class="resources-hero">
+<header class="resources-hero">
     <div class="hero-content">
         <h1>Study Material Hub</h1>
         <p>Explore documents shared by your peers</p>
@@ -34,94 +7,34 @@
             <input type="text" id="searchInput" placeholder="Search by document title...">
         </div>
     </div>
-  </header>
-<!-- Animation Section -->
-<section class="animation-section" id="whatsappAnimation">
-    <div class="animation-wrapper">
-        <div class="scrolling-text">
-            <a href="https://wa.me/27732792426?text=Hi!%20I'm%20interested%20in%20online%20classes%20at%20R20%20per%20class" 
-               class="whatsapp-link" 
-               target="_blank">
-                <i class="fab fa-whatsapp"></i>
-                📚 Online Classes Available at R20 per class! Click to WhatsApp us now!
-            </a>
-            <a href="https://wa.me/27732792426?text=Hi!%20I'm%20interested%20in%20online%20classes%20at%20R20%20per%20class" 
-               class="whatsapp-link" 
-               target="_blank">
-                <i class="fab fa-whatsapp"></i>
-                Quality tutoring - R20 per class! Get help today!
-            </a>
-            <a href="https://wa.me/27732792426?text=Hi!%20I'm%20interested%20in%20online%20classes%20at%20R20%20per%20class" 
-               class="whatsapp-link" 
-               target="_blank">
-                <i class="fab fa-whatsapp"></i>
-                🎓 Quality Education for Only R20 per session! Contact us now!
-            </a>
-        </div>
-    </div>
-</section>
-  <main class="content-container">
+</header>
+
+<main class="content-container">
     <div class="upload-section">
-        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
-        
         <div class="upload-card">
             <form id="uploadForm">
-                
-                <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-file-upload"></i>
-                    <p>Drag & drop files here or click to browse</p>
-                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName(this)" required>
-                    <button type="button" class="browse-btn" id="browseBtn">Browse Files</button>
-                    <p id="selectedFileName" style="margin-top: 10px; color: #2ecc71; font-weight: bold;"></p>
-                </div>
-                
-                <div class="upload-form-inputs">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
+                <div class="form-grid">
                     <div class="form-group">
-                        <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
-                        <input type="text" id="fileName" name="title" placeholder="Enter document title" required>
+                        <label>Grade Level</label>
+                        <select id="fileGrade" required>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
                     </div>
-
                     <div class="form-group">
-                        <label for="fileDescription"><i class="fas fa-align-left"></i> Description</label>
-                        <textarea id="fileDescription" name="description" rows="3" placeholder="Brief description of the document"></textarea>
-                    </div>
-                    
-                    <div class="form-group-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label for="fileCategory"><i class="fas fa-tag"></i> Category</label>
-                            <select id="fileCategory" name="category" required>
-                                <option value="">Select Category</option>
-                                <option value="academic">Academic</option>
-                                <option value="notes">Study Notes</option>
-                                <option value="assignment">Assignments</option>
-                                <option value="project">Projects</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group" style="flex: 1;">
-                            <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                            <select id="fileGrade" name="grade" required>
-                                <option value="">Select Grade</option>
-                                <option value="1">Grade 1</option>
-                                <option value="2">Grade 2</option>
-                                <option value="3">Grade 3</option>
-                                <option value="4">Grade 4</option>
-                                <option value="5">Grade 5</option>
-                                <option value="6">Grade 6</option>
-                                <option value="7">Grade 7</option>
-                                <option value="8">Grade 8</option>
-                                <option value="9">Grade 9</option>
-                                <option value="10">Grade 10</option>
-                                <option value="11">Grade 11</option>
-                                <option value="12">Grade 12</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
-                        <select id="fileSubject" name="subject" required>
-                            <option value="">Select Subject</option>
+                        <label>Subject</label>
+                        <select id="fileSubject" required>
                             <option value="accounting">Accounting</option>
                             <option value="mathematics">Mathematics</option>
                             <option value="physics">Physics</option>
@@ -140,72 +53,49 @@
                             <option value="isizulu">IsiZulu</option>
                         </select>
                     </div>
-                    
-                    <div class="upload-progress" id="uploadProgress" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <span id="progressText">0%</span>
-                    </div>
-                    
-                    <button type="submit" class="upload-btn" id="uploadBtn">
-                        <i class="fas fa-upload"></i> Upload Document
-                    </button>
                 </div>
-            </form>
+                </form>
         </div>
     </div>
 
     <div class="documents-section">
-        <h2><i class="fas fa-folder-open"></i> Library Documents</h2>
-        
         <div class="filter-controls">
-            <select id="categoryFilter">
-                <option value="">All Categories</option>
-                <option value="academic">Academic</option>
-                <option value="notes">Study Notes</option>
-                <option value="assignment">Assignments</option>
+            <select id="subjectFilter">
+                <option value="">All Subjects</option>
+                <option value="accounting">Accounting</option>
+                <option value="mathematics">Mathematics</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="english">English</option>
+                <option value="math_lit">Math Lit</option>
+                <option value="tourism">Tourism</option>
+                <option value="life_science">Life Science</option>
+                <option value="life_orientation">Life Orientation</option>
+                <option value="it">IT</option>
+                <option value="cat">CAT</option>
+                <option value="history">History</option>
+                <option value="geography">Geography</option>
+                <option value="business">Business Studies</option>
+                <option value="economics">Economics</option>
+                <option value="isizulu">IsiZulu</option>
             </select>
             
             <select id="gradeFilter">
                 <option value="">All Grades</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
                 <option value="12">Grade 12</option>
-                <option value="university">University</option>
-            </select>
-            
-            <select id="sortFilter">
-                <option value="newest">Newest First</option>
-                <option value="name">Name A-Z</option>
             </select>
         </div>
-        
         <div id="fileGrid" class="file-grid"></div>
-        
-        <div class="pagination-container">
-            <button class="pagination-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
-            <div class="pagination-info" id="pageInfo">Page 1 of 1</div>
-            <button class="pagination-btn" id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
-        </div>
     </div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-        <div class="footer-box">
-            <h4>Contact</h4>
-            <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
-        </div>
-        <div class="footer-box">
-            <h4>Quick Links</h4>
-            <a href="index.html">Home</a>
-            <a href="https://wa.me/27732792426">WhatsApp Us</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
-    </div>
-  </footer>
-
-  <script src="resources.js"></script>
-</body>
-</html>
+</main>

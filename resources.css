@@ -2,7 +2,7 @@
    1. BRAND COLORS & GLOBAL STYLES
 ================================= */
 :root {
-  --hero-blue: #000080;        /* Signature Navy Blue */
+  --hero-blue: #0000a0;        /* Matched to your screenshot blue */
   --pro-green: #32cd32;        /* Lime Green PRO color */
   --white: #ffffff;
   --bg-light: #f4f7f9;
@@ -28,11 +28,15 @@ body {
 }
 
 /* =================================
-   2. NAVBAR (BLUE WITH WHITE TEXT)
+   2. NAVBAR & FOOTER (SCREENSHOT BLUE)
 ================================= */
-#navbar {
-  background-color: var(--hero-blue);
+#navbar, .footer {
+  background-color: var(--hero-blue) !important;
+  color: var(--white);
   padding: 15px 5%;
+}
+
+#navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -51,20 +55,28 @@ body {
   text-decoration: none;
 }
 
+.logo img {
+  height: 35px;
+  margin-right: 10px;
+}
+
 .logo span.pro-text {
   color: var(--pro-green);
   margin-left: 5px;
 }
 
+/* =================================
+   3. NAV-RIGHT & AUTH BUTTONS
+================================= */
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 25px;
 }
 
 .nav-links {
   display: flex;
-  gap: 25px;
+  gap: 20px;
 }
 
 .nav-link {
@@ -80,7 +92,6 @@ body {
   color: var(--pro-green);
 }
 
-/* Underline for Active Link */
 .nav-link.active::after {
   content: '';
   position: absolute;
@@ -91,15 +102,12 @@ body {
   background-color: var(--pro-green);
 }
 
-/* =================================
-   3. AUTH BUTTONS (PILL SHAPED)
-================================= */
 .auth-btn {
+  text-decoration: none;
   padding: 10px 24px;
   border-radius: 50px;
   font-weight: 600;
   font-size: 0.9rem;
-  text-decoration: none;
   transition: var(--transition);
 }
 
@@ -119,17 +127,11 @@ body {
   box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2);
 }
 
-.signup-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.3);
-}
-
 /* =================================
-   4. HERO & SEARCH BAR
+   4. BEAUTIFUL HERO & SEARCH
 ================================= */
 .resources-hero {
-  background: linear-gradient(rgba(0, 0, 128, 0.7), rgba(0, 0, 128, 0.7)), 
+  background: linear-gradient(rgba(0, 0, 160, 0.75), rgba(0, 0, 160, 0.75)), 
               url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80');
   background-size: cover;
   background-position: center;
@@ -139,37 +141,79 @@ body {
 }
 
 .search-wrapper {
-  max-width: 600px;
+  max-width: 650px;
   margin: 25px auto 0;
   position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
 }
 
 .search-wrapper input {
   width: 100%;
-  padding: 16px 20px 16px 50px;
-  border-radius: 50px;
+  padding: 16px 20px 16px 55px;
+  border-radius: 40px;
   border: none;
   font-size: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   outline: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .search-wrapper i {
   position: absolute;
-  left: 20px;
+  left: 25px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--hero-blue);
 }
 
 /* =================================
-   5. PREMIUM DOCUMENT CARDS
+   5. UPLOAD & FILTER CONTROLS
+================================= */
+.upload-btn {
+  background-color: var(--pro-green);
+  color: var(--hero-blue);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2);
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.filter-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.filter-controls select {
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-weight: 600;
+  color: var(--hero-blue);
+  cursor: pointer;
+}
+
+/* =================================
+   6. PREMIUM DOCUMENT CARDS
 ================================= */
 .file-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
-  padding: 40px 0;
+  padding: 20px 0;
 }
 
 .file-card {
@@ -193,21 +237,6 @@ body {
   font-size: 3rem;
 }
 
-.card-body {
-  padding: 20px;
-}
-
-.card-body h3 {
-  color: var(--hero-blue);
-  margin-bottom: 8px;
-  font-size: 1.2rem;
-}
-
-.card-footer {
-  display: flex;
-  border-top: 1px solid #eee;
-}
-
 .view-link, .down-link {
   flex: 1;
   padding: 15px;
@@ -215,33 +244,28 @@ body {
   text-decoration: none;
   font-weight: bold;
   font-size: 0.9rem;
-  cursor: pointer;
-  border: none;
-  background: transparent;
+  transition: var(--transition);
 }
 
 .view-link { color: var(--hero-blue); border-right: 1px solid #eee; }
 .down-link { color: var(--pro-green); }
 
-.view-link:hover { background: #f0f4ff; }
-.down-link:hover { background: #f0fff0; }
-
 /* =================================
-   6. PAGINATION & VIEWER (POPUP)
+   7. PAGINATION & MODAL
 ================================= */
 .pagination-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  margin-bottom: 50px;
+  margin: 40px 0;
 }
 
 .pagination-info {
   font-weight: 700;
   color: var(--hero-blue);
   background: white;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
@@ -260,18 +284,9 @@ body {
   width: 90%;
   height: 90vh;
   border-radius: 15px;
-  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.modal-header {
-  background: var(--hero-blue);
-  color: white;
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
 }
 
 #docViewer {
@@ -281,58 +296,23 @@ body {
 }
 
 /* =================================
-   7. FOOTER (MATCHING HERO BLUE)
+   8. FOOTER & RESPONSIVE
 ================================= */
-.footer {
-  background-color: var(--hero-blue) !important;
-  color: var(--white);
-  padding: 60px 5% 20px;
-  margin-top: auto;
-}
-
 .footer-inner {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .footer-box h4 {
   color: var(--pro-green);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
-.footer-box a {
-  color: rgba(255,255,255,0.7);
-  text-decoration: none;
-  display: block;
-  margin-bottom: 10px;
-  transition: 0.3s;
-}
-
-.footer-box a:hover {
-  color: var(--pro-green);
-  padding-left: 5px;
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.85rem;
-  opacity: 0.7;
-}
-
-/* =================================
-   8. MOBILE RESPONSIVENESS
-================================= */
 @media (max-width: 768px) {
   .nav-right, .nav-links { display: none; }
+  .filter-controls { flex-direction: column; align-items: center; }
   .footer-inner { flex-direction: column; text-align: center; }
-  .modal-content { width: 95%; height: 85vh; }
 }

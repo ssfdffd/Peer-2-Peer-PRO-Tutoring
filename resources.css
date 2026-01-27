@@ -1693,6 +1693,180 @@ body {
   border-color: #ff4444 !important;
   background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%) !important;
 }
+/* =================================
+   ANIMATION SECTION (NEW)
+================================= */
+.animation-section {
+  background: linear-gradient(135deg, #32cd32 0%, #28b528 100%);
+  color: white;
+  padding: 1.2rem 5%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 3px solid #000080;
+}
+
+.animation-wrapper {
+  position: relative;
+  height: 40px;
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.scrolling-text {
+  position: absolute;
+  white-space: nowrap;
+  animation: scrollText 25s linear infinite;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.scrolling-text span {
+  background: rgba(0, 0, 128, 0.2);
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 2px solid white;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.scrolling-text:hover {
+  animation-play-state: paused;
+}
+
+.scrolling-text span:hover {
+  background: rgba(0, 0, 128, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scrolling-text i {
+  font-size: 1.4rem;
+  color: #000080;
+  animation: bounce 2s infinite;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* WhatsApp link hover effect */
+.whatsapp-link {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-link:hover {
+  color: #000080;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* =================================
+   UPLOAD FORM FIXES
+================================= */
+.upload-form-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #fafafa;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+/* Fix for form-group-row to fit perfectly */
+.form-group-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 0;
+}
+
+.form-group-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Ensure browse button is properly positioned */
+#browseBtn {
+  margin-top: 15px;
+  z-index: 2;
+  position: relative;
+}
+
+/* =================================
+   DOCUMENT ICONS IMPROVEMENTS
+================================= */
+.file-icon-box i {
+  font-size: 1.8rem;
+}
+
+/* Specific icons for different file types */
+.file-card[data-filetype="pdf"] .file-icon-box i {
+  content: "\f1c1" !important;
+}
+
+.file-card[data-filetype="doc"] .file-icon-box i,
+.file-card[data-filetype="docx"] .file-icon-box i {
+  content: "\f1c2" !important;
+}
+
+.file-card[data-filetype="ppt"] .file-icon-box i,
+.file-card[data-filetype="pptx"] .file-icon-box i {
+  content: "\f1c4" !important;
+}
+
+.file-card[data-filetype="xls"] .file-icon-box i,
+.file-card[data-filetype="xlsx"] .file-icon-box i {
+  content: "\f1c3" !important;
+}
+
+.file-card[data-filetype="jpg"] .file-icon-box i,
+.file-card[data-filetype="jpeg"] .file-icon-box i,
+.file-card[data-filetype="png"] .file-icon-box i,
+.file-card[data-filetype="gif"] .file-icon-box i {
+  content: "\f1c5" !important;
+}
+
+/* Mobile adjustments for animation */
+@media (max-width: 768px) {
+  .animation-section {
+    padding: 1rem 4%;
+  }
+  
+  .scrolling-text {
+    font-size: 1rem;
+    gap: 20px;
+  }
+  
+  .scrolling-text span {
+    padding: 6px 12px;
+  }
+}
 
 @keyframes successPulse {
   0% {

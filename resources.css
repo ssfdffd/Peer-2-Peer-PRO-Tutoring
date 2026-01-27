@@ -1879,3 +1879,273 @@ body {
     box-shadow: 0 0 0 0 rgba(50, 205, 50, 0);
   }
 }
+/* =================================
+   ANIMATION SECTION FIXES
+================================= */
+.animation-section {
+  background: linear-gradient(135deg, #32cd32 0%, #28b528 100%);
+  color: white;
+  padding: 1.2rem 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 3px solid #000080;
+  width: 100%;
+}
+
+.animation-wrapper {
+  position: relative;
+  height: 50px;
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.scrolling-text {
+  position: absolute;
+  white-space: nowrap;
+  animation: scrollText 30s linear infinite;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 60px;
+  left: 0;
+  top: 0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.scrolling-text a {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+  padding: 8px 20px;
+  background: rgba(0, 0, 128, 0.2);
+  border-radius: 50px;
+  border: 2px solid white;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.scrolling-text a:hover {
+  background: rgba(0, 0, 128, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.scrolling-text i {
+  font-size: 1.4rem;
+  color: #000080;
+  animation: bounce 2s infinite;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Animation hover pause */
+.animation-wrapper:hover .scrolling-text {
+  animation-play-state: paused;
+}
+
+/* =================================
+   UPLOAD FORM FIXES - MAKE DROPBOX FIT PERFECTLY
+================================= */
+.upload-area {
+  position: relative;
+  border: 3px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+/* Fix the browse button positioning */
+#browseBtn {
+  margin-top: 20px;
+  z-index: 10;
+  position: relative;
+}
+
+/* Fix the form layout */
+.upload-form-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #fafafa;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  height: 100%;
+  min-height: 320px;
+}
+
+/* Fix form group row alignment */
+.form-group-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.form-group-row .form-group {
+  flex: 1;
+  min-width: 0; /* Prevents overflow */
+  margin-bottom: 0;
+}
+
+/* Ensure all inputs fit properly */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Fix upload card grid layout */
+.upload-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+  min-height: 400px;
+}
+
+/* Make both sides equal height */
+.upload-card > * {
+  height: 100%;
+}
+
+/* =================================
+   DOCUMENT ICONS FIXES
+================================= */
+.file-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1.8rem;
+  margin: 0 auto 1.5rem;
+  transition: all var(--transition-speed) ease;
+}
+
+/* Specific icon colors for file types */
+.file-card[data-filetype="pdf"] .file-icon-box {
+  background-color: #ff4444;
+}
+
+.file-card[data-filetype="doc"] .file-icon-box,
+.file-card[data-filetype="docx"] .file-icon-box {
+  background-color: #2b579a;
+}
+
+.file-card[data-filetype="xls"] .file-icon-box,
+.file-card[data-filetype="xlsx"] .file-icon-box {
+  background-color: #217346;
+}
+
+.file-card[data-filetype="ppt"] .file-icon-box,
+.file-card[data-filetype="pptx"] .file-icon-box {
+  background-color: #d24726;
+}
+
+.file-card[data-filetype="jpg"] .file-icon-box,
+.file-card[data-filetype="jpeg"] .file-icon-box,
+.file-card[data-filetype="png"] .file-icon-box {
+  background-color: #4CAF50;
+}
+
+/* Ensure icons show properly */
+.file-icon-box i.fa-file-pdf { color: white; }
+.file-icon-box i.fa-file-word { color: white; }
+.file-icon-box i.fa-file-excel { color: white; }
+.file-icon-box i.fa-file-powerpoint { color: white; }
+.file-icon-box i.fa-file-image { color: white; }
+
+/* =================================
+   MOBILE RESPONSIVENESS FOR ANIMATION
+================================= */
+@media (max-width: 768px) {
+  .animation-section {
+    padding: 1rem 0;
+  }
+  
+  .animation-wrapper {
+    height: 40px;
+  }
+  
+  .scrolling-text {
+    font-size: 0.9rem;
+    gap: 40px;
+  }
+  
+  .scrolling-text a {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+  
+  .scrolling-text i {
+    font-size: 1.1rem;
+  }
+  
+  /* Stack upload form on mobile */
+  .upload-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .upload-area {
+    min-height: 250px;
+  }
+  
+  .upload-form-inputs {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrolling-text {
+    font-size: 0.8rem;
+    gap: 30px;
+  }
+  
+  .scrolling-text a {
+    padding: 5px 10px;
+  }
+}

@@ -1,20 +1,16 @@
 /* =================================
-   1. BRAND COLORS & VARIABLES
+   1. BRAND COLORS & GLOBAL STYLES
 ================================= */
 :root {
-  --nav-dark-blue: #000033;   /* Darker blue than hero */
-  --hero-blue: #000080;       /* Standard Navy */
-  --pro-green: #32cd32;       /* Lime Green */
+  --hero-blue: #000080;       /* Your signature Navy Blue */
+  --pro-green: #32cd32;       /* Lime Green PRO color */
   --white: #ffffff;
-  --bg-light: #f1f4f8;
+  --bg-light: #f4f7f9;
   --text-dark: #333333;
-  --transition: all 0.3s ease;
-  --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* =================================
-   2. RESET & BASE STYLES
-================================= */
 * {
   margin: 0;
   padding: 0;
@@ -22,25 +18,29 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
 }
 
 /* =================================
-   3. NAVBAR (DARK BLUE & WHITE TEXT)
+   2. NAVBAR & FOOTER (MATCHING HERO BLUE)
 ================================= */
+#navbar, .footer {
+  background-color: var(--hero-blue) !important;
+  color: var(--white);
+  padding: 1rem 5%;
+}
+
 #navbar {
-  background-color: var(--nav-dark-blue);
-  padding: 15px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1000;
-  color: var(--white);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
 }
 
 .logo {
@@ -48,134 +48,113 @@ body {
   font-weight: bold;
   display: flex;
   align-items: center;
-  color: var(--white);
 }
 
-.logo img {
-  height: 35px;
-  margin-right: 12px;
-}
-
-/* "PRO" text in Green */
+/* Green PRO Text Styling */
 .pro-text {
   color: var(--pro-green);
   font-weight: 800;
   margin-left: 5px;
-  text-shadow: 0 0 5px rgba(50, 205, 50, 0.2);
 }
 
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-link {
+.nav-links a {
   color: var(--white);
   text-decoration: none;
+  margin-left: 20px;
   font-weight: 500;
   transition: var(--transition);
 }
 
-.nav-link:hover {
+.nav-links a:hover {
   color: var(--pro-green);
 }
 
 /* =================================
-   4. HERO & ANIMATION
+   3. PROFESSIONAL SEARCH & HERO
 ================================= */
 .resources-hero {
-  background: linear-gradient(rgba(0, 0, 128, 0.75), rgba(0, 0, 128, 0.75)), 
-              url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80');
+  background: linear-gradient(rgba(0, 0, 128, 0.7), rgba(0, 0, 128, 0.7)), 
+              url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80');
   background-size: cover;
   background-position: center;
   color: white;
-  padding: 80px 20px;
+  padding: 100px 20px;
   text-align: center;
 }
 
-.animation-wrapper {
-  background: var(--hero-blue);
-  overflow: hidden;
-  white-space: nowrap;
-  padding: 10px 0;
+.search-wrapper {
+  max-width: 650px;
+  margin: 25px auto 0;
+  position: relative;
 }
 
-.scrolling-text {
-  display: inline-block;
-  color: var(--white);
-  font-weight: bold;
-  animation: scrollLeftToRight 25s linear infinite;
+.search-wrapper input {
+  width: 100%;
+  padding: 18px 20px 18px 50px;
+  border-radius: 50px; /* Beautiful Rounded Search */
+  border: none;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  outline: none;
 }
 
-@keyframes scrollLeftToRight {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.search-wrapper i {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--hero-blue);
+  font-size: 1.2rem;
 }
 
 /* =================================
-   5. UPLOAD SECTION (DESKTOP GRID)
+   4. BEAUTIFUL BUTTONS (PILL SHAPE)
 ================================= */
-.upload-card {
-  background: white;
-  max-width: 1000px;
-  margin: -50px auto 40px;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: var(--card-shadow);
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Desktop: Side by Side */
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.upload-area {
-  border: 2px dashed var(--hero-blue);
-  background: #f8faff;
-  padding: 30px;
-  text-align: center;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-bottom: 25px;
-  transition: var(--transition);
-}
-
-.upload-area:hover {
-  background: #eef2ff;
-  border-color: var(--pro-green);
-}
-
-.upload-btn {
-  width: 100%;
-  padding: 15px;
-  background: var(--nav-dark-blue);
+.upload-btn, .pagination-btn {
+  background: linear-gradient(135deg, var(--hero-blue) 0%, #0000cc 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 50px; /* Pill Shape */
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(0,0,128,0.2);
+}
+
+.upload-btn:hover, .pagination-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,128,0.3);
+  filter: brightness(1.1);
+}
+
+.pagination-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* =================================
-   6. PREMIUM DOCUMENT CARDS
+   5. PREMIUM DOCUMENT CARDS
 ================================= */
 .file-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 30px;
-  padding: 20px 0;
+  margin-top: 40px;
 }
 
 .file-card {
-  background: var(--white);
-  border-radius: 12px;
+  background: white;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--card-shadow);
   transition: var(--transition);
-  border-bottom: 5px solid var(--pro-green); /* Company Accent */
+  display: flex;
+  flex-direction: column;
 }
 
 .file-card:hover {
@@ -183,138 +162,120 @@ body {
 }
 
 .card-icon-header {
-  background: var(--nav-dark-blue);
-  color: var(--white);
-  padding: 30px;
+  background-color: var(--bg-light);
+  padding: 40px;
   text-align: center;
-  font-size: 3rem;
+  color: var(--hero-blue);
+  font-size: 3.5rem;
+  border-bottom: 1px solid #eee;
 }
 
-.card-info {
-  padding: 20px;
+.card-body {
+  padding: 25px;
+  flex-grow: 1;
 }
 
-.card-info h3 {
-  color: var(--nav-dark-blue);
-  margin-bottom: 10px;
-  font-size: 1.2rem;
+.card-body h3 {
+  color: var(--hero-blue);
+  margin-bottom: 12px;
+  font-size: 1.25rem;
 }
 
-.card-actions {
+.card-footer {
   display: flex;
   border-top: 1px solid #eee;
 }
 
-.card-actions button, .card-actions a {
+.view-link, .down-link {
   flex: 1;
   padding: 15px;
   text-align: center;
   text-decoration: none;
   font-weight: bold;
+  font-size: 0.9rem;
+  transition: var(--transition);
   border: none;
-  background: none;
+  background: transparent;
   cursor: pointer;
 }
 
-.btn-popup {
-  color: var(--nav-dark-blue);
-  border-right: 1px solid #eee !important;
+.view-link { color: var(--hero-blue); border-right: 1px solid #eee; }
+.down-link { color: var(--pro-green); }
+
+.view-link:hover { background: #f0f4ff; }
+.down-link:hover { background: #f0fff0; }
+
+/* =================================
+   6. PAGINATION INFO (1 OF 10)
+================================= */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 50px;
+  padding: 20px;
 }
 
-.btn-down {
-  color: var(--pro-green);
+.pagination-info {
+  font-weight: bold;
+  color: var(--hero-blue);
+  background: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-pro);
 }
 
 /* =================================
-   7. POPUP MODAL VIEWER
+   7. DOCUMENT VIEWER POPUP (MODAL)
 ================================= */
 .modal {
   display: none;
   position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .modal-content {
   background-color: #fff;
   margin: 2% auto;
-  padding: 0;
   width: 90%;
-  height: 90%;
+  height: 90vh;
   border-radius: 12px;
   position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
+.modal-header {
+  background: var(--hero-blue);
+  color: white;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .close-modal {
-  position: absolute;
-  top: 15px;
-  right: 25px;
-  color: #333;
-  font-size: 35px;
+  font-size: 28px;
   font-weight: bold;
   cursor: pointer;
-  z-index: 10001;
+  color: white;
 }
 
 #docViewer {
+  flex-grow: 1; /* This fills the white box with the document */
   width: 100%;
   height: 100%;
   border: none;
 }
 
 /* =================================
-   8. FOOTER (DARK BLUE)
-================================= */
-.footer {
-  background-color: var(--nav-dark-blue);
-  color: var(--white);
-  padding: 50px 5% 20px;
-  margin-top: 50px;
-}
-
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 30px;
-}
-
-.footer-box a {
-  color: #cccccc;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.8rem;
-}
-
-/* =================================
-   9. RESPONSIVENESS
+   8. MOBILE RESPONSIVENESS
 ================================= */
 @media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr; /* Stack on mobile */
-  }
-  
-  .upload-card {
-    margin: -30px 15px 40px;
-    padding: 20px;
-  }
-  
-  .modal-content {
-    width: 95%;
-    height: 85%;
-    margin: 10% auto;
-  }
+  .form-grid { grid-template-columns: 1fr; }
+  .modal-content { width: 95%; height: 80vh; margin-top: 10vh; }
 }

@@ -1,23 +1,25 @@
-// 1. CONFIGURATION
+// 1. CONFIGURATION & STATE
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
 let allResources = []; 
+let currentPage = 1;
+const itemsPerPage = 6; // Set how many documents show per page
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
     
-    // Setup Modal Close Button
+    // Setup Modal Close Button logic
     const modal = document.getElementById("docModal");
     const closeBtn = document.querySelector(".close-modal");
     if (closeBtn) {
         closeBtn.onclick = () => {
             modal.style.display = "none";
-            document.getElementById("docViewer").src = ""; // Stop loading when closed
+            document.getElementById("docViewer").src = ""; // Clear source to stop loading
         };
     }
 
-    // Close modal when clicking outside of it
+    // Close modal when clicking outside the white box
     window.onclick = (event) => {
         if (event.target == modal) {
             modal.style.display = "none";
@@ -25,19 +27,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Filter Listeners
-    document.getElementById('searchInput')?.addEventListener('input', filterDocuments);
+    // Pagination Listeners
+    document.getElementById('prevPage')?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderCards(allResources);
+            window.scrollTo({ top: 500, behavior: 'smooth' });
+        }
+    });
+
+    document.getElementById('nextPage')?.addEventListener('click', () => {
+        const maxPage = Math.ceil(allResources.length / itemsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            renderCards(allResources);
+            window.scrollTo({ top: 500, behavior: 'smooth' });
+        }
+    });
+
+    // Search & Filter Listeners
+    document.getElementById('searchInput')?.addEventListener('input', () => {
+        currentPage = 1; // Reset to page 1 on new search
+        filterDocuments();
+    });
     document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
     document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
 
-    // Upload Listener
+    // Upload Form Listener
     const form = document.getElementById('uploadForm');
     if (form) {
         form.addEventListener('submit', handleUpload);
     }
 });
 
-// 3. LOAD LIBRARY
+// 3. LOAD LIBRARY (Fetch from Worker)
 async function loadLibrary() {
     const fileGrid = document.getElementById('fileGrid');
     if (!fileGrid) return;
@@ -60,48 +83,69 @@ async function loadLibrary() {
     }
 }
 
-// 4. RENDER CARDS (PRO Style)
-function renderCards(resources) {
+// 4. RENDER CARDS (With Pagination)
+function renderCards(data) {
     const fileGrid = document.getElementById('fileGrid');
     fileGrid.innerHTML = '';
 
-    if (resources.length === 0) {
-        fileGrid.innerHTML = '<p>No documents match your filters.</p>';
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedItems = data.slice(start, end);
+    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+
+    // Update the Pagination Counter (Page X of Y)
+    const pageInfo = document.getElementById('pageInfo');
+    if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+    
+    document.getElementById('prevPage').disabled = (currentPage === 1);
+    document.getElementById('nextPage').disabled = (currentPage === totalPages);
+
+    if (paginatedItems.length === 0) {
+        fileGrid.innerHTML = '<p>No documents found.</p>';
         return;
     }
 
-    resources.forEach(item => {
+    paginatedItems.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
         card.innerHTML = `
             <div class="card-icon-header">
                 <i class="fas fa-file-pdf"></i>
             </div>
-            <div class="card-info">
+            <div class="card-body">
                 <h3>${item.display_title}</h3>
                 <p><strong>Subject:</strong> ${item.subject}</p>
                 <p><strong>Grade:</strong> ${item.grade_level}</p>
             </div>
-            <div class="card-actions">
-                <button onclick="openViewer('${item.file_url}')" class="btn-popup">View</button>
-                <a href="${item.file_url}" download="${item.display_title}" class="btn-down">Download</a>
+            <div class="card-footer">
+                <button onclick="openViewer('${item.file_url}', '${item.display_title}')" class="view-link">View</button>
+                <a href="${item.file_url}" download="${item.display_title}" class="down-link">Download</a>
             </div>
         `;
         fileGrid.appendChild(card);
     });
 }
 
-// 5. INTERNAL VIEWER (POPUP)
-function openViewer(url) {
+// 5. INTERNAL DOCUMENT VIEWER (The Pop-up Fix)
+function openViewer(url, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
+    const modalTitle = document.getElementById("modalTitle");
+
     if (modal && viewer) {
-        viewer.src = url;
+        if (modalTitle) modalTitle.innerText = title;
+        
+        // Use Google Docs viewer as a fallback for direct PDF embedding
+        const viewerUrl = url.endsWith('.pdf') 
+            ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true` 
+            : url;
+            
+        viewer.src = viewerUrl;
         modal.style.display = "block";
     }
 }
 
-// 6. UPLOAD HANDLER
+// 6. UPLOAD HANDLER (Mapping Fix)
 async function handleUpload(event) {
     event.preventDefault();
     
@@ -146,7 +190,7 @@ async function handleUpload(event) {
     }
 }
 
-// 7. UTILITIES (Filename, Animation, Filtering)
+// 7. UTILITIES
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');
     if (input.files && input.files[0]) {

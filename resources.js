@@ -10,18 +10,19 @@ function updateFileName(input) {
     }
 }
 
-// 3. Animation: Starts immediately from left to right
+// 3. Animation: Triggered via CSS, initialized here
 function initScrollAnimation() {
     const scrollText = document.getElementById('scrollText');
     if (scrollText) {
         scrollText.style.display = 'block';
-        // Animation defined in CSS: scrollLeftToRight
     }
 }
 
 // 4. LOAD LIBRARY (Fetch from D1 via Worker)
 async function loadLibrary() {
     const fileGrid = document.getElementById('fileGrid');
+    if (!fileGrid) return;
+    
     fileGrid.innerHTML = '<div class="loader">Accessing Library...</div>';
 
     try {
@@ -29,7 +30,7 @@ async function loadLibrary() {
         const data = await response.json();
 
         if (data.success) {
-            allResources = data.resources; // Store data for filtering
+            allResources = data.resources; 
             renderCards(allResources);
         } else {
             fileGrid.innerHTML = '<p>No documents found yet.</p>';
@@ -40,7 +41,7 @@ async function loadLibrary() {
     }
 }
 
-// 5. RENDER CARDS
+// 5. RENDER CARDS (Including Download attribute fix)
 function renderCards(resources) {
     const fileGrid = document.getElementById('fileGrid');
     fileGrid.innerHTML = '';
@@ -64,27 +65,22 @@ function renderCards(resources) {
             </div>
             <div class="card-actions">
                 <a href="${item.file_url}" target="_blank" class="btn-view">View</a>
-                <a href="${item.file_url}" download class="btn-download">Download</a>
+                <a href="${item.file_url}" download="${item.display_title}" class="btn-download">Download</a>
             </div>
         `;
         fileGrid.appendChild(card);
     });
 }
 
-// 6. FIXED FILTERING LOGIC (Triple Filter: Text + Subject + Grade)
+// 6. FILTERING LOGIC (Search + Subject + Grade)
 function filterDocuments() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const subjectTerm = document.getElementById('subjectFilter').value.toLowerCase();
-    const gradeTerm = document.getElementById('gradeFilter').value;
+    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
+    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
+    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
 
     const filtered = allResources.filter(item => {
-        // Match Search Text (Title)
         const matchesSearch = item.display_title.toLowerCase().includes(searchText);
-        
-        // Match Subject Dropdown
         const matchesSubject = subjectTerm === "" || item.subject.toLowerCase() === subjectTerm;
-        
-        // Match Grade Dropdown
         const matchesGrade = gradeTerm === "" || item.grade_level.toString() === gradeTerm;
         
         return matchesSearch && matchesSubject && matchesGrade;
@@ -93,7 +89,7 @@ function filterDocuments() {
     renderCards(filtered);
 }
 
-// 7. HANDLE UPLOAD
+// 7. HANDLE UPLOAD (Fixed mapping for lucky-mud Worker)
 async function handleUpload(event) {
     event.preventDefault();
     
@@ -111,9 +107,11 @@ async function handleUpload(event) {
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
     formData.append('title', document.getElementById('fileName').value);
-    formData.append('category', document.getElementById('fileCategory')?.value || 'General');
     formData.append('grade', document.getElementById('fileGrade').value);
     formData.append('subject', document.getElementById('fileSubject').value);
+    
+    const categoryElem = document.getElementById('fileCategory');
+    formData.append('category', categoryElem ? categoryElem.value : 'General');
 
     try {
         const response = await fetch(`${API_URL}/upload`, {

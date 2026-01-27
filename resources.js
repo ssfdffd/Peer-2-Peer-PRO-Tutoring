@@ -1,24 +1,43 @@
-// 1. YOUR WORKER URL (Kept exactly as requested)
+// 1. CONFIGURATION
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
-let allResources = []; // Global store for filtering
+let allResources = []; 
 
-// 2. Visual Feedback: Show filename when file is picked
-function updateFileName(input) {
-    const fileNameDisplay = document.getElementById('selectedFileName');
-    if (input.files && input.files[0]) {
-        fileNameDisplay.innerText = "Selected: " + input.files[0].name;
+// 2. INITIALIZATION
+document.addEventListener('DOMContentLoaded', () => {
+    loadLibrary();
+    initScrollAnimation();
+    
+    // Setup Modal Close Button
+    const modal = document.getElementById("docModal");
+    const closeBtn = document.querySelector(".close-modal");
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            document.getElementById("docViewer").src = ""; // Stop loading when closed
+        };
     }
-}
 
-// 3. Animation: Triggered via CSS, initialized here
-function initScrollAnimation() {
-    const scrollText = document.getElementById('scrollText');
-    if (scrollText) {
-        scrollText.style.display = 'block';
+    // Close modal when clicking outside of it
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            document.getElementById("docViewer").src = "";
+        }
+    };
+
+    // Filter Listeners
+    document.getElementById('searchInput')?.addEventListener('input', filterDocuments);
+    document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
+    document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
+
+    // Upload Listener
+    const form = document.getElementById('uploadForm');
+    if (form) {
+        form.addEventListener('submit', handleUpload);
     }
-}
+});
 
-// 4. LOAD LIBRARY (Fetch from D1 via Worker)
+// 3. LOAD LIBRARY
 async function loadLibrary() {
     const fileGrid = document.getElementById('fileGrid');
     if (!fileGrid) return;
@@ -41,7 +60,7 @@ async function loadLibrary() {
     }
 }
 
-// 5. RENDER CARDS (Including Download attribute fix)
+// 4. RENDER CARDS (PRO Style)
 function renderCards(resources) {
     const fileGrid = document.getElementById('fileGrid');
     fileGrid.innerHTML = '';
@@ -55,41 +74,34 @@ function renderCards(resources) {
         const card = document.createElement('div');
         card.className = 'file-card';
         card.innerHTML = `
-            <div class="card-header">
-                <span class="grade-pill">Grade ${item.grade_level}</span>
-                <span class="role-pill">${item.uploader_role || 'Student'}</span>
+            <div class="card-icon-header">
+                <i class="fas fa-file-pdf"></i>
             </div>
-            <div class="file-info">
+            <div class="card-info">
                 <h3>${item.display_title}</h3>
                 <p><strong>Subject:</strong> ${item.subject}</p>
+                <p><strong>Grade:</strong> ${item.grade_level}</p>
             </div>
             <div class="card-actions">
-                <a href="${item.file_url}" target="_blank" class="btn-view">View</a>
-                <a href="${item.file_url}" download="${item.display_title}" class="btn-download">Download</a>
+                <button onclick="openViewer('${item.file_url}')" class="btn-popup">View</button>
+                <a href="${item.file_url}" download="${item.display_title}" class="btn-down">Download</a>
             </div>
         `;
         fileGrid.appendChild(card);
     });
 }
 
-// 6. FILTERING LOGIC (Search + Subject + Grade)
-function filterDocuments() {
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
-    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
-    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
-
-    const filtered = allResources.filter(item => {
-        const matchesSearch = item.display_title.toLowerCase().includes(searchText);
-        const matchesSubject = subjectTerm === "" || item.subject.toLowerCase() === subjectTerm;
-        const matchesGrade = gradeTerm === "" || item.grade_level.toString() === gradeTerm;
-        
-        return matchesSearch && matchesSubject && matchesGrade;
-    });
-
-    renderCards(filtered);
+// 5. INTERNAL VIEWER (POPUP)
+function openViewer(url) {
+    const modal = document.getElementById("docModal");
+    const viewer = document.getElementById("docViewer");
+    if (modal && viewer) {
+        viewer.src = url;
+        modal.style.display = "block";
+    }
 }
 
-// 7. HANDLE UPLOAD (Fixed mapping for lucky-mud Worker)
+// 6. UPLOAD HANDLER
 async function handleUpload(event) {
     event.preventDefault();
     
@@ -101,7 +113,7 @@ async function handleUpload(event) {
         return;
     }
 
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     btn.disabled = true;
 
     const formData = new FormData();
@@ -109,9 +121,7 @@ async function handleUpload(event) {
     formData.append('title', document.getElementById('fileName').value);
     formData.append('grade', document.getElementById('fileGrade').value);
     formData.append('subject', document.getElementById('fileSubject').value);
-    
-    const categoryElem = document.getElementById('fileCategory');
-    formData.append('category', categoryElem ? categoryElem.value : 'General');
+    formData.append('category', document.getElementById('fileCategory')?.value || 'General');
 
     try {
         const response = await fetch(`${API_URL}/upload`, {
@@ -131,23 +141,35 @@ async function handleUpload(event) {
         console.error("Error:", error);
         alert("Connection to Worker failed.");
     } finally {
-        btn.innerHTML = '<i class="fas fa-upload"></i> Upload Document';
+        btn.innerHTML = 'Upload Document';
         btn.disabled = false;
     }
 }
 
-// 8. INITIALIZE EVERYTHING
-document.addEventListener('DOMContentLoaded', () => {
-    loadLibrary();
-    initScrollAnimation();
-    
-    // Add event listeners for filters
-    document.getElementById('searchInput')?.addEventListener('input', filterDocuments);
-    document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
-
-    const form = document.getElementById('uploadForm');
-    if (form) {
-        form.addEventListener('submit', handleUpload);
+// 7. UTILITIES (Filename, Animation, Filtering)
+function updateFileName(input) {
+    const display = document.getElementById('selectedFileName');
+    if (input.files && input.files[0]) {
+        display.innerText = "Selected: " + input.files[0].name;
     }
-});
+}
+
+function initScrollAnimation() {
+    const scrollText = document.getElementById('scrollText');
+    if (scrollText) scrollText.style.display = 'block';
+}
+
+function filterDocuments() {
+    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
+    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
+    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
+
+    const filtered = allResources.filter(item => {
+        const matchesSearch = item.display_title.toLowerCase().includes(searchText);
+        const matchesSubject = subjectTerm === "" || item.subject.toLowerCase() === subjectTerm;
+        const matchesGrade = gradeTerm === "" || item.grade_level.toString() === gradeTerm;
+        return matchesSearch && matchesSubject && matchesGrade;
+    });
+
+    renderCards(filtered);
+}

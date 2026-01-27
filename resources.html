@@ -1,49 +1,82 @@
-<header class="resources-hero">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources Library | Peer-2-Peer</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="resources.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="resources-body">
+
+  <nav id="navbar">
+    <div class="logo">
+        <img src="favicon.ico" alt="Logo">
+        Peer-2-Peer <span class="pro-text">PRO</span> | Library
+    </div>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="resources.html" class="nav-link active">Resources</a>
+        </div>
+        <a href="login.html" class="auth-btn login-btn">Login</a>
+        <a href="login.html" class="auth-btn signup-btn">Sign Up</a>
+    </div>
+  </nav>
+
+  <div class="animation-wrapper">
+    <div class="scrolling-text" id="scrollText">
+        <span>NEW STUDY GUIDES ADDED!</span>
+        <span>GRADE 12 MATH NOTES OUT NOW!</span>
+        <span>UPLOAD YOUR DOCUMENTS TODAY!</span>
+    </div>
+  </div>
+
+  <header class="resources-hero">
     <div class="hero-content">
-        <h1>Peer-2-Peer PRO |Resources</h1>
+        <h1>Study Material Hub</h1>
         <p>Explore documents shared by your peers</p>
         <div class="search-wrapper">
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Search by document title...">
         </div>
     </div>
-</header>
+  </header>
 
-<main class="content-container">
+  <main class="content-container">
     <div class="upload-section">
         <div class="upload-card">
             <form id="uploadForm">
                 <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-file-upload"></i>
+                    <p>Click to browse or Drag & Drop</p>
+                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName(this)">
+                    <p id="selectedFileName" class="selected-file-name"></p> 
+                </div>
+                
                 <div class="form-grid">
+                    <div class="form-group">
+                        <label>Document Title</label>
+                        <input type="text" id="fileName" placeholder="e.g. History Notes" required>
+                    </div>
                     <div class="form-group">
                         <label>Grade Level</label>
                         <select id="fileGrade" required>
-                            <option value="1">Grade 1</option>
-                            <option value="2">Grade 2</option>
-                            <option value="3">Grade 3</option>
-                            <option value="4">Grade 4</option>
-                            <option value="5">Grade 5</option>
-                            <option value="6">Grade 6</option>
-                            <option value="7">Grade 7</option>
-                            <option value="8">Grade 8</option>
-                            <option value="9">Grade 9</option>
-                            <option value="10">Grade 10</option>
-                            <option value="11">Grade 11</option>
-                            <option value="12">Grade 12</option>
+                            <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">Grade ${i}</option>`);</script>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Subject</label>
                         <select id="fileSubject" required>
-                            <option value="accounting">Accounting</option>
                             <option value="mathematics">Mathematics</option>
                             <option value="physics">Physics</option>
-                            <option value="chemistry">Chemistry</option>
+                            <option value="accounting">Accounting</option>
                             <option value="english">English</option>
                             <option value="math_lit">Math Lit</option>
                             <option value="tourism">Tourism</option>
                             <option value="life_science">Life Science</option>
-                            <option value="life_orientation">Life Orientation</option>
                             <option value="it">IT</option>
                             <option value="cat">CAT</option>
                             <option value="history">History</option>
@@ -53,8 +86,16 @@
                             <option value="isizulu">IsiZulu</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="fileCategory">
+                            <option value="notes">Notes</option>
+                            <option value="past_paper">Past Paper</option>
+                        </select>
+                    </div>
                 </div>
-                </form>
+                <button type="submit" class="upload-btn" id="uploadBtn">Upload Document</button>
+            </form>
         </div>
     </div>
 
@@ -62,40 +103,45 @@
         <div class="filter-controls">
             <select id="subjectFilter">
                 <option value="">All Subjects</option>
-                <option value="accounting">Accounting</option>
                 <option value="mathematics">Mathematics</option>
                 <option value="physics">Physics</option>
-                <option value="chemistry">Chemistry</option>
+                <option value="accounting">Accounting</option>
                 <option value="english">English</option>
-                <option value="math_lit">Math Lit</option>
-                <option value="tourism">Tourism</option>
-                <option value="life_science">Life Science</option>
-                <option value="life_orientation">Life Orientation</option>
-                <option value="it">IT</option>
-                <option value="cat">CAT</option>
-                <option value="history">History</option>
-                <option value="geography">Geography</option>
-                <option value="business">Business Studies</option>
-                <option value="economics">Economics</option>
                 <option value="isizulu">IsiZulu</option>
             </select>
-            
             <select id="gradeFilter">
                 <option value="">All Grades</option>
-                <option value="1">Grade 1</option>
-                <option value="2">Grade 2</option>
-                <option value="3">Grade 3</option>
-                <option value="4">Grade 4</option>
-                <option value="5">Grade 5</option>
-                <option value="6">Grade 6</option>
-                <option value="7">Grade 7</option>
-                <option value="8">Grade 8</option>
-                <option value="9">Grade 9</option>
-                <option value="10">Grade 10</option>
-                <option value="11">Grade 11</option>
-                <option value="12">Grade 12</option>
+                <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">Grade ${i}</option>`);</script>
             </select>
         </div>
         <div id="fileGrid" class="file-grid"></div>
     </div>
-</main>
+  </main>
+
+  <div id="docModal" class="modal">
+      <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <iframe id="docViewer" src="" frameborder="0"></iframe>
+      </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-box">
+            <h4>Contact</h4>
+            <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
+        </div>
+        <div class="footer-box">
+            <h4>Quick Links</h4>
+            <a href="index.html">Home</a>
+            <a href="resources.html">Resources</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="resources.js"></script>
+</body>
+</html>

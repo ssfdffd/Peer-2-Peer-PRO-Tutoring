@@ -286,75 +286,95 @@ body {
   font-size: 0.85rem;
 }
 /* =================================
-   UPLOAD SECTION STYLING
+   UPLOAD SECTION (FIXED LAYOUT)
 ================================= */
 .upload-card {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  margin: -60px auto 50px; /* Overlaps with hero section */
-  position: relative;
-  z-index: 10;
-  border: 1px solid #eef2f6;
-}
-
-.upload-card h2 {
-  color: var(--hero-blue);
-  margin-bottom: 25px;
-  text-align: center;
-  font-size: 1.8rem;
-}
-
-.upload-area {
-  border: 2px dashed #cbd5e0;
-  padding: 40px;
-  text-align: center;
+  background: white;
+  padding: 30px;
   border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: #f8fafc;
-  margin-bottom: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 1000px;
+  margin: -40px auto 40px;
 }
 
-.upload-area:hover {
-  border-color: var(--pro-green);
-  background: #f0fff4;
-}
-
-.upload-area i {
-  font-size: 3rem;
-  color: var(--hero-blue);
-  margin-bottom: 15px;
-}
-
-/* Form Grid & Buttons */
+/* Fix for the side-by-side inputs */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 25px;
+  grid-template-columns: 2fr 1fr 1fr 1fr; /* Title, Grade, Subject, Category */
+  gap: 15px;
+  margin-top: 20px;
 }
 
+.form-grid input, .form-grid select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+/* Huge Action Button */
 .upload-btn {
   background-color: var(--pro-green);
-  color: var(--hero-blue);
+  color: #000033; /* Dark blue text for better contrast */
   border: none;
-  padding: 16px;
+  padding: 18px;
   border-radius: 50px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.1rem;
   width: 100%;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+  margin-top: 25px;
+  transition: transform 0.2s;
+  text-transform: uppercase;
 }
 
 .upload-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+  transform: scale(1.02);
+  filter: brightness(1.1);
 }
+
+/* =================================
+   DOCUMENT CARDS & PAGINATION
+================================= */
+.card-footer {
+  display: flex;
+  background: #f9f9f9;
+}
+
+.view-link, .down-link {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.view-link { color: var(--hero-blue); border-right: 1px solid #eee; background: none; }
+.down-link { color: var(--pro-green); }
+
+/* Navigation Buttons */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 50px 0;
+}
+
+.p-btn {
+  background: var(--hero-blue);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.p-btn:disabled { background: #ccc; cursor: not-allowed; }
 
 /* =================================
    DOCUMENT CARDS STYLING

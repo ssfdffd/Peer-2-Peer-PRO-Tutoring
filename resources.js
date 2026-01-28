@@ -117,22 +117,22 @@ function renderCards(data) {
     }
 
     // Generate HTML for each document card
-  // Inside paginatedItems.forEach in resources.js
+// Inside renderCards function in resources.js
 paginatedItems.forEach(item => {
     const card = document.createElement('div');
     card.className = 'file-card';
     card.innerHTML = `
         <div class="card-icon-header">
             <i class="fas fa-file-pdf"></i>
+            <div class="category-tag">${item.category || 'General'}</div>
         </div>
         <div class="card-body">
             <h3>${item.display_title}</h3>
-            <p><strong>Subject:</strong> ${item.subject}</p>
-            <p><strong>Grade:</strong> ${item.grade_level}</p>
+            <p><strong>Grade:</strong> ${item.grade_level} | <strong>Subject:</strong> ${item.subject}</p>
         </div>
         <div class="card-footer">
             <button onclick="window.open('${item.file_url}', '_blank')" class="view-link">View</button>
-            <a href="${item.file_url}" download="${item.display_title}" class="down-link">Download</a>
+            <a href="${item.file_url}" download class="down-link">Download</a>
         </div>
     `;
     fileGrid.appendChild(card);

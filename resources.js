@@ -2,83 +2,118 @@
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
 let allResources = []; 
 let currentPage = 1;
-const itemsPerPage = 6; 
+const itemsPerPage = 6;
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
     
-    // Setup File Selection Listener
+    // Setup File Selection Feedback
     const fileInput = document.getElementById('fileInput');
     if (fileInput) {
         fileInput.addEventListener('change', function() {
-            updateFileName(this);
+            const display = document.getElementById('selectedFileName');
+            if (this.files && this.files[0]) {
+                display.innerText = "Selected: " + this.files[0].name;
+                display.style.color = "#32cd32";
+            }
         });
     }
 
-    // Modal logic
-    const modal = document.getElementById("docModal");
-    const closeBtn = document.querySelector(".close-modal");
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-        };
-    }
+    // Search & Filter Listeners (Real-time updates)
+    document.getElementById('searchInput')?.addEventListener('input', filterDocuments);
+    document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
+    document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
 
-    window.onclick = (event) => {
-        if (event.target == modal) {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-        }
-    };
+    // Upload Form Listener
+    const form = document.getElementById('uploadForm');
+    if (form) {
+        form.addEventListener('submit', handleUpload);
+    }
 
     // Pagination Listeners
     document.getElementById('prevPage')?.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
-            renderCards(allResources);
-            window.scrollTo({ top: 500, behavior: 'smooth' });
+            renderCards(getFilteredData());
+            window.scrollTo({ top: 400, behavior: 'smooth' });
         }
     });
 
     document.getElementById('nextPage')?.addEventListener('click', () => {
-        const totalPages = Math.ceil(allResources.length / itemsPerPage);
-        if (currentPage < totalPages) {
+        const filtered = getFilteredData();
+        const maxPage = Math.ceil(filtered.length / itemsPerPage);
+        if (currentPage < maxPage) {
             currentPage++;
-            renderCards(allResources);
-            window.scrollTo({ top: 500, behavior: 'smooth' });
+            renderCards(filtered);
+            window.scrollTo({ top: 400, behavior: 'smooth' });
         }
     });
 });
 
-// 3. FETCH DATA FROM DATABASE
+// 3. LOAD LIBRARY (Fetch Data from Cloudflare Worker)
 async function loadLibrary() {
-    const grid = document.getElementById('fileGrid');
-    grid.innerHTML = '<div class="loader">Loading Library...</div>';
+    const fileGrid = document.getElementById('fileGrid');
+    fileGrid.innerHTML = '<div class="loader">Accessing Library...</div>';
 
     try {
+        // Updated endpoint to match the Worker: /api/resources
         const response = await fetch(`${API_URL}/api/resources`);
-        allResources = await response.json();
-        renderCards(allResources);
+        const data = await response.json();
+
+        // Check if data is an array directly (Worker returns results array)
+        if (Array.isArray(data)) {
+            allResources = data; 
+            renderCards(allResources);
+        } else {
+            fileGrid.innerHTML = '<p>No documents found yet.</p>';
+        }
     } catch (error) {
-        console.error("Fetch error:", error);
-        grid.innerHTML = '<p style="color:red; text-align:center;">Failed to load resources. Is the Worker running?</p>';
+        console.error("Connection Error:", error);
+        fileGrid.innerHTML = '<p class="error">Could not connect to database.</p>';
     }
 }
 
-// 4. RENDER CARDS TO SCREEN
-function renderCards(data) {
-    const grid = document.getElementById('fileGrid');
-    grid.innerHTML = "";
+// 4. GET FILTERED DATA (Helper for Search & Pagination)
+function getFilteredData() {
+    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
+    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
+    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = data.slice(startIndex, endIndex);
+    return allResources.filter(item => {
+        // Use 'title' to match the database column
+        const itemTitle = (item.title || "").toLowerCase();
+        const matchesSearch = itemTitle.includes(searchText);
+        const matchesSubject = subjectTerm === "" || (item.subject && item.subject.toLowerCase() === subjectTerm);
+        const matchesGrade = gradeTerm === "" || (item.grade_level && item.grade_level.toString() === gradeTerm);
+        
+        return matchesSearch && matchesSubject && matchesGrade;
+    });
+}
+
+function filterDocuments() {
+    currentPage = 1;
+    renderCards(getFilteredData());
+}
+
+// 5. RENDER CARDS
+function renderCards(data) {
+    const fileGrid = document.getElementById('fileGrid');
+    if (!fileGrid) return;
+    
+    fileGrid.innerHTML = '';
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedItems = data.slice(start, end);
+    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+
+    document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+    document.getElementById('prevPage').disabled = (currentPage === 1);
+    document.getElementById('nextPage').disabled = (currentPage === totalPages);
 
     if (paginatedItems.length === 0) {
-        grid.innerHTML = '<p class="no-results">No documents found matching your criteria.</p>';
+        fileGrid.innerHTML = '<p class="no-docs">No matching documents found.</p>';
         return;
     }
 
@@ -86,41 +121,35 @@ function renderCards(data) {
         const card = document.createElement('div');
         card.className = 'file-card';
         card.innerHTML = `
-            <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
-            <div class="file-info">
-                <h3>${item.display_title || item.title}</h3>
-                <p>Subject: ${item.subject}</p>
-                <p>Grade: ${item.grade_level}</p>
+            <div class="card-icon-header">
+                <div class="category-tag">${item.subject || 'General'}</div>
+                <i class="fas fa-file-pdf pdf-icon file-type-icon"></i>
             </div>
-            <button class="view-btn" onclick="openDocument('${item.file_url}')">View PDF</button>
+            <div class="card-body">
+                <h3>${item.title}</h3>
+                <div class="document-info">
+                    <div class="info-item"><i class="fas fa-graduation-cap"></i><strong>Grade:</strong> ${item.grade_level}</div>
+                    <div class="info-item"><i class="fas fa-book"></i><strong>Subject:</strong> ${item.subject}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="${item.file_url}" target="_blank" class="view-link"><i class="fas fa-eye"></i> View</a>
+                <a href="${item.file_url}" download="${item.title}" class="down-link"><i class="fas fa-download"></i> Download</a>
+            </div>
         `;
-        grid.appendChild(card);
+        fileGrid.appendChild(card);
     });
-
-    // Update Page Info
-    const pageInfo = document.getElementById('pageInfo');
-    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
-    if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 }
 
-// 5. VIEW DOCUMENT
-function openDocument(url) {
-    const modal = document.getElementById("docModal");
-    const viewer = document.getElementById("docViewer");
-    viewer.src = url;
-    modal.style.display = "flex";
-}
-
-// 6. UPLOAD DOCUMENT
-async function uploadDocument() {
+// 6. UPLOAD HANDLER (Base64 for Cloudflare)
+async function handleUpload(event) {
+    event.preventDefault();
+    
+    const btn = document.getElementById('uploadBtn');
     const fileInput = document.getElementById('fileInput');
-    const title = document.getElementById('docTitle').value;
-    const subject = document.getElementById('docSubject').value;
-    const grade = document.getElementById('docGrade').value;
-    const btn = document.querySelector('.upload-btn');
 
-    if (!fileInput.files[0] || !title || !subject) {
-        alert("Please select a file and fill in all fields.");
+    if (!fileInput.files[0]) {
+        alert("Please select a file first!");
         return;
     }
 
@@ -134,30 +163,30 @@ async function uploadDocument() {
         const base64File = e.target.result.split(',')[1];
         
         const payload = {
-            title: title,
-            subject: subject,
-            grade: grade,
+            title: document.getElementById('fileName').value,
+            grade: document.getElementById('fileGrade').value,
+            subject: document.getElementById('fileSubject').value,
             fileName: file.name,
             fileData: base64File,
             fileType: file.type
         };
 
         try {
-            const res = await fetch(`${API_URL}/api/upload`, {
+            const response = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            const result = await res.json();
-            if (res.ok) {
-                alert("✅ Document Uploaded Successfully!");
-                location.reload(); 
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Success! Document is live.");
+                location.reload();
             } else {
-                alert("Upload failed: " + result.error);
+                alert("Upload failed: " + (result.error || "Unknown error"));
             }
         } catch (error) {
-            console.error("Error:", error);
             alert("Connection to Database failed.");
         } finally {
             btn.innerHTML = 'Upload Document';
@@ -168,37 +197,7 @@ async function uploadDocument() {
     reader.readAsDataURL(file);
 }
 
-// 7. UTILITIES
-function updateFileName(input) {
-    const display = document.getElementById('selectedFileName');
-    if (display) {
-        if (input.files && input.files[0]) {
-            display.innerText = "Selected: " + input.files[0].name;
-            display.style.color = "#32cd32"; // Lime Green
-        } else {
-            display.innerText = "No file chosen";
-            display.style.color = "#666";
-        }
-    }
-}
-
 function initScrollAnimation() {
     const scrollText = document.getElementById('scrollText');
     if (scrollText) scrollText.style.display = 'block';
-}
-
-function filterDocuments() {
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
-    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
-    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
-
-    const filtered = allResources.filter(item => {
-        const matchesSearch = (item.display_title || item.title).toLowerCase().includes(searchText);
-        const matchesSubject = subjectTerm === "" || item.subject.toLowerCase() === subjectTerm;
-        const matchesGrade = gradeTerm === "" || item.grade_level.toString() === gradeTerm;
-        return matchesSearch && matchesSubject && matchesGrade;
-    });
-
-    currentPage = 1; 
-    renderCards(filtered);
 }

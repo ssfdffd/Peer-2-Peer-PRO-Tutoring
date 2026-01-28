@@ -288,14 +288,13 @@ body {
   border-color: var(--pro-green);
   outline: none;
 }
-
 /* =================================
-   7. DOCUMENT GRID & CARDS - UPDATED COLORS
+   7. DOCUMENT GRID & CARDS - IMPROVED STYLING
 ================================= */
 .file-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
   padding: 20px 5%;
 }
 
@@ -304,97 +303,163 @@ body {
   border-radius: 15px;
   overflow: hidden;
   box-shadow: var(--card-shadow);
-  transition: var(--transition);
-  border-top: 4px solid var(--navy-bg);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .file-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  border-color: rgba(50, 205, 50, 0.3);
 }
 
 .card-icon-header {
-  background-color: rgba(244, 247, 249, 0.8);
-  padding: 30px;
+  background: linear-gradient(135deg, rgba(0, 0, 51, 0.05) 0%, rgba(127, 223, 240, 0.05) 100%);
+  padding: 25px 20px;
   text-align: center;
   color: var(--navy-bg);
-  font-size: 3rem;
+  font-size: 2.8rem;
   position: relative;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .category-tag {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: var(--pro-green);
   color: var(--navy-bg);
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-type-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  opacity: 0.9;
 }
 
 .card-body {
   padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-body h3 {
   color: var(--navy-bg);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
   line-height: 1.4;
+  font-weight: 700;
+  min-height: 3.6em; /* Ensures consistent title height */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.card-body p {
-  color: #666;
+.document-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(244, 247, 249, 0.5);
+  border-radius: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.info-item i {
+  color: var(--pro-green);
   font-size: 0.9rem;
-  margin-bottom: 5px;
+  width: 16px;
 }
 
-.card-body strong {
+.info-item strong {
   color: var(--navy-bg);
+  font-weight: 600;
+  margin-right: 4px;
 }
 
 /* =================================
-   CARD FOOTER
+   CARD FOOTER - IMPROVED BUTTONS
 ================================= */
 .card-footer {
   display: flex;
-  border-top: 1px solid #eee;
-  background: #f9f9f9;
+  border-top: 1px solid #edf2f7;
+  background: #f8fafc;
+  margin-top: auto;
 }
 
 .view-link, .down-link {
   flex: 1;
-  padding: 15px;
+  padding: 14px;
   text-align: center;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 0.9rem;
-  transition: var(--transition);
+  transition: all 0.2s ease;
   border: none;
   cursor: pointer;
   font-family: inherit;
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .view-link {
   color: var(--navy-bg);
-  border-right: 1px solid #eee;
+  border-right: 1px solid #edf2f7;
+  background: none;
 }
 
 .down-link {
   color: var(--pro-green);
+  background: none;
 }
 
 .view-link:hover {
-  background: rgba(0, 0, 51, 0.05);
+  background: rgba(0, 0, 51, 0.08);
+  color: var(--navy-bg);
 }
 
 .down-link:hover {
-  background: rgba(50, 205, 50, 0.05);
+  background: rgba(50, 205, 50, 0.1);
+  color: var(--pro-green);
 }
 
+.view-link i, .down-link i {
+  font-size: 1rem;
+}
+
+/* Document type specific icons */
+.pdf-icon { color: #e74c3c; }
+.word-icon { color: #2b579a; }
+.excel-icon { color: #217346; }
+.ppt-icon { color: #d24726; }
+.image-icon { color: #e67e22; }
+.general-icon { color: var(--navy-bg); }
 /* =================================
    8. PAGINATION CONTROLS
 ================================= */

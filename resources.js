@@ -117,27 +117,26 @@ function renderCards(data) {
     }
 
     // Generate HTML for each document card
-    paginatedItems.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'file-card';
-        card.innerHTML = `
-            <div class="card-icon-header">
-                <i class="fas fa-file-pdf"></i>
-            </div>
-            <div class="card-body">
-                <h3>${item.display_title}</h3>
-                <p><strong>Subject:</strong> ${item.subject}</p>
-                <p><strong>Grade:</strong> ${item.grade_level}</p>
-            </div>
-            <div class="card-footer">
-                <button onclick="openViewer('${item.file_url}', '${item.display_title}')" class="view-link">View</button>
-                <a href="${item.file_url}" download="${item.display_title}" class="down-link">Download</a>
-            </div>
-        `;
-        fileGrid.appendChild(card);
-    });
-}
-
+  // Inside paginatedItems.forEach in resources.js
+paginatedItems.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'file-card';
+    card.innerHTML = `
+        <div class="card-icon-header">
+            <i class="fas fa-file-pdf"></i>
+        </div>
+        <div class="card-body">
+            <h3>${item.display_title}</h3>
+            <p><strong>Subject:</strong> ${item.subject}</p>
+            <p><strong>Grade:</strong> ${item.grade_level}</p>
+        </div>
+        <div class="card-footer">
+            <button onclick="window.open('${item.file_url}', '_blank')" class="view-link">View</button>
+            <a href="${item.file_url}" download="${item.display_title}" class="down-link">Download</a>
+        </div>
+    `;
+    fileGrid.appendChild(card);
+});
 // 5. INTERNAL DOCUMENT VIEWER (The Popup Viewer)
 function openViewer(url, title) {
     const modal = document.getElementById("docModal");
@@ -229,4 +228,5 @@ function filterDocuments() {
     });
 
     renderCards(filtered);
+}
 }

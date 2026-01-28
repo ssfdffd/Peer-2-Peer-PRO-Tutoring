@@ -485,7 +485,27 @@ body {
    8. RESPONSIVENESS
 ================================= */
 @media (max-width: 768px) {
-  .footer-inner { flex-direction: column; text-align: center; gap: 30px; }
-  .filter-controls { flex-direction: column; }
+  #navbar { padding: 10px 4%; }
+  .logo { font-size: 1.1rem; }
+  .resources-hero { padding: 40px 15px; }
+  .resources-hero h1 { font-size: 1.5rem; }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .unpload-card {
+    width : 95%;
+    padding: 20px;
+    margin-top: -20px;
+  }
+  .footer-inner { flex-direction: column; text-align: center;  }
+  .filter-controls {
+     flex-direction: column;
+    padding: 0 10%
+   }
+   file-grid {
+    grid-template-columns : 1fr;
+    padding: 10px 5%;
+   }
   .upload-card { margin: 20px; }
 }

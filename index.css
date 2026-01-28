@@ -62,13 +62,22 @@ main {
 }
 
 .logo {
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-size: 1.5rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
-.logo span {
-  color: var(--accent-color);
+.logo img {
+  height: 35px;
+  margin-right: 10px;
+}
+
+.logo span.pro-text {
+  color: var(--pro-green);
+  margin-left: 5px;
 }
 
 .nav-right {

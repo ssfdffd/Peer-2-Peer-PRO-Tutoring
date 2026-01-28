@@ -2,35 +2,35 @@
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
 let allResources = []; 
 let currentPage = 1;
-const itemsPerPage = 6;
+const itemsPerPage = 6; 
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
     
-    // Setup File Selection Feedback
+    // File Input Listener - Updates "Selected: filename" text
     const fileInput = document.getElementById('fileInput');
     if (fileInput) {
         fileInput.addEventListener('change', function() {
-            const display = document.getElementById('selectedFileName');
-            if (this.files && this.files[0]) {
-                display.innerText = "Selected: " + this.files[0].name;
-                display.style.color = "#32cd32";
-            }
+            updateFileName(this);
         });
     }
 
-    // Search & Filter Listeners (Real-time updates)
+    // Modal Close Logic
+    const modal = document.getElementById("docModal");
+    const closeBtn = document.querySelector(".close-modal");
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            document.getElementById("docViewer").src = "";
+        };
+    }
+
+    // Search and Filter Listeners
     document.getElementById('searchInput')?.addEventListener('input', filterDocuments);
     document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
     document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
-
-    // Upload Form Listener
-    const form = document.getElementById('uploadForm');
-    if (form) {
-        form.addEventListener('submit', handleUpload);
-    }
 
     // Pagination Listeners
     document.getElementById('prevPage')?.addEventListener('click', () => {
@@ -52,39 +52,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 3. LOAD LIBRARY (Fetch Data from Cloudflare Worker)
+// 3. FETCH DATA FROM WORKER
 async function loadLibrary() {
-    const fileGrid = document.getElementById('fileGrid');
-    fileGrid.innerHTML = '<div class="loader">Accessing Library...</div>';
+    const grid = document.getElementById('fileGrid');
+    grid.innerHTML = '<div class="loader">Accessing Cloud Library...</div>';
 
     try {
-        // Updated endpoint to match the Worker: /api/resources
         const response = await fetch(`${API_URL}/api/resources`);
         const data = await response.json();
-
-        // Check if data is an array directly (Worker returns results array)
-        if (Array.isArray(data)) {
-            allResources = data; 
-            renderCards(allResources);
-        } else {
-            fileGrid.innerHTML = '<p>No documents found yet.</p>';
-        }
+        
+        // Handle array response from Cloudflare D1
+        allResources = Array.isArray(data) ? data : (data.results || []);
+        renderCards(allResources);
     } catch (error) {
-        console.error("Connection Error:", error);
-        fileGrid.innerHTML = '<p class="error">Could not connect to database.</p>';
+        console.error("Fetch error:", error);
+        grid.innerHTML = '<p style="color:red; text-align:center;">Failed to connect to library. Please check your connection.</p>';
     }
 }
 
-// 4. GET FILTERED DATA (Helper for Search & Pagination)
+// 4. FILTERING LOGIC (Search Bar & Dropdowns)
 function getFilteredData() {
     const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
     const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
     const gradeTerm = document.getElementById('gradeFilter')?.value || "";
 
     return allResources.filter(item => {
-        // Use 'title' to match the database column
-        const itemTitle = (item.title || "").toLowerCase();
-        const matchesSearch = itemTitle.includes(searchText);
+        // Matches database column name 'title'
+        const matchesSearch = (item.title || "").toLowerCase().includes(searchText);
         const matchesSubject = subjectTerm === "" || (item.subject && item.subject.toLowerCase() === subjectTerm);
         const matchesGrade = gradeTerm === "" || (item.grade_level && item.grade_level.toString() === gradeTerm);
         
@@ -93,27 +87,22 @@ function getFilteredData() {
 }
 
 function filterDocuments() {
-    currentPage = 1;
+    currentPage = 1; // Reset to page 1 on search
     renderCards(getFilteredData());
 }
 
-// 5. RENDER CARDS
+// 5. RENDER CARDS TO SCREEN
 function renderCards(data) {
-    const fileGrid = document.getElementById('fileGrid');
-    if (!fileGrid) return;
-    
-    fileGrid.innerHTML = '';
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const paginatedItems = data.slice(start, end);
-    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+    const grid = document.getElementById('fileGrid');
+    if (!grid) return;
+    grid.innerHTML = "";
 
-    document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
-    document.getElementById('prevPage').disabled = (currentPage === 1);
-    document.getElementById('nextPage').disabled = (currentPage === totalPages);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedItems = data.slice(startIndex, endIndex);
 
     if (paginatedItems.length === 0) {
-        fileGrid.innerHTML = '<p class="no-docs">No matching documents found.</p>';
+        grid.innerHTML = '<p class="no-results">No documents found matching your search.</p>';
         return;
     }
 
@@ -121,35 +110,45 @@ function renderCards(data) {
         const card = document.createElement('div');
         card.className = 'file-card';
         card.innerHTML = `
-            <div class="card-icon-header">
-                <div class="category-tag">${item.subject || 'General'}</div>
-                <i class="fas fa-file-pdf pdf-icon file-type-icon"></i>
+            <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+            <div class="file-info">
+                <h3>${item.title || "Untitled Document"}</h3>
+                <p><strong>Subject:</strong> ${item.subject || "General"}</p>
+                <p><strong>Grade:</strong> ${item.grade_level || "All"}</p>
             </div>
-            <div class="card-body">
-                <h3>${item.title}</h3>
-                <div class="document-info">
-                    <div class="info-item"><i class="fas fa-graduation-cap"></i><strong>Grade:</strong> ${item.grade_level}</div>
-                    <div class="info-item"><i class="fas fa-book"></i><strong>Subject:</strong> ${item.subject}</div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <a href="${item.file_url}" target="_blank" class="view-link"><i class="fas fa-eye"></i> View</a>
-                <a href="${item.file_url}" download="${item.title}" class="down-link"><i class="fas fa-download"></i> Download</a>
+            <div class="card-actions">
+                <button class="view-btn" onclick="openDocument('${item.file_url}')">View PDF</button>
             </div>
         `;
-        fileGrid.appendChild(card);
+        grid.appendChild(card);
     });
+
+    // Update Pagination Info
+    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+    const pageInfo = document.getElementById('pageInfo');
+    if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 }
 
-// 6. UPLOAD HANDLER (Base64 for Cloudflare)
-async function handleUpload(event) {
-    event.preventDefault();
-    
-    const btn = document.getElementById('uploadBtn');
-    const fileInput = document.getElementById('fileInput');
+// 6. VIEW DOCUMENT (MODAL)
+function openDocument(url) {
+    const modal = document.getElementById("docModal");
+    const viewer = document.getElementById("docViewer");
+    if (modal && viewer) {
+        viewer.src = url;
+        modal.style.display = "flex";
+    }
+}
 
-    if (!fileInput.files[0]) {
-        alert("Please select a file first!");
+// 7. UPLOAD DOCUMENT
+async function uploadDocument() {
+    const fileInput = document.getElementById('fileInput');
+    const titleInput = document.getElementById('fileName'); // Ensure this ID matches your HTML input
+    const subjectInput = document.getElementById('fileSubject');
+    const gradeInput = document.getElementById('fileGrade');
+    const btn = document.querySelector('.upload-btn') || document.getElementById('uploadBtn');
+
+    if (!fileInput.files[0] || !titleInput.value) {
+        alert("Please select a file and provide a title.");
         return;
     }
 
@@ -160,33 +159,33 @@ async function handleUpload(event) {
     const reader = new FileReader();
 
     reader.onload = async (e) => {
+        // Convert file to Base64 for safe JSON transport
         const base64File = e.target.result.split(',')[1];
         
         const payload = {
-            title: document.getElementById('fileName').value,
-            grade: document.getElementById('fileGrade').value,
-            subject: document.getElementById('fileSubject').value,
+            title: titleInput.value,
+            subject: subjectInput.value,
+            grade: gradeInput.value,
             fileName: file.name,
-            fileData: base64File,
-            fileType: file.type
+            fileData: base64File
         };
 
         try {
-            const response = await fetch(`${API_URL}/api/upload`, {
+            const res = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
-
-            if (response.ok) {
-                alert("Success! Document is live.");
-                location.reload();
+            const result = await res.json();
+            if (res.ok) {
+                alert("✅ Success! " + titleInput.value + " has been added to the library.");
+                location.reload(); 
             } else {
-                alert("Upload failed: " + (result.error || "Unknown error"));
+                alert("Upload failed: " + result.error);
             }
         } catch (error) {
+            console.error("Upload Error:", error);
             alert("Connection to Database failed.");
         } finally {
             btn.innerHTML = 'Upload Document';
@@ -195,6 +194,15 @@ async function handleUpload(event) {
     };
 
     reader.readAsDataURL(file);
+}
+
+// 8. UTILITIES
+function updateFileName(input) {
+    const display = document.getElementById('selectedFileName');
+    if (display && input.files && input.files[0]) {
+        display.innerText = "Selected: " + input.files[0].name;
+        display.style.color = "#32cd32"; // PRO Green
+    }
 }
 
 function initScrollAnimation() {

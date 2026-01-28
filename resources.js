@@ -1,25 +1,27 @@
 // 1. CONFIGURATION & STATE
+// This URL connects your website to the Cloudflare Worker database
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev"; 
 let allResources = []; 
 let currentPage = 1;
-const itemsPerPage = 6; // Set how many documents show per page
+const itemsPerPage = 6; // Sets how many documents show per page
 
 // 2. INITIALIZATION
+// Runs as soon as the page loads to set up all buttons and fetch data
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
     
-    // Setup Modal Close Button logic
+    // Setup Modal (Popup) Close Button logic
     const modal = document.getElementById("docModal");
     const closeBtn = document.querySelector(".close-modal");
     if (closeBtn) {
         closeBtn.onclick = () => {
             modal.style.display = "none";
-            document.getElementById("docViewer").src = ""; // Clear source to stop loading
+            document.getElementById("docViewer").src = ""; // Stop file from loading in background
         };
     }
 
-    // Close modal when clicking outside the white box
+    // Close modal when clicking outside the document box
     window.onclick = (event) => {
         if (event.target == modal) {
             modal.style.display = "none";
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Pagination Listeners
+    // Pagination Button Listeners
     document.getElementById('prevPage')?.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
@@ -45,13 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Search & Filter Listeners
+    // Search & Filter Listeners (Real-time updates)
     document.getElementById('searchInput')?.addEventListener('input', () => {
         currentPage = 1; // Reset to page 1 on new search
         filterDocuments();
     });
-    document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
+    document.getElementById('subjectFilter')?.addEventListener('change', () => {
+        currentPage = 1;
+        filterDocuments();
+    });
+    document.getElementById('gradeFilter')?.addEventListener('change', () => {
+        currentPage = 1;
+        filterDocuments();
+    });
 
     // Upload Form Listener
     const form = document.getElementById('uploadForm');
@@ -60,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 3. LOAD LIBRARY (Fetch from Worker)
+// 3. LOAD LIBRARY (Fetch Data from Cloudflare Worker)
 async function loadLibrary() {
     const fileGrid = document.getElementById('fileGrid');
     if (!fileGrid) return;
@@ -83,7 +91,7 @@ async function loadLibrary() {
     }
 }
 
-// 4. RENDER CARDS (With Pagination)
+// 4. RENDER CARDS (Builds the UI with Pagination)
 function renderCards(data) {
     const fileGrid = document.getElementById('fileGrid');
     fileGrid.innerHTML = '';
@@ -93,18 +101,22 @@ function renderCards(data) {
     const paginatedItems = data.slice(start, end);
     const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
 
-    // Update the Pagination Counter (Page X of Y)
+    // Update Page Counter (e.g., "Page 1 of 10")
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
     
-    document.getElementById('prevPage').disabled = (currentPage === 1);
-    document.getElementById('nextPage').disabled = (currentPage === totalPages);
+    // Enable/Disable buttons based on current page
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    if (prevBtn) prevBtn.disabled = (currentPage === 1);
+    if (nextBtn) nextBtn.disabled = (currentPage === totalPages);
 
     if (paginatedItems.length === 0) {
-        fileGrid.innerHTML = '<p>No documents found.</p>';
+        fileGrid.innerHTML = '<p>No documents found matching your criteria.</p>';
         return;
     }
 
+    // Generate HTML for each document card
     paginatedItems.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
@@ -126,7 +138,7 @@ function renderCards(data) {
     });
 }
 
-// 5. INTERNAL DOCUMENT VIEWER (The Pop-up Fix)
+// 5. INTERNAL DOCUMENT VIEWER (The Popup Viewer)
 function openViewer(url, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
@@ -135,7 +147,7 @@ function openViewer(url, title) {
     if (modal && viewer) {
         if (modalTitle) modalTitle.innerText = title;
         
-        // Use Google Docs viewer as a fallback for direct PDF embedding
+        // Embedded viewer logic for PDFs
         const viewerUrl = url.endsWith('.pdf') 
             ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true` 
             : url;
@@ -145,7 +157,7 @@ function openViewer(url, title) {
     }
 }
 
-// 6. UPLOAD HANDLER (Mapping Fix)
+// 6. UPLOAD HANDLER (Sends Files to Database)
 async function handleUpload(event) {
     event.preventDefault();
     
@@ -157,6 +169,7 @@ async function handleUpload(event) {
         return;
     }
 
+    // Show loading spinner
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     btn.disabled = true;
 
@@ -177,13 +190,13 @@ async function handleUpload(event) {
 
         if (result.success) {
             alert("Success! Document uploaded.");
-            location.reload(); 
+            location.reload(); // Refresh to show new document
         } else {
             alert("Upload failed: " + result.error);
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Connection to Worker failed.");
+        alert("Connection to Database failed.");
     } finally {
         btn.innerHTML = 'Upload Document';
         btn.disabled = false;

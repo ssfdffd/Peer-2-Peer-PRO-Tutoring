@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources Library | Peer-2-Peer</title>
+    <title>Resources Library | Peer-2-Peer PRO</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="resources.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,14 +15,15 @@
         <img src="favicon.ico" alt="Logo">
         Peer-2-Peer <span class="pro-text">PRO</span> | Library
     </div>
-   
+    <div class="nav-right">
+        <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Home</a>
+    </div>
   </nav>
 
   <div class="animation-wrapper">
     <div class="scrolling-text" id="scrollText">
-        <span>Online Extra classes R20 per class</span>
-        <span>Join Now</span>
-        <span>The best online tutoring service</span>
+        <span>Online Extra classes R20 per class • Join Now • The best online tutoring service in SA • </span>
+        <span>Peer-2-Peer PRO • Join Now • The best online tutoring service in SA • </span>
     </div>
   </div>
 
@@ -32,7 +33,7 @@
         <p>Explore documents shared by your peers</p>
         <div class="search-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by document title...">
+            <input type="text" id="searchInput" placeholder="Search by title...">
         </div>
     </div>
   </header>
@@ -50,20 +51,24 @@
                 </div>
                 
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Document Title</label>
-                        <input type="text" id="fileName" placeholder="e.g. History Notes" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Grade Level</label>
-                        <select id="fileGrade" required>
-                            <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">Grade ${i}</option>`);</script>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Subject</label>
-                        <select id="fileSubject" required>
-                            <option value="mathematics">Mathematics</option>
+                    <input type="text" id="fileName" placeholder="Document Title" required>
+                    <select id="fileGrade" required>
+                        <option value="">Select Grade</option>
+                        <option value="10">Grade 1</option>
+                        <option value="10">Grade 2</option>
+                        <option value="10">Grade 3</option>
+                        <option value="10">Grade 4</option>
+                        <option value="10">Grade 5</option>
+                        <option value="10">Grade 6</option>
+                        <option value="10">Grade 7</option>
+                        <option value="10">Grade 8</option>
+                        <option value="10">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                    <select id="fileSubject" required>
+                         <option value="mathematics">Mathematics</option>
                             <option value="physics">Physics</option>
                             <option value="accounting">Accounting</option>
                             <option value="english">English</option>
@@ -77,15 +82,7 @@
                             <option value="business">Business Studies</option>
                             <option value="economics">Economics</option>
                             <option value="isizulu">IsiZulu</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select id="fileCategory">
-                            <option value="notes">Notes</option>
-                            <option value="past_paper">Past Paper</option>
-                        </select>
-                    </div>
+                    </select>
                 </div>
                 <button type="submit" class="upload-btn" id="uploadBtn">Upload Document</button>
             </form>
@@ -94,35 +91,24 @@
 
     <div class="documents-section">
         <div class="filter-controls">
-            <select id="subjectFilter">
-                <option value="">All Subjects</option>
-                <option value="mathematics">Mathematics</option>
-                <option value="physics">Physics</option>
-                <option value="accounting">Accounting</option>
-                <option value="english">English</option>
-                <option value="isizulu">IsiZulu</option>
-            </select>
-            <select id="gradeFilter">
-                <option value="">All Grades</option>
-                <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">Grade ${i}</option>`);</script>
-            </select>
+            <select id="subjectFilter"><option value="">All Subjects</option></select>
+            <select id="gradeFilter"><option value="">All Grades</option></select>
         </div>
         <div id="fileGrid" class="file-grid"></div>
+        
+        <div class="pagination-container">
+            <button id="prevPage" class="p-btn">Previous</button>
+            <span id="pageInfo" class="pagination-info">Page 1 of 1</span>
+            <button id="nextPage" class="p-btn">Next</button>
+        </div>
     </div>
   </main>
-
-  <div id="docModal" class="modal">
-      <div class="modal-content">
-          <span class="close-modal">&times;</span>
-          <iframe id="docViewer" src="" frameborder="0"></iframe>
-      </div>
-  </div>
 
   <footer class="footer">
     <div class="footer-inner">
         <div class="footer-box">
             <h4>Contact</h4>
-            <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
+            <a href="mailto:info@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
         </div>
         <div class="footer-box">
             <h4>Quick Links</h4>

@@ -1,4 +1,4 @@
-const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev/"; 
+const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev"; 
 // ^ Replace with your actual full Workers.dev URL
 
 document.addEventListener('DOMContentLoaded', () => {

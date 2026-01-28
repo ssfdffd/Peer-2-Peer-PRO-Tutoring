@@ -2,62 +2,38 @@
    CSS VARIABLES
 ================================= */
 :root {
-  --primary-color: #000080;
-  --secondary-color: #36a32e;
-  --text-color: #7fdff0;
+  /* Updated to match login.css colors */
+  --primary-color: #000033;        /* Deep Navy from logo background */
+  --secondary-color: #32cd32;      /* Lime Green from "PRO" */
+  --text-color: #7fdff0;           /* Light Sky Blue accents */
   --light-text: #ffffff;
-  --accent-color: #32cd32;
+  --accent-color: #32cd32;         /* Same as secondary-color */
   --transition-speed: 0.3s;
   --overlay-dark: rgba(0, 0, 0, 0.6);
-  --light-bg: #f8f9fa;
+  --light-bg: #f4f7f9;            /* Updated to match login.css */
   --border-color: #e1e5eb;
   --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --navy-bg: #000033;              /* Added from login.css */
+  --pro-green: #32cd32;            /* Added from login.css */
+  --sky-blue: #7fdff0;             /* Added from login.css */
+  --white: #ffffff;                /* Added from login.css */
 }
 
 /* =================================
-   RESET & BASE
-================================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 100%;
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #fff;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-}
-
-/* Main content wrapper */
-main {
-  flex: 1;
-}
-
-/* =================================
-   NAVBAR
+   NAVBAR - UPDATED TO MATCH LOGIN.CSS
 ================================= */
 #navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--primary-color);
+  background-color: var(--navy-bg);    /* Updated to match login.css */
   color: var(--light-text);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: clamp(0.9rem, 2vw, 1.2rem) 5%;
+  border-bottom: 3px solid var(--pro-green);  /* Added border like login.css */
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
@@ -76,7 +52,7 @@ main {
 }
 
 .logo span.pro-text {
-  color: var(--pro-green);
+  color: var(--pro-green);  /* Updated to use pro-green variable */
   margin-left: 5px;
 }
 
@@ -88,7 +64,7 @@ main {
 
 .auth-btn {
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: 50px;      /* Changed to match login.css button style */
   font-size: clamp(0.85rem, 2vw, 1rem);
   font-weight: 600;
   border: none;
@@ -105,11 +81,11 @@ main {
 
 .login:hover {
   background: #fff;
-  color: var(--primary-color);
+  color: var(--navy-bg);    /* Updated to use navy-bg variable */
 }
 
 .signup {
-  background: var(--accent-color);
+  background: var(--pro-green);  /* Updated to use pro-green variable */
   color: #fff;
 }
 
@@ -118,23 +94,8 @@ main {
   transform: translateY(-2px);
 }
 
-.menu-toggle {
-  display: none; /* Hidden by default, shown on mobile */
-  font-size: 1.8rem;
-  color: #fff;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  padding: 5px;
-  background: none;
-  border: none;
-}
-
-.menu-toggle:hover {
-  transform: scale(1.1);
-}
-
 /* =================================
-   SIDE MENU
+   SIDE MENU - UPDATED COLORS
 ================================= */
 .side-nav {
   height: 100%;
@@ -143,20 +104,12 @@ main {
   z-index: 1100;
   top: 0;
   right: 0;
-  background-color: var(--primary-color);
+  background-color: var(--navy-bg);  /* Updated to match navbar */
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
   box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-}
-
-.side-nav ul {
-  list-style-type: none;
-  padding: 0 20px;
-}
-
-.side-nav li {
-  margin: 15px 0;
+  border-left: 3px solid var(--pro-green);  /* Added border for consistency */
 }
 
 .side-nav a {
@@ -172,27 +125,10 @@ main {
 .side-nav a:hover {
   background-color: rgba(255, 255, 255, 0.1);
   padding-left: 25px;
+  color: var(--pro-green);  /* Added color change on hover */
 }
-
-.close-btn {
-  position: absolute;
-  top: 15px;
-  right: 25px;
-  font-size: 2.5rem;
-  color: #fff;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s;
-  background: none;
-  border: none;
-}
-
-.close-btn:hover {
-  color: var(--accent-color);
-}
-
 /* =================================
-   HERO SECTION
+   HERO SECTION - UPDATED ACCENT COLORS
 ================================= */
 .hero {
   min-height: clamp(55vh, 70vh, 85vh);
@@ -204,59 +140,56 @@ main {
   color: #fff;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   animation: backgroundSlider 15s infinite ease-in-out;
+  position: relative;
+}
+
+/* Hero overlay for better text readability */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 51, 0.7) 0%, rgba(0, 0, 51, 0.4) 100%);
+  z-index: 1;
 }
 
 @keyframes backgroundSlider {
-  0%, 100% {
-    background-image:
-      linear-gradient(var(--overlay-dark), var(--overlay-dark)),
-      url("hero.jpeg");
+  0% {
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
   }
   33% {
-    background-image:
-      linear-gradient(var(--overlay-dark), var(--overlay-dark)),
-      url("hero2.jpeg");
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero2.jpeg");
   }
   66% {
-    background-image:
-      linear-gradient(var(--overlay-dark), var(--overlay-dark)),
-      url("hero3.jpeg");
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero3.jpeg");
   }
+  100% {
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
+  }
+}
+
+/* Fallback in case images don't load */
+.hero {
+  background-color: var(--navy-bg); /* Fallback color */
 }
 
 .hero-content {
   max-width: 900px;
   padding: 2rem;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 51, 0.5);
   backdrop-filter: blur(5px);
   animation: fadeIn 1s ease-out;
+  border: 1px solid rgba(50, 205, 50, 0.3);
+  position: relative;
+  z-index: 2; /* Ensure content is above overlay */
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hero h1 {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  margin-bottom: 1rem;
-  max-width: 900px;
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
-  line-height: 1.2;
-}
-
-.hero p {
-  font-size: clamp(1rem, 2.5vw, 1.4rem);
-  max-width: 750px;
-  font-weight: 300;
-  margin: 0 auto;
-  opacity: 0.9;
-}
-
 /* =================================
-   UPLOAD SECTION
+   UPLOAD SECTION - UPDATED COLORS
 ================================= */
 .upload-section {
   max-width: 800px;
@@ -270,117 +203,42 @@ main {
   animation: slideUp 0.8s ease-out;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .upload-section h2 {
-  color: var(--primary-color);
+  color: var(--navy-bg);  /* Updated to use navy color */
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
-.upload-section > p {
-  color: #555;
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-}
-
-#customFileName {
-  width: 100%;
-  max-width: 500px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}
-
-#customFileName:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.2);
-}
-
-.drop-zone {
-  width: 100%;
-  min-height: 200px;
-  border: 3px dashed var(--border-color);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
 .drop-zone:hover {
-  border-color: var(--accent-color);
+  border-color: var(--pro-green);  /* Updated to use pro-green */
   background-color: rgba(50, 205, 50, 0.05);
   transform: translateY(-3px);
   box-shadow: var(--shadow-light);
 }
 
 .drop-zone.drag-over {
-  border-color: var(--accent-color);
+  border-color: var(--pro-green);  /* Updated to use pro-green */
   background-color: rgba(50, 205, 50, 0.1);
-}
-
-#drop-text {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.drop-zone::before {
-  content: "📁";
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.7;
-}
-
-.drop-zone p {
-  font-size: 1rem;
-  color: #777;
-  margin-top: 0.5rem;
-}
-
-#progress-container {
-  width: 100%;
-  height: 12px;
-  background-color: #e9ecef;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-top: 1.5rem;
 }
 
 #progress-bar {
   height: 100%;
-  background-color: var(--accent-color);
+  background-color: var(--pro-green);  /* Updated to use pro-green */
   width: 0%;
   transition: width 0.4s ease;
   border-radius: 6px;
 }
 
 /* =================================
-   FOOTER
+   FOOTER - UPDATED TO MATCH LOGIN.CSS
 ================================= */
 .footer {
-  background: linear-gradient(135deg, #1a1a5a 0%, #000033 100%);
+  background-color: var(--navy-bg);  /* Updated to solid color like login.css */
   color: #ffffff;
   padding: 50px 5% 20px;
   margin-top: auto;
+  border-top: 2px solid var(--pro-green);  /* Added border like login.css */
 }
 
 .footer-inner {
@@ -397,7 +255,7 @@ main {
   margin-bottom: 1.5rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--accent-color);
+  color: var(--pro-green);  /* Updated to use pro-green */
   position: relative;
   padding-bottom: 10px;
 }
@@ -409,15 +267,8 @@ main {
   bottom: 0;
   width: 40px;
   height: 3px;
-  background-color: var(--accent-color);
+  background-color: var(--pro-green);  /* Updated to use pro-green */
   border-radius: 2px;
-}
-
-.footer-box p {
-  font-size: 0.95rem;
-  margin-bottom: 8px;
-  color: #e0e0e0;
-  font-weight: 500;
 }
 
 .footer-box a {
@@ -432,7 +283,7 @@ main {
 }
 
 .footer-box a:hover {
-  color: var(--accent-color);
+  color: var(--pro-green);  /* Updated to use pro-green */
   padding-left: 8px;
 }
 
@@ -456,26 +307,14 @@ main {
   text-align: center;
 }
 
-.footer-bottom p {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  letter-spacing: 0.5px;
-}
-
 /* =================================
    RESPONSIVE FIXES
 ================================= */
-/* =================================
-   RESPONSIVE FIXES
-================================= */
-
-/* MOBILE VIEW (768px and below) */
 @media (max-width: 768px) {
   .menu-toggle {
-    display: block !important; /* Forces visibility on mobile */
+    display: block !important;
   }
   
-  /* Hide auth buttons on mobile to prevent crowding */
   .auth-btn {
     display: none;
   }
@@ -485,33 +324,16 @@ main {
   }
 }
 
-/* DESKTOP VIEW (769px and above) */
 @media (min-width: 769px) {
-  /* If you want the hamburger to show on desktop too, change 'none' to 'block' */
-  .menu-toggle {
-    display: block; 
-    margin-left: 20px;
-  }
-
-  .auth-btn {
-    display: inline-block;
-  }
-}
-
-/* DESKTOP VIEW (769px and above) */
-@media (min-width: 769px) {
-  /* Hide the menu toggle on desktop */
   .menu-toggle {
     display: none;
   }
   
-  /* Show the auth buttons on desktop */
   .auth-btn {
     display: inline-block;
   }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
   #navbar {
     padding: 1rem 4%;
@@ -541,9 +363,4 @@ main {
   .footer {
     padding: 40px 4% 20px;
   }
-}
-
-/* Utility classes */
-.hidden {
-  display: none !important;
 }

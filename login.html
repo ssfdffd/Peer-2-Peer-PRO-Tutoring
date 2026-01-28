@@ -4,129 +4,154 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Peer-2-Peer PRO | Join Us</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="login.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 </head>
 <body>
 
 <nav id="navbar">
-  <div class="logo">Peer-2-Peer <span>PRO</span>-Login</div>
+  <div class="logo">
+    <img src="favicon.ico" alt="Logo" style="height:25px; margin-right:8px;">
+    Peer-2-Peer <span>PRO</span>-Login
+  </div>
   <div class="nav-right">
     <li><a href="index.html">Home</a></li>
     <span id="openNav" class="menu-toggle">☰</span>
   </div>
 </nav>
 
-<div id="side-menu" class="side-nav">
-  <a href="javascript:void(0)" id="closeNav" class="close-btn">×</a>
-  <ul>
-    <li><a href="resources.html">Resources</a></li>
-    <li><a href="school-dashboard.html">Dashboard for Schools</a></li>
-    <li><a href="terms.html">T's & C's</a></li>
-  </ul>
-</div>
-
 <div class="split-screen-wrapper">
-  <!-- LOGIN SIDE -->
   <div class="auth-section login-side">
     <div class="form-box">
       <h2>Welcome Back</h2>
-      <p>Login to continue your learning journey.</p>
+      <p>Log in to your Peer-2-Peer account</p>
       <form id="loginForm">
         <div class="input-group">
-          <label><i class="fas fa-user"></i> Name</label>
-          <input type="text" id="loginUser" placeholder="Enter your Name" required>
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" name="email" placeholder="email@example.com" required>
         </div>
         <div class="input-group">
           <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="loginPass" placeholder="••••••••" required>
+          <input type="password" name="password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="auth-btn">Sign In</button>
-        <p id="loginMsg" style="color: red; margin-top: 10px;"></p>
+        <div class="forgot-link">
+          <a href="#" id="forgotPassBtn">Forgot Password?</a>
+        </div>
+        <button type="submit" class="auth-btn login-btn">Login</button>
       </form>
     </div>
   </div>
 
-  <!-- SIGNUP SIDE -->
   <div class="auth-section signup-side">
     <div class="form-box">
       <h2>Create Account</h2>
-      <p>Join the community today.</p>
       <form id="signupForm">
-        <div class="input-row">
+        
+        <div class="form-grid">
           <div class="input-group">
-            <label>Name</label>
-            <input type="text" name="name" required>
+            <label>First Name</label>
+            <input type="text" name="firstName" required>
           </div>
           <div class="input-group">
             <label>Surname</label>
-            <input type="text" name="surname" required>
+            <input type="text" name="lastName" required>
           </div>
         </div>
-        <div class="input-row">
+
+        <div class="form-grid">
           <div class="input-group">
             <label>Age</label>
             <input type="number" name="age" required>
           </div>
           <div class="input-group">
-            <label>Phone</label>
-            <input type="tel" name="phone" required>
+            <label>Grade/Level</label>
+            <input type="text" name="grade" placeholder="e.g. 12">
           </div>
         </div>
-        <div class="input-group">
-          <label>School</label>
-          <input type="text" name="school" required>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phone" required>
+          </div>
+          <div class="input-group">
+            <label>Backup Phone</label>
+            <input type="tel" name="backupPhone">
+          </div>
         </div>
+
         <div class="input-group">
-          <label>Email</label>
+          <label>School Name</label>
+          <input type="text" name="schoolName" required>
+        </div>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>User Type</label>
+            <select name="userType" id="userType" required>
+              <option value="student">Student (Learner)</option>
+              <option value="tutor">Tutor (Teacher)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>School Code (Optional)</label>
+            <input type="text" name="schoolCode">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Email Address</label>
           <input type="email" name="email" required>
         </div>
+
         <div class="input-group">
-          <label>User Type</label>
-          <select name="userType" required>
-            <option value="student">Student</option>
-            <option value="tutor">Tutor</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label>Password</label>
+          <label>Create Password</label>
           <input type="password" name="password" required>
         </div>
-        <div class="input-group">
-          <label>School Code (If applicable)</label>
-          <input type="text" name="schoolCode" placeholder="Enter your school code">
+
+        <div class="tc-container">
+          <details>
+            <summary><i class="fas fa-file-contract"></i> Legal & Data Use Agreement (Read Carefully)</summary>
+            <div class="tc-content">
+              <h4>1. Intellectual Property & Branding</h4>
+              <p>The "Peer-2-Peer PRO" name, logo, and <strong>favicon</strong> are the exclusive property of Peer-2-Peer. Unauthorized reproduction or use of these brand assets is strictly prohibited.</p>
+
+              <h4>2. Commercial Data Consent (Material Condition)</h4>
+              <p>In accordance with Part B of the Enrollment Agreement, you explicitly consent that Peer-2-Peer PRO may process, aggregate, and sell <strong>anonymized and aggregated data</strong> to registered third parties or academic research partners for lawful commercial purposes. This data usage is a material condition of using this platform.</p>
+
+              <h4>3. POPIA & Privacy</h4>
+              <p>We process personal information in compliance with the Protection of Personal Information Act (POPIA). Your sensitive identifiers (ID numbers/Addresses) are protected and never sold.</p>
+
+              <h4>4. Conduct & Termination</h4>
+              <p>Misconduct, including academic dishonesty or harassment, will result in immediate account termination without refund as per Section 1.1 of the Service Agreement.</p>
+            </div>
+          </details>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" name="agreeTerms" required> 
+            <span>I have read the terms and agree to the lawful commercial use of my data.</span>
+          </label>
         </div>
-        <button type="submit" class="auth-btn signup-btn">Sign Up</button>
-        <p id="signupMsg" style="margin-top: 15px; color: #fff;"></p>
+
+        <button type="submit" class="auth-btn signup-btn">Register & Agree</button>
       </form>
     </div>
   </div>
 </div>
-
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-box">
       <h4>Contact</h4>
-      <p>Email Support</p>
-      <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
-      <p style="margin-top:12px;">Tutor Applications</p>
-      <a href="mailto:hr@peer-2-peer.co.za">hr@peer-2-peer.co.za</a>
+      <p>Support: <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a></p>
     </div>
     <div class="footer-box">
       <h4>Quick Links</h4>
       <a href="index.html">Home</a>
-      <a href="login.html">Login</a>
-      <a href="https://wa.me/27732792426">WhatsApp Us</a>
+      <a href="resources.html">Resources</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Peer-2-Peer PRO. All rights reserved.</p>
+    &copy; 2026 Peer-2-Peer PRO. All Rights Reserved.
   </div>
 </footer>
-
-<!-- FIXED: Single external script reference -->
-<script src="login.js"></script>
-
-</body>
-</html>

@@ -109,26 +109,41 @@ function renderCards(data) {
     paginatedItems.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
+        // This HTML structure now perfectly matches your resources.css
         card.innerHTML = `
-            <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
-            <div class="file-info">
-                <h3>${item.title || "Untitled Document"}</h3>
-                <p><strong>Subject:</strong> ${item.subject || "General"}</p>
-                <p><strong>Grade:</strong> ${item.grade_level || "All"}</p>
+            <div class="card-icon-header">
+                <div class="category-tag">${item.subject || 'General'}</div>
+                <i class="fas fa-file-pdf pdf-icon file-type-icon"></i>
             </div>
-            <div class="card-actions">
-                <button class="view-btn" onclick="openDocument('${item.file_url}')">View PDF</button>
+            <div class="card-body">
+                <h3>${item.title || "Untitled Document"}</h3>
+                <div class="document-info">
+                    <div class="info-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <strong>Grade:</strong> ${item.grade_level || "N/A"}
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-book"></i>
+                        <strong>Subject:</strong> ${item.subject || "General"}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="view-link" onclick="openDocument('${item.file_url}')">
+                    <i class="fas fa-eye"></i> View
+                </button>
+                <a href="${item.file_url}" download="${item.title}" class="down-link">
+                    <i class="fas fa-download"></i> Download
+                </a>
             </div>
         `;
         grid.appendChild(card);
     });
 
-    // Update Pagination Info
     const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 }
-
 // 6. VIEW DOCUMENT (MODAL)
 function openDocument(url) {
     const modal = document.getElementById("docModal");

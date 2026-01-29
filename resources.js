@@ -179,10 +179,10 @@ async function uploadDocument() {
         
         // Inside resources.js upload function
 const payload = {
-    title: titleInput.value,
+    title: titleInput.value,    // This must match the 'data.title' in the worker
     subject: subjectInput.value,
-    grade: gradeInput.value, // The worker now maps this to grade_level
-    fileUrl: "https://peer-2-peer.co.za/placeholder.pdf" 
+    grade: gradeInput.value,
+    fileUrl: "https://peer-2-peer.co.za/placeholder.pdf"
 };
 
         try {

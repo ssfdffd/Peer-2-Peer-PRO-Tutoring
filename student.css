@@ -1,6 +1,6 @@
 /* ====================================
    PEER-2-PEER PRO - STUDENT PORTAL CSS
-   UPDATED TO MATCH WEBSITE COLOR SCHEME
+   LIGHT MODE ONLY - MATCHED TO BRAND COLORS
    ==================================== */
 
 /* ====================================
@@ -19,14 +19,11 @@
   --border-color: #e1e5eb;
   --danger: #ff4444;
   --warning: #ffc107;
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-light: rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-light: rgba(0, 0, 0, 0.1);
+  --success: #32cd32;
 }
 
 /* ====================================
-   2. BASE STYLES
+   2. BASE STYLES - LIGHT MODE ONLY
    ==================================== */
 * {
     margin: 0;
@@ -38,23 +35,12 @@ body {
     font-family: 'Segoe UI', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
     min-height: 100vh;
-    transition: all 0.3s ease;
-}
-
-/* Light Mode Base */
-body.light-mode {
     background: var(--light-bg);
     color: var(--text-dark);
 }
 
-/* Dark Mode Base */
-body:not(.light-mode) {
-    background: var(--navy-bg);
-    color: var(--white);
-}
-
 /* ====================================
-   3. NAVBAR - UPDATED TO MATCH INDEX.CSS
+   3. NAVBAR - MATCHES INDEX.CSS
    ==================================== */
 .glass-nav {
     background-color: var(--navy-bg) !important;
@@ -81,7 +67,6 @@ body:not(.light-mode) {
 .premium {
     color: var(--pro-green) !important;
     font-weight: 800;
-    text-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
 }
 
 .nav-right {
@@ -96,7 +81,7 @@ body:not(.light-mode) {
     border-radius: 25px;
     padding: 8px 20px;
     min-width: 300px;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(127, 223, 240, 0.3);
 }
@@ -138,7 +123,7 @@ body:not(.light-mode) {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.3s;
+    transition: var(--transition);
     background: transparent;
     color: var(--white);
     border: 1.5px solid var(--white);
@@ -148,7 +133,6 @@ body:not(.light-mode) {
 .logout-minimal:hover {
     background: var(--white);
     color: var(--navy-bg);
-    border-color: var(--white);
 }
 
 /* ====================================
@@ -160,16 +144,16 @@ body:not(.light-mode) {
 }
 
 /* ====================================
-   6. SIDE PANEL - UPDATED COLORS
+   6. SIDE PANEL - LIGHT MODE
    ==================================== */
 .side-panel {
     width: 280px;
-    background-color: var(--navy-bg);
-    border-right: 1px solid rgba(50, 205, 50, 0.3);
+    background: var(--white);
+    border-right: 1px solid var(--border-color);
     padding: 25px;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
 }
 
 /* ====================================
@@ -178,7 +162,7 @@ body:not(.light-mode) {
 .profile-summary {
     text-align: center;
     padding-bottom: 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 25px;
 }
 
@@ -199,11 +183,11 @@ body:not(.light-mode) {
 .profile-summary h3 {
     margin-bottom: 10px;
     font-size: 1.2rem;
-    color: var(--white);
+    color: var(--navy-bg);
 }
 
 /* ====================================
-   8. PAYMENT BADGE - UPDATED COLORS
+   8. PAYMENT BADGE
    ==================================== */
 .badge-glass {
     display: inline-block;
@@ -215,15 +199,15 @@ body:not(.light-mode) {
 }
 
 .badge-glass.paid-badge {
-    background: rgba(50, 205, 50, 0.1) !important;
-    border-color: rgba(50, 205, 50, 0.3) !important;
-    color: var(--pro-green) !important;
+    background: rgba(50, 205, 50, 0.1);
+    border-color: rgba(50, 205, 50, 0.3);
+    color: #28a428;
 }
 
 .badge-glass.unpaid-badge {
-    background: rgba(255, 68, 68, 0.1) !important;
-    border-color: rgba(255, 68, 68, 0.3) !important;
-    color: var(--danger) !important;
+    background: rgba(255, 68, 68, 0.1);
+    border-color: rgba(255, 68, 68, 0.3);
+    color: #d32f2f;
 }
 
 /* ====================================
@@ -244,18 +228,20 @@ body:not(.light-mode) {
     padding: 12px 15px;
     text-decoration: none;
     border-radius: 8px;
-    transition: all 0.3s;
-    color: rgba(255, 255, 255, 0.8);
+    transition: var(--transition);
+    color: #666;
+    font-weight: 500;
 }
 
 .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--white);
+    background: rgba(50, 205, 50, 0.05);
+    color: var(--navy-bg);
 }
 
 .nav-links a.active {
     background: var(--pro-green);
     color: var(--navy-bg) !important;
+    font-weight: 600;
 }
 
 .nav-links i {
@@ -265,15 +251,14 @@ body:not(.light-mode) {
 }
 
 /* ====================================
-   10. ASK BOX - UPDATED COLORS
+   10. ASK BOX
    ==================================== */
 .ask-box-sidebar {
     border-radius: 10px;
     padding: 20px;
     margin-top: auto;
-    transition: all 0.3s;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(50, 205, 50, 0.2);
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
 }
 
 .ask-box-sidebar h4 {
@@ -281,7 +266,7 @@ body:not(.light-mode) {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--white);
+    color: var(--navy-bg);
 }
 
 .ask-box-sidebar textarea {
@@ -292,18 +277,20 @@ body:not(.light-mode) {
     min-height: 100px;
     resize: vertical;
     font-family: inherit;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    font-size: 0.95rem;
 }
 
 .ask-box-sidebar textarea:focus {
     outline: none;
     border-color: var(--pro-green);
+    box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.1);
 }
 
 .ask-box-sidebar textarea::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: #999;
 }
 
 .btn-ask {
@@ -315,12 +302,14 @@ body:not(.light-mode) {
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--transition);
+    font-size: 0.95rem;
 }
 
 .btn-ask:hover {
     background: #28b528;
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(50, 205, 50, 0.2);
 }
 
 /* ====================================
@@ -330,12 +319,7 @@ body:not(.light-mode) {
     flex: 1;
     padding: 25px;
     overflow-y: auto;
-    transition: all 0.3s ease;
     background: var(--light-bg);
-}
-
-body:not(.light-mode) .main-panel {
-    background: var(--navy-bg);
 }
 
 /* ====================================
@@ -346,15 +330,8 @@ body:not(.light-mode) .main-panel {
     padding: 25px;
     margin-bottom: 30px;
     border: 1px solid var(--border-color);
-    transition: all 0.3s;
     background: var(--white);
     box-shadow: var(--card-shadow);
-}
-
-body:not(.light-mode) .portal-section,
-body:not(.light-mode) .library-section {
-    background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(50, 205, 50, 0.2);
 }
 
 .section-header {
@@ -370,10 +347,6 @@ body:not(.light-mode) .library-section {
     gap: 10px;
     font-size: 1.3rem;
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .section-header h3 {
-    color: var(--white);
 }
 
 .badge-count {
@@ -399,7 +372,7 @@ body:not(.light-mode) .section-header h3 {
     border-radius: 12px;
     padding: 20px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: var(--transition);
     position: relative;
     overflow: hidden;
     background: var(--white);
@@ -409,11 +382,6 @@ body:not(.light-mode) .section-header h3 {
     transform: translateY(-5px);
     border-color: var(--pro-green);
     box-shadow: 0 10px 25px rgba(50, 205, 50, 0.1);
-}
-
-body:not(.light-mode) .live-card {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(50, 205, 50, 0.2);
 }
 
 .live-card-header {
@@ -437,18 +405,10 @@ body:not(.light-mode) .live-card {
     color: #666;
 }
 
-body:not(.light-mode) .class-time {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .live-card h4 {
     font-size: 1.1rem;
     margin-bottom: 10px;
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .live-card h4 {
-    color: var(--white);
 }
 
 .class-footer {
@@ -458,10 +418,6 @@ body:not(.light-mode) .live-card h4 {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid var(--border-color);
-}
-
-body:not(.light-mode) .class-footer {
-    border-top-color: rgba(255, 255, 255, 0.1);
 }
 
 .class-fee {
@@ -481,7 +437,7 @@ body:not(.light-mode) .class-footer {
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.3s;
+    transition: var(--transition);
     font-weight: 600;
 }
 
@@ -505,7 +461,7 @@ body:not(.light-mode) .class-footer {
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: all 0.3s;
+    transition: var(--transition);
     border: 1px solid var(--border-color);
     background: var(--white);
     color: var(--navy-bg);
@@ -514,25 +470,14 @@ body:not(.light-mode) .class-footer {
 
 .filter-pill:hover {
     background: rgba(50, 205, 50, 0.1);
-    color: var(--navy-bg);
+    border-color: var(--pro-green);
 }
 
 .filter-pill.active {
     background: var(--pro-green);
-    color: var(--navy-bg) !important;
+    color: var(--navy-bg);
     border-color: var(--pro-green);
     font-weight: 700;
-}
-
-body:not(.light-mode) .filter-pill {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(50, 205, 50, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-}
-
-body:not(.light-mode) .filter-pill.active {
-    background: var(--pro-green);
-    color: var(--navy-bg) !important;
 }
 
 /* ====================================
@@ -551,18 +496,14 @@ body:not(.light-mode) .filter-pill.active {
     display: flex;
     align-items: center;
     gap: 20px;
-    transition: all 0.3s;
+    transition: var(--transition);
     background: var(--white);
 }
 
 .file-card:hover {
     border-color: var(--pro-green);
     background: rgba(50, 205, 50, 0.05);
-}
-
-body:not(.light-mode) .file-card {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(50, 205, 50, 0.2);
+    transform: translateY(-2px);
 }
 
 .file-icon-box {
@@ -588,10 +529,6 @@ body:not(.light-mode) .file-card {
     font-weight: 600;
 }
 
-body:not(.light-mode) .file-title {
-    color: var(--white);
-}
-
 .file-meta {
     font-size: 0.85rem;
     margin-bottom: 3px;
@@ -599,10 +536,6 @@ body:not(.light-mode) .file-title {
     align-items: center;
     gap: 5px;
     color: #666;
-}
-
-body:not(.light-mode) .file-meta {
-    color: rgba(255, 255, 255, 0.7);
 }
 
 .file-actions {
@@ -621,7 +554,7 @@ body:not(.light-mode) .file-meta {
     align-items: center;
     gap: 5px;
     font-size: 0.9rem;
-    transition: all 0.3s;
+    transition: var(--transition);
     font-weight: 500;
 }
 
@@ -640,7 +573,7 @@ body:not(.light-mode) .file-meta {
     align-items: center;
     gap: 5px;
     font-size: 0.9rem;
-    transition: all 0.3s;
+    transition: var(--transition);
     font-weight: 600;
 }
 
@@ -651,7 +584,7 @@ body:not(.light-mode) .file-meta {
 }
 
 /* ====================================
-   16. MODAL STYLES - UPDATED COLORS
+   16. MODAL STYLES
    ==================================== */
 .modal-overlay {
     display: none;
@@ -674,13 +607,8 @@ body:not(.light-mode) .file-meta {
     max-height: 90vh;
     overflow-y: auto;
     border: 1px solid var(--border-color);
-    box-shadow: var(--card-shadow);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     background: var(--white);
-}
-
-body:not(.light-mode) .modal-content {
-    background: var(--navy-bg);
-    border-color: rgba(50, 205, 50, 0.3);
 }
 
 .modal-header {
@@ -691,20 +619,12 @@ body:not(.light-mode) .modal-content {
     align-items: center;
 }
 
-body:not(.light-mode) .modal-header {
-    border-bottom-color: rgba(50, 205, 50, 0.3);
-}
-
 .modal-header h3 {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 1.3rem;
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .modal-header h3 {
-    color: var(--white);
 }
 
 .modal-close {
@@ -718,17 +638,13 @@ body:not(.light-mode) .modal-header h3 {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.3s;
-    color: var(--navy-bg);
+    transition: var(--transition);
+    color: #666;
 }
 
 .modal-close:hover {
     background: rgba(50, 205, 50, 0.1);
     color: var(--pro-green);
-}
-
-body:not(.light-mode) .modal-close {
-    color: var(--white);
 }
 
 .modal-body {
@@ -739,24 +655,13 @@ body:not(.light-mode) .modal-close {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    background: rgba(244, 247, 249, 0.5);
+    background: var(--light-bg);
     border: 1px solid var(--border-color);
-}
-
-body:not(.light-mode) .payment-summary,
-body:not(.light-mode) .class-details-summary {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(50, 205, 50, 0.2);
 }
 
 .payment-summary h4, .class-details-summary h4 {
     margin-bottom: 15px;
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .payment-summary h4,
-body:not(.light-mode) .class-details-summary h4 {
-    color: var(--white);
 }
 
 .payment-details, .class-details {
@@ -770,21 +675,11 @@ body:not(.light-mode) .class-details-summary h4 {
     color: #666;
 }
 
-body:not(.light-mode) .payment-details p,
-body:not(.light-mode) .class-details p {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .payment-details strong, .class-details strong {
     display: flex;
     align-items: center;
     gap: 8px;
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .payment-details strong,
-body:not(.light-mode) .class-details strong {
-    color: var(--white);
 }
 
 .payment-gateway-container {
@@ -793,11 +688,7 @@ body:not(.light-mode) .class-details strong {
     text-align: center;
     margin-bottom: 20px;
     border: 2px dashed rgba(50, 205, 50, 0.3);
-    background: rgba(244, 247, 249, 0.5);
-}
-
-body:not(.light-mode) .payment-gateway-container {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--light-bg);
 }
 
 .payment-loading {
@@ -809,10 +700,6 @@ body:not(.light-mode) .payment-gateway-container {
     color: #666;
 }
 
-body:not(.light-mode) .payment-loading {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .payment-terms {
     border-left: 4px solid var(--pro-green);
     padding: 15px;
@@ -820,11 +707,6 @@ body:not(.light-mode) .payment-loading {
     margin-bottom: 20px;
     background: rgba(50, 205, 50, 0.05);
     color: var(--navy-bg);
-}
-
-body:not(.light-mode) .payment-terms {
-    background: rgba(50, 205, 50, 0.1);
-    color: var(--white);
 }
 
 .payment-terms p {
@@ -878,7 +760,7 @@ body:not(.light-mode) .payment-terms {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: all 0.3s;
+    transition: var(--transition);
 }
 
 .btn-join-class {
@@ -913,10 +795,6 @@ body:not(.light-mode) .payment-terms {
     color: #666;
 }
 
-body:not(.light-mode) .loading-state {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 /* ====================================
    18. RESPONSIVE DESIGN
    ==================================== */
@@ -928,7 +806,7 @@ body:not(.light-mode) .loading-state {
     .side-panel {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid rgba(50, 205, 50, 0.3);
+        border-bottom: 1px solid var(--border-color);
     }
 }
 
@@ -977,35 +855,7 @@ body:not(.light-mode) .loading-state {
 }
 
 /* ====================================
-   20. THEME TOGGLE (Optional - kept for reference)
-   ==================================== */
-.theme-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--navy-bg);
-    color: white;
-    border: none;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1);
-    background: var(--pro-green);
-}
-
-/* ====================================
-   21. FILE ICON COLORS
+   20. FILE ICON COLORS
    ==================================== */
 .fa-file-pdf { color: #ff4444; }
 .fa-file-word { color: #2d8cff; }
@@ -1016,12 +866,8 @@ body:not(.light-mode) .loading-state {
 .fa-file { color: #666; }
 
 /* ====================================
-   22. EMERGENCY STYLE FIX (from HTML)
+   21. EMERGENCY STYLE FIX (from HTML)
    ==================================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 button {
     background: var(--pro-green);
     color: var(--navy-bg);
@@ -1030,6 +876,7 @@ button {
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
+    transition: var(--transition);
 }
 
 button:hover {
@@ -1037,17 +884,109 @@ button:hover {
 }
 
 input, textarea {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
     padding: 10px;
     border-radius: 6px;
     width: 100%;
+    font-family: inherit;
 }
 
-body.light-mode input, 
-body.light-mode textarea {
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-color);
-    color: var(--text-dark);
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--pro-green);
+    box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.1);
+}
+
+/* ====================================
+   22. SCROLLBAR STYLING
+   ==================================== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--pro-green);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #28b528;
+}
+
+/* ====================================
+   23. PAYMENT STATUS BADGES
+   ==================================== */
+.payment-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.payment-badge.paid {
+    background-color: var(--pro-green);
+    color: white;
+}
+
+.payment-badge.unpaid {
+    background-color: var(--warning);
+    color: white;
+}
+
+/* ====================================
+   24. LOCKED CARDS
+   ==================================== */
+.live-card.locked {
+    position: relative;
+    opacity: 0.7;
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.lock-overlay i {
+    font-size: 48px;
+    margin-bottom: 10px;
+    color: #ffd700;
+}
+
+/* ====================================
+   25. EMPTY STATES
+   ==================================== */
+.empty-state, .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    grid-column: 1 / -1;
+}
+
+.empty-state i, .error-state i {
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.error-state i {
+    color: var(--danger);
 }

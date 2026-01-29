@@ -13,6 +13,44 @@ function logout() {
     localStorage.removeItem('p2p_name');
     window.location.href = 'login.html';
 }
+// Function to show the Forgot Password pop-up
+function showForgotModal() {
+    document.getElementById('forgotModal').style.display = 'flex';
+}
+
+// Function to close the pop-up
+function closeForgotModal() {
+    document.getElementById('forgotModal').style.display = 'none';
+}
+
+// Function to send the reset request to your Worker
+async function handleForgotSubmit() {
+    const email = document.getElementById('forgotEmail').value;
+    const btn = document.getElementById('forgotBtn');
+
+    if (!email) return alert("Please enter your email address.");
+
+    btn.disabled = true;
+    btn.innerText = "Checking...";
+
+    try {
+        const response = await fetch(`${API_BASE}/api/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        
+        // We always show a success message even if email isn't found 
+        // to prevent hackers from guessing who has an account.
+        alert("If an account exists for this email, a recovery link will be sent shortly.");
+        closeForgotModal();
+    } catch (err) {
+        alert("Server error. Please check your connection.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Send Recovery Link";
+    }
+}
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');

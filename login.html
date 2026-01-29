@@ -36,7 +36,7 @@
           <input type="password" name="password" placeholder="••••••••" required>
         </div>
         <div class="forgot-link">
-          <a href="#" id="forgotPassBtn">Forgot Password?</a>
+         <a href="#" onclick="showForgotModal()" style="font-size: 0.8rem; color: #6e8efb; text-decoration: none; display: block; margin-top: 5px;">Forgot Password?</a>
         </div>
         <button type="submit" class="auth-btn login-btn">Login</button>
       </form>
@@ -137,6 +137,16 @@
         <button type="submit" class="auth-btn signup-btn">Register & Agree</button>
       </form>
     </div>
+  </div>
+</div>
+</body>
+<div id="forgotModal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
+  <div style="background:#1a1a2e; padding:30px; border-radius:15px; width:90%; max-width:400px; border:1px solid #6e8efb; box-shadow: 0 0 20px rgba(110,142,251,0.3);">
+    <h3 style="margin-top:0;">Reset Password</h3>
+    <p style="color: #ccc; font-size: 0.9rem;">Enter your email and we'll send you a secure recovery link.</p>
+    <input type="email" id="forgotEmail" placeholder="Enter your registered email" style="width:100%; padding:12px; margin:15px 0; background:#0f0f23; border:1px solid #333; color:white; border-radius:5px; box-sizing: border-box;">
+    <button onclick="handleForgotSubmit()" id="forgotBtn" style="width:100%; padding:12px; background:#6e8efb; border:none; color:white; border-radius:5px; cursor:pointer; font-weight:bold;">Send Recovery Link</button>
+    <button onclick="closeForgotModal()" style="width:100%; margin-top:10px; background:transparent; border:none; color:#888; cursor:pointer;">Close</button>
   </div>
 </div>
 <script src="login.js"></script>

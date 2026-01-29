@@ -4,6 +4,17 @@ let allResources = [];
 let currentPage = 1;
 const itemsPerPage = 6; 
 
+// Add to resources.js
+//if (!localStorage.getItem('p2p_token')) {
+//    alert("Please log in to access the library.");
+  //  window.location.href = 'login.html';
+//}
+
+
+
+
+
+
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();

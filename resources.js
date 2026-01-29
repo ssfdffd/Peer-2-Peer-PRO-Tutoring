@@ -177,13 +177,13 @@ async function uploadDocument() {
         // Convert file to Base64 for safe JSON transport
         const base64File = e.target.result.split(',')[1];
         
-        const payload = {
-            title: titleInput.value,
-            subject: subjectInput.value,
-            grade: gradeInput.value,
-            fileName: file.name,
-            fileData: base64File
-        };
+        // Inside resources.js upload function
+const payload = {
+    title: titleInput.value,
+    subject: subjectInput.value,
+    grade: gradeInput.value, // The worker now maps this to grade_level
+    fileUrl: "https://peer-2-peer.co.za/placeholder.pdf" 
+};
 
         try {
             const res = await fetch(`${API_URL}/api/upload`, {

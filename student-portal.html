@@ -278,5 +278,24 @@
     </div>
 
     <script src="student.js"></script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const role = localStorage.getItem('p2p_role');
+    const token = localStorage.getItem('p2p_token');
+    const name = localStorage.getItem('p2p_name');
+
+    // Display the user's name if it exists
+    if (name && document.getElementById('studentNameDisplay')) {
+        document.getElementById('studentNameDisplay').innerText = name;
+    }
+
+    // Verify the user is a logged-in student
+    if (!token || role !== 'student') {
+        console.warn("Auth check failed. Token exists:", !!token, "Role:", role);
+        alert("Session Expired or Access Denied. Please log in again.");
+        window.location.href = 'login.html';
+    }
+  });
+</script>
 </body>
 </html>

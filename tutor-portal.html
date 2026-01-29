@@ -6,12 +6,14 @@
     <link rel="stylesheet" href="tutor.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
 
-<nav id="navbar">
-    <div class="logo">Peer-2-Peer <span style="color:#32cd32">TUTOR</span></div>
+<nav class="glass-nav">
+    <div class="logo-glow">Peer-2-Peer <span class="premium">TUTOR</span> | Control Center</div>
     <div class="nav-right">
-        <button class="auth-btn logout" onclick="logout()">Log Out</button>
+        <button class="logout-minimal" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
     </div>
 </nav>
 
@@ -62,15 +64,22 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <button id="startBtn" onclick="saveAndToggleLive(true)" class="btn-start">Go Live & Save</button>
-                    <button id="endBtn" onclick="saveAndToggleLive(false)" class="btn-end" style="display:none">End Session</button>
+                    <button id="startBtn" onclick="saveAndToggleLive(true)" class="btn-start">
+                        <i class="fas fa-broadcast-tower"></i> Go Live & Save
+                    </button>
+                    <button id="endBtn" onclick="saveAndToggleLive(false)" class="btn-end" style="display:none">
+                        <i class="fas fa-stop"></i> End Session
+                    </button>
                 </div>
             </div>
         </section>
 
         <!-- Upload Section -->
         <section class="management-card">
-            <h3><i class="fas fa-cloud-upload-alt"></i> Upload Study Material</h3>
+            <div class="section-header">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Study Material</h3>
+            </div>
+            
             <div class="input-group">
                 <label>Document Title</label>
                 <input type="text" id="studentFileName" placeholder="e.g., Grade 12 Math - Calculus Summary">
@@ -97,24 +106,50 @@
                 <div class="progress-ring-wrapper">
                     <svg class="progress-ring" width="120" height="120">
                         <circle class="progress-ring__circle-bg" stroke="rgba(0,0,0,0.05)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                        <circle id="uploadProgressCircle" class="progress-ring__circle" stroke="#00bcd4" stroke-width="8" stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60"/>
+                        <circle id="uploadProgressCircle" class="progress-ring__circle" stroke="#32cd32" stroke-width="8" stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60"/>
                     </svg>
                     <div class="progress-text" id="progressPercent">0%</div>
                 </div>
                 <p class="upload-hint">Deploying to secure servers...</p>
             </div>
 
-            <button class="btn-deploy" id="uploadBtn">Start Deployment</button>
+            <button class="btn-deploy" id="uploadBtn">
+                <i class="fas fa-rocket"></i> Start Deployment
+            </button>
         </section>
 
         <!-- Meetings List Section -->
         <section class="management-card">
-            <h3><i class="fas fa-calendar-check"></i> My Scheduled Meetings</h3>
-            <div id="myMeetingsList" class="file-grid"></div>
+            <div class="section-header">
+                <h3><i class="fas fa-calendar-check"></i> My Scheduled Meetings</h3>
+                <span id="meetingCount" class="badge-count">0 meetings</span>
+            </div>
+            <div id="myMeetingsList" class="file-grid">
+                <div class="loading-state">Loading meetings...</div>
+            </div>
         </section>
     </main>
 </div>
 
 <script src="tutor.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const role = localStorage.getItem('p2p_role');
+    const token = localStorage.getItem('p2p_token');
+    const name = localStorage.getItem('p2p_name');
+
+    // Display the tutor's name
+    if (name && document.getElementById('tutorNameDisplay')) {
+        document.getElementById('tutorNameDisplay').innerText = name;
+    }
+
+    // Verify the user is a logged-in tutor
+    if (!token || role !== 'tutor') {
+        console.warn("Auth check failed. Token exists:", !!token, "Role:", role);
+        alert("Session Expired or Access Denied. Please log in again.");
+        window.location.href = 'login.html';
+    }
+  });
+</script>
 </body>
 </html>

@@ -7,7 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
 });
-
+function logout() {
+    localStorage.removeItem('p2p_token');
+    localStorage.removeItem('p2p_role');
+    localStorage.removeItem('p2p_name');
+    window.location.href = 'login.html';
+}
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');

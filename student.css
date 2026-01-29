@@ -959,3 +959,95 @@ body:not(.light-mode) .loading-state {
     
     .modal-content {
         margin: 10px;
+        width: calc(100% - 20px);
+    }
+}
+
+/* ====================================
+   19. ANIMATIONS
+   ==================================== */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.live-badge {
+    animation: pulse 2s infinite;
+}
+
+/* ====================================
+   20. THEME TOGGLE (Optional - kept for reference)
+   ==================================== */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--navy-bg);
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: var(--pro-green);
+}
+
+/* ====================================
+   21. FILE ICON COLORS
+   ==================================== */
+.fa-file-pdf { color: #ff4444; }
+.fa-file-word { color: #2d8cff; }
+.fa-file-powerpoint { color: #ff9500; }
+.fa-file-excel { color: #00c853; }
+.fa-file-image { color: #9c27b0; }
+.fa-file-archive { color: #ffbb00; }
+.fa-file { color: #666; }
+
+/* ====================================
+   22. EMERGENCY STYLE FIX (from HTML)
+   ==================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+    background: var(--pro-green);
+    color: var(--navy-bg);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover {
+    background: #28b528;
+}
+
+input, textarea {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    width: 100%;
+}
+
+body.light-mode input, 
+body.light-mode textarea {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+}

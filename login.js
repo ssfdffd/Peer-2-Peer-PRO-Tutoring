@@ -13,20 +13,21 @@ async function handleSignup(e) {
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
 
-    // This payload now matches every "name" attribute in your HTML
+    // Captures all fields from your HTML form
     const payload = {
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
         age: formData.get('age'),
         grade: formData.get('grade'),
         phone: formData.get('phone'),
-        backupPhone: formData.get('backupPhone'), // Added
-        schoolName: formData.get('schoolName'),   // Added
+        backupPhone: formData.get('backupPhone'),
+        schoolName: formData.get('schoolName'),
         userType: formData.get('userType'),
-        schoolCode: formData.get('schoolCode'),   // Added
+        schoolCode: formData.get('schoolCode'),
         email: formData.get('email'),
         password: formData.get('password'),
-      commercialConsent: formData.get('agreeTerms') !== null
+        // Checkbox returns null if unchecked, or a value if checked
+        commercialConsent: formData.get('agreeTerms') !== null
     };
 
     btn.disabled = true;
@@ -42,7 +43,6 @@ async function handleSignup(e) {
 
         if (response.ok) {
             alert("✅ Registration Successful! Please Log In.");
-            // Reset the form so they can log in
             e.target.reset(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
@@ -60,7 +60,6 @@ async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     
-    // Using FormData for login too to stay consistent
     const formData = new FormData(e.target);
     const email = formData.get('email');
     const password = formData.get('password');
@@ -77,13 +76,17 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // Store details in LocalStorage for use on the resources/dashboard pages
+            // Store user details in the browser memory
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);
             localStorage.setItem('p2p_name', result.name);
             
-            // Redirect to the resources page
-            window.location.href = 'resources.html';
+            // SMART REDIRECT: Send user to their specific portal
+            if (result.role === 'tutor') {
+                window.location.href = 'tutor-portal.html';
+            } else {
+                window.location.href = 'student-portal.html';
+            }
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }

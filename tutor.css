@@ -28,20 +28,12 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   transition: all 0.3s ease;
-}
-
-body.light-mode {
   background: var(--light-bg);
   color: var(--text-dark);
 }
 
-body:not(.light-mode) {
-  background: var(--navy-bg);
-  color: var(--white);
-}
-
 /* ====================================
-   NAVBAR - MATCHING STUDENT PORTAL
+   NAVBAR - LIGHT MODE STYLING
    ==================================== */
 .glass-nav {
   background-color: var(--navy-bg) !important;
@@ -53,7 +45,7 @@ body:not(.light-mode) {
   top: 0;
   z-index: 1000;
   border-bottom: 3px solid var(--pro-green);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .logo-glow {
@@ -99,7 +91,7 @@ body:not(.light-mode) {
 }
 
 /* ====================================
-   DASHBOARD LAYOUT
+   DASHBOARD LAYOUT - LIGHT MODE
    ==================================== */
 .dashboard-wrapper { 
   display: flex; 
@@ -107,7 +99,7 @@ body:not(.light-mode) {
 }
 
 /* ====================================
-   SIDE PANEL - UPDATED COLORS
+   SIDE PANEL - LIGHT MODE COLORS
    ==================================== */
 .side-panel {
   width: 280px;
@@ -117,7 +109,7 @@ body:not(.light-mode) {
   text-align: center;
   display: flex;
   flex-direction: column;
-  color: white;
+  color: var(--white);
 }
 
 .main-panel { 
@@ -127,12 +119,8 @@ body:not(.light-mode) {
   overflow-y: auto;
 }
 
-body:not(.light-mode) .main-panel {
-  background: var(--navy-bg);
-}
-
 /* ====================================
-   PROFILE SECTION
+   PROFILE SECTION - LIGHT MODE
    ==================================== */
 .profile-summary {
   text-align: center;
@@ -165,7 +153,7 @@ body:not(.light-mode) .main-panel {
 
 .badge-count {
   background: var(--pro-green);
-  color: var(--navy-bg);
+  color: var(--white);
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -173,7 +161,7 @@ body:not(.light-mode) .main-panel {
 }
 
 /* ====================================
-   CONTROL SECTIONS - UPDATED COLORS
+   CONTROL SECTIONS - LIGHT MODE
    ==================================== */
 .tutor-control-section, .management-card {
   background: var(--white);
@@ -185,20 +173,10 @@ body:not(.light-mode) .main-panel {
   transition: all 0.3s;
 }
 
-body:not(.light-mode) .tutor-control-section,
-body:not(.light-mode) .management-card {
-  background: rgba(0, 0, 0, 0.2);
-  border-color: rgba(50, 205, 50, 0.2);
-}
-
 .panel-header h1 {
   color: var(--navy-bg);
   margin-bottom: 30px;
   font-size: 2rem;
-}
-
-body:not(.light-mode) .panel-header h1 {
-  color: var(--white);
 }
 
 .section-header {
@@ -216,12 +194,8 @@ body:not(.light-mode) .panel-header h1 {
   color: var(--navy-bg);
 }
 
-body:not(.light-mode) .section-header h3 {
-  color: var(--white);
-}
-
 /* ====================================
-   STATUS BADGES
+   STATUS BADGES - LIGHT MODE
    ==================================== */
 .status-badge { 
   padding: 8px 20px; 
@@ -238,13 +212,13 @@ body:not(.light-mode) .section-header h3 {
 }
 
 .status-badge.offline { 
-  background: rgba(255, 255, 255, 0.1); 
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.05); 
+  color: #666;
+  border: 1px solid var(--border-color);
 }
 
 /* ====================================
-   INPUT STYLES
+   INPUT STYLES - LIGHT MODE
    ==================================== */
 .input-grid {
   display: grid;
@@ -265,10 +239,6 @@ body:not(.light-mode) .section-header h3 {
   color: var(--navy-bg);
 }
 
-body:not(.light-mode) .input-group label {
-  color: var(--white);
-}
-
 .input-group input, 
 .input-group select, 
 .luxury-select {
@@ -283,14 +253,6 @@ body:not(.light-mode) .input-group label {
   color: var(--text-dark);
 }
 
-body:not(.light-mode) .input-group input,
-body:not(.light-mode) .input-group select,
-body:not(.light-mode) .luxury-select {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--white);
-}
-
 .input-group input:focus, 
 .input-group select:focus, 
 .luxury-select:focus {
@@ -303,12 +265,8 @@ body:not(.light-mode) .luxury-select {
   color: rgba(0, 0, 0, 0.4);
 }
 
-body:not(.light-mode) .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
 /* ====================================
-   BUTTON STYLES
+   BUTTON STYLES - LIGHT MODE
    ==================================== */
 .btn-start { 
   background: var(--pro-green); 
@@ -359,7 +317,7 @@ body:not(.light-mode) .input-group input::placeholder {
 }
 
 /* ====================================
-   UPLOAD SECTION
+   UPLOAD SECTION - LIGHT MODE
    ==================================== */
 .drop-zone {
   border: 2px dashed rgba(50, 205, 50, 0.5);
@@ -385,10 +343,6 @@ body:not(.light-mode) .input-group input::placeholder {
 .drop-zone p {
   color: var(--navy-bg);
   margin-bottom: 5px;
-}
-
-body:not(.light-mode) .drop-zone p {
-  color: var(--white);
 }
 
 .drop-zone span {
@@ -419,7 +373,7 @@ body:not(.light-mode) .drop-zone p {
 }
 
 /* ====================================
-   PROGRESS RING
+   PROGRESS RING - LIGHT MODE
    ==================================== */
 .progress-ring-wrapper { 
   position: relative; 
@@ -438,18 +392,11 @@ body:not(.light-mode) .drop-zone p {
   font-size: 1.2rem;
 }
 
-body:not(.light-mode) .progress-text {
-  color: var(--white);
-}
-
 .upload-hint {
   text-align: center;
-  color: var(--navy-bg);
+  color: var(--text-dark);
   font-style: italic;
-}
-
-body:not(.light-mode) .upload-hint {
-  color: rgba(255, 255, 255, 0.7);
+  opacity: 0.7;
 }
 
 .loading-state {
@@ -460,12 +407,8 @@ body:not(.light-mode) .upload-hint {
   grid-column: 1 / -1;
 }
 
-body:not(.light-mode) .loading-state {
-  color: rgba(255, 255, 255, 0.7);
-}
-
 /* ====================================
-   FILE GRID & MEETINGS
+   FILE GRID & MEETINGS - LIGHT MODE
    ==================================== */
 .file-grid { 
   display: grid; 
@@ -473,8 +416,73 @@ body:not(.light-mode) .loading-state {
   gap: 20px; 
 }
 
+/* Meeting Cards Styling */
+.meeting-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.meeting-card:hover {
+  border-color: var(--pro-green);
+  box-shadow: 0 5px 15px rgba(50, 205, 50, 0.1);
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.meeting-subject {
+  font-weight: 600;
+  color: var(--navy-bg);
+  margin-bottom: 5px;
+}
+
+.meeting-topic {
+  font-size: 1.1rem;
+  color: var(--navy-bg);
+  margin-bottom: 10px;
+}
+
+.meeting-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.meeting-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-join-meeting {
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s;
+}
+
+.btn-join-meeting:hover {
+  background: #28b528;
+}
+
 /* ====================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - LIGHT MODE
    ==================================== */
 @media (max-width: 1024px) {
   .dashboard-wrapper {
@@ -526,6 +534,15 @@ body:not(.light-mode) .loading-state {
     gap: 15px;
     align-items: flex-start;
   }
+  
+  .meeting-actions {
+    flex-direction: column;
+  }
+  
+  .btn-join-meeting {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Landscape Mode */
@@ -536,7 +553,7 @@ body:not(.light-mode) .loading-state {
 }
 
 /* ====================================
-   FILE ICON COLORS (Matching Student Portal)
+   FILE ICON COLORS
    ==================================== */
 .fa-file-pdf { color: #ff4444; }
 .fa-file-word { color: #2d8cff; }
@@ -557,4 +574,23 @@ body:not(.light-mode) .loading-state {
 
 .status-badge.online {
   animation: pulse 2s infinite;
+}
+
+/* ====================================
+   UTILITY CLASSES
+   ==================================== */
+.text-green {
+  color: var(--pro-green);
+}
+
+.text-navy {
+  color: var(--navy-bg);
+}
+
+.bg-light-green {
+  background: rgba(50, 205, 50, 0.1);
+}
+
+.bg-light-navy {
+  background: rgba(0, 0, 51, 0.1);
 }

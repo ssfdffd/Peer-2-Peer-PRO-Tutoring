@@ -133,23 +133,21 @@
 
 <script src="tutor.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  (function() {
     const role = localStorage.getItem('p2p_role');
     const token = localStorage.getItem('p2p_token');
     const name = localStorage.getItem('p2p_name');
 
-    // Display the tutor's name
-    if (name && document.getElementById('tutorNameDisplay')) {
-        document.getElementById('tutorNameDisplay').innerText = name;
-    }
-
-    // Verify the user is a logged-in tutor
     if (!token || role !== 'tutor') {
-        console.warn("Auth check failed. Token exists:", !!token, "Role:", role);
-        alert("Session Expired or Access Denied. Please log in again.");
+        alert("Session Expired. Please log in.");
         window.location.href = 'login.html';
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('tutorNameDisplay');
+            if (display) display.innerText = name || "Tutor";
+        });
     }
-  });
+  })();
 </script>
 </body>
 </html>

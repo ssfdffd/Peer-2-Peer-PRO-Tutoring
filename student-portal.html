@@ -278,24 +278,26 @@
     </div>
 
     <script src="student.js"></script>
-    <script>
-  document.addEventListener('DOMContentLoaded', () => {
+   <script>
+  // Robust Auth Check
+  (function() {
     const role = localStorage.getItem('p2p_role');
     const token = localStorage.getItem('p2p_token');
     const name = localStorage.getItem('p2p_name');
 
-    // Display the user's name if it exists
-    if (name && document.getElementById('studentNameDisplay')) {
-        document.getElementById('studentNameDisplay').innerText = name;
-    }
-
-    // Verify the user is a logged-in student
+    // If no token or wrong role, kick them out immediately
     if (!token || role !== 'student') {
-        console.warn("Auth check failed. Token exists:", !!token, "Role:", role);
-        alert("Session Expired or Access Denied. Please log in again.");
+        console.error("Auth Failure:", { token: !!token, role });
+        alert("Session Expired. Please log in.");
         window.location.href = 'login.html';
+    } else {
+        // If successful, show the name
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('studentNameDisplay');
+            if (display) display.innerText = name || "Student";
+        });
     }
-  });
+  })();
 </script>
 </body>
 </html>

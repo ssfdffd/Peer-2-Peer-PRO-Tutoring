@@ -1,7 +1,6 @@
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Login.js Initialized");
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
 
@@ -11,37 +10,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function handleSignup(e) {
     e.preventDefault();
-    console.log("Signup started...");
-    
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
 
-    // MAPPING: Ensure these strings match the name="" attribute in your HTML exactly
+    // This payload now matches every "name" attribute in your HTML
     const payload = {
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
-        age: parseInt(formData.get('age')) || 0,
+        age: formData.get('age'),
+        grade: formData.get('grade'),
         phone: formData.get('phone'),
-        backupPhone: formData.get('backupPhone') || null,
-        schoolName: formData.get('schoolName'),
-        email: formData.get('email'),
+        backupPhone: formData.get('backupPhone'), // Added
+        schoolName: formData.get('schoolName'),   // Added
         userType: formData.get('userType'),
-        grade: formData.get('grade') || null,
-        schoolCode: formData.get('schoolCode'),
+        schoolCode: formData.get('schoolCode'),   // Added
+        email: formData.get('email'),
         password: formData.get('password'),
-        commercialConsent: formData.get('agreeTerms') === 'on' ? 1 : 0
+        commercialConsent: formData.get('agreeTerms') === 'on'
     };
 
-    console.log("Data to be sent:", payload);
-
-    // Basic Validation: If alert doesn't show, check if payload.email is null here
-    if (!payload.email || !payload.password) {
-        alert("❌ Please fill in all required fields.");
-        return;
-    }
-
     btn.disabled = true;
-    btn.innerText = "Saving to Database...";
+    btn.innerText = "Creating Account...";
 
     try {
         const response = await fetch(`${API_BASE}/api/signup`, {
@@ -49,19 +38,18 @@ async function handleSignup(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
         const result = await response.json();
-        console.log("Server Response:", result);
 
-        if (response.ok && result.success) {
-            alert("✅ ACCOUNT CREATED! You can now log in.");
-            e.target.reset();
+        if (response.ok) {
+            alert("✅ Registration Successful! Please Log In.");
+            // Reset the form so they can log in
+            e.target.reset(); 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            alert("❌ DATABASE ERROR: " + (result.error || "Submission rejected"));
+            alert("Error: " + (result.error || "Signup failed"));
         }
     } catch (err) {
-        console.error("Connection Error:", err);
-        alert("❌ SERVER UNREACHABLE: Please check your internet or Worker status.");
+        alert("Check your internet connection or API status.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Register & Agree";
@@ -72,7 +60,7 @@ async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     
-    // Using FormData for login too to be consistent
+    // Using FormData for login too to stay consistent
     const formData = new FormData(e.target);
     const email = formData.get('email');
     const password = formData.get('password');
@@ -86,19 +74,21 @@ async function handleLogin(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
         const result = await response.json();
 
         if (response.ok && result.success) {
+            // Store details in LocalStorage for use on the resources/dashboard pages
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);
-            localStorage.setItem('p2p_name', result.name || "");
+            localStorage.setItem('p2p_name', result.name);
+            
+            // Redirect to the resources page
             window.location.href = 'resources.html';
         } else {
-            alert("❌ LOGIN FAILED: " + (result.error || "Invalid email or password"));
+            alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
-        alert("❌ CONNECTION ERROR: Auth server is offline.");
+        alert("Auth Server Error. Please try again later.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";

@@ -26,7 +26,7 @@ async function handleSignup(e) {
         schoolCode: formData.get('schoolCode'),   // Added
         email: formData.get('email'),
         password: formData.get('password'),
-        commercialConsent: formData.get('agreeTerms') === 'on'
+      commercialConsent: formData.get('agreeTerms') !== null
     };
 
     btn.disabled = true;

@@ -1,0 +1,163 @@
+:root {
+  --primary-color: #000080;
+  --secondary-color: #f0f8ff;
+  --text-color: #333;
+  --light-text: #ffffff;
+  --accent-color: #32cd32; 
+  --accent-cyan: #00bcd4;
+  --glass-border: #e2e8f0;
+  --primary-blue: #001f3f;
+  --transition-speed: 0.4s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+#navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: var(--primary-color);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.dashboard-wrapper { display: flex; min-height: 100vh; }
+
+.side-panel {
+  width: 260px;
+  background: #001f3f;
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.main-panel { flex: 1; padding: 40px; background: #f4f7f6; }
+
+.tutor-control-section, .management-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.input-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px;}
+.input-group input, .input-group select, .luxury-select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.btn-start { background: #32cd32; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-end { background: #ef4444; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+.drop-zone {
+  border: 2px dashed var(--accent-cyan);
+  background: rgba(0, 188, 212, 0.02);
+  padding: 30px;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.btn-deploy {
+  width: 100%;
+  background: var(--primary-color);
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.status-badge { padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; }
+.status-badge.online { background: #fee2e2; color: #ef4444; }
+.status-badge.offline { background: #f1f5f9; color: #64748b; }
+
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.auth-btn.logout { background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+
+/* Progress Ring CSS */
+.progress-ring-wrapper { position: relative; display: flex; justify-content: center; margin: 20px 0; }
+.progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
+
+/* === 17. TUTOR DASHBOARD MOBILE VIEW === */
+@media (max-width: 768px) {
+    /* Stack the Sidebar and Main Panel vertically */
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    .side-panel {
+        width: 100%;
+        padding: 20px;
+        border-bottom: 2px solid var(--accent-cyan);
+    }
+
+    .main-panel {
+        padding: 20px 15px;
+    }
+
+    /* Convert 2-column input grid to 1-column */
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Navbar adjustment */
+    #navbar {
+        padding: 1rem 15px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    /* Buttons: Stack control buttons for easier tapping */
+    .tutor-control-section .flex-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-start, .btn-end {
+        width: 100%;
+        padding: 15px; /* Larger hit area */
+    }
+
+    /* File Grid: Ensure cards don't get too thin */
+    .file-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Drop Zone scaling */
+    .drop-zone {
+        padding: 20px;
+    }
+}
+
+/* Landscape Mode: Ensure sidebar doesn't take too much height */
+@media (max-height: 500px) and (orientation: landscape) {
+    .side-panel {
+        display: none; /* Hide profile summary to focus on controls */
+    }
+}

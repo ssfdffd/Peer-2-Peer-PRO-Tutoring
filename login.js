@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function logout() {
-    localStorage.clear();
+    localStorage.clear(); // Clears all permanent session data
     window.location.href = 'login.html';
 }
 
@@ -39,6 +39,7 @@ async function handleForgotSubmit() {
             body: JSON.stringify({ email })
         });
         
+        // Success message is shown regardless of whether the email exists for security
         alert("If an account exists for this email, a recovery link will be sent shortly.");
         closeForgotModal();
     } catch (err) {
@@ -96,7 +97,7 @@ async function handleSignup(e) {
     }
 }
 
-// --- UPDATED LOGIN LOGIC (FIXED REDIRECT) ---
+// --- UPDATED LOGIN LOGIC (FIXED REDIRECT & PERMANENT SESSION) ---
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -116,7 +117,7 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // 1. Wipe old "expired" session ghosts
+            // 1. Wipe any old session data
             localStorage.clear();
 
             // 2. Store new permanent details
@@ -124,7 +125,7 @@ async function handleLogin(e) {
             localStorage.setItem('p2p_role', result.role);
             localStorage.setItem('p2p_name', result.name);
             
-            // 3. Tiny delay ensures data is saved before the portal tries to read it
+            // 3. Short delay to ensure localStorage is physically saved
             setTimeout(() => {
                 if (result.role === 'tutor') {
                     window.location.href = 'tutor-portal.html';
@@ -133,9 +134,11 @@ async function handleLogin(e) {
                 }
             }, 100);
         } else {
+            // Error handling for invalid credentials
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
+        // Error handling for server-side issues
         alert("Auth Server Error. Please try again later.");
     } finally {
         btn.disabled = false;

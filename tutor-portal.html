@@ -133,18 +133,15 @@
 
 <script src="tutor.js"></script>
 <script>
-  window.onload = function() {
+  window.addEventListener('load', () => {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
-      // If token is missing or role is wrong, redirect to login
+      // The server no longer tracks expiration, so we only check if the key is present
       if (!token || role !== 'tutor') {
           window.location.href = 'login.html';
-      } else {
-          // Update the display name
-          document.getElementById('tutorNameDisplay').innerText = localStorage.getItem('p2p_name') || "Tutor";
       }
-  };
+  });
 </script>
 </body>
 </html>

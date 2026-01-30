@@ -279,17 +279,14 @@
 
     <script src="student.js"></script>
   <script>
-  window.onload = function() {
+  window.addEventListener('load', () => {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
       if (!token || role !== 'student') {
           window.location.href = 'login.html';
-      } else {
-          // Update the display name
-          document.getElementById('studentNameDisplay').innerText = localStorage.getItem('p2p_name') || "Student";
       }
-  };
+  });
 </script>
 </body>
 </html>

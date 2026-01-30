@@ -133,18 +133,19 @@
 
 <script src="tutor.js"></script>
 <script>
-  window.onload = function() {
+  // Simplified permanent session check
+  (function() {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
-      // Change 'student' to 'tutor' in the tutor-portal.html file
+      // For student-portal.html use 'student', for tutor-portal.html use 'tutor'
       const requiredRole = 'tutor'; 
 
       if (!token || role !== requiredRole) {
-          console.log("Auth failed. Redirecting...");
+          // No alert needed here to avoid annoying the user
           window.location.href = 'login.html';
       }
-  };
+  })();
 </script>
 </body>
 </html>

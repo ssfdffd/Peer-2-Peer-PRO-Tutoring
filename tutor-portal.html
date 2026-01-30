@@ -133,21 +133,18 @@
 
 <script src="tutor.js"></script>
 <script>
-  (function() {
-    const role = localStorage.getItem('p2p_role');
-    const token = localStorage.getItem('p2p_token');
-    const name = localStorage.getItem('p2p_name');
+  window.onload = function() {
+      const role = localStorage.getItem('p2p_role');
+      const token = localStorage.getItem('p2p_token');
+      
+      // Change 'student' to 'tutor' in the tutor-portal.html file
+      const requiredRole = 'tutor'; 
 
-    if (!token || role !== 'tutor') {
-        alert("Session Expired. Please log in.");
-        window.location.href = 'login.html';
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            const display = document.getElementById('tutorNameDisplay');
-            if (display) display.innerText = name || "Tutor";
-        });
-    }
-  })();
+      if (!token || role !== requiredRole) {
+          console.log("Auth failed. Redirecting...");
+          window.location.href = 'login.html';
+      }
+  };
 </script>
 </body>
 </html>

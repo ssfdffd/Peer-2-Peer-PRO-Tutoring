@@ -119,6 +119,7 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
+            localStorage.clear();
             // Store user details in the browser memory
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);

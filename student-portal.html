@@ -279,19 +279,18 @@
 
     <script src="student.js"></script>
   <script>
-  // Simplified permanent session check
+  // Simplified permanent session check for Students
   (function() {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
-      // For student-portal.html use 'student', for tutor-portal.html use 'tutor'
-      const requiredRole = 'student'; 
-
-      if (!token || role !== requiredRole) {
-          // No alert needed here to avoid annoying the user
+      if (!token || role !== 'student') {
+          console.log("Student Auth failed. Role found:", role);
           window.location.href = 'login.html';
       }
   })();
-</script>
+  //fix tutor redirect 
+</script> 
+/
 </body>
 </html>

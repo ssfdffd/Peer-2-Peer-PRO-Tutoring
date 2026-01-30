@@ -133,16 +133,14 @@
 
 <script src="tutor.js"></script>
 <script>
-  // Simplified permanent session check
+  // Simplified permanent session check for Tutors
   (function() {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
-      // For student-portal.html use 'student', for tutor-portal.html use 'tutor'
-      const requiredRole = 'tutor'; 
-
-      if (!token || role !== requiredRole) {
-          // No alert needed here to avoid annoying the user
+      // IMPORTANT: Ensure this matches 'tutor' exactly
+      if (!token || role !== 'tutor') {
+          console.log("Tutor Auth failed. Role found:", role);
           window.location.href = 'login.html';
       }
   })();

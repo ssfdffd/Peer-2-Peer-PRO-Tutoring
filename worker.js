@@ -100,20 +100,21 @@ export default {
         
         const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
 
-        if (user && await verifyPassword(password, user.password_hash)) {
-          const token = await generateJWT({
-            id: user.id,
-            role: user.user_type,
-            email: user.email
-          }, secret);
+        // Inside your login block in worker.js
+if (user && await verifyPassword(password, user.password_hash)) {
+    const token = await generateJWT({
+        id: user.id,
+        role: user.user_type, // This MUST be 'student' or 'tutor'
+        email: user.email
+    }, secret);
 
-          return new Response(JSON.stringify({
-            success: true,
-            token,
-            role: user.user_type,
-            name: user.first_name
-          }), { headers: corsHeaders });
-        }
+    return new Response(JSON.stringify({
+        success: true,
+        token,
+        role: user.user_type, // Ensure this matches what you saved in signup
+        name: user.first_name
+    }), { headers: corsHeaders });
+}
     
         return new Response(JSON.stringify({ error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
       }

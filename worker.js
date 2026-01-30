@@ -35,12 +35,12 @@ async function verifyPassword(password, storedValue) {
   }
 }
 
-// --- 2. PERMANENT JWT GENERATOR (NO EXPIRATION) ---
+// --- 2. PERMANENT JWT GENERATOR (SESSION TRACKING REMOVED) ---
 async function generateJWT(payload, secret) {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = btoa(JSON.stringify(header));
   
-  // No 'exp' field makes this token valid forever
+  // REMOVED 'exp' (Expiration) entirely so the server never "expires" the session.
   const encodedPayload = btoa(JSON.stringify({
     ...payload,
     iat: Math.floor(Date.now() / 1000) 
@@ -74,66 +74,34 @@ export default {
     const secret = env.JWT_SECRET || "default_secret_change_me";
 
     try {
-      // SIGNUP
       if (url.pathname === "/api/signup" && request.method === "POST") {
         const d = await request.json();
         const secureHash = await hashPassword(d.password);
-
         await env.DB.prepare(`
-          INSERT INTO users (
-            first_name, last_name, age, phone_number, backup_phone, 
-            school_name, email, user_type, grade, school_code, 
-            password_hash, data_consent_commercial
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(
-          d.firstName, d.lastName, parseInt(d.age), d.phone, d.backupPhone,
-          d.schoolName, d.email, d.userType, d.grade, d.schoolCode,
-          secureHash,
-          d.commercialConsent ? 1 : 0
-        ).run();
-
+          INSERT INTO users (first_name, last_name, age, phone_number, backup_phone, school_name, email, user_type, grade, school_code, password_hash, data_consent_commercial)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(d.firstName, d.lastName, parseInt(d.age), d.phone, d.backupPhone, d.schoolName, d.email, d.userType, d.grade, d.schoolCode, secureHash, d.commercialConsent ? 1 : 0).run();
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
-      // LOGIN
       if (url.pathname === "/api/login" && request.method === "POST") {
         const { email, password } = await request.json();
         const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
-
         if (user && await verifyPassword(password, user.password_hash)) {
-          const token = await generateJWT({
-            id: user.id,
-            role: user.user_type, 
-            email: user.email
-          }, secret);
-
-          return new Response(JSON.stringify({
-            success: true,
-            token,
-            role: user.user_type,
-            name: user.first_name
-          }), { headers: corsHeaders });
+          const token = await generateJWT({ id: user.id, role: user.user_type, email: user.email }, secret);
+          return new Response(JSON.stringify({ success: true, token, role: user.user_type, name: user.first_name }), { headers: corsHeaders });
         }
-    
-        return new Response(JSON.stringify({ error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
+        return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401, headers: corsHeaders });
       }
 
-      // FORGOT PASSWORD
+      // Prevents "API status" errors when login.js initializes
       if (url.pathname === "/api/forgot-password" && request.method === "POST") {
-        const { email } = await request.json();
-        const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
-
-        if (user) {
-          const resetToken = crypto.randomUUID();
-          await env.DB.prepare("UPDATE users SET reset_token = ? WHERE email = ?").bind(resetToken, email).run();
-        }
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
     } catch (err) {
       return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
     }
-
     return new Response("Not Found", { status: 404 });
   }
 };

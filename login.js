@@ -9,12 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
 });
 
+/**
+ * LOGOUT LOGIC
+ * Wipes the browser memory and returns to login
+ */
 function logout() {
-    localStorage.clear(); // Wipe all permanent data
+    localStorage.clear();
     window.location.href = 'login.html';
 }
 
-// --- FORGOT PASSWORD MODAL LOGIC ---
+/**
+ * FORGOT PASSWORD MODAL LOGIC
+ */
 function showForgotModal() {
     document.getElementById('forgotModal').style.display = 'flex';
 }
@@ -39,7 +45,7 @@ async function handleForgotSubmit() {
             body: JSON.stringify({ email })
         });
         
-        alert("If an account exists for this email, a recovery link will be sent shortly.");
+        alert("If an account exists, a recovery link will be sent shortly.");
         closeForgotModal();
     } catch (err) {
         alert("Server error. Please check your connection.");
@@ -49,7 +55,10 @@ async function handleForgotSubmit() {
     }
 }
 
-// --- SIGNUP LOGIC ---
+/**
+ * SIGNUP LOGIC
+ * Creates a new account in the D1 Database
+ */
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -82,21 +91,24 @@ async function handleSignup(e) {
         const result = await response.json();
 
         if (response.ok) {
-            alert("✅ Registration Successful! Please Log In.");
+            alert("✅ Account created successfully! You can now log in.");
             e.target.reset(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            alert("Error: " + (result.error || "Signup failed"));
+            alert("Signup Failed: " + (result.error || "Please check your details."));
         }
     } catch (err) {
-        alert("Check your internet connection or API status.");
+        alert("Connection Error: Please check your internet or API status.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Register & Agree";
     }
 }
 
-// --- UPDATED LOGIN LOGIC (FIXED REDIRECT & PERMANENT SESSION) ---
+/**
+ * LOGIN LOGIC
+ * Authenticates user and sets a permanent session
+ */
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -116,27 +128,28 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // 1. Wipe any old session data
+            // 1. Wipe any old session artifacts
             localStorage.clear();
 
-            // 2. Store new permanent details
+            // 2. Save the permanent credentials
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);
             localStorage.setItem('p2p_name', result.name);
             
-            // 3. 100ms delay ensures localStorage is physically saved
+            // 3. Short delay to ensure the browser has written to storage 
+            // before the portal security guards try to read it.
             setTimeout(() => {
                 if (result.role === 'tutor') {
                     window.location.href = 'tutor-portal.html';
                 } else {
                     window.location.href = 'student-portal.html';
                 }
-            }, 100);
+            }, 150);
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
-        alert("Auth Server Error. Please try again later.");
+        alert("Auth Server Error: Please check your connection.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";

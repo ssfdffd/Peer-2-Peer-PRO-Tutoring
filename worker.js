@@ -41,10 +41,9 @@ async function generateJWT(payload, secret) {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = btoa(JSON.stringify(header));
   
-  // REMOVED 'exp' line to make token permanent
   const encodedPayload = btoa(JSON.stringify({
     ...payload,
-    iat: Math.floor(Date.now() / 1000) // 'Issued At' timestamp
+    iat: Math.floor(Date.now() / 1000) // 'iat' only, no 'exp'
   }));
 
   const key = await crypto.subtle.importKey(
@@ -59,7 +58,6 @@ async function generateJWT(payload, secret) {
     
   return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 }
-
 // --- 3. MAIN WORKER LOGIC ---
 export default {
   async fetch(request, env) {

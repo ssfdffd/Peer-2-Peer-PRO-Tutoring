@@ -2,12 +2,10 @@ name = "damp-art-617fp2p-authentification-login"
 main = "worker.js"
 compatibility_date = "2024-04-01"
 
-# This section connects your Worker to your Database
 [[d1_databases]]
 binding = "DB"
 database_name = "peer_db" 
-database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"   
+database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"
 
-# This section handles your secret key
 [vars]
 JWT_SECRET = "nqYvCP4%&^yMD^aMrwfv3U%HN8twKV27"

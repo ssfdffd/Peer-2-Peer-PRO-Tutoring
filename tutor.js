@@ -1,30 +1,57 @@
-// --- 1. INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    const userType = localStorage.getItem('userType');
-    const userName = localStorage.getItem('userName');
+// ============================================
+// TUTOR PORTAL - SECURE PRODUCTION VERSION
+// ============================================
 
-    if (userType !== 'tutor') {
-        alert("Access Denied: Tutor privileges required.");
+const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
+
+// UI-only data from sessionStorage
+const tutorName = sessionStorage.getItem("p2p_name") || "Tutor";
+const tutorRole = sessionStorage.getItem("p2p_role");
+
+// ============================================
+// 1. SECURE SESSION VALIDATION
+// ============================================
+
+/**
+ * Validates the cookie session with the Cloudflare Worker.
+ * If the 30-day refresh token is expired, it redirects to login.
+ */
+async function validateTutorSession() {
+    try {
+        const response = await fetch(`${API_BASE}/api/verify-session`, {
+            method: 'GET',
+            credentials: 'include' // CRITICAL: Sends HTTP-Only cookies to the worker
+        });
+
+        const result = await response.json();
+
+        // Check if authenticated and if the user is actually a tutor
+        if (!response.ok || !result.authenticated || tutorRole !== "tutor") {
+            throw new Error("Unauthorized Tutor Access");
+        }
+
+        console.log("✅ Tutor Session Verified");
+        
+        // Update UI Name
+        const display = document.getElementById('tutorNameDisplay');
+        if (display) display.innerText = tutorName;
+
+    } catch (err) {
+        console.error("❌ Auth Failed:", err);
+        sessionStorage.clear();
         window.location.href = "login.html";
-        return;
     }
+}
 
-    if (document.getElementById('tutorNameDisplay')) {
-        document.getElementById('tutorNameDisplay').innerText = userName;
-    }
+// ============================================
+// 2. LIVE SESSION LOGIC
+// ============================================
 
-    loadMyMeetings();
-    setupFileUpload();
-});
-
-// --- 2. LIVE SESSION LOGIC (DATABASE & BROADCAST) ---
 async function saveAndToggleLive(isStarting) {
     const topic = document.getElementById('lessonTopic').value;
     const subject = document.getElementById('lessonSubject').value;
     const time = document.getElementById('lessonTime').value;
     const link = document.getElementById('meetingLink').value;
-    const tutorName = localStorage.getItem('userName');
-    const school_id = localStorage.getItem('school_id') || 'public';
 
     if (isStarting && (!topic || !link || !time)) {
         alert("Please fill in Topic, Link, and Date/Time.");
@@ -32,141 +59,94 @@ async function saveAndToggleLive(isStarting) {
     }
 
     const payload = {
-        tutorName, topic, subject, startTime: time, link, school_id, active: isStarting
+        tutorName, 
+        topic, 
+        subject, 
+        startTime: time, 
+        link, 
+        active: isStarting
     };
 
     try {
-        // 1. Save to Database (Schedule)
-        const scheduleRes = await fetch('/api/tutor/schedule-meeting', {
+        const response = await fetch(`${API_BASE}/api/meetings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            credentials: 'include'
         });
 
-        // 2. Broadcast Live Signal to Platform
-        const liveRes = await fetch('/api/admin/toggle-session', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'x-user-role': 'tutor' 
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (scheduleRes.ok && liveRes.ok) {
-            alert(isStarting ? "Session is now LIVE for all students!" : "Session ended.");
-            updateUI(isStarting);
+        if (response.ok) {
+            alert(isStarting ? "🚀 Session is now LIVE!" : "Session ended.");
             loadMyMeetings();
         }
     } catch (err) {
-        console.error("Error toggling session:", err);
-        alert("Server connection failed.");
+        alert("Failed to update session status.");
     }
 }
 
-function updateUI(isLive) {
-    document.getElementById('liveStatusBadge').innerText = isLive ? "LIVE" : "Offline";
-    document.getElementById('liveStatusBadge').className = isLive ? "status-badge online" : "status-badge offline";
-    document.getElementById('startBtn').style.display = isLive ? 'none' : 'block';
-    document.getElementById('endBtn').style.display = isLive ? 'block' : 'none';
-}
+// ============================================
+// 3. MEETING MANAGEMENT
+// ============================================
 
-// --- 3. MEETING LIST ---
 async function loadMyMeetings() {
-    const tutorName = localStorage.getItem('userName');
-    const container = document.getElementById('myMeetingsList');
-    
-    try {
-        const res = await fetch(`/api/tutor/my-meetings?tutorName=${tutorName}`);
-        const meetings = await res.json();
-        
-        if (!meetings || meetings.length === 0) {
-            container.innerHTML = "<p>No scheduled meetings yet.</p>";
-            return;
-        }
+    const list = document.getElementById('myMeetingsList');
+    if (!list) return;
 
-        container.innerHTML = meetings.map(m => `
-            <div class="management-card" style="border-left: 5px solid #000080;">
-                <h4>${m.topic}</h4>
-                <p><strong>Subject:</strong> ${m.subject}</p>
-                <p><strong>Date:</strong> ${new Date(m.startTime).toLocaleString()}</p>
-                <a href="${m.link}" target="_blank" class="status-badge online" style="text-decoration:none; margin-top:10px;">Join Link</a>
-            </div>
-        `).join('');
+    try {
+        const response = await fetch(`${API_BASE}/api/my-meetings`, {
+            credentials: 'include'
+        });
+        const meetings = await response.json();
+
+        list.innerHTML = meetings.length ? '' : '<div class="loading-state">No meetings scheduled.</div>';
+        
+        meetings.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.innerHTML = `
+                <div class="file-info">
+                    <strong>${m.topic}</strong>
+                    <span>${m.subject} | ${new Date(m.startTime).toLocaleString()}</span>
+                </div>
+                <button class="btn-delete" onclick="deleteMeeting(${m.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            list.appendChild(card);
+        });
+        
+        document.getElementById('meetingCount').innerText = `${meetings.length} meetings`;
     } catch (err) {
-        console.error("Failed to load meetings.");
+        list.innerHTML = '<div class="error-state">Error loading meetings.</div>';
     }
 }
 
-// --- 4. FILE UPLOADS ---
-function setupFileUpload() {
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('fileInput');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    if(!dropZone || !fileInput) return;
-
-    dropZone.onclick = () => fileInput.click();
-
-    fileInput.onchange = () => {
-        if (fileInput.files.length > 0) {
-            document.getElementById('drop-text').innerHTML = `<b>Selected: ${fileInput.files[0].name}</b>`;
-        }
-    };
-
-    uploadBtn.onclick = async () => {
-        const file = fileInput.files[0];
-        const name = document.getElementById('studentFileName').value;
-        const subject = document.getElementById('materialSubject').value;
-
-        if (!file || !name) {
-            alert("Please provide a title and select a file.");
-            return;
-        }
-
-        uploadBtn.style.display = 'none';
-        document.getElementById('active-upload-status').style.display = 'block';
-
-        const formData = new FormData();
-        formData.append('studyMaterial', file);
-        formData.append('displayName', name);
-        formData.append('subject', subject);
-        formData.append('uploadedBy', localStorage.getItem('userName'));
-        formData.append('school_id', localStorage.getItem('school_id') || 'public');
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/upload', true);
-
-        xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) {
-                const percent = (e.loaded / e.total) * 100;
-                setUploadProgress(percent);
-            }
-        };
-
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                alert("Upload Successful!");
-                location.reload();
-            } else {
-                alert("Upload failed.");
-                uploadBtn.style.display = 'block';
-                document.getElementById('active-upload-status').style.display = 'none';
-            }
-        };
-        xhr.send(formData);
-    };
-}
-
-function setUploadProgress(percent) {
-    const circle = document.getElementById('uploadProgressCircle');
-    const circumference = 52 * 2 * Math.PI;
-    const offset = circumference - (percent / 100 * circumference);
-    circle.style.strokeDashoffset = offset;
-    document.getElementById('progressPercent').innerText = `${Math.round(percent)}%`;
-}
+// ============================================
+// 4. UTILITY & LOGOUT
+// ============================================
 
 function logout() {
-    localStorage.clear();
-    window.location.href = "login.html";
+    if (confirm("Are you sure you want to logout?")) {
+        sessionStorage.clear();
+        // Browser handles cookie clearing or expiry automatically
+        window.location.href = "login.html";
+    }
 }
+
+// ============================================
+// INITIALIZE ON LOAD
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Validate session first
+    validateTutorSession().then(() => {
+        // 2. If valid, load data
+        loadMyMeetings();
+        
+        // Setup form listeners if they exist
+        const liveBtn = document.getElementById('startLiveBtn');
+        if (liveBtn) {
+            liveBtn.addEventListener('click', () => saveAndToggleLive(true));
+        }
+    });
+});

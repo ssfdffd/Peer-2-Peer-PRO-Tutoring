@@ -1,7 +1,16 @@
-// login.js
+/**
+ * PEER-2-PEER PRO - Authentication Handler
+ * Handles Signup and Secure Cookie-based Login
+ */
+
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Clear any old UI-only data on load to ensure a clean state
+    if (window.location.pathname.includes('login.html')) {
+        sessionStorage.clear();
+    }
+
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
 
@@ -10,60 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * LOGOUT LOGIC
- * Wipes the browser memory and returns to login
- */
-function logout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
-
-/**
- * FORGOT PASSWORD MODAL LOGIC
- */
-function showForgotModal() {
-    document.getElementById('forgotModal').style.display = 'flex';
-}
-
-function closeForgotModal() {
-    document.getElementById('forgotModal').style.display = 'none';
-}
-
-async function handleForgotSubmit() {
-    const email = document.getElementById('forgotEmail').value;
-    const btn = document.getElementById('forgotBtn');
-
-    if (!email) return alert("Please enter your email address.");
-
-    btn.disabled = true;
-    btn.innerText = "Checking...";
-
-    try {
-        const response = await fetch(`${API_BASE}/api/forgot-password`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        
-        alert("If an account exists, a recovery link will be sent shortly.");
-        closeForgotModal();
-    } catch (err) {
-        alert("Server error. Please check your connection.");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Send Recovery Link";
-    }
-}
-
-/**
- * SIGNUP LOGIC
- * Creates a new account in the D1 Database
+ * SIGNUP HANDLER
  */
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
 
+    // Prepare data exactly as the Worker expects
     const payload = {
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
@@ -88,17 +51,17 @@ async function handleSignup(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
+
         const result = await response.json();
 
         if (response.ok) {
-            alert("✅ Account created successfully! You can now log in.");
-            e.target.reset(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert("✅ Account created successfully! Please sign in.");
+            window.location.reload(); // Refresh to show login state
         } else {
-            alert("Signup Failed: " + (result.error || "Please check your details."));
+            alert("Signup Error: " + (result.error || "Please try again."));
         }
     } catch (err) {
-        alert("Connection Error: Please check your internet or API status.");
+        alert("Network Error: Please check your internet connection.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Register & Agree";
@@ -106,52 +69,97 @@ async function handleSignup(e) {
 }
 
 /**
- * LOGIN LOGIC
- * Authenticates user and sets a permanent session
+ * LOGIN HANDLER
+ * Uses HTTP-Only Cookies for Session Management
  */
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
+    
     const email = formData.get('email');
     const password = formData.get('password');
 
     btn.disabled = true;
-    btn.innerText = "Verifying...";
+    btn.innerText = "Authenticating...";
 
     try {
         const response = await fetch(`${API_BASE}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            // CRITICAL: Tells the browser to accept and store the Set-Cookie header
+            credentials: 'include' 
         });
+
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // 1. Wipe any old session artifacts
-            localStorage.clear();
-
-            // 2. Save the permanent credentials
-            localStorage.setItem('p2p_token', result.token);
-            localStorage.setItem('p2p_role', result.role);
-            localStorage.setItem('p2p_name', result.name);
+            // Save non-sensitive info for UI display only
+            sessionStorage.setItem('p2p_name', result.name);
+            sessionStorage.setItem('p2p_role', result.role);
             
-            // 3. Short delay to ensure the browser has written to storage 
-            // before the portal security guards try to read it.
+            // Short delay to ensure browser handles the cookie write
             setTimeout(() => {
                 if (result.role === 'tutor') {
                     window.location.href = 'tutor-portal.html';
                 } else {
                     window.location.href = 'student-portal.html';
                 }
-            }, 150);
+            }, 100);
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
-        alert("Auth Server Error: Please check your connection.");
+        alert("Auth Server Error: " + err.message);
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";
+    }
+}
+
+/**
+ * LOGOUT HANDLER
+ */
+function logout() {
+    // Clear UI data
+    sessionStorage.clear();
+    // Redirect to login (the worker will handle cookie invalidation if needed)
+    window.location.href = 'login.html';
+}
+
+// --- Forgot Password Logic ---
+function showForgotModal() {
+    const modal = document.getElementById('forgotModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeForgotModal() {
+    const modal = document.getElementById('forgotModal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function handleForgotSubmit() {
+    const email = document.getElementById('forgotEmail').value;
+    const btn = document.getElementById('forgotBtn');
+
+    if (!email) return alert("Please enter your email.");
+
+    btn.disabled = true;
+    btn.innerText = "Sending...";
+
+    try {
+        await fetch(`${API_BASE}/api/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        alert("Request received. If the email exists, instructions will be sent.");
+        closeForgotModal();
+    } catch (err) {
+        alert("Error connecting to server.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Send Recovery Link";
     }
 }

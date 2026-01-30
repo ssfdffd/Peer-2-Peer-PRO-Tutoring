@@ -279,18 +279,19 @@
 
     <script src="student.js"></script>
   <script>
-  // Simplified permanent session check for Students
-  (function() {
+  // Patient Security Guard for Students
+  window.addEventListener('load', () => {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
       if (!token || role !== 'student') {
-          console.log("Student Auth failed. Role found:", role);
+          console.warn("Auth Guard: Missing credentials for Student");
           window.location.href = 'login.html';
+      } else {
+          const nameDisplay = document.getElementById('studentNameDisplay');
+          if(nameDisplay) nameDisplay.innerText = localStorage.getItem('p2p_name') || "Student";
       }
-  })();
-  //fix tutor redirect 
-</script> 
-/
+  });
+</script>
 </body>
 </html>

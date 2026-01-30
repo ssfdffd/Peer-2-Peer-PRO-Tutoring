@@ -133,17 +133,21 @@
 
 <script src="tutor.js"></script>
 <script>
-  // Simplified permanent session check for Tutors
-  (function() {
+  // Patient Security Guard for Tutors
+  window.addEventListener('load', () => {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
-      // IMPORTANT: Ensure this matches 'tutor' exactly
+      // We check for 'tutor'. If it's missing, redirect.
       if (!token || role !== 'tutor') {
-          console.log("Tutor Auth failed. Role found:", role);
+          console.warn("Auth Guard: Missing credentials for Tutor");
           window.location.href = 'login.html';
+      } else {
+          // Fill in the name if the element exists
+          const nameDisplay = document.getElementById('tutorNameDisplay');
+          if(nameDisplay) nameDisplay.innerText = localStorage.getItem('p2p_name') || "Tutor";
       }
-  })();
+  });
 </script>
 </body>
 </html>

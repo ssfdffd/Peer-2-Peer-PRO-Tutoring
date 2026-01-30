@@ -1,3 +1,4 @@
+// login.js
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,23 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
 });
+
 function logout() {
-    localStorage.removeItem('p2p_token');
-    localStorage.removeItem('p2p_role');
-    localStorage.removeItem('p2p_name');
+    localStorage.clear();
     window.location.href = 'login.html';
 }
-// Function to show the Forgot Password pop-up
+
+// --- FORGOT PASSWORD MODAL LOGIC ---
 function showForgotModal() {
     document.getElementById('forgotModal').style.display = 'flex';
 }
 
-// Function to close the pop-up
 function closeForgotModal() {
     document.getElementById('forgotModal').style.display = 'none';
 }
 
-// Function to send the reset request to your Worker
 async function handleForgotSubmit() {
     const email = document.getElementById('forgotEmail').value;
     const btn = document.getElementById('forgotBtn');
@@ -40,8 +39,6 @@ async function handleForgotSubmit() {
             body: JSON.stringify({ email })
         });
         
-        // We always show a success message even if email isn't found 
-        // to prevent hackers from guessing who has an account.
         alert("If an account exists for this email, a recovery link will be sent shortly.");
         closeForgotModal();
     } catch (err) {
@@ -51,12 +48,13 @@ async function handleForgotSubmit() {
         btn.innerText = "Send Recovery Link";
     }
 }
+
+// --- SIGNUP LOGIC ---
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
 
-    // Captures all fields from your HTML form
     const payload = {
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
@@ -69,7 +67,6 @@ async function handleSignup(e) {
         schoolCode: formData.get('schoolCode'),
         email: formData.get('email'),
         password: formData.get('password'),
-        // Checkbox returns null if unchecked, or a value if checked
         commercialConsent: formData.get('agreeTerms') !== null
     };
 
@@ -99,6 +96,7 @@ async function handleSignup(e) {
     }
 }
 
+// --- UPDATED LOGIN LOGIC (FIXED REDIRECT) ---
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -119,18 +117,22 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
+            // Wipe any old session data to prevent "expired" conflicts
             localStorage.clear();
-            // Store user details in the browser memory
+
+            // Store new permanent details
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);
             localStorage.setItem('p2p_name', result.name);
             
-            // SMART REDIRECT: Send user to their specific portal
-            if (result.role === 'tutor') {
-                window.location.href = 'tutor-portal.html';
-            } else {
-                window.location.href = 'student-portal.html';
-            }
+            // Short delay to ensure localStorage is physically saved
+            setTimeout(() => {
+                if (result.role === 'tutor') {
+                    window.location.href = 'tutor-portal.html';
+                } else {
+                    window.location.href = 'student-portal.html';
+                }
+            }, 100);
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }

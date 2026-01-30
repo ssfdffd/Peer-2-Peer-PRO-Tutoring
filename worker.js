@@ -36,13 +36,15 @@ async function verifyPassword(password, storedValue) {
 }
 
 // --- 2. PERMANENT JWT GENERATOR ---
+// --- PERMANENT JWT GENERATOR ---
 async function generateJWT(payload, secret) {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = btoa(JSON.stringify(header));
   
+  // REMOVED 'exp' line to make token permanent
   const encodedPayload = btoa(JSON.stringify({
     ...payload,
-    iat: Math.floor(Date.now() / 1000) // Issued at (No 'exp' field means it won't expire)
+    iat: Math.floor(Date.now() / 1000) // 'Issued At' timestamp
   }));
 
   const key = await crypto.subtle.importKey(

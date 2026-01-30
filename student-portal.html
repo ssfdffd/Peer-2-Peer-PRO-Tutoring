@@ -279,19 +279,17 @@
 
     <script src="student.js"></script>
   <script>
-  // Patient Security Guard for Students
-  window.addEventListener('load', () => {
+  window.onload = function() {
       const role = localStorage.getItem('p2p_role');
       const token = localStorage.getItem('p2p_token');
       
       if (!token || role !== 'student') {
-          console.warn("Auth Guard: Missing credentials for Student");
           window.location.href = 'login.html';
       } else {
-          const nameDisplay = document.getElementById('studentNameDisplay');
-          if(nameDisplay) nameDisplay.innerText = localStorage.getItem('p2p_name') || "Student";
+          // Update the display name
+          document.getElementById('studentNameDisplay').innerText = localStorage.getItem('p2p_name') || "Student";
       }
-  });
+  };
 </script>
 </body>
 </html>

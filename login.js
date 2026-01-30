@@ -100,7 +100,6 @@ async function handleSignup(e) {
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
-    
     const formData = new FormData(e.target);
     const email = formData.get('email');
     const password = formData.get('password');
@@ -117,15 +116,15 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // Wipe any old session data to prevent "expired" conflicts
+            // 1. Wipe old "expired" session ghosts
             localStorage.clear();
 
-            // Store new permanent details
+            // 2. Store new permanent details
             localStorage.setItem('p2p_token', result.token);
             localStorage.setItem('p2p_role', result.role);
             localStorage.setItem('p2p_name', result.name);
             
-            // Short delay to ensure localStorage is physically saved
+            // 3. Tiny delay ensures data is saved before the portal tries to read it
             setTimeout(() => {
                 if (result.role === 'tutor') {
                     window.location.href = 'tutor-portal.html';

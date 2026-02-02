@@ -143,6 +143,11 @@ async function handleForgotSubmit() {
     const btn = document.getElementById('forgotBtn');
 
     if (!email) return alert("Please enter your email.");
+    
+    // SAFETY CHECK: Ensure EmailJS is loaded to avoid "undefined" errors
+    if (typeof emailjs === 'undefined') {
+        return alert("Email service is still loading. Please wait a moment and try again.");
+    }
 
     btn.disabled = true;
     btn.innerText = "Sending...";
@@ -153,35 +158,35 @@ async function handleForgotSubmit() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
-            credentials: 'include' // Required for cross-origin requests
+            credentials: 'include' 
         });
 
-        if (!response.ok) throw new Error("Server could not process reset request.");
-        
+        // Parse the JSON immediately
         const result = await response.json();
 
-        // 2. If a token was returned, send the email via EmailJS
-        if (result.success && result.token) {
+        // 2. Explicitly check if success is true and token exists
+        if (result && result.success === true && result.token) {
             await emailjs.send(
-                "peer-2-peer_email", // Your Service ID
-                "template_07x82zzo", // Your Template ID
+                "peer-2-peer_email", 
+                "template_07x82zzo", 
                 {
                     to_email: email,
                     reset_token: result.token, 
                     reset_link: `https://peer-2-peer.co.za/reset-password.html?token=${result.token}`
                 }, 
-                "1MGUTlF8hOxhOc27a" // Your Public Key
+                "1MGUTlF8hOxhOc27a"
             );
 
             alert("Check your email! A secure recovery link has been sent.");
             closeForgotModal();
         } else {
-            // We show success even if email not found for security
+            // Security: show generic message if user not found (success still true but no token)
             alert("If that email is registered, you will receive a reset link shortly.");
             closeForgotModal();
         }
     } catch (err) {
-        alert("Recovery Error: " + err.message);
+        console.error("Reset Error:", err);
+        alert("Recovery Error: " + (err.message || "Unknown error occurred"));
     } finally {
         btn.disabled = false;
         btn.innerText = "Send Recovery Link";

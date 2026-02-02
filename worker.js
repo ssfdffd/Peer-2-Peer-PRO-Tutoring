@@ -84,11 +84,11 @@ export default {
       if (url.pathname === "/api/signup" && request.method === "POST") {
         const d = await request.json();
         const password = d.password;
-        // Requirements: Min 8 chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Special Char
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!password || !strongPasswordRegex.test(password)) {
           return new Response(JSON.stringify({ 
+            success: false,
             error: "Weak Password: Must be at least 8 characters and include uppercase, lowercase, a number, and a special character." 
           }), { status: 400, headers: corsHeaders });
         }
@@ -115,14 +115,13 @@ export default {
         const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
         
         if (!user) {
-          // Security: don't reveal if email doesn't exist
+          // Success: true is returned regardless to prevent email enumeration
           return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
         }
 
-        // Generate a unique 32-character random string
         const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
           .map(b => b.toString(16).padStart(2, '0')).join('');
-        const expiry = Math.floor(Date.now() / 1000) + 3600; // 1 hour expiry
+        const expiry = Math.floor(Date.now() / 1000) + 3600; // 1 Hour
 
         await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
           .bind(resetToken, expiry, email).run();
@@ -135,16 +134,14 @@ export default {
         const { token, newPassword } = await request.json();
         const now = Math.floor(Date.now() / 1000);
         
-        // Find user with a valid, non-expired token
         const user = await env.DB.prepare("SELECT id FROM users WHERE reset_token = ? AND reset_expiry > ?")
           .bind(token, now).first();
 
         if (!user) {
-          return new Response(JSON.stringify({ error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
+          return new Response(JSON.stringify({ success: false, error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
         }
 
         const secureHash = await hashPassword(newPassword);
-        // Clear token after use for security
         await env.DB.prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE id = ?")
           .bind(secureHash, user.id).run();
 
@@ -171,16 +168,16 @@ export default {
           
           return res;
         }
-        return new Response(JSON.stringify({ error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
+        return new Response(JSON.stringify({ success: false, error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
       }
 
       // --- VERIFY SESSION ROUTE ---
       if (url.pathname === "/api/verify-session") {
         const cookie = request.headers.get("Cookie") || "";
         if (cookie.includes("p2p_access") || cookie.includes("p2p_refresh")) {
-          return new Response(JSON.stringify({ authenticated: true }), { headers: corsHeaders });
+          return new Response(JSON.stringify({ success: true, authenticated: true }), { headers: corsHeaders });
         }
-        return new Response(JSON.stringify({ authenticated: false }), { status: 401, headers: corsHeaders });
+        return new Response(JSON.stringify({ success: false, authenticated: false }), { status: 401, headers: corsHeaders });
       }
 
       // --- LOGOUT ROUTE ---
@@ -192,7 +189,7 @@ export default {
       }
 
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+      return new Response(JSON.stringify({ success: false, error: err.message }), { status: 500, headers: corsHeaders });
     }
 
     return new Response("Not Found", { status: 404 });

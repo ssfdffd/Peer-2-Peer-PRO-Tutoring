@@ -2,9 +2,7 @@
  * PEER-2-PEER PRO - Authentication Handler
  * Handles Signup and Secure Cookie-based Login
  */
-
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
-
 document.addEventListener('DOMContentLoaded', () => {
     // Clear any old UI-only data on load to ensure a clean state
     if (window.location.pathname.includes('login.html')) {

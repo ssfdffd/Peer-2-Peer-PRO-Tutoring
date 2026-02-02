@@ -139,27 +139,37 @@ function closeForgotModal() {
     if (modal) modal.style.display = 'none';
 }
 
+// Update this in login.js
 async function handleForgotSubmit() {
     const email = document.getElementById('forgotEmail').value;
     const btn = document.getElementById('forgotBtn');
 
     if (!email) return alert("Please enter your email.");
-
     btn.disabled = true;
-    btn.innerText = "Sending...";
 
     try {
-        await fetch(`${API_BASE}/api/forgot-password`, {
+        // 1. Tell the Worker to generate a token
+        const response = await fetch(`${API_BASE}/api/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
-        alert("Request received. If the email exists, instructions will be sent.");
-        closeForgotModal();
+        const result = await response.json();
+
+        if (result.token) {
+            // 2. Send the email via EmailJS
+            await emailjs.send("peer-2-peer_email", "template_07x82zzo", {
+                to_email: email,
+                reset_token: result.token, 
+                reset_link: `https://peer-2-peer.co.za/reset-password.html?token=${result.token}`
+            }, "1MGUTlF8hOxhOc27a");
+
+            alert("Check your email! A reset link has been sent.");
+            closeForgotModal();
+        }
     } catch (err) {
-        alert("Error connecting to server.");
+        alert("Error: " + err.message);
     } finally {
         btn.disabled = false;
-        btn.innerText = "Send Recovery Link";
     }
 }

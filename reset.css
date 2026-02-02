@@ -1,0 +1,274 @@
+      /* =================================
+           CSS VARIABLES - MATCH BRAND
+        ================================= */
+        :root {
+            --navy-bg: #000033;
+            --pro-green: #32cd32;
+            --sky-blue: #7fdff0;
+            --white: #ffffff;
+            --light-bg: #f4f7f9;
+            --text-dark: #333333;
+            --border-color: #e1e5eb;
+            --transition: all 0.3s ease;
+        }
+
+        /* =================================
+           RESET & BASE STYLES
+        ================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--navy-bg) 0%, #000055 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* =================================
+           RESET CONTAINER
+        ================================= */
+        .reset-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* =================================
+           HEADER - MATCHES NAVBAR
+        ================================= */
+        .reset-header {
+            background-color: var(--navy-bg);
+            color: var(--white);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid var(--pro-green);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo img {
+            height: 35px;
+        }
+
+        .logo span {
+            color: var(--pro-green);
+        }
+
+        .reset-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* =================================
+           FORM BOX
+        ================================= */
+        .form-box {
+            padding: 40px;
+        }
+
+        .form-box h2 {
+            color: var(--navy-bg);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* =================================
+           FORM STYLES
+        ================================= */
+        #resetForm {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--navy-bg);
+            font-size: 1.1rem;
+        }
+
+        #resetForm input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--light-bg);
+        }
+
+        #resetForm input:focus {
+            outline: none;
+            border-color: var(--pro-green);
+            box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.2);
+            background: var(--white);
+        }
+
+        #resetForm input::placeholder {
+            color: #999;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* =================================
+           BUTTON STYLES - MATCHES BRAND
+        ================================= */
+        #resetForm button {
+            background: var(--pro-green);
+            color: var(--navy-bg);
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #resetForm button:hover {
+            background: #28b528;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(50, 205, 50, 0.3);
+        }
+
+        #resetForm button:active {
+            transform: translateY(0);
+        }
+
+        /* =================================
+           STATUS MESSAGE
+        ================================= */
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(50, 205, 50, 0.1);
+            border: 1px solid rgba(50, 205, 50, 0.3);
+            color: #28a428;
+            display: block;
+        }
+
+        .status-message.error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #d32f2f;
+            display: block;
+        }
+
+        /* =================================
+           BACK TO LOGIN LINK
+        ================================= */
+        .back-to-login {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .back-to-login a {
+            color: var(--navy-bg);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .back-to-login a:hover {
+            color: var(--pro-green);
+            gap: 12px;
+        }
+
+        /* =================================
+           RESPONSIVE DESIGN
+        ================================= */
+        @media (max-width: 480px) {
+            .reset-container {
+                border-radius: 15px;
+            }
+            
+            .reset-header {
+                padding: 20px;
+            }
+            
+            .form-box {
+                padding: 30px;
+            }
+            
+            .form-box h2 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo img {
+                height: 30px;
+            }
+        }
+
+        /* =================================
+           ANIMATIONS
+        ================================= */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reset-container {
+            animation: fadeIn 0.5s ease-out;
+        }

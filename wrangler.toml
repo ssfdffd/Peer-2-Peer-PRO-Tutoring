@@ -8,4 +8,7 @@ database_name = "peer_db"
 database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"
 
 [vars]
+# Non-sensitive variables go here
+API_URL = "https://peer-2-peer.co.za"
+# Note: In production, remove JWT_SECRET from here and use 'wrangler secret put'
 JWT_SECRET = "nqYvCP4%&^yMD^aMrwfv3U%HN8twKV27"

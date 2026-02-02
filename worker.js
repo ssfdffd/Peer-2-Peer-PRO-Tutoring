@@ -1,6 +1,6 @@
 /**
  * PEER-2-PEER AUTHENTICATION WORKER
- * Features: PBKDF2 Hashing, Secure Cookies, 30-Day Refresh Tokens
+ * Features: PBKDF2 Hashing, Secure Cookies, Password Strength Check, Environment Variables
  */
 
 // --- 1. PASSWORD SECURITY (PBKDF2) ---
@@ -38,11 +38,10 @@ async function verifyPassword(password, storedValue) {
   }
 }
 
-// --- 2. JWT GENERATOR (Access & Refresh) ---
+// --- 2. JWT GENERATOR ---
 async function generateJWT(payload, secret, expiryInSeconds) {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = btoa(JSON.stringify(header)).replace(/=/g, "");
-  
   const now = Math.floor(Date.now() / 1000);
   const encodedPayload = btoa(JSON.stringify({
     ...payload,
@@ -66,8 +65,11 @@ async function generateJWT(payload, secret, expiryInSeconds) {
 // --- 3. MAIN WORKER LOGIC ---
 export default {
   async fetch(request, env) {
+    const secret = env.JWT_SECRET || "fallback_secret_p2p";
+    const allowedOrigin = env.API_URL || "https://peer-2-peer.co.za";
+
     const corsHeaders = {
-      "Access-Control-Allow-Origin": "https://peer-2-peer.co.za",
+      "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Credentials": "true" 
@@ -76,13 +78,24 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
     const url = new URL(request.url);
-    const secret = env.JWT_SECRET || "default_secret_p2p_2024";
 
     try {
-      // --- SIGNUP ROUTE ---
+      // --- SIGNUP ROUTE WITH STRENGTH CHECK ---
       if (url.pathname === "/api/signup" && request.method === "POST") {
         const d = await request.json();
-        const secureHash = await hashPassword(d.password);
+        
+        // PASSWORD VALIDATION BLOCK
+        const password = d.password;
+        // Requirements: Min 8 chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Special Char
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!password || !strongPasswordRegex.test(password)) {
+          return new Response(JSON.stringify({ 
+            error: "Weak Password: Must be at least 8 characters and include uppercase, lowercase, a number, and a special character." 
+          }), { status: 400, headers: corsHeaders });
+        }
+
+        const secureHash = await hashPassword(password);
 
         try {
           await env.DB.prepare(`
@@ -104,15 +117,64 @@ export default {
           }
           throw dbErr;
         }
+
+        // --- NEW: FORGOT PASSWORD REQUEST ---
+if (url.pathname === "/api/forgot-password" && request.method === "POST") {
+    const { email } = await request.json();
+    
+    // Check if user exists
+    const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
+    if (!user) {
+        // Security tip: Always return success even if email isn't found to prevent "email harvesting"
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+    }
+
+    // Generate a 32-character random string
+    const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    // Set expiry for 1 hour from now
+    const expiry = Math.floor(Date.now() / 1000) + 3600;
+
+    // Save to database
+    await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
+        .bind(resetToken, expiry, email).run();
+
+    return new Response(JSON.stringify({ 
+        success: true, 
+        token: resetToken, // We return this so the frontend can send it via EmailJS
+        email: email 
+    }), { headers: corsHeaders });
+}
+
+// --- NEW: RESET PASSWORD SUBMIT ---
+if (url.pathname === "/api/reset-password" && request.method === "POST") {
+    const { token, newPassword } = await request.json();
+
+    // Find user with this token who hasn't expired yet
+    const now = Math.floor(Date.now() / 1000);
+    const user = await env.DB.prepare("SELECT id FROM users WHERE reset_token = ? AND reset_expiry > ?")
+        .bind(token, now).first();
+
+    if (!user) {
+        return new Response(JSON.stringify({ error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
+    }
+
+    // Hash the new password and clear the token
+    const secureHash = await hashPassword(newPassword);
+    await env.DB.prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE id = ?")
+        .bind(secureHash, user.id).run();
+
+    return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+}
       }
 
-      // --- LOGIN ROUTE (SETS COOKIES) ---
+      // --- LOGIN ROUTE ---
       if (url.pathname === "/api/login" && request.method === "POST") {
         const { email, password } = await request.json();
         const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
 
         if (user && await verifyPassword(password, user.password_hash)) {
-          // Access Token (1 Hour) & Refresh Token (30 Days)
           const access = await generateJWT({ id: user.id, role: user.user_type }, secret, 3600);
           const refresh = await generateJWT({ id: user.id }, secret, 2592000);
 
@@ -122,7 +184,6 @@ export default {
             name: user.first_name
           }), { headers: corsHeaders });
 
-          // Set HttpOnly Cookies (Security: Cannot be read by JavaScript)
           res.headers.append("Set-Cookie", `p2p_access=${access}; HttpOnly; Secure; SameSite=None; Max-Age=3600; Path=/`);
           res.headers.append("Set-Cookie", `p2p_refresh=${refresh}; HttpOnly; Secure; SameSite=None; Max-Age=2592000; Path=/`);
           
@@ -131,14 +192,21 @@ export default {
         return new Response(JSON.stringify({ error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
       }
 
-      // --- AUTH VERIFICATION ROUTE ---
+      // --- VERIFY SESSION ROUTE ---
       if (url.pathname === "/api/verify-session") {
         const cookie = request.headers.get("Cookie") || "";
-        // If cookies exist, the browser is authenticated
         if (cookie.includes("p2p_access") || cookie.includes("p2p_refresh")) {
           return new Response(JSON.stringify({ authenticated: true }), { headers: corsHeaders });
         }
         return new Response(JSON.stringify({ authenticated: false }), { status: 401, headers: corsHeaders });
+      }
+
+      // --- LOGOUT ROUTE ---
+      if (url.pathname === "/api/logout") {
+        const res = new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+        res.headers.append("Set-Cookie", "p2p_access=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/");
+        res.headers.append("Set-Cookie", "p2p_refresh=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/");
+        return res;
       }
 
     } catch (err) {

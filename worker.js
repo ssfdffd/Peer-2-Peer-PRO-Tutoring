@@ -1,6 +1,6 @@
 /**
  * PEER-2-PEER AUTHENTICATION WORKER
- * Features: PBKDF2 Hashing, Secure Cookies, Password Strength Check, Environment Variables
+ * Features: PBKDF2 Hashing, Secure Cookies, Password Strength Check, Password Reset, Environment Variables
  */
 
 // --- 1. PASSWORD SECURITY (PBKDF2) ---
@@ -80,13 +80,10 @@ export default {
     const url = new URL(request.url);
 
     try {
-      // --- SIGNUP ROUTE WITH STRENGTH CHECK ---
+      // --- SIGNUP ROUTE ---
       if (url.pathname === "/api/signup" && request.method === "POST") {
         const d = await request.json();
-        
-        // PASSWORD VALIDATION BLOCK
         const password = d.password;
-        // Requirements: Min 8 chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Special Char
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!password || !strongPasswordRegex.test(password)) {
@@ -96,77 +93,56 @@ export default {
         }
 
         const secureHash = await hashPassword(password);
+        await env.DB.prepare(`
+          INSERT INTO users (
+            first_name, last_name, age, phone_number, backup_phone, 
+            school_name, email, user_type, grade, school_code, 
+            password_hash, data_consent_commercial
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          d.firstName, d.lastName, parseInt(d.age), d.phone, d.backupPhone,
+          d.schoolName, d.email, d.userType, d.grade, d.schoolCode,
+          secureHash, d.commercialConsent ? 1 : 0
+        ).run();
 
-        try {
-          await env.DB.prepare(`
-            INSERT INTO users (
-              first_name, last_name, age, phone_number, backup_phone, 
-              school_name, email, user_type, grade, school_code, 
-              password_hash, data_consent_commercial
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).bind(
-            d.firstName, d.lastName, parseInt(d.age), d.phone, d.backupPhone,
-            d.schoolName, d.email, d.userType, d.grade, d.schoolCode,
-            secureHash, d.commercialConsent ? 1 : 0
-          ).run();
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      }
 
+      // --- FORGOT PASSWORD REQUEST ---
+      if (url.pathname === "/api/forgot-password" && request.method === "POST") {
+        const { email } = await request.json();
+        const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
+        
+        if (!user) {
           return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-        } catch (dbErr) {
-          if (dbErr.message.includes("UNIQUE")) {
-            return new Response(JSON.stringify({ error: "Email already registered." }), { status: 400, headers: corsHeaders });
-          }
-          throw dbErr;
         }
 
-        // --- NEW: FORGOT PASSWORD REQUEST ---
-if (url.pathname === "/api/forgot-password" && request.method === "POST") {
-    const { email } = await request.json();
-    
-    // Check if user exists
-    const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
-    if (!user) {
-        // Security tip: Always return success even if email isn't found to prevent "email harvesting"
+        const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map(b => b.toString(16).padStart(2, '0')).join('');
+        const expiry = Math.floor(Date.now() / 1000) + 3600;
+
+        await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
+          .bind(resetToken, expiry, email).run();
+
+        return new Response(JSON.stringify({ success: true, token: resetToken }), { headers: corsHeaders });
+      }
+
+      // --- RESET PASSWORD SUBMIT ---
+      if (url.pathname === "/api/reset-password" && request.method === "POST") {
+        const { token, newPassword } = await request.json();
+        const now = Math.floor(Date.now() / 1000);
+        const user = await env.DB.prepare("SELECT id FROM users WHERE reset_token = ? AND reset_expiry > ?")
+          .bind(token, now).first();
+
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
+        }
+
+        const secureHash = await hashPassword(newPassword);
+        await env.DB.prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE id = ?")
+          .bind(secureHash, user.id).run();
+
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-    }
-
-    // Generate a 32-character random string
-    const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-        .map(b => b.toString(16).padStart(2, '0')).join('');
-    
-    // Set expiry for 1 hour from now
-    const expiry = Math.floor(Date.now() / 1000) + 3600;
-
-    // Save to database
-    await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
-        .bind(resetToken, expiry, email).run();
-
-    return new Response(JSON.stringify({ 
-        success: true, 
-        token: resetToken, // We return this so the frontend can send it via EmailJS
-        email: email 
-    }), { headers: corsHeaders });
-}
-
-// --- NEW: RESET PASSWORD SUBMIT ---
-if (url.pathname === "/api/reset-password" && request.method === "POST") {
-    const { token, newPassword } = await request.json();
-
-    // Find user with this token who hasn't expired yet
-    const now = Math.floor(Date.now() / 1000);
-    const user = await env.DB.prepare("SELECT id FROM users WHERE reset_token = ? AND reset_expiry > ?")
-        .bind(token, now).first();
-
-    if (!user) {
-        return new Response(JSON.stringify({ error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
-    }
-
-    // Hash the new password and clear the token
-    const secureHash = await hashPassword(newPassword);
-    await env.DB.prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE id = ?")
-        .bind(secureHash, user.id).run();
-
-    return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-}
       }
 
       // --- LOGIN ROUTE ---

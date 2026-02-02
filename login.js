@@ -145,31 +145,47 @@ async function handleForgotSubmit() {
     const btn = document.getElementById('forgotBtn');
 
     if (!email) return alert("Please enter your email.");
+
     btn.disabled = true;
+    btn.innerText = "Sending...";
 
     try {
-        // 1. Tell the Worker to generate a token
+        // 1. Request the token from your Worker
         const response = await fetch(`${API_BASE}/api/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+            body: JSON.stringify({ email }),
+            credentials: 'include' // Required for cross-origin requests
         });
+
+        if (!response.ok) throw new Error("Server could not process reset request.");
+        
         const result = await response.json();
 
-        if (result.token) {
-            // 2. Send the email via EmailJS
-            await emailjs.send("peer-2-peer_email", "template_07x82zzo", {
-                to_email: email,
-                reset_token: result.token, 
-                reset_link: `https://peer-2-peer.co.za/reset-password.html?token=${result.token}`
-            }, "1MGUTlF8hOxhOc27a");
+        // 2. If a token was returned, send the email via EmailJS
+        if (result.success && result.token) {
+            await emailjs.send(
+                "peer-2-peer_email", // Your Service ID
+                "template_07x82zzo", // Your Template ID
+                {
+                    to_email: email,
+                    reset_token: result.token, 
+                    reset_link: `https://peer-2-peer.co.za/reset-password.html?token=${result.token}`
+                }, 
+                "1MGUTlF8hOxhOc27a" // Your Public Key
+            );
 
-            alert("Check your email! A reset link has been sent.");
+            alert("Check your email! A secure recovery link has been sent.");
+            closeForgotModal();
+        } else {
+            // We show success even if email not found for security
+            alert("If that email is registered, you will receive a reset link shortly.");
             closeForgotModal();
         }
     } catch (err) {
-        alert("Error: " + err.message);
+        alert("Recovery Error: " + err.message);
     } finally {
         btn.disabled = false;
+        btn.innerText = "Send Recovery Link";
     }
 }

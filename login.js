@@ -75,7 +75,6 @@ async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
-
     const email = formData.get('email');
     const password = formData.get('password');
 
@@ -93,30 +92,25 @@ async function handleLogin(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // --- CRITICAL SESSION FIX ---
-            // We must use the exact keys that tutor.js and student.js check for
-            sessionStorage.setItem('p2p_email', email);             // Save email for the check
-            sessionStorage.setItem('p2p_name', result.name);        // For UI display
-            sessionStorage.setItem('p2p_userType', result.role);    // Map 'role' to 'userType'
+            // --- THE FIX: Save every key your different scripts might look for ---
+            sessionStorage.setItem('p2p_email', email);
+            sessionStorage.setItem('p2p_name', result.name);
 
-            // If your worker returns grade information, save it here too
-            if (result.grade) {
-                sessionStorage.setItem('p2p_grade', result.grade);
+            // We save both 'role' and 'userType' so no script fails
+            sessionStorage.setItem('p2p_role', result.role);
+            sessionStorage.setItem('p2p_userType', result.role);
+
+            // Redirect based on role
+            if (result.role === 'tutor') {
+                window.location.href = 'tutor-portal.html';
+            } else {
+                window.location.href = 'student-portal.html';
             }
-
-            // Short delay to ensure browser handles the storage and cookie write
-            setTimeout(() => {
-                if (result.role === 'tutor') {
-                    window.location.href = 'tutor-portal.html';
-                } else {
-                    window.location.href = 'student-portal.html';
-                }
-            }, 100);
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
-        alert("Auth Server Error: " + err.message);
+        alert("Connection Error: " + err.message);
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";

@@ -4,20 +4,33 @@ const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.work
 /**
  * 1. Session Guard
  */
+/**
+ * TUTOR SESSION GUARD
+ */
 function checkTutorSession() {
     const email = sessionStorage.getItem('p2p_email');
-    const userType = sessionStorage.getItem('p2p_userType');
 
-    console.log("Checking session...", { email, userType }); // Debugging line
+    // Check both potential keys for the role
+    const userType = sessionStorage.getItem('p2p_userType') || sessionStorage.getItem('p2p_role');
 
-    // If these are missing or wrong, you get redirected
+    console.log("Session Check:", { email, userType });
+
+    // 1. Only redirect if email is missing OR the user is definitely NOT a tutor
     if (!email || userType !== 'tutor') {
-        console.warn("Auth failed, redirecting...");
+        console.warn("Unauthorized access attempt. Redirecting to login.");
         window.location.href = "login.html";
         return;
     }
+
+    // 2. Update UI
+    const nameDisplay = document.getElementById('tutorNameDisplay');
+    if (nameDisplay) {
+        nameDisplay.innerText = sessionStorage.getItem('p2p_name') || "Tutor";
+    }
 }
 
+// Run immediately
+document.addEventListener('DOMContentLoaded', checkTutorSession);
 /**
  * 2. Schedule Class to D1 via Worker
  */

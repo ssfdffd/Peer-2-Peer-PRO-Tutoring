@@ -86,31 +86,32 @@ async function handleLogin(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
-            credentials: 'include'
+            credentials: 'include' // Required for Secure HttpOnly cookies
         });
 
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // --- THE FIX: Save every key your different scripts might look for ---
+            // 1. Save all keys to satisfy both tutor.js and student.js guards
             sessionStorage.setItem('p2p_email', email);
             sessionStorage.setItem('p2p_name', result.name);
-
-            // We save both 'role' and 'userType' so no script fails
             sessionStorage.setItem('p2p_role', result.role);
             sessionStorage.setItem('p2p_userType', result.role);
 
-            // Redirect based on role
-            if (result.role === 'tutor') {
-                window.location.href = 'tutor-portal.html';
-            } else {
-                window.location.href = 'student-portal.html';
-            }
+            // 2. Small timeout ensures storage is written before redirect
+            setTimeout(() => {
+                if (result.role === 'tutor') {
+                    window.location.href = 'tutor-portal.html';
+                } else {
+                    window.location.href = 'student-portal.html';
+                }
+            }, 100);
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
-        alert("Connection Error: " + err.message);
+        console.error("Fetch error:", err);
+        alert("Connection Error: Could not reach the authentication server. Check CORS settings.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";

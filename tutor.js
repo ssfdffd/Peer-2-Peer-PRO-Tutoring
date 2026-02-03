@@ -1,102 +1,101 @@
-const LIVE_API_BASE = "https://p2p-live-worker.buhle-1ce.workers.dev";
+// Point to your Unified Worker URL
+const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
+
 /**
- * TUTOR SESSION GUARD
- * Prevents unauthorized access and updates UI names
+ * 1. Session Guard
  */
 function checkTutorSession() {
     const email = sessionStorage.getItem('p2p_email');
-    const userType = sessionStorage.getItem('p2p_userType'); // Matches your login.js key
+    const userType = sessionStorage.getItem('p2p_userType');
 
-    // 1. Check if session exists and is a tutor
     if (!email || userType !== 'tutor') {
-        console.warn("No Tutor session found, redirecting to login.");
         window.location.href = "login.html";
         return;
     }
 
-    // 2. Update the Sidebar/Header Name
-    const nameDisplay = document.getElementById('tutorNameDisplay');
-    if (nameDisplay) {
-        const fullName = sessionStorage.getItem('p2p_name') || "Tutor";
-        nameDisplay.innerText = fullName;
-    }
-
-    console.log("✅ Tutor Session Verified:", email);
+    const display = document.getElementById('tutorNameDisplay');
+    if (display) display.innerText = sessionStorage.getItem('p2p_name') || "Tutor";
 }
 
-// Initialize on load
-document.addEventListener('DOMContentLoaded', checkTutorSession);
 /**
- * Saves class details to the database and refreshes the meeting list.
+ * 2. Schedule Class to D1 via Worker
  */
 async function scheduleClass() {
     const topic = document.getElementById('classTopic').value.trim();
     const desc = document.getElementById('classDesc').value.trim();
+    const grade = document.getElementById('classGrade').value;
     const email = sessionStorage.getItem('p2p_email');
 
-    if (!topic || !desc) return alert("Please fill in both topic and description.");
+    if (!topic || !desc) return alert("Please provide a topic and description.");
 
     try {
-        const response = await fetch(`${LIVE_API_BASE}/api/schedule-class`, {
+        const response = await fetch(`${API_BASE}/api/schedule-class`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, topic, description: desc })
+            body: JSON.stringify({ email, topic, description: desc, grade })
         });
 
         const result = await response.json();
         if (result.success) {
-            alert("✅ Class Scheduled successfully!");
-            document.getElementById('classTopic').value = '';
-            document.getElementById('classDesc').value = '';
-            loadMyMeetings(); // Refresh the list
+            alert(`✅ ${topic} scheduled for ${grade}`);
+            location.reload();
         }
     } catch (err) {
-        alert("Failed to schedule class.");
+        console.error("Schedule Error:", err);
+        alert("Failed to reach server.");
     }
 }
 
 /**
- * Fetches scheduled meetings and displays them with a "Go Live" button.
+ * 3. Fetch Classes from Worker
  */
 async function loadMyMeetings() {
     const email = sessionStorage.getItem('p2p_email');
     const listContainer = document.getElementById('myMeetingsList');
 
     try {
-        const response = await fetch(`${LIVE_API_BASE}/api/my-meetings?email=${email}`);
-        const meetings = await response.json();
+        const response = await fetch(`${API_BASE}/api/get-classes?email=${email}`);
+        const classes = await response.json();
 
-        if (meetings.length === 0) {
-            listContainer.innerHTML = '<div class="loading-state">No meetings scheduled yet.</div>';
+        if (!classes || classes.length === 0) {
+            listContainer.innerHTML = "<p>No lessons scheduled. Create one above!</p>";
             return;
         }
 
-        listContainer.innerHTML = meetings.map(m => `
-            <div class="management-card" style="margin-bottom: 10px; border-left: 4px solid var(--pro-green);">
-                <h4>${m.topic}</h4>
-                <p style="font-size: 0.9em; color: #666;">${m.description}</p>
-                <div style="margin-top: 10px;">
-                    ${m.status === 'scheduled'
-                ? `<button onclick="goLive(${m.id})" class="btn-deploy" style="background:#ff4757; padding: 8px 15px;">Go Live Now</button>`
-                : `<span class="badge" style="background:var(--navy-bg)">Live Room Active</span>`
+        listContainer.innerHTML = classes.map(cls => `
+            <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #32cd32; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <div>
+                        <span style="font-size: 0.8rem; background: #000033; color: #7fdff0; padding: 2px 8px; border-radius: 4px;">${cls.grade}</span>
+                        <h4 style="margin: 8px 0 5px 0; color: #000033;">${cls.topic}</h4>
+                        <p style="font-size: 0.9rem; color: #666;">${cls.description}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.8rem; display:block; margin-bottom: 10px; color: ${cls.status === 'live' ? '#32cd32' : '#999'}">
+                            ● ${cls.status.toUpperCase()}
+                        </span>
+                        ${cls.status === 'scheduled' ?
+                `<button onclick="goLive(${cls.id})" class="btn-deploy" style="padding: 5px 15px; background: #ff4757;">Start Lesson</button>`
+                : `<button class="btn-deploy" style="padding: 5px 15px; background: #ccc;" disabled>Lesson Active</button>`
             }
+                    </div>
                 </div>
             </div>
         `).join('');
     } catch (err) {
-        console.error("Error loading meetings:", err);
+        listContainer.innerHTML = "<p>Error loading classes. Please check connection.</p>";
     }
 }
 
 /**
- * Generates the Jitsi room and injects the video iframe.
+ * 4. Launch Jitsi Meeting
  */
 async function goLive(classId) {
     const email = sessionStorage.getItem('p2p_email');
     const videoArea = document.getElementById('video-area');
 
     try {
-        const response = await fetch(`${LIVE_API_BASE}/api/go-live`, {
+        const response = await fetch(`${API_BASE}/api/go-live`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, classId })
@@ -106,27 +105,29 @@ async function goLive(classId) {
         if (result.success) {
             document.getElementById('live-setup-section').style.display = 'none';
             videoArea.style.display = 'block';
-            videoArea.innerHTML = "";
 
             const options = {
                 roomName: result.roomName,
                 width: '100%',
                 height: 700,
                 parentNode: videoArea,
-                configOverwrite: { startWithAudioMuted: true, disableInviteFunctions: true },
-                interfaceConfigOverwrite: { TOOLBAR_BUTTONS: ['microphone', 'camera', 'chat', 'raisehand', 'security'] },
-                userInfo: { displayName: `Tutor: ${sessionStorage.getItem('p2p_name') || 'Official'}` }
+                userInfo: { displayName: sessionStorage.getItem('p2p_name') }
             };
 
             const api = new JitsiMeetExternalAPI("meet.jit.si", options);
             api.addEventListener('videoConferenceLeft', () => location.reload());
         }
     } catch (err) {
-        alert("Could not start live session.");
+        alert("Launch failed.");
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    checkTutorSession();
     loadMyMeetings();
 });
 
+function logout() {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+}

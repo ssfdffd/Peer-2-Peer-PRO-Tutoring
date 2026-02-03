@@ -3,7 +3,33 @@
 // ============================================
 
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
+/**
+ * STUDENT SESSION GUARD
+ * Prevents unauthorized access and updates UI names
+ */
+function checkStudentSession() {
+    const email = sessionStorage.getItem('p2p_email');
+    const userType = sessionStorage.getItem('p2p_userType');
 
+    // 1. Check if session exists and is a student
+    if (!email || userType !== 'student') {
+        console.warn("No Student session found, redirecting to login.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // 2. Update the Sidebar/Header Name
+    const nameDisplay = document.getElementById('studentNameDisplay');
+    if (nameDisplay) {
+        const fullName = sessionStorage.getItem('p2p_name') || "Student";
+        nameDisplay.innerText = fullName;
+    }
+
+    console.log("✅ Student Session Verified:", email);
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', checkStudentSession);
 // UI-only data from sessionStorage (set during login)
 const studentName = sessionStorage.getItem("p2p_name") || "Student";
 const studentRole = sessionStorage.getItem("p2p_role");
@@ -31,7 +57,7 @@ async function validateStudentSession() {
         }
 
         console.log("✅ Session verified via secure cookies");
-        
+
         // Update the UI with the student's name
         const display = document.getElementById('userNameDisplay');
         if (display) display.innerText = studentName;

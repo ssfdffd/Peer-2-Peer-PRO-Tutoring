@@ -2,6 +2,7 @@
  * PEER-2-PEER PRO - Authentication Handler
  * Handles Signup and Secure Cookie-based Login
  */
+// MUST be your Auth Worker URL (the one that handles signup/login)
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 document.addEventListener('DOMContentLoaded', () => {
     // Clear any old UI-only data on load to ensure a clean state
@@ -74,7 +75,7 @@ async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const formData = new FormData(e.target);
-    
+
     const email = formData.get('email');
     const password = formData.get('password');
 
@@ -87,7 +88,7 @@ async function handleLogin(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
             // CRITICAL: Tells the browser to accept and store the Set-Cookie header
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         const result = await response.json();
@@ -96,7 +97,7 @@ async function handleLogin(e) {
             // Save non-sensitive info for UI display only
             sessionStorage.setItem('p2p_name', result.name);
             sessionStorage.setItem('p2p_role', result.role);
-            
+
             // Short delay to ensure browser handles the cookie write
             setTimeout(() => {
                 if (result.role === 'tutor') {
@@ -143,7 +144,7 @@ async function handleForgotSubmit() {
     const btn = document.getElementById('forgotBtn');
 
     if (!email) return alert("Please enter your email.");
-    
+
     // SAFETY CHECK: Ensure EmailJS is loaded to avoid "undefined" errors
     if (typeof emailjs === 'undefined') {
         return alert("Email service is still loading. Please wait a moment and try again.");
@@ -158,7 +159,7 @@ async function handleForgotSubmit() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         // Parse the JSON immediately
@@ -167,13 +168,13 @@ async function handleForgotSubmit() {
         // 2. Explicitly check if success is true and token exists
         if (result && result.success === true && result.token) {
             await emailjs.send(
-                "peer-2-peer_email", 
-                "template_07x82zzo", 
+                "peer-2-peer_email",
+                "template_07x82zzo",
                 {
                     to_email: email,
-                    reset_token: result.token, 
+                    reset_token: result.token,
                     reset_link: `https://peer-2-peer.co.za/reset-password.html?token=${result.token}`
-                }, 
+                },
                 "1MGUTlF8hOxhOc27a"
             );
 

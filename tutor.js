@@ -1,5 +1,31 @@
 const LIVE_API_BASE = "https://p2p-live-worker.buhle-1ce.workers.dev";
+/**
+ * TUTOR SESSION GUARD
+ * Prevents unauthorized access and updates UI names
+ */
+function checkTutorSession() {
+    const email = sessionStorage.getItem('p2p_email');
+    const userType = sessionStorage.getItem('p2p_userType'); // Matches your login.js key
 
+    // 1. Check if session exists and is a tutor
+    if (!email || userType !== 'tutor') {
+        console.warn("No Tutor session found, redirecting to login.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // 2. Update the Sidebar/Header Name
+    const nameDisplay = document.getElementById('tutorNameDisplay');
+    if (nameDisplay) {
+        const fullName = sessionStorage.getItem('p2p_name') || "Tutor";
+        nameDisplay.innerText = fullName;
+    }
+
+    console.log("✅ Tutor Session Verified:", email);
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', checkTutorSession);
 /**
  * Saves class details to the database and refreshes the meeting list.
  */

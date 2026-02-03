@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +9,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Removed conflicting dark mode inline styles -->
 </head>
+
 <body class="light-mode">
 
     <nav class="glass-nav">
         <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span> | Student Dashboard</div>
-        
+
         <div class="nav-right">
             <div class="search-luxury">
                 <i class="fas fa-search"></i>
                 <input type="text" id="globalSearch" placeholder="Search resources..." onkeyup="filterAll()">
             </div>
-            
+
             <button class="logout-minimal" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -26,7 +28,7 @@
     </nav>
 
     <div class="dashboard-wrapper">
-        
+
         <aside class="side-panel">
             <div class="profile-summary">
                 <div class="avatar-circle"><i class="fas fa-user-graduate"></i></div>
@@ -48,7 +50,7 @@
         </aside>
 
         <main class="main-panel">
-            
+
             <section class="portal-section">
                 <div class="section-header">
                     <h3><i class="fas fa-broadcast-tower"></i> Live Learning Studios</h3>
@@ -57,7 +59,7 @@
                         <input type="text" id="liveSearch" placeholder="Filter live classes..." onkeyup="filterLive()">
                     </div>
                 </div>
-                
+
                 <!-- Live Classes Grid -->
                 <div id="liveGrid" class="live-grid">
                     <div class="loading-state">Loading live classes...</div>
@@ -77,7 +79,7 @@
                     <button class="filter-pill" onclick="filterByCategory('Accounting')">Accounting</button>
                     <button class="filter-pill" onclick="filterByCategory('English')">English</button>
                 </div>
-                
+
                 <div id="fileFeed" class="file-grid">
                     <div class="loading-state">Fetching materials...</div>
                 </div>
@@ -103,14 +105,14 @@
                         <p><strong>Access:</strong> 2 hours from payment</p>
                     </div>
                 </div>
-                
+
                 <!-- Payment Gateway Integration Area -->
                 <div class="payment-gateway-container" id="paymentGatewayContainer">
                     <div class="payment-loading">
                         <i class="fas fa-spinner fa-spin"></i> Loading secure payment gateway...
                     </div>
                 </div>
-                
+
                 <div class="payment-terms">
                     <p><i class="fas fa-shield-alt"></i> All payments are secure and encrypted</p>
                     <p><i class="fas fa-clock"></i> Access expires 2 hours after payment</p>
@@ -130,20 +132,26 @@
                 <div class="class-details-summary">
                     <h4 id="detailsClassName">Loading...</h4>
                     <div class="class-details">
-                        <p><strong><i class="fas fa-user-tie"></i> Tutor:</strong> <span id="detailsTutor">Loading...</span></p>
-                        <p><strong><i class="fas fa-clock"></i> Time:</strong> <span id="detailsTime">Loading...</span></p>
-                        <p><strong><i class="fas fa-calendar"></i> Date:</strong> <span id="detailsDate">Loading...</span></p>
-                        <p><strong><i class="fas fa-chalkboard"></i> Platform:</strong> <span id="detailsPlatform">Loading...</span></p>
-                        <p><strong><i class="fas fa-book"></i> Topic:</strong> <span id="detailsTopic">Loading...</span></p>
-                        <p><strong><i class="fas fa-money-bill-wave"></i> Fee:</strong> <span id="detailsFee">Loading...</span></p>
+                        <p><strong><i class="fas fa-user-tie"></i> Tutor:</strong> <span
+                                id="detailsTutor">Loading...</span></p>
+                        <p><strong><i class="fas fa-clock"></i> Time:</strong> <span id="detailsTime">Loading...</span>
+                        </p>
+                        <p><strong><i class="fas fa-calendar"></i> Date:</strong> <span
+                                id="detailsDate">Loading...</span></p>
+                        <p><strong><i class="fas fa-chalkboard"></i> Platform:</strong> <span
+                                id="detailsPlatform">Loading...</span></p>
+                        <p><strong><i class="fas fa-book"></i> Topic:</strong> <span id="detailsTopic">Loading...</span>
+                        </p>
+                        <p><strong><i class="fas fa-money-bill-wave"></i> Fee:</strong> <span
+                                id="detailsFee">Loading...</span></p>
                     </div>
                 </div>
-                
+
                 <div class="class-actions">
                     <div class="payment-status-indicator" id="paymentStatusIndicator">
                         <i class="fas fa-lock"></i> <span>Payment required to join class</span>
                     </div>
-                    
+
                     <div class="action-buttons">
                         <button class="btn-join-class" id="joinClassBtn" onclick="joinClass()">
                             <i class="fas fa-video"></i> Join Class Now
@@ -161,4 +169,5 @@
     <script src="student.js"></script>
 
 </body>
+
 </html>

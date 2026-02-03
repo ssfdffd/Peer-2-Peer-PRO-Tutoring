@@ -1,138 +1,106 @@
-/**
- * PEER-2-PEER TUTOR CONTROL CENTER
- * Integration: Jitsi Meet External API
- * Backend: Cloudflare Workers + D1 Database
- */
-
-// Replace with your actual Live Worker URL
 const LIVE_API_BASE = "https://p2p-live-worker.buhle-1ce.workers.dev";
 
 /**
- * STEP 1: Set Class Details
- * Captures the topic and description, then reveals the "Start" button.
+ * Saves class details to the database and refreshes the meeting list.
  */
-function setClassDetails() {
+async function scheduleClass() {
     const topic = document.getElementById('classTopic').value.trim();
     const desc = document.getElementById('classDesc').value.trim();
+    const email = sessionStorage.getItem('p2p_email');
 
-    if (!topic || !desc) {
-        alert("Please enter both a topic and a lesson description to proceed.");
-        return;
-    }
-
-    // Store details in sessionStorage for the next step
-    sessionStorage.setItem('temp_class_topic', topic);
-    sessionStorage.setItem('temp_class_desc', desc);
-
-    // Update UI: Hide form, show the "Start Live" trigger
-    document.getElementById('setup-form').style.display = 'none';
-    document.getElementById('displayTopic').innerText = topic;
-    document.getElementById('start-live-container').style.display = 'block';
-
-    console.log("✅ Class details staged:", { topic, desc });
-}
-
-/**
- * STEP 2: Start Live Class
- * Communicates with the Cloudflare Worker to create a secure room
- * and injects the Jitsi Iframe into the portal.
- */
-async function startLiveClass() {
-    const userEmail = sessionStorage.getItem("p2p_email");
-    const userName = sessionStorage.getItem("p2p_name") || "Tutor";
-    const topic = sessionStorage.getItem('temp_class_topic');
-    const desc = sessionStorage.getItem('temp_class_desc');
-    const videoContainer = document.getElementById('video-area');
-
-    if (!userEmail) {
-        alert("Session expired. Please log in again.");
-        window.location.href = "login.html";
-        return;
-    }
+    if (!topic || !desc) return alert("Please fill in both topic and description.");
 
     try {
-        // 1. Request room creation from the Worker
-        const response = await fetch(`${LIVE_API_BASE}/api/create-room`, {
+        const response = await fetch(`${LIVE_API_BASE}/api/schedule-class`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: userEmail,
-                topic: topic,
-                description: desc
-            })
+            body: JSON.stringify({ email, topic, description: desc })
         });
 
         const result = await response.json();
+        if (result.success) {
+            alert("✅ Class Scheduled successfully!");
+            document.getElementById('classTopic').value = '';
+            document.getElementById('classDesc').value = '';
+            loadMyMeetings(); // Refresh the list
+        }
+    } catch (err) {
+        alert("Failed to schedule class.");
+    }
+}
 
-        if (result.success && result.roomName) {
-            // 2. Prepare the UI
+/**
+ * Fetches scheduled meetings and displays them with a "Go Live" button.
+ */
+async function loadMyMeetings() {
+    const email = sessionStorage.getItem('p2p_email');
+    const listContainer = document.getElementById('myMeetingsList');
+
+    try {
+        const response = await fetch(`${LIVE_API_BASE}/api/my-meetings?email=${email}`);
+        const meetings = await response.json();
+
+        if (meetings.length === 0) {
+            listContainer.innerHTML = '<div class="loading-state">No meetings scheduled yet.</div>';
+            return;
+        }
+
+        listContainer.innerHTML = meetings.map(m => `
+            <div class="management-card" style="margin-bottom: 10px; border-left: 4px solid var(--pro-green);">
+                <h4>${m.topic}</h4>
+                <p style="font-size: 0.9em; color: #666;">${m.description}</p>
+                <div style="margin-top: 10px;">
+                    ${m.status === 'scheduled'
+                ? `<button onclick="goLive(${m.id})" class="btn-deploy" style="background:#ff4757; padding: 8px 15px;">Go Live Now</button>`
+                : `<span class="badge" style="background:var(--navy-bg)">Live Room Active</span>`
+            }
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error("Error loading meetings:", err);
+    }
+}
+
+/**
+ * Generates the Jitsi room and injects the video iframe.
+ */
+async function goLive(classId) {
+    const email = sessionStorage.getItem('p2p_email');
+    const videoArea = document.getElementById('video-area');
+
+    try {
+        const response = await fetch(`${LIVE_API_BASE}/api/go-live`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, classId })
+        });
+
+        const result = await response.json();
+        if (result.success) {
             document.getElementById('live-setup-section').style.display = 'none';
-            videoContainer.style.display = "block";
-            videoContainer.innerHTML = ""; // Clear any previous instances
+            videoArea.style.display = 'block';
+            videoArea.innerHTML = "";
 
-            // 3. Initialize Jitsi Meet Iframe
-            const domain = "meet.jit.si";
             const options = {
                 roomName: result.roomName,
                 width: '100%',
                 height: 700,
-                parentNode: videoContainer,
-                configOverwrite: {
-                    startWithAudioMuted: true,
-                    disableInviteFunctions: true, // Hides "Copy Link" to prevent unauthorized access
-                    prejoinPageEnabled: false
-                },
-                interfaceConfigOverwrite: {
-                    TOOLBAR_BUTTONS: [
-                        'microphone', 'camera', 'chat', 'raisehand',
-                        'tileview', 'desktop', 'security', 'mute-everyone'
-                    ]
-                },
-                userInfo: {
-                    displayName: `Tutor: ${userName}`
-                }
+                parentNode: videoArea,
+                configOverwrite: { startWithAudioMuted: true, disableInviteFunctions: true },
+                interfaceConfigOverwrite: { TOOLBAR_BUTTONS: ['microphone', 'camera', 'chat', 'raisehand', 'security'] },
+                userInfo: { displayName: `Tutor: ${sessionStorage.getItem('p2p_name') || 'Official'}` }
             };
 
-            const api = new JitsiMeetExternalAPI(domain, options);
-
-            // 4. Handle Meeting Exit
-            api.addEventListener('videoConferenceLeft', () => {
-                console.log("Meeting ended by tutor.");
-                // Optional: Notify worker to mark class as 'finished' in DB
-                endClassInDatabase(userEmail);
-                location.reload();
-            });
-
-            console.log("🚀 Live class is now active:", result.roomName);
-
-        } else {
-            alert("Error: " + (result.error || "Could not initialize live session."));
+            const api = new JitsiMeetExternalAPI("meet.jit.si", options);
+            api.addEventListener('videoConferenceLeft', () => location.reload());
         }
     } catch (err) {
-        console.error("Jitsi Launch Error:", err);
-        alert("Failed to connect to the live streaming server.");
+        alert("Could not start live session.");
     }
 }
 
-/**
- * Optional: Notify database that class is closed
- */
-async function endClassInDatabase(email) {
-    try {
-        await fetch(`${LIVE_API_BASE}/api/end-class`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        });
-    } catch (e) {
-        console.warn("Could not reach worker to close class record.");
-    }
-}
-
-// Initialize event listeners on page load
 document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('startLiveBtn');
-    if (startBtn) {
-        startBtn.addEventListener('click', startLiveClass);
-    }
+    loadMyMeetings();
 });
+

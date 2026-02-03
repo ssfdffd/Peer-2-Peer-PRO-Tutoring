@@ -75,7 +75,9 @@ export default {
       "Access-Control-Allow-Credentials": "true" 
     };
 
-    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
 
     const url = new URL(request.url);
 
@@ -90,7 +92,7 @@ export default {
           return new Response(JSON.stringify({ 
             success: false,
             error: "Weak Password: Must be at least 8 characters and include uppercase, lowercase, a number, and a special character." 
-          }), { status: 400, headers: corsHeaders });
+          }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
 
         const secureHash = await hashPassword(password);
@@ -106,27 +108,51 @@ export default {
           secureHash, d.commercialConsent ? 1 : 0
         ).run();
 
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+        return new Response(JSON.stringify({ success: true }), { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
       }
 
       // --- FORGOT PASSWORD REQUEST ---
       if (url.pathname === "/api/forgot-password" && request.method === "POST") {
-        const { email } = await request.json();
-        const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
-        
-        if (!user) {
-          // Success: true is returned regardless to prevent email enumeration
-          return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+        try {
+          const { email } = await request.json();
+          
+          if (!email || typeof email !== 'string' || !email.includes('@')) {
+            // Always return success to prevent email enumeration
+            return new Response(JSON.stringify({ success: true }), { 
+              headers: { ...corsHeaders, "Content-Type": "application/json" } 
+            });
+          }
+          
+          const user = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
+          
+          if (!user) {
+            // Success: true is returned regardless to prevent email enumeration
+            return new Response(JSON.stringify({ success: true }), { 
+              headers: { ...corsHeaders, "Content-Type": "application/json" } 
+            });
+          }
+
+          const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+          const expiry = Math.floor(Date.now() / 1000) + 3600; // 1 Hour
+
+          await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
+            .bind(resetToken, expiry, email).run();
+
+          return new Response(JSON.stringify({ 
+            success: true, 
+            token: resetToken 
+          }), { 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
+        } catch (error) {
+          console.error("Forgot password error:", error);
+          return new Response(JSON.stringify({ success: true }), { 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
         }
-
-        const resetToken = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-          .map(b => b.toString(16).padStart(2, '0')).join('');
-        const expiry = Math.floor(Date.now() / 1000) + 3600; // 1 Hour
-
-        await env.DB.prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?")
-          .bind(resetToken, expiry, email).run();
-
-        return new Response(JSON.stringify({ success: true, token: resetToken }), { headers: corsHeaders });
       }
 
       // --- RESET PASSWORD SUBMIT ---
@@ -138,14 +164,35 @@ export default {
           .bind(token, now).first();
 
         if (!user) {
-          return new Response(JSON.stringify({ success: false, error: "Link expired or invalid." }), { status: 400, headers: corsHeaders });
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: "Link expired or invalid." 
+          }), { 
+            status: 400, 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
+        }
+
+        // Validate new password strength
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        
+        if (!newPassword || !strongPasswordRegex.test(newPassword)) {
+          return new Response(JSON.stringify({ 
+            success: false,
+            error: "Weak Password: Must be at least 8 characters and include uppercase, lowercase, a number, and a special character." 
+          }), { 
+            status: 400, 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
         }
 
         const secureHash = await hashPassword(newPassword);
         await env.DB.prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expiry = NULL WHERE id = ?")
           .bind(secureHash, user.id).run();
 
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+        return new Response(JSON.stringify({ success: true }), { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
       }
 
       // --- LOGIN ROUTE ---
@@ -161,37 +208,68 @@ export default {
             success: true,
             role: user.user_type,
             name: user.first_name
-          }), { headers: corsHeaders });
+          }), { 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
 
           res.headers.append("Set-Cookie", `p2p_access=${access}; HttpOnly; Secure; SameSite=None; Max-Age=3600; Path=/`);
           res.headers.append("Set-Cookie", `p2p_refresh=${refresh}; HttpOnly; Secure; SameSite=None; Max-Age=2592000; Path=/`);
           
           return res;
         }
-        return new Response(JSON.stringify({ success: false, error: "Invalid email or password" }), { status: 401, headers: corsHeaders });
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Invalid email or password" 
+        }), { 
+          status: 401, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
       }
 
       // --- VERIFY SESSION ROUTE ---
       if (url.pathname === "/api/verify-session") {
         const cookie = request.headers.get("Cookie") || "";
         if (cookie.includes("p2p_access") || cookie.includes("p2p_refresh")) {
-          return new Response(JSON.stringify({ success: true, authenticated: true }), { headers: corsHeaders });
+          return new Response(JSON.stringify({ 
+            success: true, 
+            authenticated: true 
+          }), { 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          });
         }
-        return new Response(JSON.stringify({ success: false, authenticated: false }), { status: 401, headers: corsHeaders });
+        return new Response(JSON.stringify({ 
+          success: false, 
+          authenticated: false 
+        }), { 
+          status: 401, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
       }
 
       // --- LOGOUT ROUTE ---
       if (url.pathname === "/api/logout") {
-        const res = new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+        const res = new Response(JSON.stringify({ success: true }), { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
         res.headers.append("Set-Cookie", "p2p_access=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/");
         res.headers.append("Set-Cookie", "p2p_refresh=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/");
         return res;
       }
 
     } catch (err) {
-      return new Response(JSON.stringify({ success: false, error: err.message }), { status: 500, headers: corsHeaders });
+      console.error("Worker error:", err);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: err.message || "Internal server error" 
+      }), { 
+        status: 500, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      });
     }
 
-    return new Response("Not Found", { status: 404 });
+    return new Response("Not Found", { 
+      status: 404, 
+      headers: { ...corsHeaders, "Content-Type": "text/plain" } 
+    });
   }
 };

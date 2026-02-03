@@ -6,121 +6,7 @@
     <title>Student Portal | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Removed duplicate style tag and fixed the one remaining -->
-    <style>
-        /* Emergency CSS fix - ensures basic styling */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f23;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .dashboard-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .side-panel {
-            width: 280px;
-            background: #0a0a18;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px;
-        }
-        
-        .main-panel {
-            flex: 1;
-            padding: 25px;
-            background: #0f0f23;
-        }
-        
-        .portal-section, .library-section {
-            background: #1a1a2e;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .live-card {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-        }
-        
-        .file-card {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: #1a1a2e;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        button {
-            background: #4169E1;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        
-        button:hover {
-            background: #000080;
-        }
-        
-        input, textarea {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            width: 100%;
-        }
-    </style>
+    <!-- Removed conflicting dark mode inline styles -->
 </head>
 <body class="light-mode">
 
@@ -144,8 +30,8 @@
         <aside class="side-panel">
             <div class="profile-summary">
                 <div class="avatar-circle"><i class="fas fa-user-graduate"></i></div>
-               <h3 id="studentNameDisplay">Loading...</h3>
-<span class="badge-glass" id="paymentBadge">Standard</span>
+                <h3 id="studentNameDisplay">Loading...</h3>
+                <span class="badge-glass" id="paymentBadge">Standard</span>
             </div>
 
             <ul class="nav-links">
@@ -173,20 +59,15 @@
                 </div>
                 
                 <!-- Live Classes Grid -->
-               <div id="liveGrid" class="live-grid">
-    <div class="loading-state">Loading live classes...</div>
-</div>
-                    <!-- Live classes will be loaded here dynamically -->
-                  
+                <div id="liveGrid" class="live-grid">
+                    <div class="loading-state">Loading live classes...</div>
+                </div>
             </section>
 
             <section class="library-section">
                 <div class="section-header">
                     <h3><i class="fas fa-folder-open"></i> Study Library</h3>
-                   <span id="fileCount" class="badge-count">0 files</span>
-<div id="fileFeed" class="file-grid">
-    <div class="loading-state">Fetching materials...</div>
-</div>
+                    <span id="fileCount" class="badge-count">0 files</span>
                 </div>
 
                 <div class="category-filter-wrapper">
@@ -225,7 +106,6 @@
                 
                 <!-- Payment Gateway Integration Area -->
                 <div class="payment-gateway-container" id="paymentGatewayContainer">
-                    <!-- This will be dynamically loaded with payment gateway -->
                     <div class="payment-loading">
                         <i class="fas fa-spinner fa-spin"></i> Loading secure payment gateway...
                     </div>
@@ -276,6 +156,7 @@
             </div>
         </div>
     </div>
+
     <script src="auth.js"></script>
     <script src="student.js"></script>
 

@@ -87,18 +87,24 @@ async function handleLogin(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
-            // CRITICAL: Tells the browser to accept and store the Set-Cookie header
             credentials: 'include'
         });
 
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // Save non-sensitive info for UI display only
-            sessionStorage.setItem('p2p_name', result.name);
-            sessionStorage.setItem('p2p_role', result.role);
+            // --- CRITICAL SESSION FIX ---
+            // We must use the exact keys that tutor.js and student.js check for
+            sessionStorage.setItem('p2p_email', email);             // Save email for the check
+            sessionStorage.setItem('p2p_name', result.name);        // For UI display
+            sessionStorage.setItem('p2p_userType', result.role);    // Map 'role' to 'userType'
 
-            // Short delay to ensure browser handles the cookie write
+            // If your worker returns grade information, save it here too
+            if (result.grade) {
+                sessionStorage.setItem('p2p_grade', result.grade);
+            }
+
+            // Short delay to ensure browser handles the storage and cookie write
             setTimeout(() => {
                 if (result.role === 'tutor') {
                     window.location.href = 'tutor-portal.html';
@@ -116,7 +122,6 @@ async function handleLogin(e) {
         btn.innerText = "Login";
     }
 }
-
 /**
  * LOGOUT HANDLER
  */

@@ -8,13 +8,14 @@ function checkTutorSession() {
     const email = sessionStorage.getItem('p2p_email');
     const userType = sessionStorage.getItem('p2p_userType');
 
+    console.log("Checking session...", { email, userType }); // Debugging line
+
+    // If these are missing or wrong, you get redirected
     if (!email || userType !== 'tutor') {
+        console.warn("Auth failed, redirecting...");
         window.location.href = "login.html";
         return;
     }
-
-    const display = document.getElementById('tutorNameDisplay');
-    if (display) display.innerText = sessionStorage.getItem('p2p_name') || "Tutor";
 }
 
 /**

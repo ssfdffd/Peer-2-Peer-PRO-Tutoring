@@ -86,32 +86,37 @@ async function handleLogin(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
-            credentials: 'include' // Required for Secure HttpOnly cookies
+            credentials: 'include'
         });
 
         const result = await response.json();
 
         if (response.ok && result.success) {
-            // 1. Save all keys to satisfy both tutor.js and student.js guards
+            // Normalize the role to lowercase to avoid "Tutor" vs "tutor" bugs
+            const normalizedRole = result.role.toLowerCase().trim();
+
+            // 1. Save all keys to satisfy portal guards
             sessionStorage.setItem('p2p_email', email);
             sessionStorage.setItem('p2p_name', result.name);
-            sessionStorage.setItem('p2p_role', result.role);
-            sessionStorage.setItem('p2p_userType', result.role);
+            sessionStorage.setItem('p2p_role', normalizedRole);
+            sessionStorage.setItem('p2p_userType', normalizedRole);
 
-            // 2. Small timeout ensures storage is written before redirect
-            setTimeout(() => {
-                if (result.role === 'tutor') {
-                    window.location.href = 'tutor-portal.html';
-                } else {
-                    window.location.href = 'student-portal.html';
-                }
-            }, 100);
+            console.log("Login Success. Role identified as:", normalizedRole);
+
+            // 2. Strict Redirection Logic
+            if (normalizedRole === 'tutor') {
+                window.location.replace('tutor-portal.html');
+            } else if (normalizedRole === 'student') {
+                window.location.replace('student-portal.html');
+            } else {
+                alert("Account type not recognized. Please contact support.");
+            }
         } else {
             alert("Login Failed: " + (result.error || "Invalid Credentials"));
         }
     } catch (err) {
         console.error("Fetch error:", err);
-        alert("Connection Error: Could not reach the authentication server. Check CORS settings.");
+        alert("Connection Error: Check your internet or server CORS settings.");
     } finally {
         btn.disabled = false;
         btn.innerText = "Login";

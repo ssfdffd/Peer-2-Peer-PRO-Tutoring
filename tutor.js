@@ -1,152 +1,138 @@
-// ============================================
-// TUTOR PORTAL - SECURE PRODUCTION VERSION
-// ============================================
+/**
+ * PEER-2-PEER TUTOR CONTROL CENTER
+ * Integration: Jitsi Meet External API
+ * Backend: Cloudflare Workers + D1 Database
+ */
 
-const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
-
-// UI-only data from sessionStorage
-const tutorName = sessionStorage.getItem("p2p_name") || "Tutor";
-const tutorRole = sessionStorage.getItem("p2p_role");
-
-// ============================================
-// 1. SECURE SESSION VALIDATION
-// ============================================
+// Replace with your actual Live Worker URL
+const LIVE_API_BASE = "https://p2p-live-worker.buhle-1ce.workers.dev";
 
 /**
- * Validates the cookie session with the Cloudflare Worker.
- * If the 30-day refresh token is expired, it redirects to login.
+ * STEP 1: Set Class Details
+ * Captures the topic and description, then reveals the "Start" button.
  */
-async function validateTutorSession() {
+function setClassDetails() {
+    const topic = document.getElementById('classTopic').value.trim();
+    const desc = document.getElementById('classDesc').value.trim();
+
+    if (!topic || !desc) {
+        alert("Please enter both a topic and a lesson description to proceed.");
+        return;
+    }
+
+    // Store details in sessionStorage for the next step
+    sessionStorage.setItem('temp_class_topic', topic);
+    sessionStorage.setItem('temp_class_desc', desc);
+
+    // Update UI: Hide form, show the "Start Live" trigger
+    document.getElementById('setup-form').style.display = 'none';
+    document.getElementById('displayTopic').innerText = topic;
+    document.getElementById('start-live-container').style.display = 'block';
+
+    console.log("✅ Class details staged:", { topic, desc });
+}
+
+/**
+ * STEP 2: Start Live Class
+ * Communicates with the Cloudflare Worker to create a secure room
+ * and injects the Jitsi Iframe into the portal.
+ */
+async function startLiveClass() {
+    const userEmail = sessionStorage.getItem("p2p_email");
+    const userName = sessionStorage.getItem("p2p_name") || "Tutor";
+    const topic = sessionStorage.getItem('temp_class_topic');
+    const desc = sessionStorage.getItem('temp_class_desc');
+    const videoContainer = document.getElementById('video-area');
+
+    if (!userEmail) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
+
     try {
-        const response = await fetch(`${API_BASE}/api/verify-session`, {
-            method: 'GET',
-            credentials: 'include' // CRITICAL: Sends HTTP-Only cookies to the worker
+        // 1. Request room creation from the Worker
+        const response = await fetch(`${LIVE_API_BASE}/api/create-room`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: userEmail,
+                topic: topic,
+                description: desc
+            })
         });
 
         const result = await response.json();
 
-        // Check if authenticated and if the user is actually a tutor
-        if (!response.ok || !result.authenticated || tutorRole !== "tutor") {
-            throw new Error("Unauthorized Tutor Access");
+        if (result.success && result.roomName) {
+            // 2. Prepare the UI
+            document.getElementById('live-setup-section').style.display = 'none';
+            videoContainer.style.display = "block";
+            videoContainer.innerHTML = ""; // Clear any previous instances
+
+            // 3. Initialize Jitsi Meet Iframe
+            const domain = "meet.jit.si";
+            const options = {
+                roomName: result.roomName,
+                width: '100%',
+                height: 700,
+                parentNode: videoContainer,
+                configOverwrite: {
+                    startWithAudioMuted: true,
+                    disableInviteFunctions: true, // Hides "Copy Link" to prevent unauthorized access
+                    prejoinPageEnabled: false
+                },
+                interfaceConfigOverwrite: {
+                    TOOLBAR_BUTTONS: [
+                        'microphone', 'camera', 'chat', 'raisehand',
+                        'tileview', 'desktop', 'security', 'mute-everyone'
+                    ]
+                },
+                userInfo: {
+                    displayName: `Tutor: ${userName}`
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            // 4. Handle Meeting Exit
+            api.addEventListener('videoConferenceLeft', () => {
+                console.log("Meeting ended by tutor.");
+                // Optional: Notify worker to mark class as 'finished' in DB
+                endClassInDatabase(userEmail);
+                location.reload();
+            });
+
+            console.log("🚀 Live class is now active:", result.roomName);
+
+        } else {
+            alert("Error: " + (result.error || "Could not initialize live session."));
         }
-
-        console.log("✅ Tutor Session Verified");
-        
-        // Update UI Name
-        const display = document.getElementById('tutorNameDisplay');
-        if (display) display.innerText = tutorName;
-
     } catch (err) {
-        console.error("❌ Auth Failed:", err);
-        sessionStorage.clear();
-        window.location.href = "login.html";
+        console.error("Jitsi Launch Error:", err);
+        alert("Failed to connect to the live streaming server.");
     }
 }
 
-// ============================================
-// 2. LIVE SESSION LOGIC
-// ============================================
-
-async function saveAndToggleLive(isStarting) {
-    const topic = document.getElementById('lessonTopic').value;
-    const subject = document.getElementById('lessonSubject').value;
-    const time = document.getElementById('lessonTime').value;
-    const link = document.getElementById('meetingLink').value;
-
-    if (isStarting && (!topic || !link || !time)) {
-        alert("Please fill in Topic, Link, and Date/Time.");
-        return;
-    }
-
-    const payload = {
-        tutorName, 
-        topic, 
-        subject, 
-        startTime: time, 
-        link, 
-        active: isStarting
-    };
-
+/**
+ * Optional: Notify database that class is closed
+ */
+async function endClassInDatabase(email) {
     try {
-        const response = await fetch(`${API_BASE}/api/meetings`, {
+        await fetch(`${LIVE_API_BASE}/api/end-class`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            credentials: 'include'
+            body: JSON.stringify({ email: email })
         });
-
-        if (response.ok) {
-            alert(isStarting ? "🚀 Session is now LIVE!" : "Session ended.");
-            loadMyMeetings();
-        }
-    } catch (err) {
-        alert("Failed to update session status.");
+    } catch (e) {
+        console.warn("Could not reach worker to close class record.");
     }
 }
 
-// ============================================
-// 3. MEETING MANAGEMENT
-// ============================================
-
-async function loadMyMeetings() {
-    const list = document.getElementById('myMeetingsList');
-    if (!list) return;
-
-    try {
-        const response = await fetch(`${API_BASE}/api/my-meetings`, {
-            credentials: 'include'
-        });
-        const meetings = await response.json();
-
-        list.innerHTML = meetings.length ? '' : '<div class="loading-state">No meetings scheduled.</div>';
-        
-        meetings.forEach(m => {
-            const card = document.createElement('div');
-            card.className = 'file-card';
-            card.innerHTML = `
-                <div class="file-info">
-                    <strong>${m.topic}</strong>
-                    <span>${m.subject} | ${new Date(m.startTime).toLocaleString()}</span>
-                </div>
-                <button class="btn-delete" onclick="deleteMeeting(${m.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `;
-            list.appendChild(card);
-        });
-        
-        document.getElementById('meetingCount').innerText = `${meetings.length} meetings`;
-    } catch (err) {
-        list.innerHTML = '<div class="error-state">Error loading meetings.</div>';
-    }
-}
-
-// ============================================
-// 4. UTILITY & LOGOUT
-// ============================================
-
-function logout() {
-    if (confirm("Are you sure you want to logout?")) {
-        sessionStorage.clear();
-        // Browser handles cookie clearing or expiry automatically
-        window.location.href = "login.html";
-    }
-}
-
-// ============================================
-// INITIALIZE ON LOAD
-// ============================================
-
+// Initialize event listeners on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Validate session first
-    validateTutorSession().then(() => {
-        // 2. If valid, load data
-        loadMyMeetings();
-        
-        // Setup form listeners if they exist
-        const liveBtn = document.getElementById('startLiveBtn');
-        if (liveBtn) {
-            liveBtn.addEventListener('click', () => saveAndToggleLive(true));
-        }
-    });
+    const startBtn = document.getElementById('startLiveBtn');
+    if (startBtn) {
+        startBtn.addEventListener('click', startLiveClass);
+    }
 });

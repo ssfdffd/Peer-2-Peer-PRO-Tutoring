@@ -1,9 +1,21 @@
+/* ====================================
+   PEER-2-PEER PRO - TUTOR PORTAL CSS
+   LIGHT MODE ONLY - MATCHED TO BRAND COLORS
+   ==================================== */
+
+/* ====================================
+   1. UPDATED COLOR VARIABLES (Same as student.css)
+   ==================================== */
 :root {
   --navy-bg: #000033;
+  /* Deep Navy from logo background */
   --pro-green: #32cd32;
+  /* Vibrant Lime Green from Logo */
   --sky-blue: #7fdff0;
+  /* Light Sky Blue accents */
   --white: #ffffff;
   --light-bg: #f4f7f9;
+  /* Light background */
   --text-dark: #333333;
   --text-light: #ffffff;
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -11,29 +23,30 @@
   --border-color: #e1e5eb;
   --danger: #ff4444;
   --warning: #ffc107;
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-light: rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-light: rgba(0, 0, 0, 0.1);
+  --success: #32cd32;
+  --accent: #3b82f6;
+  --accent-dark: #2563eb;
 }
 
-* { 
-  margin: 0; 
-  padding: 0; 
-  box-sizing: border-box; 
+/* ====================================
+   2. BASE STYLES - LIGHT MODE ONLY
+   ==================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   min-height: 100vh;
-  transition: all 0.3s ease;
   background: var(--light-bg);
   color: var(--text-dark);
 }
 
 /* ====================================
-   NAVBAR - LIGHT MODE STYLING
+   3. NAVBAR - MATCHES STUDENT PORTAL
    ==================================== */
 .glass-nav {
   background-color: var(--navy-bg) !important;
@@ -45,7 +58,7 @@ body {
   top: 0;
   z-index: 1000;
   border-bottom: 3px solid var(--pro-green);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .logo-glow {
@@ -57,10 +70,9 @@ body {
   color: var(--white);
 }
 
-.premium {
+.logo-glow .premium {
   color: var(--pro-green) !important;
   font-weight: 800;
-  text-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
 }
 
 .nav-right {
@@ -69,6 +81,9 @@ body {
   gap: 20px;
 }
 
+/* ====================================
+   4. LOGOUT BUTTON
+   ==================================== */
 .logout-minimal {
   padding: 8px 20px;
   border-radius: 50px;
@@ -77,7 +92,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s;
+  transition: var(--transition);
   background: transparent;
   color: var(--white);
   border: 1.5px solid var(--white);
@@ -87,57 +102,52 @@ body {
 .logout-minimal:hover {
   background: var(--white);
   color: var(--navy-bg);
-  border-color: var(--white);
 }
 
 /* ====================================
-   DASHBOARD LAYOUT - LIGHT MODE
+   5. DASHBOARD LAYOUT
    ==================================== */
-.dashboard-wrapper { 
-  display: flex; 
+.dashboard-wrapper {
+  display: flex;
   min-height: calc(100vh - 70px);
+  padding: 25px;
+  gap: 25px;
 }
 
 /* ====================================
-   SIDE PANEL - LIGHT MODE COLORS
+   6. SIDE PANEL - LIGHT MODE
    ==================================== */
 .side-panel {
   width: 280px;
-  background-color: var(--navy-bg);
-  border-right: 1px solid rgba(50, 205, 50, 0.3);
-  padding: 30px 20px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  color: var(--white);
-}
-
-.main-panel { 
-  flex: 1; 
-  padding: 40px; 
-  background: var(--light-bg);
-  overflow-y: auto;
+  background: var(--white);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
 }
 
 /* ====================================
-   PROFILE SECTION - LIGHT MODE
+   7. PROFILE SECTION
    ==================================== */
 .profile-summary {
   text-align: center;
   padding-bottom: 25px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 25px;
 }
 
 .profile-summary i.fa-chalkboard-teacher {
-  color: var(--pro-green);
+  color: var(--navy-bg);
   margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--navy-bg), #000055);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .profile-summary h3 {
   margin-bottom: 10px;
   font-size: 1.2rem;
-  color: var(--white);
+  color: var(--navy-bg);
+  font-weight: 600;
 }
 
 .badge {
@@ -148,35 +158,35 @@ body {
   font-weight: 500;
   background: rgba(50, 205, 50, 0.1);
   border: 1px solid rgba(50, 205, 50, 0.3);
-  color: var(--pro-green);
+  color: #28a428;
 }
 
-.badge-count {
-  background: var(--pro-green);
-  color: var(--white);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.9rem;
+/* ====================================
+   8. MAIN PANEL
+   ==================================== */
+.main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.panel-header h1 {
+  font-size: 1.8rem;
+  color: var(--navy-bg);
+  margin-bottom: 10px;
   font-weight: 700;
 }
 
 /* ====================================
-   CONTROL SECTIONS - LIGHT MODE
+   9. MANAGEMENT CARDS
    ==================================== */
-.tutor-control-section, .management-card {
+.management-card {
   background: var(--white);
   border-radius: 15px;
   padding: 25px;
-  margin-bottom: 30px;
   border: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
-  transition: all 0.3s;
-}
-
-.panel-header h1 {
-  color: var(--navy-bg);
-  margin-bottom: 30px;
-  font-size: 2rem;
 }
 
 .section-header {
@@ -184,6 +194,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .section-header h3 {
@@ -195,30 +207,39 @@ body {
 }
 
 /* ====================================
-   STATUS BADGES - LIGHT MODE
+   10. STATUS BADGES
    ==================================== */
-.status-badge { 
-  padding: 8px 20px; 
-  border-radius: 20px; 
-  font-weight: bold; 
+.status-badge {
   display: inline-block;
-  font-size: 0.9rem;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.status-badge.online { 
-  background: rgba(50, 205, 50, 0.1); 
-  color: var(--pro-green);
+.status-badge.offline {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.online {
+  background: rgba(50, 205, 50, 0.1);
+  color: var(--success);
   border: 1px solid rgba(50, 205, 50, 0.3);
 }
 
-.status-badge.offline { 
-  background: rgba(0, 0, 0, 0.05); 
-  color: #666;
-  border: 1px solid var(--border-color);
+.badge-count {
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 /* ====================================
-   INPUT STYLES - LIGHT MODE
+   11. INPUT STYLES
    ==================================== */
 .input-grid {
   display: grid;
@@ -227,112 +248,103 @@ body {
   margin-bottom: 20px;
 }
 
-.input-group { 
-  margin-bottom: 15px; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 8px;
+@media (max-width: 768px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
 }
 
 .input-group label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: 600;
   color: var(--navy-bg);
+  font-size: 0.95rem;
 }
 
-.input-group input, 
-.input-group select, 
+.input-group input,
+.input-group textarea,
 .luxury-select {
+  width: 100%;
   padding: 12px 15px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  width: 100%;
+  font-size: 1rem;
   font-family: inherit;
-  font-size: 0.95rem;
-  transition: all 0.3s;
   background: var(--white);
   color: var(--text-dark);
+  transition: var(--transition);
 }
 
-.input-group input:focus, 
-.input-group select:focus, 
+.input-group input:focus,
+.input-group textarea:focus,
 .luxury-select:focus {
   outline: none;
   border-color: var(--pro-green);
   box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.1);
 }
 
-.input-group input::placeholder {
-  color: rgba(0, 0, 0, 0.4);
+.luxury-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
 /* ====================================
-   BUTTON STYLES - LIGHT MODE
+   12. BUTTON STYLES
    ==================================== */
-.btn-start { 
-  background: var(--pro-green); 
-  color: var(--navy-bg); 
-  border: none; 
-  padding: 12px 25px; 
-  border-radius: 8px; 
-  font-weight: 700; 
-  cursor: pointer; 
-  transition: all 0.3s;
+.btn-deploy {
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
   justify-content: center;
+  gap: 10px;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 15px;
 }
 
-.btn-start:hover {
+.btn-deploy:hover {
   background: #28b528;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(50, 205, 50, 0.3);
 }
 
-.btn-end { 
-  background: var(--danger); 
-  color: white; 
-  border: none; 
-  padding: 12px 25px; 
-  border-radius: 8px; 
-  font-weight: 700; 
-  cursor: pointer; 
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-}
-
-.btn-end:hover {
-  background: #ff3333;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
-}
-
-.button-group {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
+.btn-deploy i {
+  font-size: 1.1em;
 }
 
 /* ====================================
-   UPLOAD SECTION - LIGHT MODE
+   13. DROP ZONE
    ==================================== */
 .drop-zone {
-  border: 2px dashed rgba(50, 205, 50, 0.5);
-  background: rgba(50, 205, 50, 0.05);
-  padding: 30px;
+  border: 2px dashed rgba(50, 205, 50, 0.3);
+  border-radius: 12px;
+  padding: 40px 20px;
   text-align: center;
-  border-radius: 15px;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.3s;
+  transition: var(--transition);
+  margin: 20px 0;
+  background: var(--light-bg);
 }
 
 .drop-zone:hover {
   border-color: var(--pro-green);
-  background: rgba(50, 205, 50, 0.1);
+  background: rgba(50, 205, 50, 0.05);
 }
 
 .drop-zone i {
@@ -340,122 +352,105 @@ body {
   margin-bottom: 15px;
 }
 
-.drop-zone p {
-  color: var(--navy-bg);
-  margin-bottom: 5px;
+#drop-text {
+  color: #666;
+  font-size: 1rem;
 }
 
-.drop-zone span {
+#drop-text span {
   color: var(--pro-green);
   font-weight: 600;
-}
-
-.btn-deploy {
-  width: 100%;
-  background: var(--pro-green);
-  color: var(--navy-bg);
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-.btn-deploy:hover {
-  background: #28b528;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(50, 205, 50, 0.3);
+  text-decoration: underline;
 }
 
 /* ====================================
-   PROGRESS RING - LIGHT MODE
+   14. UPLOAD PROGRESS
    ==================================== */
-.progress-ring-wrapper { 
-  position: relative; 
-  display: flex; 
-  justify-content: center; 
-  margin: 20px 0; 
+#active-upload-status {
+  text-align: center;
+  padding: 20px 0;
 }
 
-.progress-text { 
-  position: absolute; 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%); 
-  font-weight: bold; 
-  color: var(--navy-bg);
+.progress-ring-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.progress-ring__circle-bg {
+  stroke-width: 8;
+  stroke: rgba(0, 0, 0, 0.05);
+  fill: transparent;
+}
+
+.progress-ring__circle {
+  stroke-width: 8;
+  stroke: var(--pro-green);
+  fill: transparent;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.35s;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy-bg);
 }
 
 .upload-hint {
-  text-align: center;
-  color: var(--text-dark);
-  font-style: italic;
-  opacity: 0.7;
-}
-
-.loading-state {
-  text-align: center;
-  padding: 40px;
-  font-size: 1.1rem;
   color: #666;
-  grid-column: 1 / -1;
+  font-size: 0.95rem;
 }
 
 /* ====================================
-   FILE GRID & MEETINGS - LIGHT MODE
+   15. FILE GRID (for meetings)
    ==================================== */
-.file-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-  gap: 20px; 
+.file-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Meeting Cards Styling */
 .meeting-card {
-  background: var(--white);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
-  transition: all 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+  background: var(--white);
 }
 
 .meeting-card:hover {
   border-color: var(--pro-green);
-  box-shadow: 0 5px 15px rgba(50, 205, 50, 0.1);
+  background: rgba(50, 205, 50, 0.05);
+  transform: translateY(-2px);
 }
 
-.meeting-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.meeting-subject {
-  font-weight: 600;
-  color: var(--navy-bg);
-  margin-bottom: 5px;
-}
-
-.meeting-topic {
+.meeting-info h4 {
   font-size: 1.1rem;
+  margin-bottom: 5px;
   color: var(--navy-bg);
-  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .meeting-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
-  margin-bottom: 15px;
+  display: flex;
+  gap: 15px;
+}
+
+.meeting-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .meeting-actions {
@@ -463,113 +458,134 @@ body {
   gap: 10px;
 }
 
-.btn-join-meeting {
+.btn-start-meeting {
   background: var(--pro-green);
   color: var(--navy-bg);
   border: none;
   padding: 8px 15px;
   border-radius: 6px;
-  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: all 0.3s;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition);
 }
 
-.btn-join-meeting:hover {
+.btn-start-meeting:hover {
   background: #28b528;
+  transform: scale(1.05);
 }
 
 /* ====================================
-   RESPONSIVE DESIGN - LIGHT MODE
+   16. LOADING STATE
+   ==================================== */
+.loading-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* ====================================
+   17. VIDEO AREA
+   ==================================== */
+#video-area {
+  border-radius: 15px !important;
+  overflow: hidden;
+  margin-top: 25px;
+  min-height: 500px;
+  background: var(--navy-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+
+/* ====================================
+   18. RESPONSIVE DESIGN
    ==================================== */
 @media (max-width: 1024px) {
   .dashboard-wrapper {
     flex-direction: column;
   }
-  
+
   .side-panel {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid rgba(50, 205, 50, 0.3);
   }
 }
 
 @media (max-width: 768px) {
+  .dashboard-wrapper {
+    padding: 15px;
+  }
+
   .glass-nav {
     flex-direction: column;
     gap: 15px;
     padding: 15px;
   }
-  
-  .input-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .main-panel {
-    padding: 20px 15px;
-  }
-  
-  .button-group {
-    flex-direction: column;
-  }
-  
-  .btn-start, .btn-end {
-    width: 100%;
-    padding: 15px;
-  }
-  
-  .file-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .drop-zone {
+
+  .management-card {
     padding: 20px;
   }
-  
+
   .section-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
   }
-  
-  .meeting-actions {
+
+  .meeting-card {
     flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
   }
-  
-  .btn-join-meeting {
+
+  .meeting-actions {
+    width: 100%;
+  }
+
+  .btn-start-meeting {
     width: 100%;
     justify-content: center;
   }
 }
 
-/* Landscape Mode */
-@media (max-height: 500px) and (orientation: landscape) {
-  .side-panel {
-    display: none;
-  }
+/* ====================================
+   19. SCROLLBAR STYLING
+   ==================================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pro-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #28b528;
 }
 
 /* ====================================
-   FILE ICON COLORS
-   ==================================== */
-.fa-file-pdf { color: #ff4444; }
-.fa-file-word { color: #2d8cff; }
-.fa-file-powerpoint { color: #ff9500; }
-.fa-file-excel { color: #00c853; }
-.fa-file-image { color: #9c27b0; }
-.fa-file-archive { color: #ffbb00; }
-.fa-file { color: #666; }
-
-/* ====================================
-   ANIMATIONS
+   20. ANIMATIONS
    ==================================== */
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .status-badge.online {
@@ -577,20 +593,22 @@ body {
 }
 
 /* ====================================
-   UTILITY CLASSES
+   21. EMPTY STATES
    ==================================== */
-.text-green {
-  color: var(--pro-green);
+.empty-state,
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  grid-column: 1 / -1;
 }
 
-.text-navy {
-  color: var(--navy-bg);
+.empty-state i,
+.error-state i {
+  margin-bottom: 15px;
+  color: #ccc;
 }
 
-.bg-light-green {
-  background: rgba(50, 205, 50, 0.1);
-}
-
-.bg-light-navy {
-  background: rgba(0, 0, 51, 0.1);
+.error-state i {
+  color: var(--danger);
 }

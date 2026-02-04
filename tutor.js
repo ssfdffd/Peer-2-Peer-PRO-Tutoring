@@ -8,12 +8,27 @@ const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.work
  * TUTOR SESSION GUARD
  */
 function checkTutorSession() {
-    const role = sessionStorage.getItem('p2p_userType');
-    if (role !== 'tutor') {
-        console.error("Access denied: User is not a tutor. Role found:", role);
-        window.location.href = 'login.html'; // Or student-portal.html
+    const email = sessionStorage.getItem('p2p_email');
+
+    // Check both potential keys for the role
+    const userType = sessionStorage.getItem('p2p_userType') || sessionStorage.getItem('p2p_role');
+
+    console.log("Session Check:", { email, userType });
+
+    // 1. Only redirect if email is missing OR the user is definitely NOT a tutor
+    if (!email || userType !== 'tutor') {
+        console.warn("Unauthorized access attempt. Redirecting to login.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // 2. Update UI
+    const nameDisplay = document.getElementById('tutorNameDisplay');
+    if (nameDisplay) {
+        nameDisplay.innerText = sessionStorage.getItem('p2p_name') || "Tutor";
     }
 }
+
 // Run immediately
 document.addEventListener('DOMContentLoaded', checkTutorSession);
 /**

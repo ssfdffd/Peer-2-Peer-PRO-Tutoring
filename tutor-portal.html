@@ -2,422 +2,225 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutor Portal | Peer-2-Peer Pro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="tutor.css" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <style>
-        /* Additional inline styles for perfect alignment */
-        .dashboard-grid {
-            perspective: 1000px;
-        }
-
-        .dash-card {
-            animation: cardFloat 0.6s ease-out backwards;
-        }
-
-        .dash-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .dash-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .dash-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .dash-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .dash-card:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        .dash-card:nth-child(6) {
-            animation-delay: 0.6s;
-        }
-
-        @keyframes cardFloat {
-            from {
-                opacity: 0;
-                transform: translateY(30px) rotateX(10deg);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateX(0);
-            }
-        }
-
-        /* Modern gradient backgrounds for wide cards */
-        .dash-card.wide:nth-child(5) {
-            background: linear-gradient(135deg, rgba(50, 205, 50, 0.05), rgba(0, 0, 51, 0.03));
-        }
-
-        .dash-card.wide:nth-child(6) {
-            background: linear-gradient(135deg, rgba(0, 0, 51, 0.03), rgba(50, 205, 50, 0.05));
-        }
-
-        /* Subtle patterns */
-        .dash-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle at top right, rgba(50, 205, 50, 0.1), transparent 70%);
-            pointer-events: none;
-            border-radius: var(--radius);
-            z-index: 0;
-        }
-
-        .dash-card>* {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="tutor.css">
+    <script src='https://meet.jit.si/external_api.js'></script>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
     <nav class="glass-nav">
-        <div class="logo">
-            <div class="card-icon" style="margin: 0; width: 45px; height: 45px; background: var(--green);">
-                <i class="fas fa-graduation-cap" style="color: var(--navy);"></i>
-            </div>
-            <span>PEER-2-PEER <span class="pro-text">PRO</span></span>
+        <div class="nav-left">
+            <div class="logo-pill">P2P PRO</div>
         </div>
-
         <div class="nav-right">
-            <span class="tutor-name">
-                <i class="fas fa-user-circle"></i> Welcome, Tutor
-            </span>
-            <button class="logout-minimal">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <div class="user-profile">
+                <div class="avatar"><i class="fas fa-user-tie"></i></div>
+                <span id="tutorNameDisplay">Loading Tutor...</span>
+            </div>
+            <button class="logout-minimal" onclick="logout()">
+                <i class="fas fa-power-off"></i>
             </button>
         </div>
     </nav>
 
-    <!-- MAIN DASHBOARD -->
-    <div class="main-panel">
-        <div class="panel-header">
-            <h1>Tutor Hub</h1>
-            <p class="subtitle">Everything you need to teach, create, and manage — in one place.</p>
-        </div>
+    <main class="main-panel">
+        <div id="mainDashboard">
+            <header class="panel-header">
+                <h1>Tutor <span style="color: var(--green);">Hub</span></h1>
+                <p>Strategic management of your academic sessions and resources.</p>
+            </header>
 
-        <!-- DASHBOARD GRID - PERFECT STATIC LAYOUT -->
-        <div class="dashboard-grid">
-            <!-- Live Classes -->
-            <div class="dash-card" onclick="showSection('liveOrganizer')">
-                <div class="status-indicator online">Online</div>
-                <div class="card-icon"><i class="fas fa-video"></i></div>
-                <h3>Live Classes</h3>
-                <p>Schedule & launch interactive lessons</p>
-                <span class="badge-count">3 Active</span>
-            </div>
-
-            <!-- Resources -->
-            <div class="dash-card" onclick="showSection('resourceSharing')">
-                <div class="card-icon"><i class="fas fa-folder-open"></i></div>
-                <h3>Resources</h3>
-                <p>Upload notes, files & study guides</p>
-                <span class="badge-count">12 Files</span>
-            </div>
-
-            <!-- Analytics -->
-            <div class="dash-card" onclick="showSection('tutorDashboard')">
-                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-                <h3>Analytics</h3>
-                <p>Track progress & teaching hours</p>
-                <span class="badge-count">View Stats</span>
-            </div>
-
-            <!-- Community -->
-            <div class="dash-card" onclick="showSection('p2pForum')">
-                <div class="card-icon"><i class="fas fa-comments"></i></div>
-                <h3>Community</h3>
-                <p>Forum discussions & collaboration</p>
-                <span class="badge-count">48 New</span>
-            </div>
-
-            <!-- Interactive Whiteboard (Hero Feature) -->
-            <div class="dash-card wide" onclick="showSection('WhiteBoard')">
-                <div class="card-icon"><i class="fas fa-chalkboard"></i></div>
-                <div class="card-content">
-                    <h3>Interactive Whiteboard</h3>
-                    <p>Teach visually in real-time with drawing tools, shapes, and collaborative features designed for
-                        effective online instruction.</p>
-                    <span class="badge-count">Try Now</span>
+            <div class="dashboard-grid">
+                <div class="dash-card card-featured" onclick="showSection('liveOrganizer')">
+                    <div class="card-icon"><i class="fas fa-video"></i></div>
+                    <h3>Live Class Organiser</h3>
+                    <p>Schedule and launch secure Jitsi video lessons with students.</p>
+                    <div class="card-status"><i class="fas fa-circle"></i> System Ready</div>
                 </div>
-            </div>
 
-            <!-- Document Creator (Hero Feature) -->
-            <div class="dash-card wide" onclick="showSection('documentCreator')">
-                <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-                <div class="card-content">
-                    <h3>Document Creator</h3>
-                    <p>Create professional lesson notes, worksheets, and study materials with our rich text editor and
-                        formatting tools.</p>
-                    <span class="badge-count">Create New</span>
+                <div class="dash-card" onclick="showSection('resourceSharing')">
+                    <div class="card-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <h3>Resources</h3>
+                    <p>Distribute study guides and notes.</p>
+                </div>
+
+                <div class="dash-card" onclick="showSection('tutorDashboard')">
+                    <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3>Performance</h3>
+                    <p>View student analytics.</p>
+                </div>
+
+                <div class="dash-card" onclick="showSection('p2pForum')">
+                    <div class="card-icon"><i class="fas fa-comments"></i></div>
+                    <h3>P2P Forum</h3>
+                    <p>Join community discussions.</p>
+                </div>
+
+                <div class="dash-card card-wide" onclick="alert('Digital Whiteboard launching soon!')">
+                    <div class="card-icon"><i class="fas fa-chalkboard"></i></div>
+                    <div class="card-content">
+                        <h3>Interactive Whiteboard</h3>
+                        <p>Collaborate in real-time using our canvas drawing tools.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- WHITEBOARD SECTION -->
-    <div id="WhiteBoard" class="portal-section">
-        <button class="back-btn" onclick="backToDash()">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </button>
+        <section id="liveOrganizer" class="portal-section" style="display: none;">
+            <div class="section-header-row">
+                <button class="btn-back" onclick="backToDash()"><i class="fas fa-chevron-left"></i> Back</button>
+                <h2>Class <span style="color: var(--green);">Organiser</span></h2>
+            </div>
 
-        <div class="management-card">
-            <div class="section-header">
-                <h3><i class="fas fa-chalkboard"></i> Interactive Whiteboard</h3>
-                <button class="tool-btn green-bg" onclick="saveWhiteboard()">
-                    <i class="fas fa-save"></i> Save
+            <div id="live-setup-section" class="glass-form-container">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Lesson Topic</label>
+                        <input type="text" id="classTopic" placeholder="e.g. Physics: Newton's Laws">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Grade</label>
+                        <select id="classGrade">
+                            <option>Grade 8</option>
+                            <option>Grade 9</option>
+                            <option>Grade 10</option>
+                            <option>Grade 11</option>
+                            <option>Grade 12</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Brief Description</label>
+                    <textarea id="classDesc" placeholder="What will be covered in this session?"></textarea>
+                </div>
+                <button class="btn-deploy" onclick="scheduleClass()">
+                    <i class="fas fa-calendar-check"></i> Save & Schedule
                 </button>
-            </div>
 
-            <div class="whiteboard-container">
-                <div class="whiteboard-toolbar">
-                    <button class="tool-btn active"><i class="fas fa-pencil-alt"></i> Pencil</button>
-                    <button class="tool-btn"><i class="fas fa-eraser"></i> Eraser</button>
-                    <button class="tool-btn"><i class="fas fa-text-height"></i> Text</button>
-                    <button class="tool-btn"><i class="fas fa-shapes"></i> Shapes</button>
-                    <input type="color" class="color-picker" value="#000033" />
-                    <input type="range" min="1" max="20" value="3" style="width: 100px;" />
-                    <button class="tool-btn danger"><i class="fas fa-trash"></i> Clear All</button>
-                </div>
-                <canvas class="whiteboard-canvas" id="whiteboardCanvas"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- DOCUMENT CREATOR SECTION -->
-    <div id="documentCreator" class="portal-section">
-        <button class="back-btn" onclick="backToDash()">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </button>
-
-        <div class="management-card">
-            <div class="section-header">
-                <h3><i class="fas fa-file-alt"></i> Document Creator</h3>
-                <div>
-                    <button class="tool-btn" onclick="exportDocument()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                    <button class="tool-btn green-bg" onclick="saveDocument()">
-                        <i class="fas fa-save"></i> Save
-                    </button>
+                <div class="scheduled-list">
+                    <h3>Your Upcoming Sessions</h3>
+                    <div id="myMeetingsList" class="meeting-grid">
+                    </div>
                 </div>
             </div>
 
-            <div class="editor-container">
-                <div class="editor-toolbar">
-                    <select class="tool-btn" style="padding: 8px 15px;">
-                        <option>Arial</option>
-                        <option>Georgia</option>
-                        <option>Times New Roman</option>
-                    </select>
-                    <button class="editor-btn"><i class="fas fa-bold"></i></button>
-                    <button class="editor-btn"><i class="fas fa-italic"></i></button>
-                    <button class="editor-btn"><i class="fas fa-underline"></i></button>
-                    <button class="editor-btn"><i class="fas fa-list-ul"></i></button>
-                    <button class="editor-btn"><i class="fas fa-list-ol"></i></button>
-                    <button class="editor-btn"><i class="fas fa-link"></i></button>
-                    <button class="editor-btn"><i class="fas fa-image"></i></button>
-                    <input type="color" class="color-picker" value="#000033" style="width: 35px; height: 35px;" />
-                </div>
+            <div id="video-area" class="video-container"></div>
+        </section>
+    </main>
 
-                <div class="editor-content" contenteditable="true">
-                    <h3>Lesson Plan: Introduction to Algebra</h3>
-                    <p><strong>Objective:</strong> Students will understand basic algebraic concepts and solve simple
-                        equations.</p>
-                    <p><strong>Materials Needed:</strong></p>
-                    <ul>
-                        <li>Whiteboard markers</li>
-                        <li>Practice worksheets</li>
-                        <li>Algebra tiles (virtual)</li>
-                    </ul>
-                    <p><strong>Lesson Structure:</strong></p>
-                    <ol>
-                        <li>Introduction to variables (10 mins)</li>
-                        <li>Solving basic equations (20 mins)</li>
-                        <li>Group practice session (15 mins)</li>
-                        <li>Q&A and summary (5 mins)</li>
-                    </ol>
-                    <p><strong>Key Concepts:</strong> Variables, Constants, Equations, Solving for x</p>
-                </div>
-
-                <button class="btn-deploy">
-                    <i class="fas fa-cloud-upload-alt"></i> Publish Document
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
+    <script src="tutor.js"></script>
     <script>
-        function showSection(id) {
-            // Hide all sections
-            document.querySelectorAll('.portal-section').forEach(section => {
-                section.classList.remove('active');
-            });
+        const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev"; // AUTH
+        const API_BASE2 = "https://p2p-live-worker.buhle-1ce.workers.dev"; // LIVE CLASS
 
-            // Show selected section
-            document.getElementById(id).classList.add('active');
+        function checkTutorSession() {
+            const email = sessionStorage.getItem('p2p_email');
+            const userType = sessionStorage.getItem('p2p_userType');
+            if (!email || userType !== 'tutor') {
+                window.location.href = "login.html";
+                return;
+            }
+            document.getElementById('tutorNameDisplay').innerText = sessionStorage.getItem('p2p_name') || "Tutor";
+        }
 
-            // Smooth scroll to section
-            document.getElementById(id).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        // Layout Switching
+        function showSection(sectionId) {
+            document.getElementById('mainDashboard').style.display = 'none';
+            document.querySelectorAll('.portal-section').forEach(s => s.style.display = 'none');
 
-            // Initialize whiteboard if needed
-            if (id === 'WhiteBoard') {
-                initWhiteboard();
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.style.display = 'block';
+                if (sectionId === 'liveOrganizer') loadMyMeetings();
             }
         }
 
         function backToDash() {
-            // Hide all sections
-            document.querySelectorAll('.portal-section').forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // Smooth scroll back to top
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            document.querySelectorAll('.portal-section').forEach(s => s.style.display = 'none');
+            document.getElementById('mainDashboard').style.display = 'block';
+            document.getElementById('video-area').style.display = 'none';
+            document.getElementById('live-setup-section').style.display = 'block';
         }
 
-        function initWhiteboard() {
-            const canvas = document.getElementById('whiteboardCanvas');
-            const ctx = canvas.getContext('2d');
+        // Logic for Scheduling
+        async function scheduleClass() {
+            const topic = document.getElementById('classTopic').value.trim();
+            const grade = document.getElementById('classGrade').value;
+            const desc = document.getElementById('classDesc').value.trim();
+            const email = sessionStorage.getItem('p2p_email');
 
-            // Set canvas size
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            if (!topic || !desc) return alert("Fill in topic and description.");
 
-            // Set initial drawing style
-            ctx.strokeStyle = '#000033';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-
-            // Drawing variables
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-
-            // Drawing functions
-            function startDrawing(e) {
-                isDrawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-
-            function draw(e) {
-                if (!isDrawing) return;
-
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-
-            function stopDrawing() {
-                isDrawing = false;
-            }
-
-            // Event listeners
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-
-            // Tool functionality
-            document.querySelectorAll('.whiteboard-toolbar .tool-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    document.querySelectorAll('.whiteboard-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-
-                    if (this.querySelector('.fa-eraser')) {
-                        ctx.strokeStyle = '#ffffff';
-                        ctx.lineWidth = 20;
-                    } else if (this.querySelector('.fa-pencil-alt')) {
-                        ctx.strokeStyle = document.querySelector('.color-picker').value;
-                        ctx.lineWidth = 3;
-                    }
+            try {
+                const response = await fetch(`${API_BASE2}/api/schedule-class`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, topic, description: desc, grade })
                 });
-            });
-
-            // Color picker
-            document.querySelector('.color-picker').addEventListener('input', function () {
-                ctx.strokeStyle = this.value;
-            });
-
-            // Clear button
-            document.querySelector('.tool-btn.danger').addEventListener('click', function () {
-                if (confirm('Clear the entire whiteboard?')) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const result = await response.json();
+                if (result.success) {
+                    alert("Session Locked in!");
+                    loadMyMeetings();
                 }
-            });
-
-            // Resize handling
-            window.addEventListener('resize', function () {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            });
+            } catch (e) { alert("Connectivity error with Live Worker."); }
         }
 
-        function saveWhiteboard() {
-            alert('Whiteboard saved! In production, this would save to your account.');
+        async function loadMyMeetings() {
+            const email = sessionStorage.getItem('p2p_email');
+            const container = document.getElementById('myMeetingsList');
+
+            try {
+                const res = await fetch(`${API_BASE2}/api/get-classes?email=${email}`);
+                const classes = await res.json();
+
+                container.innerHTML = classes.map(c => `
+            <div class="meeting-item">
+                <div class="meeting-info">
+                    <strong>${c.topic}</strong>
+                    <span>Grade ${c.grade} • ${new Date(c.created_at).toLocaleDateString()}</span>
+                </div>
+                <button class="btn-start" onclick="goLive(${c.id})">Start</button>
+            </div>
+        `).join('') || "<p>No sessions scheduled.</p>";
+            } catch (e) { container.innerHTML = "Error syncing meetings."; }
         }
 
-        function saveDocument() {
-            alert('Document saved successfully!');
-        }
-
-        function exportDocument() {
-            alert('Document exported as PDF!');
-        }
-
-        // Initialize whiteboard on page load if needed
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add hover effects
-            document.querySelectorAll('.dash-card').forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
+        async function goLive(classId) {
+            const email = sessionStorage.getItem('p2p_email');
+            try {
+                const res = await fetch(`${API_BASE2}/api/go-live`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, classId })
                 });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('live-setup-section').style.display = 'none';
+                    const videoArea = document.getElementById('video-area');
+                    videoArea.style.display = 'block';
 
-                card.addEventListener('mouseleave', function () {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Logout button
-            document.querySelector('.logout-minimal').addEventListener('click', function () {
-                if (confirm('Are you sure you want to logout?')) {
-                    window.location.href = 'index.html';
+                    new JitsiMeetExternalAPI("meet.jit.si", {
+                        roomName: result.roomName,
+                        width: '100%',
+                        height: 600,
+                        parentNode: videoArea,
+                        userInfo: { displayName: sessionStorage.getItem('p2p_name') }
+                    });
                 }
-            });
-        });
+            } catch (e) { alert("Live bridge failed."); }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }
+
+        document.addEventListener('DOMContentLoaded', checkTutorSession);
     </script>
-
 </body>
 
 </html>

@@ -10,8 +10,8 @@
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/48/000000/graduation-cap.png">
 </head>
 
-<body class="light-mode">
-    <!-- UPDATED NAVBAR TO MATCH STUDENT PORTAL -->
+<body>
+    <!-- SIMPLE NAVBAR -->
     <nav class="glass-nav">
         <a href="index.html" class="logo-glow">
             <i class="fas fa-graduation-cap"></i>
@@ -21,10 +21,7 @@
         <div class="nav-right">
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar">T</div>
-                <div class="user-details">
-                    <span id="userName" class="user-name">Dr. Elena Rodriguez</span>
-                    <span class="user-role">Premium Tutor</span>
-                </div>
+                <span id="userName">Tutor Portal</span>
             </div>
             <button class="logout-minimal" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -32,384 +29,180 @@
         </div>
     </nav>
 
-    <!-- ENHANCED DASHBOARD HEADER -->
-    <div class="dashboard-header">
-        <div class="header-content">
-            <h1 class="main-title" id="welcomeTitle">Welcome to Your Tutor Dashboard</h1>
-            <p class="subtitle">Manage your classes, upload resources, and enhance your teaching experience with our
-                premium tools</p>
+    <!-- SIMPLE HEADER -->
+    <header class="main-header">
+        <h1 class="main-title">Tutor Control Panel</h1>
+        <p class="subtitle">Essential tools for teaching and managing your classes</p>
+    </header>
 
-            <!-- Stats Overview -->
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <i class="fas fa-calendar-check stat-icon"></i>
-                    <div class="stat-info">
-                        <h3>24</h3>
-                        <p>Upcoming Sessions</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-users stat-icon"></i>
-                    <div class="stat-info">
-                        <h3>156</h3>
-                        <p>Active Students</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-star stat-icon"></i>
-                    <div class="stat-info">
-                        <h3>4.9</h3>
-                        <p>Average Rating</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-money-bill-wave stat-icon"></i>
-                    <div class="stat-info">
-                        <h3>R 4,850</h3>
-                        <p>Monthly Earnings</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QUICK ACTION FILTERS -->
-    <div class="action-filter-container">
-        <div class="filter-header">
-            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-            <p>Select a category to filter your teaching tools</p>
-        </div>
-        <div class="action-filter">
-            <button class="filter-pill active" onclick="filterActions('all')">
-                <i class="fas fa-th-large"></i> All Actions
-            </button>
-            <button class="filter-pill" onclick="filterActions('live')">
-                <i class="fas fa-broadcast-tower"></i> Live Sessions
-            </button>
-            <button class="filter-pill" onclick="filterActions('resources')">
-                <i class="fas fa-cloud-upload-alt"></i> Resources
-            </button>
-            <button class="filter-pill" onclick="filterActions('tools')">
-                <i class="fas fa-tools"></i> Teaching Tools
-            </button>
-            <button class="filter-pill" onclick="filterActions('schedule')">
-                <i class="fas fa-calendar-alt"></i> Schedule
-            </button>
-        </div>
-    </div>
-
-    <!-- BEAUTIFULLY STYLED ACTION GRID -->
+    <!-- 5 ESSENTIAL ACTION BLOCKS -->
     <div class="action-container">
-        <div class="action-grid" id="actionGrid">
-            <!-- Card 1 - Featured -->
-            <div class="action-card featured" data-category="schedule">
-                <div class="card-badge">
-                    <i class="fas fa-crown"></i> Featured
-                </div>
+        <div class="action-grid">
+            <!-- Block 1: Organize Class -->
+            <div class="action-card">
                 <div class="card-header">
-                    <div class="action-icon pulse"
-                        style="background: linear-gradient(135deg, var(--pro-green), #28b528);">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #1e5799, #207cca);">
                         <i class="fas fa-calendar-plus"></i>
                     </div>
-                    <h3 class="action-title" id="personalWelcome">Schedule Your Next Class</h3>
-                    <div class="action-role">Teaching Management</div>
+                    <h3 class="action-title">Organize Class</h3>
+                    <div class="action-role">Schedule & Management</div>
                 </div>
                 <div class="card-body">
-                    <p class="action-description">Click to schedule your next class to improve your teaching experience
-                        and reach more learners. Become a visionary educator driving innovation and collaboration in
-                        modern tutoring.</p>
-                    <div class="card-stats">
-                        <div class="stat">
-                            <i class="fas fa-clock"></i>
-                            <span>Avg. 45 min sessions</span>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-chart-line"></i>
-                            <span>95% satisfaction rate</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="goToSchedule()">
-                            <i class="fas fa-plus-circle"></i> Schedule Session
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2 - Interactive Whiteboard -->
-            <div class="action-card" data-category="tools">
-                <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #4a6bff, #6b48ff);">
-                        <i class="fas fa-chalkboard"></i>
-                    </div>
-                    <h3 class="action-title">Interactive Whiteboard</h3>
-                    <div class="action-role">Digital Teaching Tool</div>
-                </div>
-                <div class="card-body">
-                    <p class="action-description">Create engaging lessons with real-time collaboration, diagrams, and
-                        annotations. Perfect for explaining complex concepts visually to enhance student understanding.
-                    </p>
+                    <p class="action-description">Create and manage your class schedules. Set dates, times, and topics
+                        for upcoming sessions. Organize students and track attendance.</p>
                     <ul class="feature-list">
-                        <li><i class="fas fa-check-circle"></i> Real-time collaboration</li>
-                        <li><i class="fas fa-check-circle"></i> Multiple board templates</li>
-                        <li><i class="fas fa-check-circle"></i> Save & export sessions</li>
-                        <li><i class="fas fa-check-circle"></i> Math equation support</li>
+                        <li><i class="fas fa-check-circle"></i> Schedule multiple classes</li>
+                        <li><i class="fas fa-check-circle"></i> Set recurring sessions</li>
+                        <li><i class="fas fa-check-circle"></i> Track student attendance</li>
+                        <li><i class="fas fa-check-circle"></i> Send reminders</li>
                     </ul>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="openWhiteboard()">
-                            <i class="fas fa-external-link-alt"></i> Open Whiteboard
-                        </button>
-                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn" onclick="organizeClass()">
+                        <i class="fas fa-plus-circle"></i> Organize Class
+                    </button>
                 </div>
             </div>
 
-            <!-- Card 3 - Upload Resources -->
-            <div class="action-card" data-category="resources">
+            <!-- Block 2: Create Document -->
+            <div class="action-card">
                 <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #ff6b6b, #ffa36c);">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3 class="action-title">Upload Resources</h3>
-                    <div class="action-role">Content Management</div>
-                </div>
-                <div class="card-body">
-                    <p class="action-description">Upload documents, presentations, and supplementary materials. Supports
-                        PDF, PPT, DOC, and video formats up to 100MB. Share with specific classes or all students.</p>
-                    <div class="upload-preview">
-                        <i class="fas fa-file-pdf"></i>
-                        <i class="fas fa-file-powerpoint"></i>
-                        <i class="fas fa-file-word"></i>
-                        <i class="fas fa-file-video"></i>
-                        <i class="fas fa-file-image"></i>
-                    </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="goToUpload()">
-                            <i class="fas fa-upload"></i> Upload Resources
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4 - Create Documents -->
-            <div class="action-card" data-category="resources">
-                <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #ff4d8d, #ff6b6b);">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #834d9b, #d04ed6);">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <h3 class="action-title">Create Documents</h3>
+                    <h3 class="action-title">Create Document</h3>
                     <div class="action-role">Content Creation</div>
                 </div>
                 <div class="card-body">
-                    <p class="action-description">Create custom documents, worksheets, and study guides with our
-                        built-in editor. Templates available for different subjects and learning levels.</p>
+                    <p class="action-description">Create lesson plans, worksheets, and study materials. Use templates or
+                        start from scratch to build engaging educational content.</p>
                     <div class="template-count">
                         <i class="fas fa-layer-group"></i>
-                        <span>12+ professional templates available</span>
+                        <span>15+ professional templates</span>
                     </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="createDocument()">
-                            <i class="fas fa-edit"></i> Create Document
-                        </button>
-                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> Lesson plan templates</li>
+                        <li><i class="fas fa-check-circle"></i> Worksheet creator</li>
+                        <li><i class="fas fa-check-circle"></i> Study guide builder</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn" onclick="createDocument()">
+                        <i class="fas fa-edit"></i> Create Document
+                    </button>
                 </div>
             </div>
 
-            <!-- Card 5 - Start Live Class -->
-            <div class="action-card" data-category="live">
+            <!-- Block 3: Upload Document -->
+            <div class="action-card">
                 <div class="card-header">
-                    <div class="action-icon pulse" style="background: linear-gradient(135deg, #ffcc00, #ff9900);">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3 class="action-title">Upload Document</h3>
+                    <div class="action-role">Resource Sharing</div>
+                </div>
+                <div class="card-body">
+                    <p class="action-description">Upload existing materials to share with students. Supports PDFs,
+                        presentations, videos, and other educational resources.</p>
+                    <div class="upload-preview">
+                        <i class="fas fa-file-pdf" title="PDF"></i>
+                        <i class="fas fa-file-powerpoint" title="Presentation"></i>
+                        <i class="fas fa-file-word" title="Document"></i>
+                        <i class="fas fa-file-video" title="Video"></i>
+                        <i class="fas fa-file-image" title="Image"></i>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> Up to 100MB per file</li>
+                        <li><i class="fas fa-check-circle"></i> Organize by class</li>
+                        <li><i class="fas fa-check-circle"></i> Set access permissions</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn" onclick="uploadDocument()">
+                        <i class="fas fa-upload"></i> Upload Document
+                    </button>
+                </div>
+            </div>
+
+            <!-- Block 4: Whiteboard -->
+            <div class="action-card">
+                <div class="card-header">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #4b6cb7, #182848);">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                    <h3 class="action-title">Interactive Whiteboard</h3>
+                    <div class="action-role">Visual Teaching</div>
+                </div>
+                <div class="card-body">
+                    <p class="action-description">Draw, write, and explain concepts in real-time. Perfect for math
+                        equations, diagrams, and collaborative problem-solving.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> Real-time collaboration</li>
+                        <li><i class="fas fa-check-circle"></i> Math equation support</li>
+                        <li><i class="fas fa-check-circle"></i> Multiple drawing tools</li>
+                        <li><i class="fas fa-check-circle"></i> Save and export boards</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn" onclick="openWhiteboard()">
+                        <i class="fas fa-external-link-alt"></i> Open Whiteboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Block 5: Live Class -->
+            <div class="action-card">
+                <div class="card-header">
+                    <div class="action-icon pulse" style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">
                         <i class="fas fa-broadcast-tower"></i>
                     </div>
-                    <h3 class="action-title">Start Live Class</h3>
-                    <div class="action-role">Live Session</div>
+                    <h3 class="action-title">Live Class</h3>
+                    <div class="action-role">Real-time Teaching</div>
                 </div>
                 <div class="card-body">
-                    <p class="action-description">Start your live teaching session now. Your students are waiting!
-                        Includes video, audio, screen sharing, and interactive features for engaging lessons.</p>
+                    <p class="action-description">Start a live teaching session with video, audio, and screen sharing.
+                        Engage with students in real-time and answer questions instantly.</p>
                     <div class="live-indicator">
                         <div class="pulse-dot"></div>
-                        <span>Live session ready - 15 students waiting</span>
+                        <span>Ready to start live session</span>
                     </div>
-                    <div class="card-footer">
-                        <button class="action-btn live-btn" onclick="startLiveClass()">
-                            <i class="fas fa-play-circle"></i> Start Live Session
-                        </button>
-                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> Video & audio streaming</li>
+                        <li><i class="fas fa-check-circle"></i> Screen sharing</li>
+                        <li><i class="fas fa-check-circle"></i> Student Q&A</li>
+                        <li><i class="fas fa-check-circle"></i> Session recording</li>
+                    </ul>
                 </div>
-            </div>
-
-            <!-- Card 6 - Create Flashcards -->
-            <div class="action-card" data-category="tools">
-                <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #32cd32, #00cc66);">
-                        <i class="fas fa-clone"></i>
-                    </div>
-                    <h3 class="action-title">Create Flashcards</h3>
-                    <div class="action-role">Study Materials</div>
-                </div>
-                <div class="card-body">
-                    <p class="action-description">Create interactive flashcards to help students memorize key concepts.
-                        Includes spaced repetition algorithm for optimal learning and retention.</p>
-                    <div class="progress-indicator">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 78%"></div>
-                        </div>
-                        <span>78% student retention rate with flashcards</span>
-                    </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="createFlashcards()">
-                            <i class="fas fa-plus-square"></i> Make Flashcards
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 7 - Student Analytics -->
-            <div class="action-card" data-category="tools">
-                <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3 class="action-title">Student Analytics</h3>
-                    <div class="action-role">Performance Tracking</div>
-                </div>
-                <div class="card-body">
-                    <p class="action-description">Track student progress, identify learning gaps, and measure engagement
-                        with detailed analytics. Make data-driven decisions to improve your teaching.</p>
-                    <div class="feature-list">
-                        <li><i class="fas fa-chart-line"></i> Progress tracking</li>
-                        <li><i class="fas fa-clock"></i> Engagement metrics</li>
-                        <li><i class="fas fa-graduation-cap"></i> Performance reports</li>
-                    </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="viewAnalytics()">
-                            <i class="fas fa-chart-pie"></i> View Analytics
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 8 - Grade Assignments -->
-            <div class="action-card" data-category="resources">
-                <div class="card-header">
-                    <div class="action-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-                        <i class="fas fa-check-double"></i>
-                    </div>
-                    <h3 class="action-title">Grade Assignments</h3>
-                    <div class="action-role">Assessment Tool</div>
-                </div>
-                <div class="card-body">
-                    <p class="action-description">Efficiently grade assignments, provide feedback, and track submission
-                        status. Use rubrics and templates for consistent assessment.</p>
-                    <div class="stat">
-                        <i class="fas fa-inbox"></i>
-                        <span>24 assignments pending review</span>
-                    </div>
-                    <div class="card-footer">
-                        <button class="action-btn" onclick="gradeAssignments()">
-                            <i class="fas fa-check-circle"></i> Grade Assignments
-                        </button>
-                    </div>
+                <div class="card-footer">
+                    <button class="action-btn live-btn" onclick="startLiveClass()">
+                        <i class="fas fa-play-circle"></i> Start Live Class
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ENHANCED FOOTER MATCHING STUDENT PORTAL -->
-    <footer class="shared-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3><i class="fas fa-graduation-cap"></i> Peer-2-Peer PRO Tutor</h3>
-                <p>Empowering tutors with cutting-edge tools to deliver exceptional learning experiences and maximize
-                    student success.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Quick Actions</h3>
-                <div class="footer-links">
-                    <a href="index.html"><i class="fas fa-home"></i> Home Dashboard</a>
-                    <a href="#"><i class="fas fa-calendar-alt"></i> Class Schedule</a>
-                    <a href="#"><i class="fas fa-book"></i> Resource Library</a>
-                    <a href="#"><i class="fas fa-chart-bar"></i> Analytics</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Tutor Support</h3>
-                <div class="footer-links">
-                    <a href="#"><i class="fas fa-question-circle"></i> Help Center</a>
-                    <a href="#"><i class="fas fa-file-alt"></i> Documentation</a>
-                    <a href="#"><i class="fas fa-envelope"></i> Contact Support</a>
-                    <a href="#"><i class="fas fa-comments"></i> Tutor Community</a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Legal & Resources</h3>
-                <div class="footer-links">
-                    <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
-                    <a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a>
-                    <a href="#"><i class="fas fa-cookie-bite"></i> Cookie Policy</a>
-                    <a href="#"><i class="fas fa-download"></i> Resource Templates</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2023 Peer-2-Peer Pro Tutoring. All rights reserved. | Empowering educators worldwide</p>
-        </div>
+    <!-- SIMPLE FOOTER -->
+    <footer class="footer">
+        <p>© 2023 Peer-2-Peer Pro Tutoring. All rights reserved.</p>
+        <p>Essential tools for modern educators | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
 
     <script>
-        // Tutor Portal Functions
-        function filterActions(category) {
-            const cards = document.querySelectorAll('.action-card');
-            const filterButtons = document.querySelectorAll('.filter-pill');
-
-            // Update active button
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes('All Actions') && category === 'all' ||
-                    btn.querySelector('i').className.includes(category) ||
-                    btn.textContent.toLowerCase().includes(category)) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Show/hide cards
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
+        // Simple tutor portal functions
         function loadUserInfo() {
-            const userName = sessionStorage.getItem('p2p_name') || 'Dr. Elena Rodriguez';
+            const userName = sessionStorage.getItem('p2p_name') || 'Tutor';
             const userAvatar = document.getElementById('userAvatar');
-            const welcomeTitle = document.getElementById('personalWelcome');
+            const userNameSpan = document.getElementById('userName');
 
-            // Update user info
-            document.getElementById('userName').textContent = userName;
+            userNameSpan.textContent = userName;
             userAvatar.textContent = userName.charAt(0).toUpperCase();
 
-            // Add color based on name
-            const colors = ['#32cd32', '#4a6bff', '#ff6b6b', '#ffcc00', '#ff4d8d', '#6b48ff'];
+            // Add random color for avatar
+            const colors = ['#32cd32', '#4a6bff', '#ff6b6b', '#ffcc00', '#834d9b'];
             const colorIndex = userName.length % colors.length;
             userAvatar.style.background = `linear-gradient(135deg, ${colors[colorIndex]}, ${colors[(colorIndex + 2) % colors.length]})`;
-
-            // Update welcome message
-            if (welcomeTitle && userName !== 'Dr. Elena Rodriguez') {
-                welcomeTitle.innerHTML = `Welcome Back, <span class="highlight">${userName}</span>!`;
-            }
         }
 
         function logout() {
@@ -417,66 +210,37 @@
             window.location.href = 'login.html';
         }
 
-        // Navigation functions with toast notifications
-        function goToSchedule() {
-            showToast('Opening Schedule Manager...', 'success');
-        }
-
-        function openWhiteboard() {
-            showToast('Launching Interactive Whiteboard...', 'info');
-        }
-
-        function goToUpload() {
-            showToast('Opening Resource Upload...', 'success');
+        // Essential block functions
+        function organizeClass() {
+            alert('Opening Class Organizer... This feature allows you to schedule and manage classes.');
+            // window.location.href = 'organize-class.html';
         }
 
         function createDocument() {
-            showToast('Loading Document Creator...', 'info');
+            alert('Opening Document Creator... Create lesson plans, worksheets, and study materials.');
+            // window.open('document-creator.html', '_blank');
+        }
+
+        function uploadDocument() {
+            alert('Opening Document Upload... Upload PDFs, presentations, videos, and other resources.');
+            // window.location.href = 'upload-document.html';
+        }
+
+        function openWhiteboard() {
+            alert('Launching Interactive Whiteboard... Perfect for visual explanations and collaborative teaching.');
+            // window.open('whiteboard.html', '_blank');
         }
 
         function startLiveClass() {
-            showToast('Starting Live Session...', 'warning');
-        }
-
-        function createFlashcards() {
-            showToast('Opening Flashcard Creator...', 'success');
-        }
-
-        function viewAnalytics() {
-            showToast('Loading Student Analytics...', 'info');
-        }
-
-        function gradeAssignments() {
-            showToast('Opening Assignment Grader...', 'info');
-        }
-
-        // Toast notification function
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${message}</span>
-                <button onclick="this.parentElement.remove()">&times;</button>
-            `;
-
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            alert('Starting Live Class... Video, audio, and screen sharing will begin shortly.');
+            // window.location.href = 'live-class.html';
         }
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function () {
             loadUserInfo();
 
-            // Add hover effects to cards
+            // Add hover effects
             document.querySelectorAll('.action-card').forEach(card => {
                 card.addEventListener('mouseenter', function () {
                     this.style.transform = 'translateY(-10px)';
@@ -489,7 +253,7 @@
 
             // Add click animations to buttons
             document.querySelectorAll('.action-btn').forEach(btn => {
-                btn.addEventListener('click', function (e) {
+                btn.addEventListener('click', function () {
                     this.style.transform = 'scale(0.95)';
                     setTimeout(() => {
                         this.style.transform = '';

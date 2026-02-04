@@ -14,6 +14,80 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <style>
+        /* Additional inline styles for perfect alignment */
+        .dashboard-grid {
+            perspective: 1000px;
+        }
+
+        .dash-card {
+            animation: cardFloat 0.6s ease-out backwards;
+        }
+
+        .dash-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .dash-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dash-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .dash-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .dash-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .dash-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes cardFloat {
+            from {
+                opacity: 0;
+                transform: translateY(30px) rotateX(10deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Modern gradient backgrounds for wide cards */
+        .dash-card.wide:nth-child(5) {
+            background: linear-gradient(135deg, rgba(50, 205, 50, 0.05), rgba(0, 0, 51, 0.03));
+        }
+
+        .dash-card.wide:nth-child(6) {
+            background: linear-gradient(135deg, rgba(0, 0, 51, 0.03), rgba(50, 205, 50, 0.05));
+        }
+
+        /* Subtle patterns */
+        .dash-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at top right, rgba(50, 205, 50, 0.1), transparent 70%);
+            pointer-events: none;
+            border-radius: var(--radius);
+            z-index: 0;
+        }
+
+        .dash-card>* {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,12 +95,16 @@
     <!-- NAVBAR -->
     <nav class="glass-nav">
         <div class="logo">
-            <img src="assets/logo.svg" class="logo-img" alt="Peer-2-Peer Pro" />
+            <div class="card-icon" style="margin: 0; width: 45px; height: 45px; background: var(--green);">
+                <i class="fas fa-graduation-cap" style="color: var(--navy);"></i>
+            </div>
             <span>PEER-2-PEER <span class="pro-text">PRO</span></span>
         </div>
 
         <div class="nav-right">
-            <span class="tutor-name">Tutor Name</span>
+            <span class="tutor-name">
+                <i class="fas fa-user-circle"></i> Welcome, Tutor
+            </span>
             <button class="logout-minimal">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -35,121 +113,309 @@
 
     <!-- MAIN DASHBOARD -->
     <div class="main-panel">
-
         <div class="panel-header">
             <h1>Tutor Hub</h1>
             <p class="subtitle">Everything you need to teach, create, and manage — in one place.</p>
         </div>
 
-        <!-- DASHBOARD GRID -->
+        <!-- DASHBOARD GRID - PERFECT STATIC LAYOUT -->
         <div class="dashboard-grid">
-
+            <!-- Live Classes -->
             <div class="dash-card" onclick="showSection('liveOrganizer')">
+                <div class="status-indicator online">Online</div>
                 <div class="card-icon"><i class="fas fa-video"></i></div>
                 <h3>Live Classes</h3>
-                <p>Schedule & launch lessons</p>
+                <p>Schedule & launch interactive lessons</p>
                 <span class="badge-count">3 Active</span>
             </div>
 
+            <!-- Resources -->
             <div class="dash-card" onclick="showSection('resourceSharing')">
                 <div class="card-icon"><i class="fas fa-folder-open"></i></div>
                 <h3>Resources</h3>
-                <p>Upload notes & files</p>
+                <p>Upload notes, files & study guides</p>
                 <span class="badge-count">12 Files</span>
             </div>
 
+            <!-- Analytics -->
             <div class="dash-card" onclick="showSection('tutorDashboard')">
                 <div class="card-icon"><i class="fas fa-chart-line"></i></div>
                 <h3>Analytics</h3>
-                <p>Track progress & hours</p>
+                <p>Track progress & teaching hours</p>
+                <span class="badge-count">View Stats</span>
             </div>
 
+            <!-- Community -->
             <div class="dash-card" onclick="showSection('p2pForum')">
                 <div class="card-icon"><i class="fas fa-comments"></i></div>
                 <h3>Community</h3>
-                <p>Forum & collaboration</p>
+                <p>Forum discussions & collaboration</p>
                 <span class="badge-count">48 New</span>
             </div>
 
-            <!-- HERO FEATURES -->
+            <!-- Interactive Whiteboard (Hero Feature) -->
             <div class="dash-card wide" onclick="showSection('WhiteBoard')">
                 <div class="card-icon"><i class="fas fa-chalkboard"></i></div>
-                <h3>Interactive Whiteboard</h3>
-                <p>Teach visually in real-time</p>
+                <div class="card-content">
+                    <h3>Interactive Whiteboard</h3>
+                    <p>Teach visually in real-time with drawing tools, shapes, and collaborative features designed for
+                        effective online instruction.</p>
+                    <span class="badge-count">Try Now</span>
+                </div>
             </div>
 
+            <!-- Document Creator (Hero Feature) -->
             <div class="dash-card wide" onclick="showSection('documentCreator')">
                 <div class="card-icon"><i class="fas fa-file-alt"></i></div>
-                <h3>Document Creator</h3>
-                <p>Create lesson notes & worksheets</p>
+                <div class="card-content">
+                    <h3>Document Creator</h3>
+                    <p>Create professional lesson notes, worksheets, and study materials with our rich text editor and
+                        formatting tools.</p>
+                    <span class="badge-count">Create New</span>
+                </div>
             </div>
-
         </div>
     </div>
 
-    <!-- SECTIONS -->
+    <!-- WHITEBOARD SECTION -->
     <div id="WhiteBoard" class="portal-section">
         <button class="back-btn" onclick="backToDash()">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
         </button>
 
         <div class="management-card">
             <div class="section-header">
-                <h3><i class="fas fa-chalkboard"></i> Whiteboard</h3>
+                <h3><i class="fas fa-chalkboard"></i> Interactive Whiteboard</h3>
+                <button class="tool-btn green-bg" onclick="saveWhiteboard()">
+                    <i class="fas fa-save"></i> Save
+                </button>
             </div>
 
             <div class="whiteboard-container">
                 <div class="whiteboard-toolbar">
-                    <button class="tool-btn active"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="tool-btn"><i class="fas fa-eraser"></i></button>
-                    <input type="color" class="color-picker" />
-                    <button class="tool-btn danger"><i class="fas fa-trash"></i> Clear</button>
+                    <button class="tool-btn active"><i class="fas fa-pencil-alt"></i> Pencil</button>
+                    <button class="tool-btn"><i class="fas fa-eraser"></i> Eraser</button>
+                    <button class="tool-btn"><i class="fas fa-text-height"></i> Text</button>
+                    <button class="tool-btn"><i class="fas fa-shapes"></i> Shapes</button>
+                    <input type="color" class="color-picker" value="#000033" />
+                    <input type="range" min="1" max="20" value="3" style="width: 100px;" />
+                    <button class="tool-btn danger"><i class="fas fa-trash"></i> Clear All</button>
                 </div>
-                <canvas class="whiteboard-canvas"></canvas>
+                <canvas class="whiteboard-canvas" id="whiteboardCanvas"></canvas>
             </div>
         </div>
     </div>
 
+    <!-- DOCUMENT CREATOR SECTION -->
     <div id="documentCreator" class="portal-section">
         <button class="back-btn" onclick="backToDash()">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
         </button>
 
         <div class="management-card">
             <div class="section-header">
                 <h3><i class="fas fa-file-alt"></i> Document Creator</h3>
+                <div>
+                    <button class="tool-btn" onclick="exportDocument()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="tool-btn green-bg" onclick="saveDocument()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
             </div>
 
             <div class="editor-container">
                 <div class="editor-toolbar">
+                    <select class="tool-btn" style="padding: 8px 15px;">
+                        <option>Arial</option>
+                        <option>Georgia</option>
+                        <option>Times New Roman</option>
+                    </select>
                     <button class="editor-btn"><i class="fas fa-bold"></i></button>
                     <button class="editor-btn"><i class="fas fa-italic"></i></button>
                     <button class="editor-btn"><i class="fas fa-underline"></i></button>
+                    <button class="editor-btn"><i class="fas fa-list-ul"></i></button>
+                    <button class="editor-btn"><i class="fas fa-list-ol"></i></button>
+                    <button class="editor-btn"><i class="fas fa-link"></i></button>
+                    <button class="editor-btn"><i class="fas fa-image"></i></button>
+                    <input type="color" class="color-picker" value="#000033" style="width: 35px; height: 35px;" />
                 </div>
 
                 <div class="editor-content" contenteditable="true">
-                    <h3>Lesson Title</h3>
-                    <p>Start typing your lesson here…</p>
+                    <h3>Lesson Plan: Introduction to Algebra</h3>
+                    <p><strong>Objective:</strong> Students will understand basic algebraic concepts and solve simple
+                        equations.</p>
+                    <p><strong>Materials Needed:</strong></p>
+                    <ul>
+                        <li>Whiteboard markers</li>
+                        <li>Practice worksheets</li>
+                        <li>Algebra tiles (virtual)</li>
+                    </ul>
+                    <p><strong>Lesson Structure:</strong></p>
+                    <ol>
+                        <li>Introduction to variables (10 mins)</li>
+                        <li>Solving basic equations (20 mins)</li>
+                        <li>Group practice session (15 mins)</li>
+                        <li>Q&A and summary (5 mins)</li>
+                    </ol>
+                    <p><strong>Key Concepts:</strong> Variables, Constants, Equations, Solving for x</p>
                 </div>
 
                 <button class="btn-deploy">
-                    <i class="fas fa-save"></i> Save Document
+                    <i class="fas fa-cloud-upload-alt"></i> Publish Document
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script>
         function showSection(id) {
-            document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+            // Hide all sections
+            document.querySelectorAll('.portal-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
             document.getElementById(id).classList.add('active');
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+
+            // Smooth scroll to section
+            document.getElementById(id).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            // Initialize whiteboard if needed
+            if (id === 'WhiteBoard') {
+                initWhiteboard();
+            }
         }
 
         function backToDash() {
-            document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Hide all sections
+            document.querySelectorAll('.portal-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Smooth scroll back to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
+
+        function initWhiteboard() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Set initial drawing style
+            ctx.strokeStyle = '#000033';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+
+            // Drawing variables
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            // Drawing functions
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            // Event listeners
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Tool functionality
+            document.querySelectorAll('.whiteboard-toolbar .tool-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.whiteboard-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    if (this.querySelector('.fa-eraser')) {
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 20;
+                    } else if (this.querySelector('.fa-pencil-alt')) {
+                        ctx.strokeStyle = document.querySelector('.color-picker').value;
+                        ctx.lineWidth = 3;
+                    }
+                });
+            });
+
+            // Color picker
+            document.querySelector('.color-picker').addEventListener('input', function () {
+                ctx.strokeStyle = this.value;
+            });
+
+            // Clear button
+            document.querySelector('.tool-btn.danger').addEventListener('click', function () {
+                if (confirm('Clear the entire whiteboard?')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            });
+
+            // Resize handling
+            window.addEventListener('resize', function () {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            });
+        }
+
+        function saveWhiteboard() {
+            alert('Whiteboard saved! In production, this would save to your account.');
+        }
+
+        function saveDocument() {
+            alert('Document saved successfully!');
+        }
+
+        function exportDocument() {
+            alert('Document exported as PDF!');
+        }
+
+        // Initialize whiteboard on page load if needed
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add hover effects
+            document.querySelectorAll('.dash-card').forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Logout button
+            document.querySelector('.logout-minimal').addEventListener('click', function () {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+        });
     </script>
 
 </body>

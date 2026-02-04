@@ -4,222 +4,761 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Portal | Peer-2-Peer Pro</title>
+    <title>Peer-2-Peer Pro | Tutor Team</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="tutor.css">
-    <script src='https://meet.jit.si/external_api.js'></script>
+    <style>
+        /* ==================================== */
+        /* REDESIGNED TUTOR PORTAL - TEAM LAYOUT */
+        /* ==================================== */
+
+        :root {
+            --primary-navy: #0a0a2a;
+            --secondary-navy: #1a1a3a;
+            --accent-green: #00ff88;
+            --accent-green-light: rgba(0, 255, 136, 0.1);
+            --accent-blue: #4a6bff;
+            --text-light: #f0f0f0;
+            --text-gray: #b0b0c0;
+            --card-bg: #1e1e3e;
+            --card-border: #2a2a4a;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #0a0a2a, #1a1a3a);
+            --gradient-card: linear-gradient(145deg, #1e1e3e, #252548);
+            --gradient-accent: linear-gradient(90deg, #00ff88, #4a6bff);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--gradient-primary);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============ NAVBAR ============ */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            background: rgba(10, 10, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent-green);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            background: var(--gradient-accent);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-navy);
+            font-size: 1.2rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-navy);
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--accent-green);
+            color: var(--primary-navy);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* ============ MAIN HEADER ============ */
+        .main-header {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ============ TEAM FILTER ============ */
+        .team-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-gray);
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--accent-green);
+            color: var(--primary-navy);
+            border-color: var(--accent-green);
+        }
+
+        /* ============ TEAM GRID ============ */
+        .team-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .team-card {
+            background: var(--gradient-card);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--card-border);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-green);
+        }
+
+        .card-header {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary-navy);
+            font-weight: 800;
+            border: 4px solid var(--card-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .member-tags {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .card-body {
+            padding: 1.5rem 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-description {
+            color: var(--text-gray);
+            line-height: 1.6;
+            flex-grow: 1;
+            font-size: 0.95rem;
+        }
+
+        .card-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--accent-green);
+            color: var(--primary-navy);
+            transform: translateY(-3px);
+        }
+
+        .contact-btn {
+            background: transparent;
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: var(--accent-green);
+            color: var(--primary-navy);
+        }
+
+        /* ============ FEATURED CARD ============ */
+        .team-card.featured {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .team-card.featured .card-header {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: none;
+        }
+
+        .team-card.featured .avatar-container {
+            width: 140px;
+            height: 140px;
+            font-size: 3.5rem;
+        }
+
+        .team-card.featured .card-body {
+            flex: 2;
+            justify-content: center;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1100px) {
+            .team-card.featured {
+                grid-column: span 1;
+                flex-direction: column;
+            }
+
+            .team-card.featured .card-header {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .team-container {
+                padding: 0 1rem 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-right {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .team-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .team-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .team-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .team-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .team-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .team-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .team-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+    </style>
 </head>
 
 <body>
-
-    <nav class="glass-nav">
-        <div class="nav-left">
-            <div class="logo-pill">P2P PRO</div>
-        </div>
-        <div class="nav-right">
-            <div class="user-profile">
-                <div class="avatar"><i class="fas fa-user-tie"></i></div>
-                <span id="tutorNameDisplay">Loading Tutor...</span>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
             </div>
-            <button class="logout-minimal" onclick="logout()">
-                <i class="fas fa-power-off"></i>
+            <span>Peer-2-Peer Pro</span>
+        </div>
+
+        <div class="nav-right">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">T</div>
+                <span id="userName">Tutor Dashboard</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
     </nav>
 
-    <main class="main-panel">
-        <div id="mainDashboard">
-            <header class="panel-header">
-                <h1>Tutor <span style="color: var(--green);">Hub</span></h1>
-                <p>Strategic management of your academic sessions and resources.</p>
-            </header>
+    <!-- MAIN CONTENT -->
+    <main>
+        <header class="main-header">
+            <h1 class="main-title">Meet Our Expert Tutors</h1>
+            <p class="subtitle">Our team of dedicated educators brings years of experience and a passion for helping
+                students succeed. Each tutor specializes in different subjects and learning styles to provide
+                personalized support.</p>
+        </header>
 
-            <div class="dashboard-grid">
-                <div class="dash-card card-featured" onclick="showSection('liveOrganizer')">
-                    <div class="card-icon"><i class="fas fa-video"></i></div>
-                    <h3>Live Class Organiser</h3>
-                    <p>Schedule and launch secure Jitsi video lessons with students.</p>
-                    <div class="card-status"><i class="fas fa-circle"></i> System Ready</div>
+        <!-- TEAM FILTER -->
+        <div class="team-filter">
+            <button class="filter-btn active" onclick="filterTeam('all')">All Tutors</button>
+            <button class="filter-btn" onclick="filterTeam('math')">Math & Science</button>
+            <button class="filter-btn" onclick="filterTeam('humanities')">Humanities</button>
+            <button class="filter-btn" onclick="filterTeam('tech')">Technology</button>
+            <button class="filter-btn" onclick="filterTeam('language')">Languages</button>
+        </div>
+
+        <!-- TEAM GRID -->
+        <div class="team-container">
+            <div class="team-grid" id="teamGrid">
+                <!-- Card 1 - Featured -->
+                <div class="team-card featured" data-category="math tech">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #ff6b6b, #ffa36c);">
+                            PB
+                        </div>
+                        <h3 class="member-name">Phillip Bothman</h3>
+                        <div class="member-role">Founder & Lead Tutor</div>
+                        <div class="member-tags">
+                            <span class="tag">Mathematics</span>
+                            <span class="tag">Physics</span>
+                            <span class="tag">Computer Science</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">A visionary educator driving innovation and collaboration in
+                            modern tutoring. With over 15 years of teaching experience, Phillip specializes in making
+                            complex STEM concepts accessible and engaging for all learning levels.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-video"></i></a>
+                            </div>
+                            <button class="contact-btn">Schedule Session</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="dash-card" onclick="showSection('resourceSharing')">
-                    <div class="card-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <h3>Resources</h3>
-                    <p>Distribute study guides and notes.</p>
+                <!-- Card 2 -->
+                <div class="team-card" data-category="humanities">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #4a6bff, #6b48ff);">
+                            JK
+                        </div>
+                        <h3 class="member-name">James Kenter</h3>
+                        <div class="member-role">Humanities Specialist</div>
+                        <div class="member-tags">
+                            <span class="tag">Literature</span>
+                            <span class="tag">History</span>
+                            <span class="tag">Writing</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">A passionate educator who believes in the power of storytelling
+                            and critical thinking. James helps students develop strong writing skills and analytical
+                            abilities across all humanities subjects.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                            </div>
+                            <button class="contact-btn">Contact</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="dash-card" onclick="showSection('tutorDashboard')">
-                    <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
-                    <h3>Performance</h3>
-                    <p>View student analytics.</p>
+                <!-- Card 3 -->
+                <div class="team-card" data-category="tech">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #00ff88, #00ccff);">
+                            CK
+                        </div>
+                        <h3 class="member-name">Cristofer Kenter</h3>
+                        <div class="member-role">Tech & Design Tutor</div>
+                        <div class="member-tags">
+                            <span class="tag">Web Design</span>
+                            <span class="tag">Programming</span>
+                            <span class="tag">UI/UX</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">A creative problem-solver who bridges the gap between technology
+                            and design. Cristofer helps students learn coding, design principles, and digital creativity
+                            in hands-on, project-based sessions.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                            </div>
+                            <button class="contact-btn">Contact</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="dash-card" onclick="showSection('p2pForum')">
-                    <div class="card-icon"><i class="fas fa-comments"></i></div>
-                    <h3>P2P Forum</h3>
-                    <p>Join community discussions.</p>
+                <!-- Card 4 -->
+                <div class="team-card" data-category="math">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #ff4d8d, #ff6b6b);">
+                            PL
+                        </div>
+                        <h3 class="member-name">Paitlyn Lubin</h3>
+                        <div class="member-role">Mathematics Tutor</div>
+                        <div class="member-tags">
+                            <span class="tag">Algebra</span>
+                            <span class="tag">Calculus</span>
+                            <span class="tag">Statistics</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">Specializing in breaking down complex mathematical concepts into
+                            understandable steps. Paitlyn's patient approach helps students build confidence and mastery
+                            in mathematics at all levels.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-chart-bar"></i></a>
+                            </div>
+                            <button class="contact-btn">Contact</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="dash-card card-wide" onclick="alert('Digital Whiteboard launching soon!')">
-                    <div class="card-icon"><i class="fas fa-chalkboard"></i></div>
-                    <div class="card-content">
-                        <h3>Interactive Whiteboard</h3>
-                        <p>Collaborate in real-time using our canvas drawing tools.</p>
+                <!-- Card 5 -->
+                <div class="team-card" data-category="tech">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #ffcc00, #ff9900);">
+                            DH
+                        </div>
+                        <h3 class="member-name">Davis Herwitz</h3>
+                        <div class="member-role">Web Development Tutor</div>
+                        <div class="member-tags">
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">React</span>
+                            <span class="tag">APIs</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">A full-stack developer with a passion for teaching modern web
+                            technologies. Davis helps students learn practical coding skills through real-world projects
+                            and collaborative problem-solving.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-codepen"></i></a>
+                            </div>
+                            <button class="contact-btn">Contact</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="team-card" data-category="language">
+                    <div class="card-header">
+                        <div class="avatar-container" style="background: linear-gradient(135deg, #9d50bb, #6e48aa);">
+                            KG
+                        </div>
+                        <h3 class="member-name">Kianna Gouse</h3>
+                        <div class="member-role">Language Arts Tutor</div>
+                        <div class="member-tags">
+                            <span class="tag">English</span>
+                            <span class="tag">Spanish</span>
+                            <span class="tag">ESL</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="member-description">A multilingual educator with expertise in language acquisition and
+                            communication skills. Kianna helps students master grammar, vocabulary, and conversational
+                            fluency in multiple languages.</p>
+                        <div class="card-footer">
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                                <a href="#" class="social-link"><i class="fas fa-language"></i></a>
+                            </div>
+                            <button class="contact-btn">Contact</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <section id="liveOrganizer" class="portal-section" style="display: none;">
-            <div class="section-header-row">
-                <button class="btn-back" onclick="backToDash()"><i class="fas fa-chevron-left"></i> Back</button>
-                <h2>Class <span style="color: var(--green);">Organiser</span></h2>
-            </div>
-
-            <div id="live-setup-section" class="glass-form-container">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Lesson Topic</label>
-                        <input type="text" id="classTopic" placeholder="e.g. Physics: Newton's Laws">
-                    </div>
-                    <div class="form-group">
-                        <label>Target Grade</label>
-                        <select id="classGrade">
-                            <option>Grade 8</option>
-                            <option>Grade 9</option>
-                            <option>Grade 10</option>
-                            <option>Grade 11</option>
-                            <option>Grade 12</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Brief Description</label>
-                    <textarea id="classDesc" placeholder="What will be covered in this session?"></textarea>
-                </div>
-                <button class="btn-deploy" onclick="scheduleClass()">
-                    <i class="fas fa-calendar-check"></i> Save & Schedule
-                </button>
-
-                <div class="scheduled-list">
-                    <h3>Your Upcoming Sessions</h3>
-                    <div id="myMeetingsList" class="meeting-grid">
-                    </div>
-                </div>
-            </div>
-
-            <div id="video-area" class="video-container"></div>
-        </section>
     </main>
 
-    <script src="tutor.js"></script>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2023 Peer-2-Peer Pro Tutoring. All rights reserved.</p>
+        <p>Designed for optimal learning experiences | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </p>
+    </footer>
+
     <script>
-        const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev"; // AUTH
-        const API_BASE2 = "https://p2p-live-worker.buhle-1ce.workers.dev"; // LIVE CLASS
+        // Filter team members by category
+        function filterTeam(category) {
+            const cards = document.querySelectorAll('.team-card');
+            const filterButtons = document.querySelectorAll('.filter-btn');
 
-        function checkTutorSession() {
-            const email = sessionStorage.getItem('p2p_email');
-            const userType = sessionStorage.getItem('p2p_userType');
-            if (!email || userType !== 'tutor') {
-                window.location.href = "login.html";
-                return;
-            }
-            document.getElementById('tutorNameDisplay').innerText = sessionStorage.getItem('p2p_name') || "Tutor";
-        }
-
-        // Layout Switching
-        function showSection(sectionId) {
-            document.getElementById('mainDashboard').style.display = 'none';
-            document.querySelectorAll('.portal-section').forEach(s => s.style.display = 'none');
-
-            const target = document.getElementById(sectionId);
-            if (target) {
-                target.style.display = 'block';
-                if (sectionId === 'liveOrganizer') loadMyMeetings();
-            }
-        }
-
-        function backToDash() {
-            document.querySelectorAll('.portal-section').forEach(s => s.style.display = 'none');
-            document.getElementById('mainDashboard').style.display = 'block';
-            document.getElementById('video-area').style.display = 'none';
-            document.getElementById('live-setup-section').style.display = 'block';
-        }
-
-        // Logic for Scheduling
-        async function scheduleClass() {
-            const topic = document.getElementById('classTopic').value.trim();
-            const grade = document.getElementById('classGrade').value;
-            const desc = document.getElementById('classDesc').value.trim();
-            const email = sessionStorage.getItem('p2p_email');
-
-            if (!topic || !desc) return alert("Fill in topic and description.");
-
-            try {
-                const response = await fetch(`${API_BASE2}/api/schedule-class`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, topic, description: desc, grade })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert("Session Locked in!");
-                    loadMyMeetings();
+            // Update active button
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(category) ||
+                    (category === 'all' && btn.textContent.includes('All Tutors'))) {
+                    btn.classList.add('active');
                 }
-            } catch (e) { alert("Connectivity error with Live Worker."); }
-        }
+            });
 
-        async function loadMyMeetings() {
-            const email = sessionStorage.getItem('p2p_email');
-            const container = document.getElementById('myMeetingsList');
-
-            try {
-                const res = await fetch(`${API_BASE2}/api/get-classes?email=${email}`);
-                const classes = await res.json();
-
-                container.innerHTML = classes.map(c => `
-            <div class="meeting-item">
-                <div class="meeting-info">
-                    <strong>${c.topic}</strong>
-                    <span>Grade ${c.grade} • ${new Date(c.created_at).toLocaleDateString()}</span>
-                </div>
-                <button class="btn-start" onclick="goLive(${c.id})">Start</button>
-            </div>
-        `).join('') || "<p>No sessions scheduled.</p>";
-            } catch (e) { container.innerHTML = "Error syncing meetings."; }
-        }
-
-        async function goLive(classId) {
-            const email = sessionStorage.getItem('p2p_email');
-            try {
-                const res = await fetch(`${API_BASE2}/api/go-live`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, classId })
-                });
-                const result = await res.json();
-                if (result.success) {
-                    document.getElementById('live-setup-section').style.display = 'none';
-                    const videoArea = document.getElementById('video-area');
-                    videoArea.style.display = 'block';
-
-                    new JitsiMeetExternalAPI("meet.jit.si", {
-                        roomName: result.roomName,
-                        width: '100%',
-                        height: 600,
-                        parentNode: videoArea,
-                        userInfo: { displayName: sessionStorage.getItem('p2p_name') }
-                    });
+            // Show/hide cards based on category
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category.includes(category)) {
+                    card.style.display = 'flex';
+                    card.style.animation = 'fadeIn 0.5s ease forwards';
+                } else {
+                    card.style.display = 'none';
                 }
-            } catch (e) { alert("Live bridge failed."); }
+            });
         }
 
+        // Set user info from session storage (if available)
+        function loadUserInfo() {
+            const userName = sessionStorage.getItem('p2p_name') || 'Tutor';
+            const userEmail = sessionStorage.getItem('p2p_email') || 'tutor@example.com';
+
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+
+            // Update featured card with actual tutor name if available
+            if (userName && userName !== 'Tutor') {
+                const featuredName = document.querySelector('.team-card.featured .member-name');
+                const featuredAvatar = document.querySelector('.team-card.featured .avatar-container');
+
+                if (featuredName && featuredAvatar) {
+                    const initials = userName.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
+                    featuredName.textContent = userName;
+                    featuredAvatar.textContent = initials;
+                }
+            }
+        }
+
+        // Logout function
         function logout() {
             sessionStorage.clear();
-            window.location.href = "login.html";
+            window.location.href = 'login.html';
         }
 
-        document.addEventListener('DOMContentLoaded', checkTutorSession);
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUserInfo();
+
+            // Add click handlers to all contact buttons
+            document.querySelectorAll('.contact-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const card = this.closest('.team-card');
+                    const tutorName = card.querySelector('.member-name').textContent;
+                    alert(`You've requested to contact ${tutorName}. Our scheduling system will open shortly.`);
+                });
+            });
+        });
     </script>
 </body>
 

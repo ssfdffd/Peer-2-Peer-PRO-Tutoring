@@ -13,18 +13,20 @@
 <body>
     <!-- SIMPLE NAVBAR -->
     <nav class="glass-nav">
-        <a href="index.html" class="logo-glow">
-            <i class="fas fa-graduation-cap"></i>
-            Peer-2-Peer <span class="premium">TUTOR</span>
-        </a>
+        <div class="logo-container">
+            <img src="https://img.icons8.com/color/48/000000/graduation-cap.png" alt="Favicon" class="favicon-img">
+            <span>PEER-2-PEER <span style="color: var(--green);">PRO</span></span>
+        </div>
 
-        <div class="nav-right">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">T</div>
-                <span id="userName">Tutor Portal</span>
+        <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+            <div class="user-pill"
+                style="display:flex; align-items:center; gap:10px; background:var(--bg); padding:5px 15px; border-radius:30px;">
+                <i class="fas fa-user-circle" style="color:var(--green)"></i>
+                <span id="tutorNameDisplay" style="font-weight:600">Tutor Name</span>
             </div>
-            <button class="logout-minimal" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <button onclick="logout()"
+                style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-weight:bold;">
+                <i class="fas fa-power-off"></i> Logout
             </button>
         </div>
     </nav>

@@ -121,7 +121,7 @@ body {
 }
 
 /* ====================================
-   6. SIDE PANEL - LIGHT MODE
+   6. SIDE PANEL - SIMPLIFIED
    ==================================== */
 .side-panel {
   width: 280px;
@@ -136,7 +136,7 @@ body {
 }
 
 /* ====================================
-   7. PROFILE SECTION
+   7. PROFILE SECTION - SIMPLIFIED
    ==================================== */
 .profile-summary {
   text-align: center;
@@ -173,48 +173,56 @@ body {
 }
 
 /* ====================================
-   8. QUICK STATS (NEW)
+   8. STATUS BADGES
    ==================================== */
-.quick-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.status-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 10px;
 }
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  background: var(--light-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  transition: var(--transition);
+.status-badge.offline {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-.stat-item:hover {
-  border-color: var(--pro-green);
-  transform: translateX(5px);
+.status-badge.online {
+  background: rgba(50, 205, 50, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(50, 205, 50, 0.3);
+  animation: pulse 2s infinite;
 }
 
-.stat-item i {
-  color: var(--navy-bg);
-  width: 20px;
-}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
 
-.stat-item span {
-  flex: 1;
-  color: var(--text-dark);
-}
+  50% {
+    opacity: 0.7;
+  }
 
-.stat-item strong {
-  color: var(--navy-bg);
-  font-weight: 700;
+  100% {
+    opacity: 1;
+  }
 }
 
 /* ====================================
-   9. QUICK ACTIONS (NEW)
+   9. QUICK ACTIONS
    ==================================== */
+.quick-actions-title {
+  color: var(--navy-bg);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
 .quick-actions {
   display: flex;
   flex-direction: column;
@@ -270,7 +278,7 @@ body {
 }
 
 /* ====================================
-   11. DASHBOARD GRID (NEW)
+   11. DASHBOARD GRID - 6 CARDS
    ==================================== */
 .dashboard-grid {
   display: grid;
@@ -289,6 +297,9 @@ body {
   transition: var(--transition);
   position: relative;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .dash-card:hover {
@@ -301,18 +312,28 @@ body {
   font-size: 2.5rem;
   color: var(--navy-bg);
   margin-bottom: 15px;
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(50, 205, 50, 0.1);
+  border-radius: 50%;
+  border: 2px solid rgba(50, 205, 50, 0.3);
 }
 
 .dash-card h3 {
   margin-bottom: 10px;
   color: var(--navy-bg);
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .dash-card p {
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 15px;
+  flex-grow: 1;
 }
 
 .badge-count {
@@ -320,9 +341,11 @@ body {
   color: var(--navy-bg);
   padding: 4px 12px;
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ====================================
@@ -397,66 +420,363 @@ body {
   color: var(--navy-bg);
 }
 
-/* ====================================
-   14. STATS GRID (NEW)
-   ==================================== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.stat-card {
-  background: var(--light-bg);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  border: 1px solid var(--border-color);
+.btn-deploy-sm {
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: var(--transition);
 }
 
-.stat-card:hover {
+.btn-deploy-sm:hover {
+  background: #28b528;
+  transform: translateY(-2px);
+}
+
+/* ====================================
+   14. WHITEBOARD STYLES - ENHANCED
+   ==================================== */
+.whiteboard-container {
+  background: var(--light-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.whiteboard-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 15px;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.tool-group label {
+  color: var(--navy-bg);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tool-btn {
+  padding: 10px 15px;
+  background: var(--light-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--navy-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.tool-btn:hover {
+  background: rgba(50, 205, 50, 0.2);
+  border-color: var(--pro-green);
+  color: var(--navy-bg);
+}
+
+.tool-btn.active {
+  background: var(--pro-green);
+  border-color: var(--pro-green);
+  color: var(--navy-bg);
+}
+
+.tool-btn.danger {
+  background: rgba(255, 68, 68, 0.1);
+  border-color: rgba(255, 68, 68, 0.3);
+  color: var(--danger);
+}
+
+.tool-btn.danger:hover {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.color-picker {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+#brushSize {
+  width: 100px;
+}
+
+#sizeValue {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--navy-bg);
+}
+
+.whiteboard-area {
+  padding: 20px;
+  background: var(--white);
+}
+
+.whiteboard-canvas {
+  width: 100%;
+  height: 500px;
+  background: var(--white);
+  display: block;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: crosshair;
+}
+
+/* ====================================
+   15. DOCUMENT EDITOR STYLES - ENHANCED
+   ==================================== */
+.editor-container {
+  background: var(--light-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.editor-btn-group {
+  display: flex;
+  gap: 5px;
+  padding: 0 10px;
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.font-select,
+.font-size-select {
+  min-width: 150px;
+}
+
+.editor-btn {
+  padding: 8px 12px;
+  background: var(--light-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--navy-bg);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-btn:hover {
+  background: rgba(50, 205, 50, 0.2);
+  border-color: var(--pro-green);
+  color: var(--navy-bg);
+}
+
+.color-picker-sm {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.editor-content {
+  min-height: 400px;
+  padding: 30px;
+  background: var(--white);
+  outline: none;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.editor-content h3 {
+  color: var(--navy-bg);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--pro-green);
+  padding-bottom: 10px;
+}
+
+.editor-content p {
+  margin-bottom: 15px;
+}
+
+.editor-footer {
+  padding: 20px;
+  background: var(--white);
+  border-top: 1px solid var(--border-color);
+}
+
+/* ====================================
+   16. OVERVIEW GRID FOR TUTOR DASHBOARD
+   ==================================== */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.overview-card {
+  background: var(--light-bg);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: var(--transition);
+}
+
+.overview-card:hover {
   border-color: var(--pro-green);
   transform: translateY(-3px);
 }
 
-.stat-card i {
-  font-size: 2rem;
-  color: var(--navy-bg);
-  margin-bottom: 10px;
+.overview-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(50, 205, 50, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(50, 205, 50, 0.3);
 }
 
-.stat-card h4 {
+.overview-icon i {
+  font-size: 1.5rem;
+  color: var(--navy-bg);
+}
+
+.overview-content h4 {
   color: #666;
   font-size: 0.9rem;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-weight: 500;
 }
 
-.stat-number {
-  font-size: 2rem;
+.overview-number {
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--navy-bg);
   margin-bottom: 5px;
 }
 
-.stat-trend {
+.overview-trend {
   font-size: 0.85rem;
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 600;
 }
 
-.stat-trend.positive {
+.overview-trend.positive {
+  background: rgba(50, 205, 50, 0.1);
+  color: #28a428;
+  border: 1px solid rgba(50, 205, 50, 0.3);
+}
+
+.overview-status {
+  font-size: 0.85rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.overview-status.online {
   background: rgba(50, 205, 50, 0.1);
   color: #28a428;
   border: 1px solid rgba(50, 205, 50, 0.3);
 }
 
 /* ====================================
-   15. FORUM STYLES (NEW)
+   17. FORUM STYLES - ENHANCED
    ==================================== */
 .forum-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.forum-search {
+  display: flex;
+  gap: 10px;
+}
+
+.forum-search-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.forum-search-btn {
+  padding: 12px 20px;
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.forum-search-btn:hover {
+  background: #28b528;
+}
+
+.forum-categories {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.forum-category {
+  padding: 8px 20px;
+  background: var(--light-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--navy-bg);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.forum-category:hover,
+.forum-category.active {
+  background: var(--pro-green);
+  border-color: var(--pro-green);
+  color: var(--navy-bg);
+}
+
+.forum-posts {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -467,6 +787,12 @@ body {
   border-radius: 12px;
   padding: 20px;
   background: var(--light-bg);
+  transition: var(--transition);
+}
+
+.forum-post:hover {
+  border-color: var(--pro-green);
+  transform: translateY(-2px);
 }
 
 .post-header {
@@ -477,8 +803,8 @@ body {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--pro-green);
@@ -495,7 +821,24 @@ body {
   font-size: 0.85rem;
 }
 
-.forum-post p {
+.post-badge {
+  padding: 4px 10px;
+  background: var(--pro-green);
+  color: var(--navy-bg);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.post-title {
+  color: var(--navy-bg);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.post-excerpt {
   color: var(--text-dark);
   line-height: 1.6;
   margin-bottom: 15px;
@@ -525,130 +868,6 @@ body {
   background: var(--pro-green);
   border-color: var(--pro-green);
   color: var(--navy-bg);
-}
-
-/* ====================================
-   16. WHITEBOARD STYLES (NEW)
-   ==================================== */
-.whiteboard-container {
-  background: var(--light-bg);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
-
-.whiteboard-toolbar {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
-
-.tool-btn {
-  padding: 8px 15px;
-  background: var(--light-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  color: var(--navy-bg);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 600;
-  transition: var(--transition);
-}
-
-.tool-btn:hover {
-  background: var(--pro-green);
-  border-color: var(--pro-green);
-  color: var(--navy-bg);
-}
-
-.tool-btn.active {
-  background: var(--pro-green);
-  border-color: var(--pro-green);
-  color: var(--navy-bg);
-}
-
-.tool-btn.danger {
-  background: rgba(255, 68, 68, 0.1);
-  border-color: rgba(255, 68, 68, 0.3);
-  color: var(--danger);
-}
-
-.tool-btn.danger:hover {
-  background: var(--danger);
-  color: var(--white);
-}
-
-.color-picker {
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.whiteboard-canvas {
-  width: 100%;
-  height: 500px;
-  background: var(--white);
-  display: block;
-}
-
-/* ====================================
-   17. EDITOR STYLES (NEW)
-   ==================================== */
-.editor-container {
-  background: var(--light-bg);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
-
-.editor-toolbar {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.font-select {
-  flex: 1;
-  max-width: 200px;
-}
-
-.editor-btn {
-  padding: 8px 12px;
-  background: var(--light-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  color: var(--navy-bg);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.editor-btn:hover {
-  background: var(--pro-green);
-  border-color: var(--pro-green);
-  color: var(--navy-bg);
-}
-
-.editor-content {
-  min-height: 300px;
-  padding: 20px;
-  background: var(--white);
-  outline: none;
-}
-
-.editor-content h3 {
-  color: var(--navy-bg);
-  margin-bottom: 15px;
 }
 
 /* ====================================
@@ -732,27 +951,23 @@ body {
 }
 
 /* ====================================
-   20. STATUS BADGES
+   20. EMPTY STATES
    ==================================== */
-.status-badge {
-  display: inline-block;
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
+.empty-state,
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
 }
 
-.status-badge.offline {
-  background: rgba(239, 68, 68, 0.1);
+.empty-state i,
+.error-state i {
+  margin-bottom: 15px;
+  color: #ccc;
+}
+
+.error-state i {
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.status-badge.online {
-  background: rgba(50, 205, 50, 0.1);
-  color: var(--success);
-  border: 1px solid rgba(50, 205, 50, 0.3);
-  animation: pulse 2s infinite;
 }
 
 /* ====================================
@@ -782,27 +997,7 @@ body {
 }
 
 /* ====================================
-   22. EMPTY STATES
-   ==================================== */
-.empty-state,
-.error-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #666;
-}
-
-.empty-state i,
-.error-state i {
-  margin-bottom: 15px;
-  color: #ccc;
-}
-
-.error-state i {
-  color: var(--danger);
-}
-
-/* ====================================
-   23. RESPONSIVE DESIGN
+   22. RESPONSIVE DESIGN
    ==================================== */
 @media (max-width: 1024px) {
   .dashboard-wrapper {
@@ -821,10 +1016,17 @@ body {
 
   .glass-nav {
     padding: 15px;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .nav-right {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .input-grid,
-  .stats-grid,
+  .overview-grid,
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -835,19 +1037,27 @@ body {
     align-items: flex-start;
   }
 
-  .meeting-card {
+  .whiteboard-toolbar,
+  .editor-toolbar {
     flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
-  .nav-right {
-    flex-wrap: wrap;
+  .tool-group {
+    border: none;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .editor-btn-group {
+    border: none;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-color);
   }
 }
 
 /* ====================================
-   24. SCROLLBAR STYLING
+   23. SCROLLBAR STYLING
    ==================================== */
 ::-webkit-scrollbar {
   width: 8px;

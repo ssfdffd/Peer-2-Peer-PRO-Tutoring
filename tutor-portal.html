@@ -2,360 +2,156 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Portal | Peer-2-Peer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="tutor.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script src='https://meet.jit.si/external_api.js'></script>
+    <meta charset="UTF-8" />
+    <title>Tutor Portal | Peer-2-Peer Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="tutor.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
 
 <body>
-    <!-- Navbar matching index.css -->
-    <nav id="navbar" class="glass-nav">
+
+    <!-- NAVBAR -->
+    <nav class="glass-nav">
         <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>PEER-2-PEER</span>
-            <span class="pro-text">PRO</span>
+            <img src="assets/logo.svg" class="logo-img" alt="Peer-2-Peer Pro" />
+            <span>PEER-2-PEER <span class="pro-text">PRO</span></span>
         </div>
+
         <div class="nav-right">
-            <span id="tutorNameDisplay" class="tutor-name">Tutor Name</span>
-            <button class="logout-minimal" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
+            <span class="tutor-name">Tutor Name</span>
+            <button class="logout-minimal">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
     </nav>
 
-    <!-- Main Dashboard -->
-    <div id="mainDashboard" class="dashboard-wrapper">
-        <!-- Side Panel -->
-        <div class="side-panel">
-            <div class="profile-summary">
-                <i class="fas fa-chalkboard-teacher fa-3x"></i>
-                <h3 id="tutorFullName">Dr. Alex Johnson</h3>
-                <div class="badge">Verified Tutor</div>
-                <div class="status-badge online" id="statusIndicator">
-                    <i class="fas fa-circle"></i> Online
-                </div>
-            </div>
+    <!-- MAIN DASHBOARD -->
+    <div class="main-panel">
 
-            <div class="quick-stats">
-                <div class="stat-item">
-                    <i class="fas fa-users"></i>
-                    <span>Students: <strong>42</strong></span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-clock"></i>
-                    <span>Hours: <strong>156</strong></span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-star"></i>
-                    <span>Rating: <strong>4.9</strong></span>
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <button class="quick-btn" onclick="showSection('WhiteBoard')">
-                    <i class="fas fa-chalkboard"></i>
-                    Whiteboard
-                </button>
-                <button class="quick-btn" onclick="showSection('documentCreator')">
-                    <i class="fas fa-file-alt"></i>
-                    Create Document
-                </button>
-            </div>
+        <div class="panel-header">
+            <h1>Tutor Hub</h1>
+            <p class="subtitle">Everything you need to teach, create, and manage — in one place.</p>
         </div>
 
-        <!-- Main Panel -->
-        <div class="main-panel">
-            <!-- Welcome Header -->
-            <div class="panel-header">
-                <h1>Tutor Hub</h1>
-                <p class="subtitle">Manage your classes, resources, and community engagement from one place.</p>
+        <!-- DASHBOARD GRID -->
+        <div class="dashboard-grid">
+
+            <div class="dash-card" onclick="showSection('liveOrganizer')">
+                <div class="card-icon"><i class="fas fa-video"></i></div>
+                <h3>Live Classes</h3>
+                <p>Schedule & launch lessons</p>
+                <span class="badge-count">3 Active</span>
             </div>
 
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                <div class="dash-card" onclick="showSection('liveOrganizer')">
-                    <div class="card-icon">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <h3>Live Class Organiser</h3>
-                    <p>Schedule and launch Jitsi lessons</p>
-                    <div class="badge-count">3 Active</div>
-                </div>
-
-                <div class="dash-card" onclick="showSection('resourceSharing')">
-                    <div class="card-icon">
-                        <i class="fas fa-file-export"></i>
-                    </div>
-                    <h3>Resource Sharing</h3>
-                    <p>Upload notes and study guides</p>
-                    <div class="badge-count">12 Files</div>
-                </div>
-
-                <div class="dash-card" onclick="showSection('tutorDashboard')">
-                    <div class="card-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Tutor Dashboard</h3>
-                    <p>Track student progress and hours</p>
-                    <div class="badge-count">Analytics</div>
-                </div>
-
-                <div class="dash-card" onclick="showSection('p2pForum')">
-                    <div class="card-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3>P2P Forum</h3>
-                    <p>Engage in community discussions</p>
-                    <div class="badge-count">48 New</div>
-                </div>
+            <div class="dash-card" onclick="showSection('resourceSharing')">
+                <div class="card-icon"><i class="fas fa-folder-open"></i></div>
+                <h3>Resources</h3>
+                <p>Upload notes & files</p>
+                <span class="badge-count">12 Files</span>
             </div>
 
-            <!-- Section Containers -->
-            <div id="liveOrganizer" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-video"></i> Schedule New Lesson</h3>
-                    </div>
-
-                    <div class="input-grid">
-                        <div class="input-group">
-                            <label for="classTopic"><i class="fas fa-book"></i> Lesson Topic</label>
-                            <input type="text" id="classTopic" placeholder="Algebra Basics, Physics 101...">
-                        </div>
-                        <div class="input-group">
-                            <label for="classGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                            <select id="classGrade" class="luxury-select">
-                                <option value="Grade 8">Grade 8</option>
-                                <option value="Grade 9">Grade 9</option>
-                                <option value="Grade 10">Grade 10</option>
-                                <option value="Grade 11">Grade 11</option>
-                                <option value="Grade 12">Grade 12</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="classDesc"><i class="fas fa-align-left"></i> Lesson Description</label>
-                        <textarea id="classDesc"
-                            placeholder="Describe the lesson objectives, topics covered, and any prerequisites..."
-                            rows="4"></textarea>
-                    </div>
-
-                    <button class="btn-deploy" onclick="scheduleClass()">
-                        <i class="fas fa-calendar-plus"></i>
-                        Save & Schedule Lesson
-                    </button>
-                </div>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-clock"></i> My Scheduled Classes</h3>
-                        <span class="badge-count" id="meetingCount">0</span>
-                    </div>
-
-                    <div id="myMeetingsList" class="file-grid">
-                        <!-- Meetings will be loaded here -->
-                        <div class="empty-state">
-                            <i class="fas fa-calendar-times fa-2x"></i>
-                            <p>No scheduled classes yet</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="video-area"></div>
+            <div class="dash-card" onclick="showSection('tutorDashboard')">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Analytics</h3>
+                <p>Track progress & hours</p>
             </div>
 
-            <div id="resourceSharing" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-cloud-upload-alt"></i> Upload Resources</h3>
-                    </div>
-
-                    <div class="drop-zone" id="resourceDropZone">
-                        <i class="fas fa-file-upload fa-3x"></i>
-                        <p id="drop-text">Drag & drop your files here or <span>browse</span></p>
-                        <p class="upload-hint">Supports PDF, DOC, PPT, Images (Max 50MB)</p>
-                    </div>
-
-                    <input type="file" id="fileInput" multiple style="display: none;">
-
-                    <div id="active-upload-status" style="display: none;">
-                        <div class="progress-ring-wrapper">
-                            <svg class="progress-ring" width="80" height="80">
-                                <circle class="progress-ring__circle-bg" cx="40" cy="40" r="36"></circle>
-                                <circle class="progress-ring__circle" cx="40" cy="40" r="36"></circle>
-                            </svg>
-                            <div class="progress-text">0%</div>
-                        </div>
-                        <p class="upload-hint">Uploading...</p>
-                    </div>
-                </div>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-folder-open"></i> My Resources</h3>
-                        <span class="badge-count" id="resourceCount">0</span>
-                    </div>
-
-                    <div id="resourceList" class="file-grid">
-                        <div class="empty-state">
-                            <i class="fas fa-folder-open fa-2x"></i>
-                            <p>No resources uploaded yet</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="dash-card" onclick="showSection('p2pForum')">
+                <div class="card-icon"><i class="fas fa-comments"></i></div>
+                <h3>Community</h3>
+                <p>Forum & collaboration</p>
+                <span class="badge-count">48 New</span>
             </div>
 
-            <div id="tutorDashboard" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-chart-bar"></i> Performance Analytics</h3>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <i class="fas fa-users"></i>
-                            <h4>Active Students</h4>
-                            <p class="stat-number">42</p>
-                            <span class="stat-trend positive">↑ 12%</span>
-                        </div>
-
-                        <div class="stat-card">
-                            <i class="fas fa-clock"></i>
-                            <h4>Teaching Hours</h4>
-                            <p class="stat-number">156</p>
-                            <span class="stat-trend positive">↑ 8%</span>
-                        </div>
-
-                        <div class="stat-card">
-                            <i class="fas fa-star"></i>
-                            <h4>Average Rating</h4>
-                            <p class="stat-number">4.9</p>
-                            <span class="stat-trend positive">↑ 0.2</span>
-                        </div>
-
-                        <div class="stat-card">
-                            <i class="fas fa-dollar-sign"></i>
-                            <h4>Earnings</h4>
-                            <p class="stat-number">$3,250</p>
-                            <span class="stat-trend positive">↑ 15%</span>
-                        </div>
-                    </div>
-                </div>
+            <!-- HERO FEATURES -->
+            <div class="dash-card wide" onclick="showSection('WhiteBoard')">
+                <div class="card-icon"><i class="fas fa-chalkboard"></i></div>
+                <h3>Interactive Whiteboard</h3>
+                <p>Teach visually in real-time</p>
             </div>
 
-            <div id="p2pForum" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-comments"></i> Community Forum</h3>
-                        <span class="badge-count">48 New</span>
-                    </div>
-
-                    <div class="forum-container">
-                        <div class="forum-post">
-                            <div class="post-header">
-                                <img src="https://ui-avatars.com/api/?name=John+Doe&background=000033&color=32cd32"
-                                    class="avatar">
-                                <div class="post-info">
-                                    <h4>John Doe</h4>
-                                    <span class="post-time">2 hours ago</span>
-                                </div>
-                            </div>
-                            <p>How do you handle difficult concepts in calculus? Looking for teaching strategies.</p>
-                            <div class="post-actions">
-                                <button class="forum-btn"><i class="fas fa-reply"></i> Reply</button>
-                                <button class="forum-btn"><i class="fas fa-thumbs-up"></i> Like (12)</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="dash-card wide" onclick="showSection('documentCreator')">
+                <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+                <h3>Document Creator</h3>
+                <p>Create lesson notes & worksheets</p>
             </div>
 
-            <div id="WhiteBoard" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
+        </div>
+    </div>
 
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-chalkboard"></i> Interactive Whiteboard</h3>
-                    </div>
+    <!-- SECTIONS -->
+    <div id="WhiteBoard" class="portal-section">
+        <button class="back-btn" onclick="backToDash()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
 
-                    <div class="whiteboard-container">
-                        <div class="whiteboard-toolbar">
-                            <button class="tool-btn active"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="tool-btn"><i class="fas fa-eraser"></i></button>
-                            <button class="tool-btn"><i class="fas fa-text-height"></i></button>
-                            <button class="tool-btn"><i class="fas fa-shapes"></i></button>
-                            <input type="color" class="color-picker" value="#000033">
-                            <button class="tool-btn danger"><i class="fas fa-trash"></i> Clear</button>
-                        </div>
-
-                        <canvas id="whiteboardCanvas" class="whiteboard-canvas"></canvas>
-                    </div>
-                </div>
+        <div class="management-card">
+            <div class="section-header">
+                <h3><i class="fas fa-chalkboard"></i> Whiteboard</h3>
             </div>
 
-            <div id="documentCreator" class="portal-section">
-                <button class="back-btn" onclick="backToDash()">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
-
-                <div class="management-card">
-                    <div class="section-header">
-                        <h3><i class="fas fa-file-alt"></i> Document Creator</h3>
-                    </div>
-
-                    <div class="editor-container">
-                        <div class="editor-toolbar">
-                            <select class="font-select luxury-select">
-                                <option>Arial</option>
-                                <option>Times New Roman</option>
-                                <option>Courier New</option>
-                            </select>
-                            <button class="editor-btn"><i class="fas fa-bold"></i></button>
-                            <button class="editor-btn"><i class="fas fa-italic"></i></button>
-                            <button class="editor-btn"><i class="fas fa-underline"></i></button>
-                            <button class="editor-btn"><i class="fas fa-list-ul"></i></button>
-                        </div>
-
-                        <div class="editor-content" contenteditable="true">
-                            <h3>My Lesson Notes</h3>
-                            <p>Start typing your content here...</p>
-                        </div>
-
-                        <button class="btn-deploy">
-                            <i class="fas fa-save"></i>
-                            Save Document
-                        </button>
-                    </div>
+            <div class="whiteboard-container">
+                <div class="whiteboard-toolbar">
+                    <button class="tool-btn active"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="tool-btn"><i class="fas fa-eraser"></i></button>
+                    <input type="color" class="color-picker" />
+                    <button class="tool-btn danger"><i class="fas fa-trash"></i> Clear</button>
                 </div>
+                <canvas class="whiteboard-canvas"></canvas>
             </div>
         </div>
     </div>
 
-    <script src="tutor.js"></script>
+    <div id="documentCreator" class="portal-section">
+        <button class="back-btn" onclick="backToDash()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+
+        <div class="management-card">
+            <div class="section-header">
+                <h3><i class="fas fa-file-alt"></i> Document Creator</h3>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-toolbar">
+                    <button class="editor-btn"><i class="fas fa-bold"></i></button>
+                    <button class="editor-btn"><i class="fas fa-italic"></i></button>
+                    <button class="editor-btn"><i class="fas fa-underline"></i></button>
+                </div>
+
+                <div class="editor-content" contenteditable="true">
+                    <h3>Lesson Title</h3>
+                    <p>Start typing your lesson here…</p>
+                </div>
+
+                <button class="btn-deploy">
+                    <i class="fas fa-save"></i> Save Document
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function backToDash() {
+            document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
 </body>
 
 </html>

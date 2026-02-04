@@ -149,6 +149,417 @@ body {
 }
 
 /* ====================================
+   CARD STYLING - MODERN MINIMAL DESIGN
+   ==================================== */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 3rem;
+}
+
+/* CARD BASE STYLES */
+.dash-card {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  cursor: pointer;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  aspect-ratio: 1 / 1;
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CARD HOVER EFFECTS */
+.dash-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--green);
+  box-shadow: var(--shadow-lg), 0 15px 35px rgba(50, 205, 50, 0.2);
+}
+
+/* CARD ACCENT STRIP */
+.dash-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, var(--green), #28b528, var(--green));
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dash-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* CARD NUMBER BADGE */
+.card-number {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, rgba(50, 205, 50, 0.1), rgba(0, 0, 51, 0.05));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 1.3rem;
+  border: 2px solid rgba(50, 205, 50, 0.15);
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.dash-card:hover .card-number {
+  background: linear-gradient(135deg, var(--green), #28b528);
+  color: var(--white);
+  transform: scale(1.1) rotate(5deg);
+  border-color: var(--green);
+  box-shadow: 0 8px 20px rgba(50, 205, 50, 0.3);
+}
+
+/* CARD TITLE STYLING */
+.dash-card h3 {
+  margin: 70px 0 15px 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.3px;
+}
+
+.dash-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--green);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.dash-card:hover h3::after {
+  width: 60px;
+}
+
+/* CARD DESCRIPTION */
+.dash-card p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+}
+
+/* CARD BACKGROUND PATTERN */
+.dash-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 10% 90%, rgba(0, 0, 51, 0.03) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.dash-card:hover::after {
+  opacity: 1;
+}
+
+/* ACTION INDICATOR */
+.card-action {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: var(--transition);
+}
+
+.dash-card:hover .card-action {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.card-action i {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.dash-card:hover .card-action i {
+  transform: translateX(5px);
+}
+
+/* FEATURED CARD STYLING */
+.dash-card.featured {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--white);
+  border-color: var(--green);
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-card.featured::before {
+  height: 8px;
+  background: linear-gradient(90deg, var(--green), #7fdff0, var(--green));
+}
+
+.dash-card.featured h3 {
+  color: var(--white);
+  font-size: 1.8rem;
+}
+
+.dash-card.featured h3::after {
+  background: var(--green);
+}
+
+.dash-card.featured p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.dash-card.featured .card-number {
+  background: linear-gradient(135deg, rgba(50, 205, 50, 0.2), rgba(127, 223, 240, 0.1));
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dash-card.featured:hover .card-number {
+  background: linear-gradient(135deg, var(--white), #f0f0f0);
+  color: var(--navy);
+}
+
+.dash-card.featured .card-action {
+  color: var(--green);
+}
+
+.dash-card.featured::after {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(50, 205, 50, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 10% 90%, rgba(127, 223, 240, 0.1) 0%, transparent 50%);
+}
+
+/* INDIVIDUAL CARD COLOR VARIANTS */
+.dash-card:nth-child(1) {
+  /* Live Organizer */
+  border-top: 6px solid var(--green);
+}
+
+.dash-card:nth-child(2) {
+  /* Resources */
+  border-top: 6px solid #7fdff0;
+}
+
+.dash-card:nth-child(3) {
+  /* Analytics */
+  border-top: 6px solid #834d9b;
+}
+
+.dash-card:nth-child(4) {
+  /* P2P Forum */
+  border-top: 6px solid #ffc107;
+}
+
+.dash-card:nth-child(2) .card-number {
+  background: linear-gradient(135deg, rgba(127, 223, 240, 0.1), rgba(0, 0, 51, 0.05));
+  border-color: rgba(127, 223, 240, 0.2);
+}
+
+.dash-card:nth-child(3) .card-number {
+  background: linear-gradient(135deg, rgba(131, 77, 155, 0.1), rgba(0, 0, 51, 0.05));
+  border-color: rgba(131, 77, 155, 0.2);
+}
+
+.dash-card:nth-child(4) .card-number {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(0, 0, 51, 0.05));
+  border-color: rgba(255, 193, 7, 0.2);
+}
+
+.dash-card:nth-child(2):hover .card-number {
+  background: linear-gradient(135deg, #7fdff0, #5ac9e0);
+}
+
+.dash-card:nth-child(3):hover .card-number {
+  background: linear-gradient(135deg, #834d9b, #6a3d7f);
+}
+
+.dash-card:nth-child(4):hover .card-number {
+  background: linear-gradient(135deg, #ffc107, #e6ac00);
+}
+
+/* CARD SHIMMER EFFECT */
+.card-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent);
+  transition: left 0.8s ease;
+}
+
+.dash-card:hover .card-shimmer {
+  left: 100%;
+}
+
+/* RESPONSIVE CARD STYLING */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .dash-card {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-card {
+    padding: 2rem;
+    min-height: 260px;
+  }
+
+  .dash-card h3 {
+    font-size: 1.5rem;
+    margin-top: 60px;
+  }
+
+  .card-number {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+    top: 20px;
+    left: 20px;
+  }
+
+  .card-action {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dash-card {
+    aspect-ratio: auto;
+    min-height: 220px;
+    padding: 1.8rem;
+  }
+
+  .dash-card h3 {
+    font-size: 1.4rem;
+    margin-top: 50px;
+  }
+
+  .dash-card p {
+    font-size: 1rem;
+  }
+}
+
+/* CARD ENTRANCE ANIMATIONS */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) rotateX(-10deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+.dash-card {
+  animation: cardSlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  opacity: 0;
+  transform-origin: center bottom;
+}
+
+.dash-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.dash-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dash-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.dash-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* CARD FOCUS STATE */
+.dash-card:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(50, 205, 50, 0.3), var(--shadow-lg);
+}
+
+/* CARD CONTENT CONTAINER */
+.card-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 3;
+}
+
+/* ====================================
    MAIN PANEL & DASHBOARD
    ==================================== */
 .main-panel {

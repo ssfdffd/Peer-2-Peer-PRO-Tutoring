@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Classroom | Peer-2-Peer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="live-lesson.css">
+</head>
+
+<body>
+
+    <div class="classroom-container">
+        <header class="class-header">
+            <div class="live-indicator">
+                <span class="dot"></span>
+                <span id="statusText">Checking Class Status...</span>
+            </div>
+            <button onclick="window.location.href='student-portal.html'" class="btn-exit">Exit Class</button>
+        </header>
+
+        <div class="class-layout">
+            <div class="video-main">
+                <div id="placeholder" class="video-placeholder">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h3>The lesson hasn't started yet.</h3>
+                    <p>Stay on this page; the link will appear here automatically when the tutor goes live.</p>
+                </div>
+                <div id="liveFrameContainer" class="frame-container" style="display: none;">
+                    <iframe src="https://" allow="camera; microphone; fullscreen; display-capture">
+                    </iframe>
+
+                </div>
+            </div>
+
+            <aside class="class-sidebar">
+                <h3>Class Info</h3>
+                <div class="info-card">
+                    <p><strong>Topic:</strong> <span id="classTopic">Daily Live Session</span></p>
+                    <p><strong>Tutor:</strong> <span id="classTutor">Assigned Peer</span></p>
+                </div>
+
+                <div class="announcement-box">
+                    <h4>Announcements</h4>
+                    <ul id="announcementList">
+                        <li>Welcome to the class!</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="live-lesson.js"></script>
+</body>
+
+</html>

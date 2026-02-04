@@ -1,6 +1,5 @@
 // Point to your Unified Worker URL
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
-const API_BASE2 = "https://p2p-live-worker.buhle-1ce.workers.dev";
 
 /**
  * 1. Session Guard

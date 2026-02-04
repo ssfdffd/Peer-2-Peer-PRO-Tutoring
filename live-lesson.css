@@ -1,0 +1,155 @@
+:root {
+    --primary: #1e3a8a;
+    --live-red: #ef4444;
+    --bg-dark: #0f172a;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: white;
+    overflow: hidden; /* No scrolling in the classroom */
+}
+
+.classroom-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.class-header {
+    height: 60px;
+    background: #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #334155;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    background-color: #94a3b8; /* Gray when offline */
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot.active {
+    background-color: var(--live-red);
+    box-shadow: 0 0 10px var(--live-red);
+    animation: blink 1.5s infinite;
+}
+
+.class-layout {
+    display: flex;
+    flex: 1;
+}
+
+.video-main {
+    flex: 3;
+    background: black;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-placeholder {
+    text-align: center;
+    padding: 20px;
+}
+
+.video-placeholder i { font-size: 80px; color: #334155; margin-bottom: 20px; }
+
+.frame-container, iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.class-sidebar {
+    flex: 1;
+    background: #1e293b;
+    border-left: 1px solid #334155;
+    padding: 20px;
+}
+
+.btn-exit {
+    background: var(--live-red);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* === 11. MOBILE CLASSROOM VIEW === */
+@media (max-width: 900px) {
+    body {
+        /* Allow scrolling on mobile so students can reach the sidebar */
+        overflow-y: auto; 
+    }
+
+    .classroom-container {
+        /* Change height from 100vh to auto to prevent cutting off content */
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .class-layout {
+        /* Stack Video on top of Sidebar */
+        flex-direction: column;
+    }
+
+    .video-main {
+        /* Give the video a fixed aspect ratio or height on mobile */
+        flex: none;
+        height: 56.25vw; /* Maintains 16:9 aspect ratio based on screen width */
+        min-height: 250px;
+        position: sticky;
+        top: 0;
+        z-index: 100; /* Keeps video at top while student scrolls sidebar */
+    }
+
+    .class-sidebar {
+        flex: none;
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #334155;
+        min-height: 400px;
+        padding: 15px;
+    }
+
+    .class-header {
+        padding: 0 15px;
+        font-size: 0.9rem;
+    }
+
+    .video-placeholder i {
+        font-size: 50px;
+    }
+}
+
+/* Landscape Mode Fix */
+@media (max-height: 500px) and (orientation: landscape) {
+    .video-main {
+        height: 100vh; /* Fill screen with video in landscape */
+    }
+    .class-sidebar {
+        display: none; /* Hide sidebar in landscape to focus on video */
+    }
+}

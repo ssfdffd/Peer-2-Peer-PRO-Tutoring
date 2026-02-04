@@ -4,490 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peer-2-Peer Pro | Tutor Team</title>
+    <title>Peer-2-Peer PRO | Tutor Portal</title>
+    <link rel="stylesheet" href="tutor.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* ==================================== */
-        /* REDESIGNED TUTOR PORTAL - TEAM LAYOUT */
-        /* ==================================== */
-
-        :root {
-            --primary-navy: #0a0a2a;
-            --secondary-navy: #1a1a3a;
-            --accent-green: #00ff88;
-            --accent-green-light: rgba(0, 255, 136, 0.1);
-            --accent-blue: #4a6bff;
-            --text-light: #f0f0f0;
-            --text-gray: #b0b0c0;
-            --card-bg: #1e1e3e;
-            --card-border: #2a2a4a;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --gradient-primary: linear-gradient(135deg, #0a0a2a, #1a1a3a);
-            --gradient-card: linear-gradient(145deg, #1e1e3e, #252548);
-            --gradient-accent: linear-gradient(90deg, #00ff88, #4a6bff);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: var(--gradient-primary);
-            color: var(--text-light);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ============ NAVBAR ============ */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 3rem;
-            background: rgba(10, 10, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--accent-green);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-icon {
-            background: var(--gradient-accent);
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-navy);
-            font-size: 1.2rem;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--gradient-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-navy);
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background: transparent;
-            color: var(--accent-green);
-            border: 2px solid var(--accent-green);
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logout-btn:hover {
-            background: var(--accent-green);
-            color: var(--primary-navy);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
-        }
-
-        /* ============ MAIN HEADER ============ */
-        .main-header {
-            text-align: center;
-            padding: 3rem 2rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .main-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-gray);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* ============ TEAM FILTER ============ */
-        .team-filter {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1.5rem 0;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-gray);
-            padding: 0.7rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: var(--accent-green);
-            color: var(--primary-navy);
-            border-color: var(--accent-green);
-        }
-
-        /* ============ TEAM GRID ============ */
-        .team-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem 4rem;
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .team-card {
-            background: var(--gradient-card);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--card-border);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .team-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--accent-green);
-        }
-
-        .card-header {
-            padding: 2rem 2rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient-accent);
-        }
-
-        .avatar-container {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 1.2rem;
-            background: var(--gradient-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--primary-navy);
-            font-weight: 800;
-            border: 4px solid var(--card-bg);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .member-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .member-role {
-            color: var(--accent-green);
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.5px;
-        }
-
-        .member-tags {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.8rem;
-        }
-
-        .tag {
-            background: rgba(0, 255, 136, 0.1);
-            color: var(--accent-green);
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .card-body {
-            padding: 1.5rem 2rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .member-description {
-            color: var(--text-gray);
-            line-height: 1.6;
-            flex-grow: 1;
-            font-size: 0.95rem;
-        }
-
-        .card-footer {
-            padding: 1.5rem 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        .social-link {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-gray);
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-link:hover {
-            background: var(--accent-green);
-            color: var(--primary-navy);
-            transform: translateY(-3px);
-        }
-
-        .contact-btn {
-            background: transparent;
-            color: var(--accent-green);
-            border: 1px solid var(--accent-green);
-            padding: 0.5rem 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .contact-btn:hover {
-            background: var(--accent-green);
-            color: var(--primary-navy);
-        }
-
-        /* ============ FEATURED CARD ============ */
-        .team-card.featured {
-            grid-column: span 2;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .team-card.featured .card-header {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: none;
-        }
-
-        .team-card.featured .avatar-container {
-            width: 140px;
-            height: 140px;
-            font-size: 3.5rem;
-        }
-
-        .team-card.featured .card-body {
-            flex: 2;
-            justify-content: center;
-        }
-
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 1100px) {
-            .team-card.featured {
-                grid-column: span 1;
-                flex-direction: column;
-            }
-
-            .team-card.featured .card-header {
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-            }
-
-            .team-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            }
-
-            .team-container {
-                padding: 0 1rem 3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .team-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-right {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .user-info {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* ============ FOOTER ============ */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-gray);
-            font-size: 0.9rem;
-        }
-
-        .footer a {
-            color: var(--accent-green);
-            text-decoration: none;
-        }
-
-        /* ============ ANIMATIONS ============ */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .team-card {
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        .team-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .team-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .team-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .team-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .team-card:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        .team-card:nth-child(6) {
-            animation-delay: 0.6s;
-        }
-    </style>
 </head>
 
-<body>
+<body class="light-mode">
     <!-- NAVIGATION -->
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-chalkboard-teacher"></i>
-            </div>
-            <span>Peer-2-Peer Pro</span>
-        </div>
+    <nav class="glass-nav">
+        <div class="logo-glow">Peer-2-Peer <span class="premium">TUTOR</span> | Control Panel</div>
 
         <div class="nav-right">
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar">T</div>
-                <span id="userName">Tutor Dashboard</span>
+                <span id="userName">Tutor Portal</span>
             </div>
-            <button class="logout-btn" onclick="logout()">
+            <button class="logout-minimal" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
@@ -496,189 +28,133 @@
     <!-- MAIN CONTENT -->
     <main>
         <header class="main-header">
-            <h1 class="main-title">Meet Our Expert Tutors</h1>
-            <p class="subtitle">Our team of dedicated educators brings years of experience and a passion for helping
-                students succeed. Each tutor specializes in different subjects and learning styles to provide
-                personalized support.</p>
+            <h1 class="main-title">Welcome to Your Tutor Dashboard</h1>
+            <p class="subtitle">Manage your classes, upload resources, and enhance your teaching experience</p>
         </header>
 
-        <!-- TEAM FILTER -->
-        <div class="team-filter">
-            <button class="filter-btn active" onclick="filterTeam('all')">All Tutors</button>
-            <button class="filter-btn" onclick="filterTeam('math')">Math & Science</button>
-            <button class="filter-btn" onclick="filterTeam('humanities')">Humanities</button>
-            <button class="filter-btn" onclick="filterTeam('tech')">Technology</button>
-            <button class="filter-btn" onclick="filterTeam('language')">Languages</button>
+        <!-- QUICK ACTION FILTERS -->
+        <div class="action-filter">
+            <button class="filter-pill active" onclick="filterActions('all')">All Actions</button>
+            <button class="filter-pill" onclick="filterActions('live')">Live Sessions</button>
+            <button class="filter-pill" onclick="filterActions('resources')">Resources</button>
+            <button class="filter-pill" onclick="filterActions('tools')">Teaching Tools</button>
+            <button class="filter-pill" onclick="filterActions('schedule')">Schedule</button>
         </div>
 
-        <!-- TEAM GRID -->
-        <div class="team-container">
-            <div class="team-grid" id="teamGrid">
+        <!-- ACTION GRID -->
+        <div class="action-container">
+            <div class="action-grid" id="actionGrid">
                 <!-- Card 1 - Featured -->
-                <div class="team-card featured" data-category="math tech">
+                <div class="action-card featured" data-category="schedule">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #ff6b6b, #ffa36c);">
-                            PB
+                        <div class="action-icon"
+                            style="background: linear-gradient(135deg, var(--pro-green), #28b528);">
+                            <i class="fas fa-calendar-plus"></i>
                         </div>
-                        <h3 class="member-name">Phillip Bothman</h3>
-                        <div class="member-role">Founder & Lead Tutor</div>
-                        <div class="member-tags">
-                            <span class="tag">Mathematics</span>
-                            <span class="tag">Physics</span>
-                            <span class="tag">Computer Science</span>
-                        </div>
+                        <h3 class="action-title">Schedule Your Next Class</h3>
+                        <div class="action-role">Click to schedule your next class to improve your teaching experience
+                            and reach more learners.</div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">A visionary educator driving innovation and collaboration in
-                            modern tutoring. With over 15 years of teaching experience, Phillip specializes in making
-                            complex STEM concepts accessible and engaging for all learning levels.</p>
+                        <p class="action-description">Become a visionary educator driving innovation and collaboration
+                            in modern tutoring. Make complex concepts accessible and engaging for all learning levels.
+                        </p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-video"></i></a>
-                            </div>
-                            <button class="contact-btn">Schedule Session</button>
+                            <button class="action-btn" onclick="goToSchedule()">Schedule Session</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 2 -->
-                <div class="team-card" data-category="humanities">
+                <div class="action-card" data-category="tools">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #4a6bff, #6b48ff);">
-                            JK
+                        <div class="action-icon" style="background: linear-gradient(135deg, #4a6bff, #6b48ff);">
+                            <i class="fas fa-chalkboard"></i>
                         </div>
-                        <h3 class="member-name">James Kenter</h3>
-                        <div class="member-role">Humanities Specialist</div>
-                        <div class="member-tags">
-                            <span class="tag">Literature</span>
-                            <span class="tag">History</span>
-                            <span class="tag">Writing</span>
-                        </div>
+                        <h3 class="action-title">Interactive Whiteboard</h3>
+                        <div class="action-role">Use our digital whiteboard to make your lessons more interactive with
+                            diagrams and live explanations.</div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">A passionate educator who believes in the power of storytelling
-                            and critical thinking. James helps students develop strong writing skills and analytical
-                            abilities across all humanities subjects.</p>
+                        <p class="action-description">Integrating our whiteboard will show your students a new way to
+                            learn and understand concepts. You'll be able to develop strong visual explanations and
+                            interactive teaching methods.</p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                            </div>
-                            <button class="contact-btn">Contact</button>
+                            <button class="action-btn" onclick="openWhiteboard()">Open Whiteboard</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 3 -->
-                <div class="team-card" data-category="tech">
+                <div class="action-card" data-category="resources">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #00ff88, #00ccff);">
-                            CK
+                        <div class="action-icon" style="background: linear-gradient(135deg, #ff6b6b, #ffa36c);">
+                            <i class="fas fa-cloud-upload-alt"></i>
                         </div>
-                        <h3 class="member-name">Cristofer Kenter</h3>
-                        <div class="member-role">Tech & Design Tutor</div>
-                        <div class="member-tags">
-                            <span class="tag">Web Design</span>
-                            <span class="tag">Programming</span>
-                            <span class="tag">UI/UX</span>
-                        </div>
+                        <h3 class="action-title">Upload Resources</h3>
+                        <div class="action-role">Upload documents to be accessed by your students after lessons</div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">A creative problem-solver who bridges the gap between technology
-                            and design. Cristofer helps students learn coding, design principles, and digital creativity
-                            in hands-on, project-based sessions.</p>
+                        <p class="action-description">You can share homework, assignments, and supplementary materials
+                            to help all students grasp concepts effectively and bridge learning gaps.</p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                            </div>
-                            <button class="contact-btn">Contact</button>
+                            <button class="action-btn" onclick="goToUpload()">Upload Resources</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 4 -->
-                <div class="team-card" data-category="math">
+                <div class="action-card" data-category="resources">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #ff4d8d, #ff6b6b);">
-                            PL
+                        <div class="action-icon" style="background: linear-gradient(135deg, #ff4d8d, #ff6b6b);">
+                            <i class="fas fa-file-alt"></i>
                         </div>
-                        <h3 class="member-name">Paitlyn Lubin</h3>
-                        <div class="member-role">Mathematics Tutor</div>
-                        <div class="member-tags">
-                            <span class="tag">Algebra</span>
-                            <span class="tag">Calculus</span>
-                            <span class="tag">Statistics</span>
+                        <h3 class="action-title">Create Documents</h3>
+                        <div class="action-role">Create your own study materials to be used by Peer-2-Peer PRO students
                         </div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">Specializing in breaking down complex mathematical concepts into
-                            understandable steps. Paitlyn's patient approach helps students build confidence and mastery
-                            in mathematics at all levels.</p>
+                        <p class="action-description">Create custom documents, PDFs, and worksheets to enhance your
+                            teaching. Reach students with different learning styles through well-structured materials.
+                        </p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-chart-bar"></i></a>
-                            </div>
-                            <button class="contact-btn">Contact</button>
+                            <button class="action-btn" onclick="createDocument()">Create Document</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 5 -->
-                <div class="team-card" data-category="tech">
+                <div class="action-card" data-category="live">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #ffcc00, #ff9900);">
-                            DH
+                        <div class="action-icon" style="background: linear-gradient(135deg, #ffcc00, #ff9900);">
+                            <i class="fas fa-broadcast-tower"></i>
                         </div>
-                        <h3 class="member-name">Davis Herwitz</h3>
-                        <div class="member-role">Web Development Tutor</div>
-                        <div class="member-tags">
-                            <span class="tag">JavaScript</span>
-                            <span class="tag">React</span>
-                            <span class="tag">APIs</span>
-                        </div>
+                        <h3 class="action-title">Start Live Class</h3>
+                        <div class="action-role">Start your live class now</div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">A full-stack developer with a passion for teaching modern web
-                            technologies. Davis helps students learn practical coding skills through real-world projects
-                            and collaborative problem-solving.</p>
+                        <p class="action-description">Don't keep your students waiting. They're counting on you to guide
+                            their learning journey. Start your live session now!</p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                                <a href="#" class="social-link"><i class="fab fa-codepen"></i></a>
-                            </div>
-                            <button class="contact-btn">Contact</button>
+                            <button class="action-btn" onclick="startLiveClass()">Start Live Session</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Card 6 -->
-                <div class="team-card" data-category="language">
+                <div class="action-card" data-category="tools">
                     <div class="card-header">
-                        <div class="avatar-container" style="background: linear-gradient(135deg, #9d50bb, #6e48aa);">
-                            KG
+                        <div class="action-icon" style="background: linear-gradient(135deg, #32cd32, #00cc66);">
+                            <i class="fas fa-clone"></i>
                         </div>
-                        <h3 class="member-name">Kianna Gouse</h3>
-                        <div class="member-role">Language Arts Tutor</div>
-                        <div class="member-tags">
-                            <span class="tag">English</span>
-                            <span class="tag">Spanish</span>
-                            <span class="tag">ESL</span>
-                        </div>
+                        <h3 class="action-title">Create Flashcards</h3>
+                        <div class="action-role">Create flash cards for your students to use in their revision</div>
                     </div>
                     <div class="card-body">
-                        <p class="member-description">A multilingual educator with expertise in language acquisition and
-                            communication skills. Kianna helps students master grammar, vocabulary, and conversational
-                            fluency in multiple languages.</p>
+                        <p class="action-description">Create digital flashcards to help students with quick revision.
+                            The best tutors go the extra mile for their students' success.</p>
                         <div class="card-footer">
-                            <div class="social-links">
-                                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                <a href="#" class="social-link"><i class="fas fa-language"></i></a>
-                            </div>
-                            <button class="contact-btn">Contact</button>
+                            <button class="action-btn" onclick="createFlashcards()">Make Flashcards</button>
                         </div>
                     </div>
                 </div>
@@ -689,21 +165,25 @@
     <!-- FOOTER -->
     <footer class="footer">
         <p>© 2023 Peer-2-Peer Pro Tutoring. All rights reserved.</p>
-        <p>Designed for optimal learning experiences | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        <p>Designed for optimal teaching experiences | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
         </p>
     </footer>
 
+    <script src="auth.js"></script>
+    <script src="tutor.js"></script>
     <script>
-        // Filter team members by category
-        function filterTeam(category) {
-            const cards = document.querySelectorAll('.team-card');
-            const filterButtons = document.querySelectorAll('.filter-btn');
+        // tutor-team.js - Tutor Portal Functions
+
+        // Filter actions by category
+        function filterActions(category) {
+            const cards = document.querySelectorAll('.action-card');
+            const filterButtons = document.querySelectorAll('.filter-pill');
 
             // Update active button
             filterButtons.forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.textContent.toLowerCase().includes(category) ||
-                    (category === 'all' && btn.textContent.includes('All Tutors'))) {
+                    (category === 'all' && btn.textContent.includes('All Actions'))) {
                     btn.classList.add('active');
                 }
             });
@@ -719,7 +199,7 @@
             });
         }
 
-        // Set user info from session storage (if available)
+        // Load user info from session storage
         function loadUserInfo() {
             const userName = sessionStorage.getItem('p2p_name') || 'Tutor';
             const userEmail = sessionStorage.getItem('p2p_email') || 'tutor@example.com';
@@ -729,13 +209,9 @@
 
             // Update featured card with actual tutor name if available
             if (userName && userName !== 'Tutor') {
-                const featuredName = document.querySelector('.team-card.featured .member-name');
-                const featuredAvatar = document.querySelector('.team-card.featured .avatar-container');
-
-                if (featuredName && featuredAvatar) {
-                    const initials = userName.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
-                    featuredName.textContent = userName;
-                    featuredAvatar.textContent = initials;
+                const featuredTitle = document.querySelector('.action-card.featured .action-title');
+                if (featuredTitle) {
+                    featuredTitle.textContent = `Welcome, ${userName}!`;
                 }
             }
         }
@@ -746,16 +222,45 @@
             window.location.href = 'login.html';
         }
 
+        // Navigation functions
+        function goToSchedule() {
+            window.location.href = 'tutor-portal.html#schedule';
+        }
+
+        function openWhiteboard() {
+            alert('Interactive whiteboard will open in a new tab. This feature requires classroom setup.');
+            // window.open('whiteboard.html', '_blank');
+        }
+
+        function goToUpload() {
+            window.location.href = 'tutor-portal.html#upload';
+        }
+
+        function createDocument() {
+            alert('Document creator will open. You can create PDFs, worksheets, and study materials.');
+            // window.open('document-creator.html', '_blank');
+        }
+
+        function startLiveClass() {
+            alert('Live class session will start. Make sure you have your materials ready!');
+            // window.location.href = 'live-class.html';
+        }
+
+        function createFlashcards() {
+            alert('Flashcard creator will open. Create digital flashcards for your students.');
+            // window.open('flashcard-creator.html', '_blank');
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function () {
             loadUserInfo();
 
-            // Add click handlers to all contact buttons
-            document.querySelectorAll('.contact-btn').forEach(btn => {
+            // Add click handlers to all action buttons
+            document.querySelectorAll('.action-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    const card = this.closest('.team-card');
-                    const tutorName = card.querySelector('.member-name').textContent;
-                    alert(`You've requested to contact ${tutorName}. Our scheduling system will open shortly.`);
+                    const card = this.closest('.action-card');
+                    const actionName = card.querySelector('.action-title').textContent;
+                    console.log(`Action initiated: ${actionName}`);
                 });
             });
         });

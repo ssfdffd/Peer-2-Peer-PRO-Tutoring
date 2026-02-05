@@ -4,35 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Live Classroom | Peer-2-Peer PRO</title>
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+
     <style>
-        body,
-        html {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
             background: #0a192f;
+            overflow: hidden;
         }
 
         #meet {
-            height: 100vh;
             width: 100%;
+            height: 100vh;
         }
 
         .loading-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
-            font-family: sans-serif;
             background: #0a192f;
+            color: white;
             z-index: 10;
+            font-family: sans-serif;
         }
     </style>
 </head>
@@ -40,64 +40,56 @@
 <body>
 
     <div id="loading" class="loading-screen">
-        <h2>Connecting to Secure Classroom...</h2>
+        <h2>Connecting to Secure Classroom…</h2>
         <p>Peer-2-Peer PRO Live</p>
     </div>
 
     <div id="meet"></div>
 
-    <script src="https://meet.jit.si/external_api.js"></script>
     <script>
         window.onload = () => {
-            // 1. Get the Room Name from the URL (?room=P2P-xyz)
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomName = urlParams.get('room');
+            const params = new URLSearchParams(window.location.search);
+            const roomName = params.get('room');
 
             if (!roomName) {
-                alert("No room specified. Returning to dashboard.");
-                window.location.href = 'create-class.html';
+                alert("Room not found.");
+                window.location.href = "create-class.html";
                 return;
             }
 
-            // 2. Initialize Jitsi
             const domain = "meet.jit.si";
+
             const options = {
-                roomName: roomName,
+                roomName,
+                parentNode: document.getElementById("meet"),
                 width: "100%",
                 height: "100%",
-                parentNode: document.querySelector('#meet'),
                 userInfo: {
-                    displayName: sessionStorage.getItem('p2p_name') || 'Tutor'
+                    displayName: sessionStorage.getItem("p2p_name") || "Tutor"
                 },
                 configOverwrite: {
                     startWithAudioMuted: false,
-                    disablePrejoinPage: true
+                    startWithVideoMuted: false,
+                    prejoinPageEnabled: false
                 },
                 interfaceConfigOverwrite: {
-                    TOOLBAR_BUTTONS: [
-                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-                        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-                        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-                        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-                        'security'
-                    ],
+                    SHOW_JITSI_WATERMARK: false,
+                    SHOW_WATERMARK_FOR_GUESTS: false
                 }
             };
 
             const api = new JitsiMeetExternalAPI(domain, options);
 
-            // Hide loading screen when video starts
-            api.addEventListener('videoConferenceJoined', () => {
-                document.getElementById('loading').style.display = 'none';
+            api.addEventListener("videoConferenceJoined", () => {
+                document.getElementById("loading").style.display = "none";
             });
 
-            // Redirect back when hanging up
-            api.addEventListener('readyToClose', () => {
-                window.location.href = 'tutor-portal.html';
+            api.addEventListener("readyToClose", () => {
+                window.location.href = "tutor-portal.html";
             });
         };
     </script>
+
 </body>
 
 </html>

@@ -99,11 +99,16 @@ async function loadTutorClasses(email) {
 // ==========================================
 // 4. JITSI REDIRECT
 // ==========================================
+// This function is called when the green START button is clicked
 function goLive(roomName) {
-    // Redirect to your live session page where Jitsi is embedded
-    window.location.href = `live-session.html?room=${roomName}`;
-}
+    // Show a quick notification before jumping in
+    showNotification("Initializing Secure Classroom...", "success");
 
+    setTimeout(() => {
+        // Redirect to the session page with the room name as a URL parameter
+        window.location.href = `live-session.html?room=${roomName}`;
+    }, 800);
+}
 // ==========================================
 // 5. UI UTILITIES & ANIMATIONS
 // ==========================================

@@ -22,6 +22,51 @@ body {
     line-height: 1.6;
 }
 
+/* Professional Start Button styling */
+.btn-start-small {
+    background: linear-gradient(135deg, #32cd32 0%, #28a745 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-start-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-start-small i {
+    font-size: 0.7rem;
+    /* Small pulsing animation to show it's ready */
+    animation: pulse-white 2s infinite;
+}
+
+@keyframes pulse-white {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 /* Navbar */
 .glass-nav {
     display: flex;

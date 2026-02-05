@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Live Class | P2P Pro</title>
+    <link rel="stylesheet" href="class.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/48/000000/graduation-cap.png">
+</head>
+
+<body>
+
+    <nav class="glass-nav">
+        <div class="logo-container">
+            <img src="https://img.icons8.com/color/48/000000/graduation-cap.png" class="favicon-img" alt="Logo">
+            <span class="brand-name">PEER-2-PEER <span class="green-text">PRO</span> SetUP Live Class Now</span>
+        </div>
+        <div class="nav-right">
+            <a href="tutor-portal.html" class="back-link-pill"><i class="fas fa-th-large"></i> Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="main-panel">
+        <div class="split-layout">
+            <div class="form-container glass-effect">
+                <header class="form-header">
+                    <i class="fas fa-broadcast-tower pulse-icon"></i>
+                    <h2>Launch <span class="green-text">Live Session</span></h2>
+                    <p>Setup your virtual classroom and notify your students.</p>
+                </header>
+
+                <div class="p2p-form">
+                    <div class="input-group">
+                        <label><i class="fas fa-tag"></i> Lesson Topic</label>
+                        <input type="text" id="classTopic" placeholder="e.g. Introduction to Quantum Physics">
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label><i class="fas fa-graduation-cap"></i> Target Grade</label>
+                            <select id="classGrade">
+                                <option>Grade 1</option>
+                                <option>Grade 2</option>
+                                <option>Grade 3</option>
+                                <option>Grade 4</option>
+                                <option>Grade 5</option>
+                                <option>Grade 6</option>
+                                <option>Grade 7</option>
+                                <option>Grade 8</option>
+                                <option>Grade 9</option>
+                                <option>Grade 10</option>
+                                <option>Grade 11</option>
+                                <option>Grade 12</option>
+
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-clock"></i> Duration</label>
+                            <select id="classDuration">
+                                <option>60 Minutes</option>
+                                <option>120 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label><i class="fas fa-align-left"></i> Learning Objectives</label>
+                        <textarea id="classDesc" placeholder="What should students expect to learn?"></textarea>
+                    </div>
+
+                    <button class="btn-launch" onclick="scheduleClass()">
+                        <span>Schedule & Broadcast</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="queue-container">
+                <h3><i class="fas fa-list-ul"></i> Upcoming Sessions</h3>
+                <div id="myMeetingsList" class="meeting-cards-stack">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>No classes scheduled yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="create.js"></script>
+</body>
+
+</html>

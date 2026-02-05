@@ -1,5 +1,5 @@
 // Import anime.js library (add this to your HTML: <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>)
-
+const API_BASE = "https://liveclass.buhle-1ce.workers.dev/";
 // Global variables
 let classCounter = 1;
 const meetings = [];
@@ -121,7 +121,7 @@ function scheduleClass() {
     const grade = document.getElementById('classGrade').value;
     const duration = document.getElementById('classDuration').value;
     const description = document.getElementById('classDesc').value.trim();
-
+    const tutorEmail = sessionStorage.getItem('p2p_email');
     // Validation
     if (!topic || !description) {
         showNotification('Please fill in all required fields', 'error');
@@ -132,6 +132,7 @@ function scheduleClass() {
     // Create new meeting object
     const newMeeting = {
         id: Date.now(),
+        tutorEmail: tutorEmail,
         topic: topic,
         grade: grade,
         duration: duration,

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutor Portal | Peer-2-Peer Pro</title>
     <link rel="stylesheet" href="tutor.css">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/48/000000/graduation-cap.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src='https://meet.jit.si/external_api.js'></script>
 </head>
@@ -14,11 +14,10 @@
 <body>
 
     <nav class="glass-nav">
-        <a href="#" class="logo-container">
-            <!-- Favicon/Logo -->
-            <img src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/assets/svg/1f4da.svg" alt="Peer-2-Peer Pro Logo">
+        <div class="logo-container">
+            <img src="https://img.icons8.com/color/48/000000/graduation-cap.png" alt="Logo" style="width:35px;">
             <span class="brand-name">PEER-2-PEER <span class="green-text">PRO</span></span>
-        </a>
+        </div>
 
         <div class="nav-right">
             <div class="user-pill">
@@ -32,145 +31,39 @@
     </nav>
 
     <main class="main-panel">
-        <div id="mainDashboard">
-            <header class="panel-header">
-                <h1>Welcome Back, <span id="tutorName" class="green-text">Teacher</span></h1>
-                <p>Strategic management of your academic sessions and resources.</p>
-            </header>
+        <header class="panel-header">
+            <h1>Welcome Back, <span id="welcomeName" class="green-text">Tutor</span></h1>
+            <p>Manage your professional academic sessions from your unified dashboard.</p>
+        </header>
 
-            <div class="dashboard-grid">
-                <!-- Card 1 - Live Organizer -->
-                <a href="create-class.html" class="dash-card featured">
-                    <div class="card-number">01</div>
-                    <div class="card-icon"><i class="fas fa-video"></i></div>
-                    <h3>Live Class Organiser</h3>
-                    <p>Schedule your next online lesson.</p>
-                </a>
+        <div class="dashboard-grid">
+            <div class="dash-card featured" onclick="window.location.href='create-live.html'">
+                <div class="card-icon"><i class="fas fa-video"></i></div>
+                <h3>Live Organiser</h3>
+                <p>Schedule sessions on the Live Worker.</p>
+            </div>
 
-                <!-- Card 2 - Resources -->
-                <a href="resources.html" class="dash-card">
-                    <div class="card-number">02</div>
-                    <div class="card-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <h3>Resources</h3>
-                    <p>Distribute study guides and notes.</p>
-                </a>
+            <div class="dash-card" onclick="alert('Resources coming soon')">
+                <div class="card-icon"><i class="fas fa-file-upload"></i></div>
+                <h3>Resources</h3>
+                <p>Upload and share materials.</p>
+            </div>
 
-                <!-- Card 3 - Create Document -->
-                <a href="create-document.html" class="dash-card">
-                    <div class="card-number">03</div>
-                    <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
-                    <h3>Create Your Own Document</h3>
-                    <p>Only the best tutors go the extra mile for their learners</p>
-                </a>
+            <div class="dash-card" onclick="alert('Analytics coming soon')">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Analytics</h3>
+                <p>View student engagement.</p>
+            </div>
 
-                <!-- Card 4 - P2P Forum -->
-                <a href="forum.html" class="dash-card">
-                    <div class="card-number">04</div>
-                    <div class="card-icon"><i class="fas fa-comments"></i></div>
-                    <h3>P2P Forum</h3>
-                    <p>Answering a simple question can go a long way in helping a learner.</p>
-                </a>
-
-                <!-- Card 5 - Whiteboard -->
-                <a href="whiteboard.html" class="dash-card">
-                    <div class="card-number">05</div>
-                    <div class="card-icon"><i class="fa-solid fa-chalkboard"></i></div>
-                    <h3>Interactive Whiteboard</h3>
-                    <p>Use our interactive whiteboard to explain concepts to your learners.</p>
-                </a>
+            <div class="dash-card" onclick="alert('Forum coming soon')">
+                <div class="card-icon"><i class="fas fa-comments"></i></div>
+                <h3>P2P Forum</h3>
+                <p>Community discussion board.</p>
             </div>
         </div>
-        <section id="liveOrganizer" class="portal-section" style="display: none;">
-            <button class="back-link" onclick="backToDash()"><i class="fas fa-arrow-left"></i> Back to
-                Dashboard</button>
-            <div class="glass-form">
-                <h2>Schedule <span class="green-text">New Class</span></h2>
-                <div class="form-row">
-                    <input type="text" id="classTopic" placeholder="Lesson Topic">
-                    <select id="classGrade">
-                        <option>Grade 8</option>
-                        <option>Grade 9</option>
-                        <option>Grade 10</option>
-                        <option>Grade 11</option>
-                        <option>Grade 12</option>
-                    </select>
-                </div>
-                <textarea id="classDesc" placeholder="Description..."></textarea>
-                <button class="primary-btn" onclick="scheduleClass()">Create Session</button>
-            </div>
-            <div id="myMeetingsList" class="meetings-container"></div>
-            <div id="video-area"></div>
-        </section>
     </main>
 
-    <!-- FOOTER SECTION -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/assets/svg/1f4da.svg" alt="Peer-2-Peer Pro Logo">
-                <h3>PEER-2-PEER <span class="green-text">PRO</span></h3>
-                <p>Empowering educators and learners through innovative peer-to-peer learning solutions.</p>
-            </div>
-
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#" onclick="showSection('liveOrganizer')"><i class="fas fa-video"></i> Live Classes</a>
-                    </li>
-                    <li><a href="#" onclick="redirectToWhiteboard()"><i class="fa-solid fa-chalkboard"></i>
-                            Whiteboard</a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>support@peer2peerpro.com</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+1 (555) 123-4567</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>123 Education St, Knowledge City</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2024 Peer-2-Peer Pro. All rights reserved. | Empowering Education Through Technology</p>
-        </div>
-    </footer>
-
     <script src="tutor.js"></script>
-    <script>
-        // Function to redirect to whiteboard page
-        function redirectToWhiteboard() {
-            window.location.href = "whiteboard.html";
-        }
-
-        // Function to simulate logout
-        function logout() {
-            if (confirm("Are you sure you want to logout?")) {
-                // Redirect to login page
-                window.location.href = "login.html";
-            }
-        }
-
-        // Display tutor name (you can replace this with actual data from your backend)
-        document.addEventListener('DOMContentLoaded', function () {
-            // Mock tutor name - replace with actual user data
-            const tutorName = "Dr. Sarah Johnson";
-            document.getElementById('tutorName').textContent = tutorName;
-            document.getElementById('tutorNameDisplay').textContent = tutorName;
-        });
-    </script>
 </body>
 
 </html>

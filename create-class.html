@@ -4,364 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule Live Class | P2P Pro</title>
-
-    <!-- CSS -->
+    <title>Schedule Live Class | Peer-2-Peer Pro</title>
     <link rel="stylesheet" href="class.css">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Anime.js for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- Preconnect for better performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <style>
-        /* Additional inline styles for animations */
-        .form-header h2 span {
-            display: inline-block;
-        }
-
-        /* Loading animation for form */
-        .input-group::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--green), transparent);
-            transition: width 0.3s ease;
-        }
-
-        .input-group:focus-within::after {
-            width: 100%;
-        }
-
-        /* Particle effect for launch button */
-        .btn-launch {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-launch .particles {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-        }
-    </style>
 </head>
 
 <body>
 
     <nav class="glass-nav">
-        <a href="tutor-portal.html" class="logo-container">
+        <div class="logo-container">
             <img src="favicon.ico" alt="Logo">
-            <div class="brand-name">
-                PEER-2-PEER <span class="green-text">PRO</span>
-                <span style="font-size: 0.9rem; margin-left: 15px; color: var(--text-muted); font-weight: 500;">
-                    | Live Class Organizer
-                </span>
-            </div>
-        </a>
+            <span class="brand-name">PEER-2-PEER <span class="green-text">PRO</span></span>
+        </div>
         <div class="nav-right">
-            <a href="tutor-portal.html" class="back-link-pill">
-                <i class="fas fa-th-large"></i>
-                <span>Dashboard</span>
-            </a>
+            <a href="tutor-portal.html" class="back-link"><i class="fas fa-arrow-left"></i> Dashboard</a>
         </div>
     </nav>
 
     <main class="main-panel">
         <div class="split-layout">
-            <!-- Left Column: Form -->
-            <div class="form-container glass-effect">
-                <header class="form-header">
-                    <i class="fas fa-broadcast-tower pulse-icon"></i>
-                    <h2>Launch <span class="green-text">Live Session</span></h2>
-                    <p>Setup your virtual classroom with professional streaming tools and student notifications</p>
-                </header>
+            <section class="form-container fade-in">
+                <div class="form-header">
+                    <i class="fas fa-video pulse-icon"></i>
+                    <h2>Launch <span class="green-text">Live Class</span></h2>
+                    <p>Set up your classroom. Details will be saved to your D1 database.</p>
+                </div>
 
-                <form class="p2p-form" id="classForm" onsubmit="event.preventDefault(); scheduleClass();">
+                <div class="p2p-form">
                     <div class="input-group">
-                        <label><i class="fas fa-tag"></i> Lesson Topic</label>
-                        <input type="text" id="classTopic" placeholder="e.g., Introduction to Quantum Physics"
-                            autocomplete="off" data-validate="required">
-                        <div class="input-hint">Be specific about what you'll teach</div>
-                    </div>
-
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label><i class="fas fa-graduation-cap"></i> Target Grade</label>
-                            <select id="classGrade">
-                                <option value="" disabled selected>Select grade level</option>
-                                <option>Grade 1-3</option>
-                                <option>Grade 4-6</option>
-                                <option>Grade 7-9</option>
-                                <option>Grade 10-12</option>
-                                <option>College Level</option>
-                                <option>Adult Education</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fas fa-clock"></i> Duration</label>
-                            <select id="classDuration">
-                                <option value="" disabled selected>Select duration</option>
-                                <option>30 Minutes</option>
-                                <option>60 Minutes</option>
-                                <option>90 Minutes</option>
-                                <option>120 Minutes</option>
-                                <option>Custom Duration</option>
-                            </select>
-                        </div>
+                        <label for="classTopic"><i class="fas fa-book"></i> Lesson Topic</label>
+                        <input type="text" id="classTopic" placeholder="e.g. Calculus Basics">
                     </div>
 
                     <div class="input-group">
-                        <label><i class="fas fa-align-left"></i> Learning Objectives</label>
-                        <textarea id="classDesc" placeholder="What specific skills or knowledge will students gain from this session?
-            
-Example:
-• Understand the basics of quantum mechanics
-• Solve simple quantum equations
-• Apply concepts to real-world scenarios" rows="5" data-validate="required"></textarea>
-                        <div class="input-hint">List clear, measurable objectives</div>
+                        <label for="classGrade"><i class="fas fa-graduation-cap"></i> Select Grade</label>
+                        <select id="classGrade">
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                            <option value="Grade 6">Grade 6</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+
+                        </select>
                     </div>
 
-                    <!-- Additional Options -->
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label><i class="fas fa-video"></i> Stream Quality</label>
-                            <select id="streamQuality">
-                                <option>720p HD</option>
-                                <option selected>1080p Full HD</option>
-                                <option>2K Ultra HD</option>
-                                <option>4K (Premium)</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fas fa-users"></i> Max Participants</label>
-                            <select id="maxParticipants">
-                                <option>25 Students</option>
-                                <option selected>50 Students</option>
-                                <option>100 Students</option>
-                                <option>Unlimited</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <input type="checkbox" id="recordSession" checked>
-                            <i class="fas fa-record-vinyl"></i> Record session for later review
-                        </label>
-                        <label style="margin-top: 10px;">
-                            <input type="checkbox" id="enableChat" checked>
-                            <i class="fas fa-comments"></i> Enable live chat
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn-launch" id="launchButton">
+                    <button class="btn-launch" onclick="scheduleClass()">
                         <span>Schedule & Broadcast</span>
                         <i class="fas fa-paper-plane"></i>
-                        <span class="particle-count">0</span>
                     </button>
+                </div>
+            </section>
 
-                    <div class="form-footer">
-                        <p style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
-                            <i class="fas fa-shield-alt"></i> Your session is secured with end-to-end encryption
-                        </p>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Right Column: Queue -->
-            <div class="queue-container">
-                <h3><i class="fas fa-list-ul"></i> Scheduled Sessions</h3>
+            <section class="queue-container fade-in" style="animation-delay: 0.2s;">
                 <div class="queue-header">
-                    <div class="queue-stats">
-                        <span id="totalSessions">0 sessions</span>
-                        <span id="upcomingCount">0 upcoming</span>
-                    </div>
-                    <button class="btn-refresh" onclick="refreshQueue()">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
+                    <h3><i class="fas fa-clock"></i> Scheduled Today</h3>
                 </div>
-
                 <div id="myMeetingsList" class="meeting-cards-stack">
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-plus"></i>
-                        <p>No classes scheduled yet</p>
-                        <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.7;">Your scheduled sessions will
-                            appear here</p>
-                    </div>
                 </div>
-
-                <div class="queue-legend">
-                    <div class="legend-item">
-                        <span class="legend-color" style="background: var(--green);"></span>
-                        <span>Live now</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background: #3b82f6;"></span>
-                        <span>Upcoming</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background: #6b7280;"></span>
-                        <span>Completed</span>
-                    </div>
-                </div>
-            </div>
+            </section>
         </div>
     </main>
 
-    <!-- Live Session Preview Modal -->
-    <div id="previewModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3><i class="fas fa-eye"></i> Session Preview</h3>
-            <div class="preview-container">
-                <!-- Preview content will be injected here -->
-            </div>
-            <button class="btn-close-modal" onclick="closePreview()">
-                <i class="fas fa-times"></i> Close
-            </button>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
     <script src="create.js"></script>
-
-    <script>
-        // Additional interactive animations
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add particle effect to launch button
-            const launchBtn = document.getElementById('launchButton');
-            launchBtn.addEventListener('mouseenter', createParticles);
-
-            // Add input character counters
-            setupCharacterCounters();
-
-            // Add real-time validation
-            setupRealTimeValidation();
-
-            // Add keyboard shortcuts
-            setupKeyboardShortcuts();
-        });
-
-        function createParticles(e) {
-            const btnRect = launchBtn.getBoundingClientRect();
-            const x = e.clientX - btnRect.left;
-            const y = e.clientY - btnRect.top;
-
-            for (let i = 0; i < 5; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particles';
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                launchBtn.appendChild(particle);
-
-                anime({
-                    targets: particle,
-                    translateX: () => anime.random(-50, 50),
-                    translateY: () => anime.random(-50, 50),
-                    scale: [0, 1],
-                    opacity: [0.5, 0],
-                    duration: 1000,
-                    easing: 'easeOutCubic',
-                    complete: () => particle.remove()
-                });
-            }
-        }
-
-        function setupCharacterCounters() {
-            const textarea = document.getElementById('classDesc');
-            const counter = document.createElement('div');
-            counter.className = 'char-counter';
-            counter.style.cssText = `
-                text-align: right;
-                font-size: 0.8rem;
-                color: var(--text-muted);
-                margin-top: 5px;
-            `;
-            textarea.parentElement.appendChild(counter);
-
-            textarea.addEventListener('input', function () {
-                const length = this.value.length;
-                counter.textContent = `${length}/500 characters`;
-
-                if (length > 450) {
-                    counter.style.color = '#ef4444';
-                } else if (length > 400) {
-                    counter.style.color = '#f59e0b';
-                } else {
-                    counter.style.color = 'var(--text-muted)';
-                }
-            });
-        }
-
-        function setupRealTimeValidation() {
-            const inputs = document.querySelectorAll('[data-validate]');
-            inputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    if (this.value.trim()) {
-                        anime({
-                            targets: this,
-                            borderColor: ['#233554', '#10b981', '#233554'],
-                            duration: 500,
-                            easing: 'easeInOutSine'
-                        });
-                    }
-                });
-            });
-        }
-
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', function (e) {
-                // Ctrl/Cmd + Enter to submit form
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    scheduleClass();
-                }
-
-                // Escape to clear form
-                if (e.key === 'Escape') {
-                    clearForm();
-                }
-            });
-        }
-
-        function refreshQueue() {
-            const btn = document.querySelector('.btn-refresh i');
-            anime({
-                targets: btn,
-                rotate: 360,
-                duration: 500,
-                easing: 'easeInOutSine'
-            });
-
-            showNotification('Queue refreshed', 'info');
-        }
-
-        function closePreview() {
-            const modal = document.getElementById('previewModal');
-            anime({
-                targets: modal,
-                opacity: 0,
-                scale: 0.9,
-                duration: 300,
-                easing: 'easeInCubic',
-                complete: () => modal.style.display = 'none'
-            });
-        }
-    </script>
 </body>
 
 </html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard Tutorial | Peer-2-Peer Pro</title>
+    <link rel="stylesheet" href="whiteboard.css">
+    <style>
+        .tutorial-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .tutorial-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .tutorial-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--white), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+
+        .shortcuts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .shortcuts-table th,
+        .shortcuts-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .shortcuts-table th {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--green);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--green), #52d1a8);
+            color: var(--navy);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tutorial-container">
+        <div class="tutorial-header">
+            <h1>Whiteboard Tutorial</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem;">
+                Learn how to use all the features of our interactive whiteboard
+            </p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-pen"></i>
+                <h3>Drawing Tools</h3>
+                <p>Use pen, highlighter, and eraser tools with adjustable sizes and colors.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-shapes"></i>
+                <h3>Shapes & Lines</h3>
+                <p>Insert rectangles, circles, triangles, arrows, stars, and custom shapes.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-font"></i>
+                <h3>Text Editing</h3>
+                <p>Add text with customizable fonts, sizes, colors, and styles (bold, italic, underline).</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-image"></i>
+                <h3>Media Insertion</h3>
+                <p>Insert images, documents (PDF, Word, PowerPoint), and videos directly onto the board.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-microphone"></i>
+                <h3>Audio Notes</h3>
+                <p>Record voice explanations and attach them to specific areas of your whiteboard.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-save"></i>
+                <h3>Save & Export</h3>
+                <p>Save your work in multiple formats (JSON, PNG, JPEG, SVG) and export for sharing.</p>
+            </div>
+        </div>
+
+        <h2 style="color: var(--white); margin-bottom: 1rem;">Keyboard Shortcuts</h2>
+
+        <table class="shortcuts-table">
+            <thead>
+                <tr>
+                    <th>Shortcut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><kbd>Ctrl + S</kbd></td>
+                    <td>Save whiteboard</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + O</kbd></td>
+                    <td>Open saved whiteboard</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + N</kbd></td>
+                    <td>New whiteboard</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Z</kbd></td>
+                    <td>Undo</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + Y</kbd></td>
+                    <td>Redo</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + C</kbd></td>
+                    <td>Copy selected</td>
+                </tr>
+                <tr>
+                    <td><kbd>Ctrl + V</kbd></td>
+                    <td>Paste</td>
+                </tr>
+                <tr>
+                    <td><kbd>Delete</kbd></td>
+                    <td>Delete selected</td>
+                </tr>
+                <tr>
+                    <td><kbd>P</kbd></td>
+                    <td>Pen tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>H</kbd></td>
+                    <td>Highlighter tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>E</kbd></td>
+                    <td>Eraser tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>T</kbd></td>
+                    <td>Text tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>S</kbd></td>
+                    <td>Shape tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>Space</kbd></td>
+                    <td>Pan tool</td>
+                </tr>
+                <tr>
+                    <td><kbd>G</kbd></td>
+                    <td>Toggle grid</td>
+                </tr>
+                <tr>
+                    <td><kbd>+</kbd></td>
+                    <td>Zoom in</td>
+                </tr>
+                <tr>
+                    <td><kbd>-</kbd></td>
+                    <td>Zoom out</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 style="color: var(--white); margin-top: 3rem; margin-bottom: 1rem;">Tips & Tricks</h2>
+
+        <div class="feature-card">
+            <ul style="color: var(--text-muted); line-height: 1.8;">
+                <li>Use <strong>right-click</strong> on any object for quick actions (delete, copy, etc.)</li>
+                <li><strong>Double-click</strong> on text to edit it</li>
+                <li>Hold <strong>Shift</strong> while drawing to create straight lines or perfect shapes</li>
+                <li>Use <strong>Ctrl + mouse wheel</strong> to zoom in/out quickly</li>
+                <li>Your work is <strong>auto-saved</strong> every 30 seconds</li>
+                <li>Use <strong>multiple pages</strong> for different topics or lessons</li>
+                <li><strong>Export as PNG</strong> for high-quality images to share with students</li>
+                <li>Attach <strong>audio recordings</strong> to explain complex diagrams</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="whiteboard.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Start Using Whiteboard
+            </a>
+            <a href="tutor-portal.html" class="back-button"
+                style="background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-left: 1rem;">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

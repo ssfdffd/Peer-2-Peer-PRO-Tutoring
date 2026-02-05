@@ -1,34 +1,29 @@
-// Point to your Unified Worker URL
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
-/**
- * 1. Session Guard
- */
-/**
- * TUTOR SESSION GUARD
- */
 function checkTutorSession() {
     const email = sessionStorage.getItem('p2p_email');
+    const name = sessionStorage.getItem('p2p_name'); // This comes from your database via the Worker
+    const userType = sessionStorage.getItem('p2p_userType');
 
-    // Check both potential keys for the role
-    const userType = sessionStorage.getItem('p2p_userType') || sessionStorage.getItem('p2p_role');
-
-    console.log("Session Check:", { email, userType });
-
-    // 1. Only redirect if email is missing OR the user is definitely NOT a tutor
     if (!email || userType !== 'tutor') {
-        console.warn("Unauthorized access attempt. Redirecting to login.");
         window.location.href = "login.html";
         return;
     }
 
-    // 2. Update UI
-    const nameDisplay = document.getElementById('tutorNameDisplay');
-    if (nameDisplay) {
-        nameDisplay.innerText = sessionStorage.getItem('p2p_name') || "Tutor";
-    }
+    // Update UI with the actual database name
+    const displayElement = document.getElementById('tutorNameDisplay');
+    const welcomeElement = document.getElementById('welcomeName');
+
+    if (displayElement) displayElement.innerText = name || "Tutor";
+    if (welcomeElement) welcomeElement.innerText = name || "Tutor";
 }
 
+function logout() {
+    if (confirm("Logout of Peer-2-Peer Pro?")) {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+    }
+}
 // Run immediately
 document.addEventListener('DOMContentLoaded', checkTutorSession);
 /**

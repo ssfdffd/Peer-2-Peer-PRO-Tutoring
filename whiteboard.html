@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Whiteboard | Peer-2-Peer Pro</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="whiteboard.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/whiteboard.png">
+
+    <!-- Drawing Library -->
+    <script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+
+    <!-- Anime.js for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        /* Additional dynamic styles */
+        :root {
+            --current-color: #000000;
+            --current-size: 3;
+        }
+
+        /* Pen cursor */
+        .pen-cursor {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="%SIZE%" fill="%COLOR%" stroke="white" stroke-width="1"/></svg>') 12 12, crosshair;
+        }
+
+        .eraser-cursor {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect x="8" y="8" width="16" height="16" fill="white" stroke="black" stroke-width="1" rx="2"/></svg>') 16 16, crosshair;
+        }
+
+        .text-cursor {
+            cursor: text;
+        }
+
+        .shape-cursor {
+            cursor: crosshair;
+        }
+
+        .select-cursor {
+            cursor: default;
+        }
+
+        .grab-cursor {
+            cursor: grab;
+        }
+
+        .grabbing-cursor {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="whiteboard-nav">
+        <a href="tutor-portal.html" class="whiteboard-logo">
+            <img src="https://img.icons8.com/color/96/000000/whiteboard.png" alt="Whiteboard Logo">
+            <div>
+                <div class="whiteboard-title">Interactive Whiteboard</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">
+                    Peer-2-Peer Pro • Interactive WhiteBoard
+                </div>
+            </div>
+        </a>
+        <div class="nav-actions">
+            <button class="action-btn" onclick="showCollaborationModal()">
+                <i class="fas fa-users"></i>
+                <span id="collaboratorCount">0 Collaborators</span>
+            </button>
+            <button class="action-btn" onclick="exportWhiteboard()">
+                <i class="fas fa-download"></i>
+                <span>Export</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Whiteboard Container -->
+    <div class="whiteboard-container">
+        <!-- Left Toolbar -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <h4>Tools</h4>
+                <button class="tool-btn active" id="select-tool" title="Select (V)" onclick="setTool('select')">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
+                <button class="tool-btn" id="pen-tool" title="Pen (P)" onclick="setTool('pen')">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button class="tool-btn" id="highlighter-tool" title="Highlighter (H)" onclick="setTool('highlighter')">
+                    <i class="fas fa-highlighter"></i>
+                </button>
+                <button class="tool-btn" id="eraser-tool" title="Eraser (E)" onclick="setTool('eraser')">
+                    <i class="fas fa-eraser"></i>
+                </button>
+                <button class="tool-btn" id="text-tool" title="Text (T)" onclick="setTool('text')">
+                    <i class="fas fa-font"></i>
+                </button>
+                <button class="tool-btn" id="shape-tool" title="Shapes (S)" onclick="setTool('shape')">
+                    <i class="fas fa-shapes"></i>
+                </button>
+                <button class="tool-btn" id="line-tool" title="Line (L)" onclick="setTool('line')">
+                    <i class="fas fa-slash"></i>
+                </button>
+            </div>
+
+            <div class="tool-group">
+                <h4>Media</h4>
+                <button class="tool-btn" id="image-tool" title="Insert Image (I)" onclick="insertImage()">
+                    <i class="fas fa-image"></i>
+                </button>
+                <button class="tool-btn file-upload-btn" title="Insert Document">
+                    <i class="fas fa-file-pdf"></i>
+                    <input type="file" id="document-upload" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple>
+                </button>
+                <button class="tool-btn" id="video-tool" title="Insert Video" onclick="insertVideo()">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="tool-btn" id="audio-tool" title="Record Audio" onclick="toggleAudioRecording()">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+
+            <div class="tool-group">
+                <h4>View</h4>
+                <button class="tool-btn" id="pan-tool" title="Pan (Space)" onclick="setTool('pan')">
+                    <i class="fas fa-hand-paper"></i>
+                </button>
+                <button class="tool-btn" id="grid-toggle" title="Toggle Grid (G)" onclick="toggleGrid()">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="tool-btn" id="zoom-in" title="Zoom In (+)" onclick="zoomIn()">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="tool-btn" id="zoom-out" title="Zoom Out (-)" onclick="zoomOut()">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Whiteboard Area -->
+        <div class="whiteboard-area">
+            <!-- Top Action Bar -->
+            <div class="action-bar">
+                <button class="action-btn" onclick="newWhiteboard()">
+                    <i class="fas fa-file"></i> New
+                </button>
+                <button class="action-btn" onclick="showSaveModal()">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="action-btn" onclick="showLoadModal()">
+                    <i class="fas fa-folder-open"></i> Open
+                </button>
+                <button class="action-btn danger" onclick="clearWhiteboard()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+                <button class="action-btn" onclick="undo()">
+                    <i class="fas fa-undo"></i> Undo
+                </button>
+                <button class="action-btn" onclick="redo()">
+                    <i class="fas fa-redo"></i> Redo
+                </button>
+                <button class="action-btn file-upload-btn">
+                    <i class="fas fa-upload"></i> Import
+                    <input type="file" id="image-upload" accept="image/*,.pdf,.svg" multiple>
+                </button>
+                <button class="action-btn" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i> Fullscreen
+                </button>
+            </div>
+
+            <!-- Whiteboard Canvas -->
+            <div class="whiteboard-canvas-container" id="canvas-container">
+                <canvas id="whiteboard-canvas"></canvas>
+                <!-- Canvas boundary indicator -->
+                <div class="canvas-boundary" id="canvas-boundary"></div>
+            </div>
+
+            <!-- Page Controls -->
+            <div class="page-controls">
+                <button class="page-btn" onclick="previousPage()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="page-info">
+                    <span id="current-page">Page 1</span>
+                    <span style="color: var(--text-muted);">/</span>
+                    <span id="total-pages">1</span>
+                </div>
+                <button class="page-btn" onclick="nextPage()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="page-btn" onclick="addPage()" title="Add Page">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="page-btn" onclick="deletePage()" title="Delete Page">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoomIn()">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="zoom-btn" onclick="zoomOut()">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="zoom-btn" onclick="resetZoom()">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="zoom-display">
+                    <span id="zoom-level">100%</span>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <i class="fas fa-pen"></i>
+                    <span id="current-tool">Select Tool</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-palette"></i>
+                    <span id="current-color">Black</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <span id="brush-size">Size: 3px</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-save"></i>
+                    <span id="auto-save">Auto-saved: Just now</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-database"></i>
+                    <span id="storage-used">Storage: 0.1MB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Properties Panel -->
+        <div class="properties-panel" id="properties-panel">
+            <!-- Colors Section -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-palette"></i>
+                    <span>Colors</span>
+                </div>
+                <div class="color-grid">
+                    <div class="color-option active" style="background: #000000;" onclick="setColor('#000000')"></div>
+                    <div class="color-option" style="background: #4361ee;" onclick="setColor('#4361ee')"></div>
+                    <div class="color-option" style="background: #f72585;" onclick="setColor('#f72585')"></div>
+                    <div class="color-option" style="background: #4cc9f0;" onclick="setColor('#4cc9f0')"></div>
+                    <div class="color-option" style="background: #f8961e;" onclick="setColor('#f8961e')"></div>
+                    <div class="color-option" style="background: #7209b7;" onclick="setColor('#7209b7')"></div>
+                    <div class="color-option" style="background: #2a9d8f;" onclick="setColor('#2a9d8f')"></div>
+                    <div class="color-option" style="background: #e63946;" onclick="setColor('#e63946')"></div>
+                    <div class="color-option" style="background: #ffd166;" onclick="setColor('#ffd166')"></div>
+                    <div class="color-option" style="background: #06d6a0;" onclick="setColor('#06d6a0')"></div>
+                </div>
+                <div class="custom-color">
+                    <input type="color" id="customColorPicker" value="#000000" onchange="setColor(this.value)">
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Custom Color</span>
+                </div>
+            </div>
+
+            <!-- Brush Size Section -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-brush"></i>
+                    <span>Brush Size</span>
+                </div>
+                <input type="range" min="1" max="50" value="3" class="brush-size-slider" id="brush-slider"
+                    oninput="updateBrushSize(this.value)">
+                <div class="size-preview">
+                    <div class="size-circle" id="size-preview"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <button class="action-btn small" onclick="setBrushSize(1)">Fine</button>
+                    <button class="action-btn small" onclick="setBrushSize(5)">Medium</button>
+                    <button class="action-btn small" onclick="setBrushSize(15)">Thick</button>
+                </div>
+            </div>
+
+            <!-- Shapes Section -->
+            <div class="panel-section" id="shapes-section">
+                <div class="panel-title">
+                    <i class="fas fa-shapes"></i>
+                    <span>Shapes</span>
+                </div>
+                <div class="shapes-grid">
+                    <button class="shape-btn" onclick="setShape('rectangle')" title="Rectangle">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('circle')" title="Circle">
+                        <i class="fas fa-circle"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('triangle')" title="Triangle">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('line')" title="Line">
+                        <i class="fas fa-slash"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('arrow')" title="Arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('star')" title="Star">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('hexagon')" title="Hexagon">
+                        <i class="fas fa-hexagon"></i>
+                    </button>
+                    <button class="shape-btn" onclick="setShape('cloud')" title="Cloud">
+                        <i class="fas fa-cloud"></i>
+                    </button>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="fill-shape" checked>
+                        <span>Fill Shape</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Text Properties Section -->
+            <div class="panel-section" id="text-section">
+                <div class="panel-title">
+                    <i class="fas fa-font"></i>
+                    <span>Text Properties</span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Font Size</label>
+                    <input type="range" min="12" max="72" value="24" id="font-size-slider"
+                        oninput="updateFontSize(this.value)">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Font Family</label>
+                    <select id="font-family" onchange="updateFontFamily(this.value)"
+                        style="width: 100%; padding: 8px; border-radius: var(--radius-md); background: rgba(10, 25, 47, 0.6); border: 1px solid var(--border-color); color: var(--text-dark);">
+                        <option value="Arial">Arial</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Comic Sans MS">Comic Sans MS</option>
+                        <option value="'Courier New', monospace">Monospace</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <button class="action-btn small" onclick="setTextBold()">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button class="action-btn small" onclick="setTextItalic()">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button class="action-btn small" onclick="setTextUnderline()">
+                        <i class="fas fa-underline"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Media Controls Section -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-microphone"></i>
+                    <span>Audio Recording</span>
+                </div>
+                <div class="media-controls">
+                    <div class="recording-indicator" id="recording-indicator">
+                        <i class="fas fa-circle"></i>
+                        <span>Recording...</span>
+                        <span id="recording-timer">00:00</span>
+                    </div>
+                    <button class="action-btn" id="record-btn" onclick="toggleAudioRecording()">
+                        <i class="fas fa-microphone"></i>
+                        <span>Start Recording</span>
+                    </button>
+                    <button class="action-btn" id="play-btn" onclick="playRecordings()" disabled>
+                        <i class="fas fa-play"></i>
+                        <span>Play Recordings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Modal -->
+    <div class="modal-overlay" id="save-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-save"></i> Save Whiteboard</h3>
+                <button class="modal-close" onclick="hideSaveModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">File Name</label>
+                    <input type="text" id="save-filename" placeholder="My Whiteboard"
+                        style="width: 100%; padding: 12px; border-radius: var(--radius-md); background: rgba(10, 25, 47, 0.6); border: 1px solid var(--border-color); color: var(--text-dark);">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Format</label>
+                    <select id="save-format"
+                        style="width: 100%; padding: 12px; border-radius: var(--radius-md); background: rgba(10, 25, 47, 0.6); border: 1px solid var(--border-color); color: var(--text-dark);">
+                        <option value="json">P2P Whiteboard Format (.json)</option>
+                        <option value="png">PNG Image (.png)</option>
+                        <option value="jpg">JPEG Image (.jpg)</option>
+                        <option value="pdf">PDF Document (.pdf)</option>
+                        <option value="svg">SVG Vector (.svg)</option>
+                    </select>
+                </div>
+                <div class="save-list" id="saved-files-list">
+                    <!-- Saved files will appear here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="hideSaveModal()">
+                    Cancel
+                </button>
+                <button class="action-btn primary" onclick="saveWhiteboard()">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Modal -->
+    <div class="modal-overlay" id="load-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> Open Whiteboard</h3>
+                <button class="modal-close" onclick="hideLoadModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="save-list" id="load-files-list">
+                    <!-- Saved files will appear here -->
+                </div>
+                <p style="text-align: center; color: var(--text-muted); margin-top: 1rem; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Click on a file to load it
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="hideLoadModal()">
+                    Cancel
+                </button>
+                <button class="action-btn" onclick="importWhiteboard()">
+                    <i class="fas fa-upload"></i> Import File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collaboration Modal -->
+    <div class="modal-overlay" id="collab-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> Collaboration</h3>
+                <button class="modal-close" onclick="hideCollaborationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Invite Link</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="invite-link" readonly
+                            style="flex: 1; padding: 12px; border-radius: var(--radius-md); background: rgba(10, 25, 47, 0.6); border: 1px solid var(--border-color); color: var(--text-dark);">
+                        <button class="action-btn" onclick="copyInviteLink()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: var(--white); margin-bottom: 1rem;">Active Collaborators</h4>
+                    <div id="collaborators-list">
+                        <div class="collaborator-item">
+                            <div class="collaborator-avatar" style="background: var(--green);"></div>
+                            <div class="collaborator-info">
+                                <div class="collaborator-name">You (Host)</div>
+                                <div class="collaborator-status" style="color: var(--green);">● Online</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="hideCollaborationModal()">
+                    Close
+                </button>
+                <button class="action-btn primary" onclick="startCollaboration()">
+                    <i class="fas fa-broadcast-tower"></i> Start Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="color: var(--white); font-size: 1.2rem; margin-top: 1rem;" id="loading-message">Loading Whiteboard...
+        </p>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu" style="display: none;">
+        <div class="context-menu-item" onclick="deleteSelected()">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+        </div>
+        <div class="context-menu-item" onclick="copySelected()">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+        </div>
+        <div class="context-menu-item" onclick="pasteSelected()">
+            <i class="fas fa-paste"></i>
+            <span>Paste</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="bringToFront()">
+            <i class="fas fa-arrow-up"></i>
+            <span>Bring to Front</span>
+        </div>
+        <div class="context-menu-item" onclick="sendToBack()">
+            <i class="fas fa-arrow-down"></i>
+            <span>Send to Back</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="groupObjects()">
+            <i class="fas fa-object-group"></i>
+            <span>Group</span>
+        </div>
+        <div class="context-menu-item" onclick="ungroupObjects()">
+            <i class="fas fa-object-ungroup"></i>
+            <span>Ungroup</span>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="hidden-image-upload" accept="image/*" multiple style="display: none;">
+    <input type="file" id="hidden-document-upload" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple style="display: none;">
+    <input type="file" id="hidden-video-upload" accept="video/*" style="display: none;">
+
+    <!-- JavaScript -->
+    <script src="whiteboard.js"></script>
+
+    <script>
+        // Initialize whiteboard when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeWhiteboard();
+            setupEventListeners();
+            loadAutoSave();
+            updateStorageInfo();
+
+            // Show loading animation
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+            }, 1000);
+        });
+
+        // Set up keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Prevent default for shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 's': e.preventDefault(); showSaveModal(); break;
+                    case 'o': e.preventDefault(); showLoadModal(); break;
+                    case 'n': e.preventDefault(); newWhiteboard(); break;
+                    case 'z': e.preventDefault(); undo(); break;
+                    case 'y': e.preventDefault(); redo(); break;
+                    case 'c': e.preventDefault(); copySelected(); break;
+                    case 'v': e.preventDefault(); pasteSelected(); break;
+                    case 'g': e.preventDefault(); toggleGrid(); break;
+                }
+            } else {
+                switch (e.key) {
+                    case 'Delete': deleteSelected(); break;
+                    case 'Escape': closeModals(); break;
+                    case ' ': e.preventDefault(); setTool('pan'); break;
+                    case 'p': setTool('pen'); break;
+                    case 'h': setTool('highlighter'); break;
+                    case 'e': setTool('eraser'); break;
+                    case 't': setTool('text'); break;
+                    case 's': setTool('shape'); break;
+                    case 'l': setTool('line'); break;
+                    case 'v': setTool('select'); break;
+                }
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+            resizeCanvas();
+        });
+
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            }
+        });
+    </script>
+</body>
+
+</html>

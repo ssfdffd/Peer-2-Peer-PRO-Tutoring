@@ -1,30 +1,27 @@
 /**
  * PEER-2-PEER PRO: FINAL CREATE.JS
- * Fully integrated with your Unified Worker & D1 Database
+ * Pointing to the Live Class Worker
  */
 
-const API_BASE = "https://liveclass.buhle-1ce.workers.dev"; // Your Worker URL
+// IMPORTANT: Ensure this is the URL for your SECOND worker (Live Class Worker)
+const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initial UI Animations
     animateFormEntrance();
     animatePageLoad();
     setupInputAnimations();
 
-    // 1. Auto-fill from login session (if available)
+    // Pull tutor info from sessionStorage (Set by your Login Worker)
     const savedEmail = sessionStorage.getItem('p2p_email');
     const savedName = sessionStorage.getItem('p2p_name');
 
     if (savedEmail) {
         document.getElementById('tutorEmailInput').value = savedEmail;
         document.getElementById('tutorNameInput').value = savedName || "";
-        loadTutorClasses(savedEmail); // Load existing classes immediately
+        loadTutorClasses(savedEmail);
     }
 });
 
-// ==========================================
-// 2. SAVE CLASS TO D1 DATABASE
-// ==========================================
 async function scheduleClass() {
     const name = document.getElementById('tutorNameInput').value.trim();
     const email = document.getElementById('tutorEmailInput').value.trim();
@@ -33,43 +30,38 @@ async function scheduleClass() {
 
     if (!name || !email || !topic) {
         showNotification("Please fill in all fields", "error");
-        shakeForm();
         return;
     }
 
     const btn = document.querySelector('.btn-launch');
-    const originalContent = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>Saving to DB...</span> <i class="fas fa-spinner fa-spin"></i>';
+    btn.innerHTML = '<span>Broadcasting...</span> <i class="fas fa-spinner fa-spin"></i>';
 
     try {
         const response = await fetch(`${API_BASE}/api/schedule-class`, {
             method: 'POST',
+            mode: 'cors', // Ensure CORS mode is on
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, name, topic, grade })
         });
 
-        const result = await response.json();
+        if (!response.ok) throw new Error("Worker connection failed");
 
+        const result = await response.json();
         if (result.success) {
-            showNotification(`Class "${topic}" scheduled!`, 'success');
-            document.getElementById('classTopic').value = ''; // Clear topic
-            loadTutorClasses(email); // Refresh the list from DB
-        } else {
-            throw new Error(result.error || "Save failed");
+            showNotification(`Class Live!`, 'success');
+            document.getElementById('classTopic').value = '';
+            loadTutorClasses(email);
         }
     } catch (err) {
-        showNotification(err.message, 'error');
-        shakeForm();
+        console.error("Fetch Error:", err);
+        showNotification("Failed to connect. Check Worker CORS/Deployment.", "error");
     } finally {
         btn.disabled = false;
-        btn.innerHTML = originalContent;
+        btn.innerHTML = '<span>Schedule & Broadcast</span> <i class="fas fa-paper-plane"></i>';
     }
 }
 
-// ==========================================
-// 3. LOAD CLASSES FROM D1 DATABASE
-// ==========================================
 async function loadTutorClasses(email) {
     const container = document.getElementById('myMeetingsList');
     if (!email || !container) return;
@@ -78,37 +70,26 @@ async function loadTutorClasses(email) {
         const res = await fetch(`${API_BASE}/api/get-classes?email=${encodeURIComponent(email)}`);
         const classes = await res.json();
 
-        container.innerHTML = ''; // Clear list
+        container.innerHTML = '';
 
-        if (!classes || classes.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No upcoming lessons.</p>';
+        if (classes.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No active classes.</p>';
             return;
         }
 
         classes.forEach(meeting => {
-            const card = document.createElement('div');
-            card.className = 'meeting-item';
-            card.innerHTML = `
-                <div class="meeting-info">
-                    <h4>${meeting.topic}</h4>
-                    <span><i class="fas fa-graduation-cap"></i> ${meeting.grade} • Active</span>
-                    <p style="color: #8892b0; margin-top: 5px; font-size: 0.8rem;">Room: ${meeting.room_name}</p>
-                </div>
-                <div class="meeting-actions">
-                    <button class="btn-start-small" onclick="goLive('${meeting.room_name}')">
-                        <i class="fas fa-play"></i> START
-                    </button>
-                </div>
-            `;
-            container.appendChild(card);
-
-            anime({
-                targets: card,
-                translateX: [20, 0],
-                opacity: [0, 1],
-                duration: 500,
-                easing: 'easeOutCubic'
-            });
+            container.innerHTML += `
+                <div class="meeting-item">
+                    <div class="meeting-info">
+                        <h4>${meeting.topic}</h4>
+                        <span>${meeting.grade} • Active</span>
+                    </div>
+                    <div class="meeting-actions">
+                        <button class="btn-start-small" onclick="window.location.href='live-session.html?room=${meeting.room_name}'">
+                            <i class="fas fa-play"></i> START
+                        </button>
+                    </div>
+                </div>`;
         });
     } catch (e) {
         console.error("Load Error:", e);

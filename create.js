@@ -3,7 +3,6 @@
  * Pointing to the Live Class Worker
  */
 
-// IMPORTANT: Ensure this is the URL for your SECOND worker (Live Class Worker)
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     animatePageLoad();
     setupInputAnimations();
 
-    // Pull tutor info from sessionStorage (Set by your Login Worker)
     const savedEmail = sessionStorage.getItem('p2p_email');
     const savedName = sessionStorage.getItem('p2p_name');
 
@@ -40,7 +38,7 @@ async function scheduleClass() {
     try {
         const response = await fetch(`${API_BASE}/api/schedule-class`, {
             method: 'POST',
-            mode: 'cors', // Ensure CORS mode is on
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, name, topic, grade })
         });
@@ -72,46 +70,51 @@ async function loadTutorClasses(email) {
 
         container.innerHTML = '';
 
-        if (classes.length === 0) {
+        if (!classes || classes.length === 0) {
             container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No active classes.</p>';
             return;
         }
 
         classes.forEach(meeting => {
-            container.innerHTML += `
-                <div class="meeting-item">
-                    <div class="meeting-info">
-                        <h4>${meeting.topic}</h4>
-                        <span>${meeting.grade} • Active</span>
-                    </div>
-                    <div class="meeting-actions">
-                        <button class="btn-start-small" onclick="window.location.href='live-session.html?room=${meeting.room_name}'">
-                            <i class="fas fa-play"></i> START
-                        </button>
-                    </div>
+            // We pass meeting.room_name directly into the goLive function
+            const card = document.createElement('div');
+            card.className = 'meeting-item';
+            card.innerHTML = `
+                <div class="meeting-info">
+                    <h4>${meeting.topic}</h4>
+                    <span><i class="fas fa-graduation-cap"></i> ${meeting.grade} • Active</span>
+                </div>
+                <div class="meeting-actions">
+                    <button class="btn-start-small" onclick="goLive('${meeting.room_name}')">
+                        <i class="fas fa-play"></i> START CLASS
+                    </button>
                 </div>`;
+            container.appendChild(card);
         });
     } catch (e) {
         console.error("Load Error:", e);
     }
 }
 
-// ==========================================
-// 4. JITSI REDIRECT
-// ==========================================
-// This function is called when the green START button is clicked
+/**
+ * Handles the redirect to the Jitsi Session page
+ */
 function goLive(roomName) {
-    // Show a quick notification before jumping in
-    showNotification("Initializing Secure Classroom...", "success");
+    if (!roomName) {
+        showNotification("Room Error: Name missing", "error");
+        return;
+    }
 
+    showNotification("Launching Secure Classroom...", "success");
+
+    // Redirecting to your live-session.html page with the room parameter
     setTimeout(() => {
-        // Redirect to the session page with the room name as a URL parameter
-        window.location.href = `live-session.html?room=${roomName}`;
+        window.location.href = `live-session.html?room=${encodeURIComponent(roomName)}`;
     }, 800);
 }
-// ==========================================
-// 5. UI UTILITIES & ANIMATIONS
-// ==========================================
+
+// --- ANIMATIONS & UI UTILITIES ---
+
 function showNotification(message, type = 'info') {
     const n = document.createElement('div');
     n.className = `notification ${type}`;
@@ -125,40 +128,39 @@ function showNotification(message, type = 'info') {
     setTimeout(() => n.remove(), 4000);
 }
 
-function shakeForm() {
-    anime({
-        targets: '.p2p-form',
-        translateX: [-10, 10, -10, 10, 0],
-        easing: 'easeInOutSine',
-        duration: 400
-    });
-}
-
 function animateFormEntrance() {
-    anime({
-        targets: '.input-group, .btn-launch',
-        translateY: [30, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100, { start: 300 }),
-        easing: 'easeOutCubic',
-        duration: 800
-    });
+    if (typeof anime !== 'undefined') {
+        anime({
+            targets: '.input-group, .btn-launch',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            delay: anime.stagger(100, { start: 300 }),
+            easing: 'easeOutCubic',
+            duration: 800
+        });
+    }
 }
 
 function animatePageLoad() {
-    anime({
-        targets: '.form-header',
-        translateY: [-20, 0],
-        opacity: [0, 1],
-        duration: 1000,
-        easing: 'easeOutCubic'
-    });
+    if (typeof anime !== 'undefined') {
+        anime({
+            targets: '.form-header',
+            translateY: [-20, 0],
+            opacity: [0, 1],
+            duration: 1000,
+            easing: 'easeOutCubic'
+        });
+    }
 }
 
 function setupInputAnimations() {
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
-        input.addEventListener('focus', () => anime({ targets: input, scale: 1.02, duration: 300 }));
-        input.addEventListener('blur', () => anime({ targets: input, scale: 1, duration: 300 }));
+        input.addEventListener('focus', () => {
+            if (typeof anime !== 'undefined') anime({ targets: input, scale: 1.02, duration: 300 });
+        });
+        input.addEventListener('blur', () => {
+            if (typeof anime !== 'undefined') anime({ targets: input, scale: 1, duration: 300 });
+        });
     });
 }

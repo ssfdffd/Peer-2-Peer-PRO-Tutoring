@@ -1,92 +1,87 @@
 /**
  * PEER-2-PEER PRO: FINAL CREATE.JS
- * Integrated with Anime.js and D1 Worker Backend
+ * Fully integrated with your Unified Worker & D1 Database
  */
 
-const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
+const API_BASE = "https://liveclass.buhle-1ce.workers.dev"; // Your Worker URL
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Initial UI Animations
     animateFormEntrance();
     animatePageLoad();
     setupInputAnimations();
 
-    // Auto-load if email exists in session, otherwise wait for input
+    // 1. Auto-fill from login session (if available)
     const savedEmail = sessionStorage.getItem('p2p_email');
+    const savedName = sessionStorage.getItem('p2p_name');
+
     if (savedEmail) {
         document.getElementById('tutorEmailInput').value = savedEmail;
-        document.getElementById('tutorNameInput').value = sessionStorage.getItem('p2p_name') || "";
-        loadTutorClasses(savedEmail);
+        document.getElementById('tutorNameInput').value = savedName || "";
+        loadTutorClasses(savedEmail); // Load existing classes immediately
     }
 });
 
-// --- API INTEGRATION ---
-
-/**
- * Saves a new class to the D1 Database via the Worker
- */
+// ==========================================
+// 2. SAVE CLASS TO D1 DATABASE
+// ==========================================
 async function scheduleClass() {
-    const tutorName = document.getElementById('tutorNameInput').value.trim();
-    const tutorEmail = document.getElementById('tutorEmailInput').value.trim();
+    const name = document.getElementById('tutorNameInput').value.trim();
+    const email = document.getElementById('tutorEmailInput').value.trim();
     const topic = document.getElementById('classTopic').value.trim();
     const grade = document.getElementById('classGrade').value;
 
-    if (!tutorName || !tutorEmail || !topic || !grade) {
-        showNotification('Please fill in all fields', 'error');
+    if (!name || !email || !topic) {
+        showNotification("Please fill in all fields", "error");
         shakeForm();
         return;
     }
 
     const btn = document.querySelector('.btn-launch');
-    const originalText = btn.innerHTML;
+    const originalContent = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>Saving...</span> <i class="fas fa-spinner fa-spin"></i>';
+    btn.innerHTML = '<span>Saving to DB...</span> <i class="fas fa-spinner fa-spin"></i>';
 
     try {
         const response = await fetch(`${API_BASE}/api/schedule-class`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: tutorEmail,
-                name: tutorName,
-                topic: topic,
-                grade: grade
-            })
+            body: JSON.stringify({ email, name, topic, grade })
         });
 
         const result = await response.json();
 
         if (result.success) {
-            showNotification(`Class scheduled successfully!`, 'success');
-            document.getElementById('classTopic').value = ''; // Clear topic field
-            loadTutorClasses(tutorEmail); // Refresh the list
+            showNotification(`Class "${topic}" scheduled!`, 'success');
+            document.getElementById('classTopic').value = ''; // Clear topic
+            loadTutorClasses(email); // Refresh the list from DB
         } else {
-            throw new Error(result.error || "Failed to save");
+            throw new Error(result.error || "Save failed");
         }
     } catch (err) {
         showNotification(err.message, 'error');
         shakeForm();
     } finally {
         btn.disabled = false;
-        btn.innerHTML = originalText;
+        btn.innerHTML = originalContent;
     }
 }
 
-/**
- * Fetches real data from DB based on provided email
- */
+// ==========================================
+// 3. LOAD CLASSES FROM D1 DATABASE
+// ==========================================
 async function loadTutorClasses(email) {
     const container = document.getElementById('myMeetingsList');
     if (!email || !container) return;
 
     try {
-        // Calling your worker's GET endpoint
         const res = await fetch(`${API_BASE}/api/get-classes?email=${encodeURIComponent(email)}`);
         const classes = await res.json();
 
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear list
 
         if (!classes || classes.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No classes found for this email.</p>';
+            container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No upcoming lessons.</p>';
             return;
         }
 
@@ -107,7 +102,6 @@ async function loadTutorClasses(email) {
             `;
             container.appendChild(card);
 
-            // Animation for new cards
             anime({
                 targets: card,
                 translateX: [20, 0],
@@ -118,18 +112,48 @@ async function loadTutorClasses(email) {
         });
     } catch (e) {
         console.error("Load Error:", e);
-        container.innerHTML = '<p style="color: #ef4444;">Error loading classes.</p>';
     }
 }
 
-// --- UI & ANIMATIONS ---
+// ==========================================
+// 4. JITSI REDIRECT
+// ==========================================
+function goLive(roomName) {
+    // Redirect to your live session page where Jitsi is embedded
+    window.location.href = `live-session.html?room=${roomName}`;
+}
+
+// ==========================================
+// 5. UI UTILITIES & ANIMATIONS
+// ==========================================
+function showNotification(message, type = 'info') {
+    const n = document.createElement('div');
+    n.className = `notification ${type}`;
+    n.innerHTML = `<span>${message}</span>`;
+    Object.assign(n.style, {
+        position: 'fixed', top: '20px', right: '20px', padding: '15px 25px',
+        background: type === 'success' ? '#32cd32' : '#ef4444', color: 'white',
+        borderRadius: '10px', zIndex: '9999', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+    });
+    document.body.appendChild(n);
+    setTimeout(() => n.remove(), 4000);
+}
+
+function shakeForm() {
+    anime({
+        targets: '.p2p-form',
+        translateX: [-10, 10, -10, 10, 0],
+        easing: 'easeInOutSine',
+        duration: 400
+    });
+}
 
 function animateFormEntrance() {
     anime({
         targets: '.input-group, .btn-launch',
         translateY: [30, 0],
         opacity: [0, 1],
-        delay: anime.stagger(80, { start: 200 }),
+        delay: anime.stagger(100, { start: 300 }),
         easing: 'easeOutCubic',
         duration: 800
     });
@@ -140,7 +164,7 @@ function animatePageLoad() {
         targets: '.form-header',
         translateY: [-20, 0],
         opacity: [0, 1],
-        duration: 800,
+        duration: 1000,
         easing: 'easeOutCubic'
     });
 }
@@ -148,51 +172,7 @@ function animatePageLoad() {
 function setupInputAnimations() {
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            anime({ targets: input, scale: 1.01, duration: 200, easing: 'easeOutCubic' });
-        });
-        input.addEventListener('blur', () => {
-            anime({ targets: input, scale: 1, duration: 200, easing: 'easeOutCubic' });
-        });
-    });
-}
-
-function goLive(roomName) {
-    showNotification(`Entering Room: ${roomName}`, 'success');
-    setTimeout(() => {
-        window.location.href = `live-session.html?room=${roomName}`;
-    }, 800);
-}
-
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `<span>${message}</span>`;
-
-    Object.assign(notification.style, {
-        position: 'fixed', top: '20px', right: '20px', padding: '15px 25px',
-        backgroundColor: type === 'success' ? '#32cd32' : '#ef4444',
-        color: 'white', borderRadius: '10px', zIndex: '9999', boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-        fontFamily: 'sans-serif', fontWeight: 'bold'
-    });
-
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        anime({
-            targets: notification,
-            opacity: 0,
-            translateX: 20,
-            duration: 500,
-            complete: () => notification.remove()
-        });
-    }, 3000);
-}
-
-function shakeForm() {
-    anime({
-        targets: '.p2p-form',
-        translateX: [-10, 10, -10, 10, 0],
-        easing: 'easeInOutSine',
-        duration: 400
+        input.addEventListener('focus', () => anime({ targets: input, scale: 1.02, duration: 300 }));
+        input.addEventListener('blur', () => anime({ targets: input, scale: 1, duration: 300 }));
     });
 }

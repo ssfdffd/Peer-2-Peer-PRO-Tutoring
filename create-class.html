@@ -33,13 +33,14 @@
 
                 <div class="p2p-form">
                     <div class="input-group">
-                        <label for="tutorNameInput"><i class="fas fa-user"></i> Your Name</label>
-                        <input type="text" id="tutorNameInput" placeholder="e.g. Dr. Sarah Johnson">
+                        <label for="tutorNameInput">Your Name</label>
+                        <input type="text" id="tutorNameInput" placeholder="Dr. Sarah Johnson">
                     </div>
 
                     <div class="input-group">
-                        <label for="tutorEmailInput"><i class="fas fa-envelope"></i> Your Email</label>
-                        <input type="email" id="tutorEmailInput" placeholder="tutor@example.com">
+                        <label for="tutorEmailInput">Your Email</label>
+                        <input type="email" id="tutorEmailInput" placeholder="tutor@example.com"
+                            oninput="loadTutorClasses(this.value)">
                     </div>
 
                     <div class="input-group">

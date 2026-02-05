@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Forum | Grade-Based Learning</title>
+    <title>Community Forum | Grade-Based Learning with Image Upload</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* Base Styles & Reset */
@@ -241,6 +241,94 @@
             font-weight: 600;
         }
 
+        /* Image Upload Section */
+        .image-upload-section {
+            margin-bottom: 20px;
+        }
+
+        .upload-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-blue);
+            background: var(--gray-100);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-green);
+            background: var(--light-green);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: var(--text-medium);
+            margin-bottom: 5px;
+        }
+
+        .upload-subtext {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        #imagePreview {
+            display: none;
+            margin-top: 15px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #imagePreview img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-image:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
         #forumQuestion {
             width: 100%;
             min-height: 120px;
@@ -312,11 +400,31 @@
             color: var(--accent-green);
         }
 
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .filter-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 15px;
         }
 
         .filter-btn {
@@ -351,6 +459,40 @@
             border: none;
             font-weight: 600;
             min-width: 100%;
+        }
+
+        /* Sort Options */
+        .sort-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sort-btn {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--text-medium);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sort-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--primary-blue);
+        }
+
+        .sort-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
         }
 
         /* Main Panel */
@@ -389,7 +531,7 @@
             color: var(--accent-green);
         }
 
-        .current-grade-badge {
+        .current-filter-badge {
             background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
             color: white;
             padding: 8px 16px;
@@ -486,6 +628,18 @@
             color: white;
         }
 
+        .time-badge {
+            background: var(--gray-100);
+            color: var(--text-medium);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .forum-date {
             font-size: 0.85rem;
             color: var(--text-light);
@@ -500,6 +654,42 @@
             color: var(--text-dark);
             margin-bottom: 20px;
             padding-left: 5px;
+        }
+
+        /* Question Image */
+        .question-image {
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            max-width: 100%;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .question-image:hover {
+            transform: scale(1.02);
+        }
+
+        .question-image img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .image-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .forum-actions {
@@ -681,6 +871,47 @@
             padding: 12px 24px;
         }
 
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .dashboard-wrapper {
@@ -770,9 +1001,9 @@
             P2P <span class="premium">GRADE FORUM</span>
         </div>
         <div class="nav-right">
-            <div class="current-grade-badge" id="currentGradeBadge">
+            <div class="current-filter-badge" id="currentFilterBadge">
                 <i class="fas fa-user-graduate"></i>
-                Grade <span id="currentGradeDisplay">11</span>
+                Grade <span id="currentGradeDisplay">11</span> • <span id="currentSortDisplay">Latest</span>
             </div>
             <div class="notification-hub">
                 <i class="fas fa-bell" id="bellIcon" onclick="toggleNotifs()"></i>
@@ -799,6 +1030,21 @@
                     </div>
                 </div>
 
+                <div class="image-upload-section">
+                    <label class="upload-label"><i class="fas fa-image"></i> Add Image (Optional)</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Click to upload or drag & drop</div>
+                        <div class="upload-subtext">PNG, JPG, GIF up to 5MB</div>
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                    </div>
+                    <div id="imagePreview">
+                        <!-- Preview will be shown here -->
+                    </div>
+                </div>
+
                 <textarea id="forumQuestion"
                     placeholder="What subject are you struggling with? Ask your grade-specific question here..."></textarea>
                 <button class="btn-ask" onclick="submitToForum()" id="submitBtn">
@@ -807,13 +1053,34 @@
             </div>
 
             <div class="filter-panel">
-                <h4><i class="fas fa-sliders-h"></i> Filter Discussions</h4>
-                <div class="filter-buttons" id="filterButtons">
-                    <!-- Filter buttons will be generated here -->
+                <h4><i class="fas fa-sliders-h"></i> Filter & Sort</h4>
+
+                <div class="filter-options">
+                    <div class="filter-group">
+                        <label><i class="fas fa-layer-group"></i> Filter by Grade</label>
+                        <div class="filter-buttons" id="filterButtons">
+                            <!-- Filter buttons will be generated here -->
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-sort"></i> Sort by</label>
+                        <div class="sort-options">
+                            <button class="sort-btn active" onclick="applySort('latest')" id="sortLatest">
+                                <i class="fas fa-clock"></i> Latest First
+                            </button>
+                            <button class="sort-btn" onclick="applySort('oldest')" id="sortOldest">
+                                <i class="fas fa-history"></i> Oldest First
+                            </button>
+                            <button class="sort-btn" onclick="applySort('mostReplies')" id="sortMostReplies">
+                                <i class="fas fa-comments"></i> Most Replies
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
                 <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 15px; line-height: 1.5;">
-                    <i class="fas fa-info-circle"></i> View questions from all grades or filter by specific grade
-                    levels.
+                    <i class="fas fa-info-circle"></i> Filter questions by grade level and sort by your preference.
                 </p>
             </div>
         </aside>
@@ -822,9 +1089,9 @@
             <section class="portal-section">
                 <div class="section-header">
                     <h3><i class="fas fa-comments"></i> Grade-Based Discussions</h3>
-                    <div class="current-grade-badge">
+                    <div class="current-filter-badge">
                         <i class="fas fa-eye"></i>
-                        Viewing: <span id="viewingFilter">Grade 11 Only</span>
+                        <span id="viewingFilter">Grade 11 • Latest</span>
                     </div>
                 </div>
                 <div id="forumFeed">
@@ -836,18 +1103,28 @@
         </main>
     </div>
 
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <img id="modalImage" src="" alt="Enlarged view">
+        </div>
+    </div>
+
     <script>
-        // Sample data with grade information
+        // Sample data with grade information, timestamps, and images
         const sampleQuestions = [
             {
                 id: 1,
                 userName: "Alex Johnson",
                 grade: 11,
                 date: "2 hours ago",
-                text: "Can someone explain how to solve quadratic equations using the quadratic formula? I'm stuck on my math homework.",
+                timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                text: "Can someone explain how to solve this calculus problem? I'm stuck on finding the derivative.",
+                image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
                 replies: [
-                    { id: 101, userName: "Sam Rivera", replyText: "Sure! Remember the formula is x = [-b ± √(b² - 4ac)] / 2a. Start by identifying a, b, and c from your equation." },
-                    { id: 102, userName: "Taylor Kim", replyText: "I found this Khan Academy video really helpful for visualizing it!" }
+                    { id: 101, userName: "Sam Rivera", replyText: "You need to use the chain rule here. Start by differentiating the outer function." },
+                    { id: 102, userName: "Taylor Kim", replyText: "Check out this step-by-step solution I wrote!" }
                 ]
             },
             {
@@ -855,9 +1132,11 @@
                 userName: "Maria Chen",
                 grade: 11,
                 date: "Yesterday, 3:42 PM",
-                text: "Studying for chemistry final - any tips for memorizing the periodic table trends?",
+                timestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 hours ago
+                text: "Physics question about Newton's laws. Can someone help me understand the third law?",
+                image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w-400&h=250&fit=crop",
                 replies: [
-                    { id: 201, userName: "Jordan Lee", replyText: "Create flashcards with mnemonics! That's what worked for me." }
+                    { id: 201, userName: "Jordan Lee", replyText: "For every action, there's an equal and opposite reaction. Think of a rocket pushing exhaust gases down." }
                 ]
             },
             {
@@ -865,7 +1144,9 @@
                 userName: "David Park",
                 grade: 12,
                 date: "Nov 12, 10:15 AM",
+                timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
                 text: "AP Calculus question: How do I find the derivative of implicit functions?",
+                image: null,
                 replies: []
             },
             {
@@ -873,9 +1154,11 @@
                 userName: "Sophia Williams",
                 grade: 9,
                 date: "Nov 10, 2:30 PM",
-                text: "Need help with basic algebra - solving for x in equations like 2x + 5 = 15",
+                timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+                text: "Need help with this geometry problem about triangles and angles.",
+                image: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=400&h=300&fit=crop",
                 replies: [
-                    { id: 401, userName: "Mr. Thompson (Teacher)", replyText: "Great question! Start by subtracting 5 from both sides, then divide by 2." }
+                    { id: 401, userName: "Mr. Thompson (Teacher)", replyText: "Remember that the sum of angles in a triangle is always 180 degrees." }
                 ]
             },
             {
@@ -883,7 +1166,9 @@
                 userName: "James Wilson",
                 grade: 7,
                 date: "Nov 9, 4:20 PM",
+                timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // 8 days ago
                 text: "What's the difference between a metaphor and a simile? English test tomorrow!",
+                image: null,
                 replies: [
                     { id: 501, userName: "Emma Garcia", replyText: "Simile uses 'like' or 'as' (quiet as a mouse), metaphor doesn't (he's a lion)." }
                 ]
@@ -893,10 +1178,13 @@
                 userName: "Olivia Brown",
                 grade: 11,
                 date: "Nov 8, 11:15 AM",
-                text: "Physics question: How do I calculate acceleration when given velocity and time?",
+                timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000), // 9 days ago
+                text: "Chemistry lab question: How do I balance this chemical equation?",
+                image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&h=300&fit=crop",
                 replies: [
-                    { id: 601, userName: "Noah Martinez", replyText: "Use a = Δv/Δt (change in velocity divided by change in time)." },
-                    { id: 602, userName: "Alex Johnson", replyText: "Make sure your units are consistent! Convert to m/s and seconds if needed." }
+                    { id: 601, userName: "Noah Martinez", replyText: "Start by balancing the atoms that appear in only one compound on each side." },
+                    { id: 602, userName: "Alex Johnson", replyText: "I used this online balancer to check my work!" },
+                    { id: 603, userName: "Liam Wilson", replyText: "Make sure to check your coefficients at the end." }
                 ]
             }
         ];
@@ -910,6 +1198,8 @@
         // State
         let selectedGrade = currentUser.grade;
         let currentFilter = 'grade-11'; // Default filter
+        let currentSort = 'latest'; // Default sort
+        let selectedImage = null; // For image upload
         let allGrades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -919,16 +1209,19 @@
             // Initialize filter buttons
             initializeFilterButtons();
 
+            // Initialize image upload
+            initializeImageUpload();
+
             // Set current user in localStorage for demo
             localStorage.setItem('userName', currentUser.name);
             localStorage.setItem('userGrade', currentUser.grade);
             localStorage.setItem('school_id', 'demo-school-123');
 
             // Update UI to show current grade
-            document.getElementById('currentGradeDisplay').textContent = currentUser.grade;
+            updateFilterDisplay();
 
             // Load and display questions
-            filterQuestions(currentFilter);
+            filterAndSortQuestions();
 
             // Check notifications every 20 seconds
             setInterval(checkNotifications, 20000);
@@ -992,6 +1285,83 @@
             });
         }
 
+        function initializeImageUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('imageUpload');
+
+            // Click to upload
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+
+                if (e.dataTransfer.files.length) {
+                    handleImageUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleImageUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        function handleImageUpload(file) {
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                showNotification('Please select an image file (PNG, JPG, GIF)');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('Image size should be less than 5MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedImage = e.target.result;
+                showImagePreview(selectedImage, file.name);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showImagePreview(imageSrc, fileName) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `
+                <img src="${imageSrc}" alt="Preview">
+                <button class="remove-image" onclick="removeImage()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="image-label">
+                    <i class="fas fa-image"></i> ${fileName}
+                </div>
+            `;
+            preview.style.display = 'block';
+        }
+
+        function removeImage() {
+            selectedImage = null;
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('imageUpload').value = '';
+        }
+
         function selectGrade(grade) {
             selectedGrade = grade;
 
@@ -1036,39 +1406,35 @@
                 }
             });
 
-            // Update viewing filter display
-            const viewingText = document.getElementById('viewingFilter');
-            switch (filter) {
-                case 'all':
-                    viewingText.textContent = 'All Grades';
-                    break;
-                case `grade-${currentUser.grade}`:
-                    viewingText.textContent = `Grade ${currentUser.grade} Only`;
-                    break;
-                case 'elementary':
-                    viewingText.textContent = 'Elementary (Grades 1-5)';
-                    break;
-                case 'middle':
-                    viewingText.textContent = 'Middle School (Grades 6-8)';
-                    break;
-                case 'highschool':
-                    viewingText.textContent = 'High School (Grades 9-12)';
-                    break;
-                default:
-                    if (filter.startsWith('grade-')) {
-                        const grade = filter.replace('grade-', '');
-                        viewingText.textContent = `Grade ${grade} Only`;
-                    }
-            }
-
-            // Apply the filter
-            filterQuestions(filter);
+            // Apply filter and sort
+            filterAndSortQuestions();
+            updateFilterDisplay();
         }
 
-        function filterQuestions(filter) {
+        function applySort(sortType) {
+            currentSort = sortType;
+
+            // Update sort button states
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(`sort${capitalizeFirstLetter(sortType)}`).classList.add('active');
+
+            // Apply filter and sort
+            filterAndSortQuestions();
+            updateFilterDisplay();
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function filterAndSortQuestions() {
             let filteredQuestions = [];
 
-            switch (filter) {
+            // First, apply filter
+            switch (currentFilter) {
                 case 'all':
                     filteredQuestions = [...sampleQuestions];
                     break;
@@ -1090,15 +1456,88 @@
                     break;
 
                 default:
-                    if (filter.startsWith('grade-')) {
-                        const grade = parseInt(filter.replace('grade-', ''));
+                    if (currentFilter.startsWith('grade-')) {
+                        const grade = parseInt(currentFilter.replace('grade-', ''));
                         filteredQuestions = sampleQuestions.filter(q => q.grade === grade);
                     } else {
                         filteredQuestions = [...sampleQuestions];
                     }
             }
 
+            // Then, apply sorting
+            switch (currentSort) {
+                case 'latest':
+                    filteredQuestions.sort((a, b) => b.timestamp - a.timestamp);
+                    break;
+
+                case 'oldest':
+                    filteredQuestions.sort((a, b) => a.timestamp - b.timestamp);
+                    break;
+
+                case 'mostReplies':
+                    filteredQuestions.sort((a, b) => b.replies.length - a.replies.length);
+                    break;
+            }
+
             renderForum(filteredQuestions);
+        }
+
+        function updateFilterDisplay() {
+            // Update filter badge
+            const currentGradeDisplay = document.getElementById('currentGradeDisplay');
+            const currentSortDisplay = document.getElementById('currentSortDisplay');
+            const viewingFilter = document.getElementById('viewingFilter');
+
+            let filterText = '';
+            let sortText = '';
+
+            // Determine filter text
+            switch (currentFilter) {
+                case 'all':
+                    filterText = 'All Grades';
+                    currentGradeDisplay.textContent = 'All';
+                    break;
+                case `grade-${currentUser.grade}`:
+                    filterText = `Grade ${currentUser.grade}`;
+                    currentGradeDisplay.textContent = currentUser.grade;
+                    break;
+                case 'elementary':
+                    filterText = 'Elementary (1-5)';
+                    currentGradeDisplay.textContent = '1-5';
+                    break;
+                case 'middle':
+                    filterText = 'Middle (6-8)';
+                    currentGradeDisplay.textContent = '6-8';
+                    break;
+                case 'highschool':
+                    filterText = 'High School (9-12)';
+                    currentGradeDisplay.textContent = '9-12';
+                    break;
+                default:
+                    if (currentFilter.startsWith('grade-')) {
+                        const grade = currentFilter.replace('grade-', '');
+                        filterText = `Grade ${grade}`;
+                        currentGradeDisplay.textContent = grade;
+                    }
+            }
+
+            // Determine sort text
+            switch (currentSort) {
+                case 'latest':
+                    sortText = 'Latest';
+                    currentSortDisplay.textContent = 'Latest';
+                    break;
+                case 'oldest':
+                    sortText = 'Oldest';
+                    currentSortDisplay.textContent = 'Oldest';
+                    break;
+                case 'mostReplies':
+                    sortText = 'Most Replies';
+                    currentSortDisplay.textContent = 'Most Replies';
+                    break;
+            }
+
+            viewingFilter.textContent = `${filterText} • ${sortText}`;
         }
 
         function renderForum(questions) {
@@ -1125,6 +1564,12 @@
                 const isUserGrade = q.grade === currentUser.grade;
                 const card = document.createElement('div');
                 card.className = 'forum-card';
+
+                // Time badge for "latest" posts
+                const timeBadge = q.timestamp > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                    ? `<span class="time-badge"><i class="fas fa-bolt"></i> New</span>`
+                    : '';
+
                 card.innerHTML = `
                     ${isOwner ? `<button class="delete-btn" onclick="deleteQuestion(${q.id})" title="Delete discussion"><i class="fas fa-trash"></i></button>` : ''}
                     
@@ -1134,11 +1579,21 @@
                             <span class="grade-badge ${isUserGrade ? 'grade-11' : ''}">
                                 <i class="fas fa-graduation-cap"></i> Grade ${q.grade}
                             </span>
+                            ${timeBadge}
                         </div>
                     </div>
                     
                     <div class="forum-date"><i class="far fa-clock"></i> ${q.date}</div>
                     <div class="forum-text">${q.text}</div>
+                    
+                    ${q.image ? `
+                        <div class="question-image" onclick="openImageModal('${q.image}')">
+                            <img src="${q.image}" alt="Question image">
+                            <div class="image-label">
+                                <i class="fas fa-expand"></i> Click to enlarge
+                            </div>
+                        </div>
+                    ` : ''}
                     
                     <div class="forum-actions">
                         <button class="action-btn" onclick="toggleReplies(${q.id})" id="toggle-btn-${q.id}">
@@ -1149,7 +1604,7 @@
                             <i class="fas fa-hands-helping"></i> Help Peer
                         </button>
                         ${!isUserGrade ? `<button class="action-btn" onclick="switchToGrade(${q.grade})" title="View more Grade ${q.grade} questions">
-                            <i class="fas fa-exchange-alt"></i> Switch to Grade ${q.grade}
+                            <i class="fas fa-exchange-alt"></i> Grade ${q.grade}
                         </button>` : ''}
                     </div>
 
@@ -1175,6 +1630,20 @@
                 `;
                 feed.appendChild(card);
             });
+        }
+
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         function switchToGrade(grade) {
@@ -1255,17 +1724,20 @@
                 userName: currentUser.name,
                 grade: selectedGrade,
                 date: "Just now",
+                timestamp: new Date(),
                 text: text,
+                image: selectedImage,
                 replies: []
             };
 
             sampleQuestions.unshift(newQuestion); // Add to beginning
 
             // Re-apply current filter to refresh view
-            filterQuestions(currentFilter);
+            filterAndSortQuestions();
 
             // Reset form
             textInput.value = '';
+            removeImage();
             textInput.placeholder = "Question posted to Grade " + selectedGrade + "! Ask another?";
 
             // Reset placeholder after 3 seconds
@@ -1340,7 +1812,7 @@
             const index = sampleQuestions.findIndex(q => q.id === id);
             if (index !== -1) {
                 sampleQuestions.splice(index, 1);
-                filterQuestions(currentFilter); // Refresh with current filter
+                filterAndSortQuestions(); // Refresh with current filter
                 showNotification("Discussion deleted successfully.");
             }
         }

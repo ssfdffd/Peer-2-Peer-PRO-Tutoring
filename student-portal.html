@@ -19,15 +19,6 @@
                 <img src="favicon.ico" alt="Logo" class="nav-logo">
                 <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></div>
             </div>
-
-            <div class="nav-links">
-                <a href="#" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
-                <a href="student-live-classes.html" class="nav-link"><i class="fas fa-video"></i> Live Classes</a>
-                <a href="student-materials.html" class="nav-link"><i class="fas fa-book"></i> Resources</a>
-                <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Forum</a>
-                <a href="student-progress.html" class="nav-link"><i class="fas fa-chart-line"></i> Progress</a>
-            </div>
-
             <div class="nav-right">
                 <div class="user-profile">
                     <div class="avatar-small" id="userAvatar">
@@ -50,35 +41,12 @@
         <div class="hero-container">
             <div class="hero-content animate__animated animate__fadeInLeft">
                 <h1 class="hero-title">
-                    Welcome to Your <span class="hero-highlight">Learning Hub</span>
+                    Welcome to Your <span class="hero-highlight">Student Portal</span>
                 </h1>
                 <p class="hero-subtitle">
                     Continue your journey with personalized tools, live sessions, and
                     collaborative learning experiences designed just for you.
                 </p>
-                <div class="hero-stats">
-                    <div class="stat-card">
-                        <i class="fas fa-clock"></i>
-                        <div>
-                            <h3>14.5 Hours</h3>
-                            <p>Study Time This Week</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-trophy"></i>
-                        <div>
-                            <h3>85% Avg</h3>
-                            <p>Test Performance</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-fire"></i>
-                        <div>
-                            <h3>7 Day Streak</h3>
-                            <p>Learning Streak</p>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="hero-visual animate__animated animate__fadeInRight">
                 <div class="floating-elements">
@@ -99,31 +67,6 @@
         </div>
     </section>
 
-    <!-- Quick Actions Bar -->
-    <section class="quick-actions-section">
-        <div class="quick-actions-container">
-            <button class="quick-action-btn" onclick="quickJoinClass()">
-                <i class="fas fa-play-circle"></i>
-                <span>Quick Join</span>
-            </button>
-            <button class="quick-action-btn" onclick="openLiveClasses()">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>Live Classes</span>
-            </button>
-            <button class="quick-action-btn" onclick="quickUpload()">
-                <i class="fas fa-upload"></i>
-                <span>Share Notes</span>
-            </button>
-            <button class="quick-action-btn" onclick="quickAsk()">
-                <i class="fas fa-question-circle"></i>
-                <span>Ask Question</span>
-            </button>
-            <button class="quick-action-btn" onclick="quickSchedule()">
-                <i class="fas fa-calendar-plus"></i>
-                <span>Book Tutor</span>
-            </button>
-        </div>
-    </section>
 
     <!-- Main Features Grid -->
     <main class="main-panel">
@@ -134,9 +77,9 @@
                 <div class="section-header">
                     <div class="section-title">
                         <i class="fas fa-brain section-icon"></i>
-                        <h2>Learning Core</h2>
+                        <h2>Upcoming live classes</h2>
                     </div>
-                    <p class="section-description">Essential tools for your academic success</p>
+                    <p class="section-description">Se your next live class.</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card" onclick="openLiveClasses()">
@@ -173,30 +116,7 @@
                         </div>
                     </div>
 
-                    <div class="feature-card" onclick="openPracticeTests()">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-clipboard-check"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Practice & Assessment</h3>
-                            <p>Test your knowledge with timed quizzes and exams</p>
-                            <div class="feature-progress">
-                                <div class="progress-info">
-                                    <span>Your Progress</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Start Test</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
+
                 </div>
             </section>
 
@@ -217,57 +137,16 @@
                             </div>
                         </div>
                         <div class="feature-content">
-                            <h3>Study Groups</h3>
-                            <p>Join collaborative learning sessions with classmates</p>
-                            <div class="feature-stats">
-                                <span><i class="fas fa-user"></i> 12 Active Groups</span>
-                            </div>
+                            <h3>Peer-2-Peer Forum</h3>
+                            <p>Ask Questions and help other learners</p>
+
                         </div>
                         <div class="feature-cta">
-                            <span>Join Group</span>
+                            <span>Contribute to forum</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
 
-                    <div class="feature-card" onclick="openForum()">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Student Forum</h3>
-                            <p>Discuss topics and get help from the community</p>
-                            <div class="feature-stats">
-                                <span><i class="fas fa-comment"></i> 245 New Posts</span>
-                            </div>
-                        </div>
-                        <div class="feature-cta">
-                            <span>View Forum</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-
-                    <div class="feature-card" onclick="openShareNotes()">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                            </div>
-                            <div class="feature-badge popular">Trending</div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Share & Collaborate</h3>
-                            <p>Upload notes and collaborate with other learners</p>
-                            <div class="feature-stats">
-                                <span><i class="fas fa-share-alt"></i> 156 Shared</span>
-                            </div>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Share Now</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- Row 3: Tools & Progress -->
@@ -292,10 +171,10 @@
                             <div class="feature-progress">
                                 <div class="progress-info">
                                     <span>Overall Progress</span>
-                                    <span>65%</span>
+                                    <span>0%</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
+                                    <div class="progress-fill" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -314,35 +193,12 @@
                         <div class="feature-content">
                             <h3>Personal Tutoring</h3>
                             <p>Book one-on-one sessions with specialized tutors</p>
-                            <div class="feature-stats">
-                                <span><i class="fas fa-star"></i> 4.8/5 Rating</span>
-                            </div>
                         </div>
                         <div class="feature-cta">
                             <span>Book Now</span>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
-
-                    <div class="feature-card" onclick="openResourceLibrary()">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-layer-group"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Resource Library</h3>
-                            <p>Access videos, worksheets, and learning aids</p>
-                            <div class="feature-stats">
-                                <span><i class="fas fa-folder-open"></i> 342 Resources</span>
-                            </div>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Browse Library</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-                </div>
             </section>
         </div>
     </main>
@@ -352,25 +208,17 @@
         <div class="activity-container">
             <h3><i class="fas fa-history"></i> Recent Activity</h3>
             <div class="activity-grid">
-                <div class="activity-item">
-                    <i class="fas fa-video activity-icon"></i>
-                    <div class="activity-content">
-                        <h4>Joined Math Live Class</h4>
-                        <p>30 minutes ago • 45 participants</p>
-                    </div>
-                </div>
+
                 <div class="activity-item">
                     <i class="fas fa-file-upload activity-icon"></i>
                     <div class="activity-content">
-                        <h4>Uploaded Chemistry Notes</h4>
-                        <p>2 hours ago • 12 downloads</p>
+
                     </div>
                 </div>
                 <div class="activity-item">
                     <i class="fas fa-trophy activity-icon"></i>
                     <div class="activity-content">
-                        <h4>Completed Physics Quiz</h4>
-                        <p>Yesterday • Score: 92%</p>
+
                     </div>
                 </div>
             </div>

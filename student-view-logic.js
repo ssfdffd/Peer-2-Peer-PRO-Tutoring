@@ -1,16 +1,16 @@
 /**
- * Updated Student View Logic
+ * PEER-2-PEER STUDENT VIEW LOGIC
+ * Fetches from Unified Live Worker and handles Live Status
  */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchClasses();
-    // Auto-refresh every 30 seconds to update Live status
+    // Auto-refresh every 30 seconds to sync "Live" status from database
     setInterval(fetchClasses, 30000);
 });
 
 async function fetchClasses() {
-    // 1. Check that this ID matches your HTML container
     const container = document.getElementById('liveClassesContainer');
     if (!container) return;
 
@@ -18,7 +18,6 @@ async function fetchClasses() {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
         const classes = await response.json();
 
-        // 2. Clear loader and check for empty list
         if (!classes || classes.length === 0) {
             container.innerHTML = `
                 <div style="grid-column: 1/-1; text-align:center; padding: 50px;">
@@ -28,10 +27,10 @@ async function fetchClasses() {
             return;
         }
 
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear current view
 
         classes.forEach(cls => {
-            // 3. Status Check: Ensure 'active' matches your Worker's 'go-live' logic
+            // Status check: Worker sets status to 'active' when tutor clicks START
             const isLive = cls.status === 'active';
             const card = document.createElement('div');
             card.className = `class-card ${isLive ? 'active-live' : ''}`;
@@ -40,22 +39,19 @@ async function fetchClasses() {
             const targetDateTime = `${cls.scheduled_date}T${cls.scheduled_time}:00`;
 
             card.innerHTML = `
-                <div class="status-badge ${isLive ? 'badge-live' : 'badge-waiting'}">
-                    ${isLive ? '<i class="fas fa-circle"></i> LIVE NOW' : 'UPCOMING'}
+                ${isLive ? '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>' : ''}
+                <div class="class-header">
+                    <h3>${cls.topic}</h3>
+                    <span class="grade-tag">${cls.grade}</span>
                 </div>
-                <h3>${cls.topic}</h3>
-                <p class="tutor-info"><i class="fas fa-user-tie"></i> ${cls.tutor_name}</p>
-                
-                <div class="countdown-timer" id="${timerId}">
-                    ${isLive ? '<span class="live-text">Session is in progress</span>' : 'Calculating...'}
+                <div class="tutor-info">
+                    <i class="fas fa-user-tie"></i> <span>Tutor: ${cls.tutor_name}</span>
                 </div>
-
-                <div class="class-meta">
-                    <span><i class="fas fa-graduation-cap"></i> ${cls.grade}</span> | 
-                    <span><i class="fas fa-calendar"></i> ${cls.scheduled_date}</span>
+                <div class="schedule-info">
+                    <p><i class="fas fa-calendar-alt"></i> ${cls.scheduled_date}</p>
+                    <p id="${timerId}" class="countdown-text">${isLive ? 'Started' : 'Calculating...'}</p>
                 </div>
-
-                <button class="btn-join ${isLive ? 'btn-enabled' : 'btn-disabled'}" 
+                <button class="join-btn ${isLive ? 'btn-enabled' : 'btn-disabled'}" 
                         onclick="${isLive ? `joinRoom('${cls.room_name}')` : ''}"
                         ${!isLive ? 'disabled' : ''}>
                     ${isLive ? 'JOIN CLASSROOM' : 'WAITING FOR TUTOR'}
@@ -99,5 +95,5 @@ function startCountdown(elementId, targetDate) {
 }
 
 function joinRoom(roomName) {
-    window.location.href = `live-session.html?room=${roomName}`;
+    window.location.href = `student-session.html?room=${roomName}`;
 }

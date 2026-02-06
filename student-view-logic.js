@@ -1,48 +1,56 @@
+/**
+ * Updated Student View Logic
+ */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchClasses();
-    // Refresh the list from DB every 30 seconds
+    // Auto-refresh every 30 seconds to update Live status
     setInterval(fetchClasses, 30000);
 });
 
 async function fetchClasses() {
+    // 1. Check that this ID matches your HTML container
     const container = document.getElementById('liveClassesContainer');
+    if (!container) return;
+
     try {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
         const classes = await response.json();
 
+        // 2. Clear loader and check for empty list
         if (!classes || classes.length === 0) {
-            container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 50px;">
-                <i class="fas fa-video-slash" style="font-size: 3rem; color: #1e293b;"></i>
-                <p>No classes found in the schedule.</p>
-            </div>`;
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding: 50px;">
+                    <i class="fas fa-video-slash" style="font-size: 3rem; color: #475569; margin-bottom: 15px;"></i>
+                    <p>No classes are currently scheduled.</p>
+                </div>`;
             return;
         }
 
-        container.innerHTML = ''; // Clear container
+        container.innerHTML = '';
 
         classes.forEach(cls => {
+            // 3. Status Check: Ensure 'active' matches your Worker's 'go-live' logic
             const isLive = cls.status === 'active';
             const card = document.createElement('div');
             card.className = `class-card ${isLive ? 'active-live' : ''}`;
 
-            // Generate unique ID for this countdown
             const timerId = `timer-${cls.id}`;
             const targetDateTime = `${cls.scheduled_date}T${cls.scheduled_time}:00`;
 
             card.innerHTML = `
                 <div class="status-badge ${isLive ? 'badge-live' : 'badge-waiting'}">
-                    ${isLive ? 'LIVE' : 'UPCOMING'}
+                    ${isLive ? '<i class="fas fa-circle"></i> LIVE NOW' : 'UPCOMING'}
                 </div>
                 <h3>${cls.topic}</h3>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Tutor: ${cls.tutor_name}</p>
+                <p class="tutor-info"><i class="fas fa-user-tie"></i> ${cls.tutor_name}</p>
                 
                 <div class="countdown-timer" id="${timerId}">
-                    ${isLive ? 'Session is Live!' : 'Calculating...'}
+                    ${isLive ? '<span class="live-text">Session is in progress</span>' : 'Calculating...'}
                 </div>
 
-                <div class="class-meta" style="font-size: 0.85rem; margin-bottom: 15px;">
+                <div class="class-meta">
                     <span><i class="fas fa-graduation-cap"></i> ${cls.grade}</span> | 
                     <span><i class="fas fa-calendar"></i> ${cls.scheduled_date}</span>
                 </div>
@@ -55,18 +63,19 @@ async function fetchClasses() {
             `;
             container.appendChild(card);
 
-            // Start the countdown if not live
             if (!isLive) {
                 startCountdown(timerId, targetDateTime);
             }
         });
     } catch (err) {
         console.error("Fetch error:", err);
+        container.innerHTML = "<p>Error loading classes. Please check your connection.</p>";
     }
 }
 
 function startCountdown(elementId, targetDate) {
     const timerElement = document.getElementById(elementId);
+    if (!timerElement) return;
 
     const update = () => {
         const now = new Date().getTime();
@@ -75,7 +84,6 @@ function startCountdown(elementId, targetDate) {
 
         if (diff <= 0) {
             timerElement.innerHTML = "Starting shortly...";
-            timerElement.style.color = "#ff4d4d";
             return;
         }
 

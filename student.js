@@ -1,149 +1,150 @@
 // ============================================
-// STUDENT PORTAL - SECURE PRODUCTION VERSION
+// STUDENT PORTAL BLOCK FUNCTIONS
 // ============================================
 
-const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
-/**
- * STUDENT SESSION GUARD
- * Prevents unauthorized access and updates UI names
- */
-function checkStudentSession() {
-    const email = sessionStorage.getItem('p2p_email');
-    const userType = sessionStorage.getItem('p2p_userType');
-
-    // 1. Check if session exists and is a student
-    if (!email || userType !== 'student') {
-        console.warn("No Student session found, redirecting to login.");
-        window.location.href = "login.html";
-        return;
-    }
-
-    // 2. Update the Sidebar/Header Name
-    const nameDisplay = document.getElementById('studentNameDisplay');
-    if (nameDisplay) {
-        const fullName = sessionStorage.getItem('p2p_name') || "Student";
-        nameDisplay.innerText = fullName;
-    }
-
-    console.log("✅ Student Session Verified:", email);
+// Feature Navigation Functions
+function openLiveClasses() {
+    showMessage("Opening Live Classes...", "info");
+    window.location.href = "student-live-classes.html";
 }
 
-// Initialize on load
-document.addEventListener('DOMContentLoaded', checkStudentSession);
-// UI-only data from sessionStorage (set during login)
-const studentName = sessionStorage.getItem("p2p_name") || "Student";
-const studentRole = sessionStorage.getItem("p2p_role");
-
-// ============================================
-// 1. SECURE SESSION VALIDATION
-// ============================================
-
-/**
- * Validates the cookie session with the Cloudflare Worker
- * This replaces the old localStorage token check
- */
-async function validateStudentSession() {
-    try {
-        const response = await fetch(`${API_BASE}/api/verify-session`, {
-            method: 'GET',
-            credentials: 'include' // Required to send the HTTP-Only cookies
-        });
-
-        const result = await response.json();
-
-        // Ensure user is authenticated AND has the correct role
-        if (!response.ok || !result.authenticated || studentRole !== "student") {
-            throw new Error("Unauthorized access");
-        }
-
-        console.log("✅ Session verified via secure cookies");
-
-        // Update the UI with the student's name
-        const display = document.getElementById('userNameDisplay');
-        if (display) display.innerText = studentName;
-
-    } catch (err) {
-        console.error("❌ Auth Failed:", err);
-        sessionStorage.clear();
-        // Redirect to login if the 30-day refresh token has expired
-        window.location.href = "login.html";
-    }
+function openStudyMaterials() {
+    showMessage("Loading Study Materials...", "info");
+    window.location.href = "student-materials.html";
 }
 
-// ============================================
-// 2. CORE PORTAL LOGIC
-// ============================================
-
-function initializeStudentPage() {
-    console.log("🎓 Initializing Student Dashboard...");
-    loadInitialData();
-    setupAutoRefresh();
+function openPracticeTests() {
+    showMessage("Launching Practice Tests...", "info");
+    window.location.href = "student-tests.html";
 }
 
-/**
- * Fetches available classes/materials
- * Note: Your API endpoints should also check for cookies on the backend
- */
-async function loadInitialData() {
-    try {
-        // Example: loadAvailableClasses();
-        // Example: loadStudyMaterials();
-    } catch (error) {
-        showError("Failed to load dashboard data.");
-    }
+function openStudyGroups() {
+    showMessage("Joining Study Groups...", "info");
+    window.location.href = "student-groups.html";
 }
 
-function setupAutoRefresh() {
-    // Refresh data every 5 minutes to keep the session active
-    setInterval(() => {
-        validateStudentSession();
-    }, 300000);
+function openForum() {
+    showMessage("Opening Student Forum...", "info");
+    window.location.href = "forum.html";
 }
 
-// ============================================
-// 3. UTILITY & UI FUNCTIONS
-// ============================================
+function openShareNotes() {
+    showMessage("Opening Note Sharing...", "info");
+    window.location.href = "student-upload.html";
+}
 
-function showMessage(text, type = "info") {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `p2p-toast ${type}`;
-    messageDiv.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
-            <span>${text}</span>
-        </div>
-    `;
-    document.body.appendChild(messageDiv);
+function openProgressTracker() {
+    showMessage("Loading Progress Tracker...", "info");
+    window.location.href = "student-progress.html";
+}
 
+function openTutoringRequests() {
+    showMessage("Opening Tutoring Requests...", "info");
+    window.location.href = "student-tutoring.html";
+}
+
+function openResourceLibrary() {
+    showMessage("Accessing Resource Library...", "info");
+    window.location.href = "student-library.html";
+}
+
+// Quick Actions
+function quickJoinClass() {
+    showMessage("Finding available classes...", "info");
+    // Logic to find and join the first available class
     setTimeout(() => {
-        messageDiv.classList.add('fade-out');
-        setTimeout(() => messageDiv.remove(), 300);
-    }, 5000);
+        const availableRooms = ["P2P-Live-Math101", "P2P-Live-Science202"];
+        if (availableRooms.length > 0) {
+            window.location.href = `student-live.html?room=${availableRooms[0]}`;
+        } else {
+            showMessage("No classes available at the moment", "error");
+        }
+    }, 1000);
 }
 
-function showError(text) {
-    showMessage(text, "error");
+function quickUpload() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf,.doc,.docx,.txt,.jpg,.png';
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            showMessage(`Uploading ${file.name}...`, "info");
+            // Upload logic here
+        }
+    };
+    fileInput.click();
 }
 
-/**
- * SECURE LOGOUT
- * Clears UI data and redirects (Cookies will be handled by the browser)
- */
-function logout() {
-    if (confirm("Are you sure you want to logout?")) {
-        sessionStorage.clear();
-        window.location.href = "login.html";
+function quickAsk() {
+    const question = prompt("What would you like to ask?");
+    if (question && question.trim()) {
+        showMessage("Question posted to forum!", "success");
+        // Post to forum logic
     }
 }
 
-// ============================================
-// INITIALIZE ON LOAD
-// ============================================
+function quickSchedule() {
+    showMessage("Opening tutor scheduling...", "info");
+    window.location.href = "student-schedule.html";
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Run the security check first
-    validateStudentSession().then(() => {
-        // 2. If successful, initialize the rest of the page
-        initializeStudentPage();
+function quickGrades() {
+    showMessage("Loading your grades...", "info");
+    // Fetch and display grades
+    setTimeout(() => {
+        showMessage("Average: 85% | Top Subject: Mathematics (92%)", "success");
+    }, 1500);
+}
+
+function quickDownload() {
+    showMessage("Preparing all resources for download...", "info");
+    // Download logic
+    setTimeout(() => {
+        showMessage("Download started!", "success");
+    }, 2000);
+}
+
+// Search functionality
+function filterFeatures() {
+    const searchTerm = document.getElementById('globalSearch').value.toLowerCase();
+    const cards = document.querySelectorAll('.feature-card, .quick-action-card');
+
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(searchTerm) || searchTerm === '') {
+            card.style.display = 'flex';
+            card.classList.add('animate__animated', 'animate__fadeIn');
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Initialize student name
+document.addEventListener('DOMContentLoaded', function () {
+    const studentName = sessionStorage.getItem('p2p_name') || 'Student';
+    document.getElementById('studentNameDisplay').textContent = studentName;
+
+    // Add hover animations
+    const cards = document.querySelectorAll('.feature-card, .quick-action-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('animate__pulse');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('animate__pulse');
+        });
     });
 });
+
+// Enhanced logout
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        showMessage("Logging out...", "info");
+        setTimeout(() => {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }, 1000);
+    }
+}

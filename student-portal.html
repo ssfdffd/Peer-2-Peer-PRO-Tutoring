@@ -7,7 +7,7 @@
     <title>Student Portal | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Removed conflicting dark mode inline styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 
 <body class="light-mode">
@@ -16,9 +16,9 @@
         <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span> | Student Dashboard</div>
 
         <div class="nav-right">
-            <div class="search-luxury">
+            <div class="search-luxury mini">
                 <i class="fas fa-search"></i>
-                <input type="text" id="globalSearch" placeholder="Search resources..." onkeyup="filterAll()">
+                <input type="text" id="globalSearch" placeholder="Search features..." onkeyup="filterFeatures()">
             </div>
 
             <button class="logout-minimal" onclick="logout()">
@@ -27,140 +27,300 @@
         </div>
     </nav>
 
-    <div class="dashboard-wrapper">
+    <main class="main-panel">
 
-        <aside class="side-panel">
-            <div class="profile-summary">
-                <div class="avatar-circle"><i class="fas fa-user-graduate"></i></div>
-                <h3 id="studentNameDisplay">Loading...</h3>
-                <span class="badge-glass" id="paymentBadge">Standard</span>
+        <!-- Welcome Header -->
+        <div class="welcome-header animate__animated animate__fadeIn">
+            <h1>Welcome back, <span id="studentNameDisplay">Student</span>! 👋</h1>
+            <p>Your learning journey continues. Choose what you'd like to do today.</p>
+        </div>
+
+        <!-- Main Features Grid -->
+        <div class="features-container">
+            <!-- Row 1: Learning Tools -->
+            <div class="features-row">
+                <h2 class="section-title animate__animated animate__fadeInLeft">
+                    <i class="fas fa-brain"></i> Learning Tools
+                </h2>
+                <div class="features-grid">
+
+                    <!-- Live Classes -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-1s"
+                        onclick="openLiveClasses()">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Join Live Classes</h3>
+                            <p>Attend real-time interactive sessions with expert tutors</p>
+                            <div class="feature-badge live">Live Now</div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Study Materials -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-1s"
+                        onclick="openStudyMaterials()">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Study Materials</h3>
+                            <p>Access notes, past papers, and learning resources</p>
+                            <div class="feature-badge new">New</div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Practice Tests -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-1s"
+                        onclick="openPracticeTests()">
+                        <div class="feature-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Practice Tests</h3>
+                            <p>Test your knowledge with timed quizzes and exams</p>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-trophy"></i> 85% avg</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
-            <ul class="nav-links">
-                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="student-upload.html"><i class="fas fa-cloud-upload-alt"></i> Share Notes</a></li>
-                <li><a href="forum.html"><i class="fas fa-comments"></i> Student Forum</a></li>
-            </ul>
+            <!-- Row 2: Collaboration -->
+            <div class="features-row">
+                <h2 class="section-title animate__animated animate__fadeInLeft">
+                    <i class="fas fa-users"></i> Collaboration
+                </h2>
+                <div class="features-grid">
 
-            <div class="ask-box-sidebar">
-                <h4><i class="fas fa-question-circle"></i> Ask Community</h4>
-                <textarea id="forumQuestion" placeholder="Stuck on a problem? Ask here..."></textarea>
-                <button class="btn-ask" onclick="submitToForum()">Post to Forum</button>
+                    <!-- Study Groups -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-2s"
+                        onclick="openStudyGroups()">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Study Groups</h3>
+                            <p>Join group sessions and collaborate with peers</p>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-user"></i> 12 active</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Forum -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-2s"
+                        onclick="openForum()">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Student Forum</h3>
+                            <p>Ask questions and help others in the community</p>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-comment"></i> 245 new</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Share Notes -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-2s"
+                        onclick="openShareNotes()">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Share Notes</h3>
+                            <p>Upload and share your study materials with peers</p>
+                            <div class="feature-badge popular">Popular</div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-        </aside>
 
-        <main class="main-panel">
+            <!-- Row 3: Progress & Tools -->
+            <div class="features-row">
+                <h2 class="section-title animate__animated animate__fadeInLeft">
+                    <i class="fas fa-chart-line"></i> Progress & Tools
+                </h2>
+                <div class="features-grid">
 
-            <section class="portal-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-broadcast-tower"></i> Live Learning Studios</h3>
-                    <div class="search-luxury mini">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="liveSearch" placeholder="Filter live classes..." onkeyup="filterLive()">
+                    <!-- Progress Tracker -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-3s"
+                        onclick="openProgressTracker()">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Progress Tracker</h3>
+                            <p>Monitor your learning progress and achievements</p>
+                            <div class="feature-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                                <span>65% complete</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
+
+                    <!-- Tutoring Requests -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-3s"
+                        onclick="openTutoringRequests()">
+                        <div class="feature-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Request Tutoring</h3>
+                            <p>Book one-on-one sessions with specialized tutors</p>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-star"></i> 4.8/5 rating</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Resource Library -->
+                    <div class="feature-card animate__animated animate__fadeInUp animate__delay-3s"
+                        onclick="openResourceLibrary()">
+                        <div class="feature-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Resource Library</h3>
+                            <p>Access videos, worksheets, and learning aids</p>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-folder"></i> 156 files</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
                 </div>
-
-                <!-- Live Classes Grid -->
-                <div id="liveGrid" class="live-grid">
-                    <div class="loading-state">Loading live classes...</div>
-                </div>
-            </section>
-
-            <section class="library-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-folder-open"></i> Study Library</h3>
-                    <span id="fileCount" class="badge-count">0 files</span>
-                </div>
-
-                <div class="category-filter-wrapper">
-                    <button class="filter-pill active" onclick="filterByCategory('All')">All Resources</button>
-                    <button class="filter-pill" onclick="filterByCategory('Mathematics')">Math</button>
-                    <button class="filter-pill" onclick="filterByCategory('Physical Sciences')">Science</button>
-                    <button class="filter-pill" onclick="filterByCategory('Accounting')">Accounting</button>
-                    <button class="filter-pill" onclick="filterByCategory('English')">English</button>
-                </div>
-
-                <div id="fileFeed" class="file-grid">
-                    <div class="loading-state">Fetching materials...</div>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-credit-card"></i> Complete Payment</h3>
-                <button class="modal-close" onclick="closePaymentModal()">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="payment-summary">
-                    <h4>Payment for: <span id="paymentClassName"></span></h4>
-                    <div class="payment-details">
-                        <p><strong>Amount:</strong> <span id="paymentAmount">R20</span></p>
-                        <p><strong>Tutor:</strong> <span id="paymentTutor">Loading...</span></p>
-                        <p><strong>Duration:</strong> 2 hours</p>
-                        <p><strong>Access:</strong> 2 hours from payment</p>
-                    </div>
-                </div>
 
-                <!-- Payment Gateway Integration Area -->
-                <div class="payment-gateway-container" id="paymentGatewayContainer">
-                    <div class="payment-loading">
-                        <i class="fas fa-spinner fa-spin"></i> Loading secure payment gateway...
-                    </div>
-                </div>
+            <!-- Row 4: Quick Actions -->
+            <div class="features-row">
+                <h2 class="section-title animate__animated animate__fadeInLeft">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </h2>
+                <div class="quick-actions-grid">
 
-                <div class="payment-terms">
-                    <p><i class="fas fa-shield-alt"></i> All payments are secure and encrypted</p>
-                    <p><i class="fas fa-clock"></i> Access expires 2 hours after payment</p>
+                    <!-- Quick Join -->
+                    <div class="quick-action-card" onclick="quickJoinClass()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <h4>Quick Join</h4>
+                        <p>Join ongoing class</p>
+                    </div>
+
+                    <!-- Upload Notes -->
+                    <div class="quick-action-card" onclick="quickUpload()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h4>Upload Notes</h4>
+                        <p>Share instantly</p>
+                    </div>
+
+                    <!-- Ask Question -->
+                    <div class="quick-action-card" onclick="quickAsk()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h4>Ask Question</h4>
+                        <p>Get help now</p>
+                    </div>
+
+                    <!-- Schedule Session -->
+                    <div class="quick-action-card" onclick="quickSchedule()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <h4>Book Tutor</h4>
+                        <p>Schedule session</p>
+                    </div>
+
+                    <!-- View Grades -->
+                    <div class="quick-action-card" onclick="quickGrades()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h4>View Grades</h4>
+                        <p>Check progress</p>
+                    </div>
+
+                    <!-- Download Resources -->
+                    <div class="quick-action-card" onclick="quickDownload()">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h4>Download All</h4>
+                        <p>Get resources</p>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Class Details Modal -->
-    <div id="classDetailsModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-chalkboard-teacher"></i> Class Details</h3>
-                <button class="modal-close" onclick="closeClassDetailsModal()">&times;</button>
+    </main>
+
+    <!-- Quick Stats Bar -->
+    <div class="quick-stats-bar">
+        <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <div>
+                <h4>Study Time</h4>
+                <p>14.5 hrs this week</p>
             </div>
-            <div class="modal-body">
-                <div class="class-details-summary">
-                    <h4 id="detailsClassName">Loading...</h4>
-                    <div class="class-details">
-                        <p><strong><i class="fas fa-user-tie"></i> Tutor:</strong> <span
-                                id="detailsTutor">Loading...</span></p>
-                        <p><strong><i class="fas fa-clock"></i> Time:</strong> <span id="detailsTime">Loading...</span>
-                        </p>
-                        <p><strong><i class="fas fa-calendar"></i> Date:</strong> <span
-                                id="detailsDate">Loading...</span></p>
-                        <p><strong><i class="fas fa-chalkboard"></i> Platform:</strong> <span
-                                id="detailsPlatform">Loading...</span></p>
-                        <p><strong><i class="fas fa-book"></i> Topic:</strong> <span id="detailsTopic">Loading...</span>
-                        </p>
-                        <p><strong><i class="fas fa-money-bill-wave"></i> Fee:</strong> <span
-                                id="detailsFee">Loading...</span></p>
-                    </div>
-                </div>
-
-                <div class="class-actions">
-                    <div class="payment-status-indicator" id="paymentStatusIndicator">
-                        <i class="fas fa-lock"></i> <span>Payment required to join class</span>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="btn-join-class" id="joinClassBtn" onclick="joinClass()">
-                            <i class="fas fa-video"></i> Join Class Now
-                        </button>
-                        <button class="btn-pay-class" id="payClassBtn" onclick="initiatePayment()">
-                            <i class="fas fa-credit-card"></i> Pay to Join (R20)
-                        </button>
-                    </div>
-                </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-book"></i>
+            <div>
+                <h4>Courses</h4>
+                <p>5 active courses</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-star"></i>
+            <div>
+                <h4>Streak</h4>
+                <p>7 days in a row</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-trophy"></i>
+            <div>
+                <h4>Achievements</h4>
+                <p>12 unlocked</p>
             </div>
         </div>
     </div>

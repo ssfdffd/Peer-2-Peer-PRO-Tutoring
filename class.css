@@ -67,6 +67,26 @@ body {
     }
 }
 
+.btn-start-small {
+    background: #32cd32;
+    color: #000033;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+}
+
+.btn-start-small:hover {
+    background: #28a745;
+    transform: scale(1.05);
+}
+
 /* Professional Start Button for the Scheduled List */
 .btn-start-small {
     background: #32cd32;

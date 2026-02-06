@@ -101,16 +101,19 @@ async function loadTutorClasses(email) {
  */
 function goLive(roomName) {
     if (!roomName) {
-        showNotification("Room Error: Name missing", "error");
+        showNotification("Error: Room name missing", "error");
         return;
     }
 
-    showNotification("Launching Secure Classroom...", "success");
+    // Clean the room name to ensure it's a valid string for Jitsi
+    const cleanRoom = roomName.trim().replace(/['"]+/g, '');
 
-    // Redirecting to your live-session.html page with the room parameter
+    showNotification("Launching Classroom...", "success");
+
+    // We use a clean redirect to your session page
     setTimeout(() => {
-        window.location.href = `live-session.html?room=${encodeURIComponent(roomName)}`;
-    }, 800);
+        window.location.href = `live-session.html?room=${encodeURIComponent(cleanRoom)}`;
+    }, 600);
 }
 
 // --- ANIMATIONS & UI UTILITIES ---

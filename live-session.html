@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Live Classroom | Peer-2-Peer PRO</title>
-
     <script src="https://meet.jit.si/external_api.js"></script>
-
     <style>
         html,
         body {
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             background: #0a192f;
             overflow: hidden;
         }
@@ -20,6 +19,9 @@
         #meet {
             width: 100%;
             height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .loading-screen {
@@ -31,7 +33,7 @@
             align-items: center;
             background: #0a192f;
             color: white;
-            z-index: 10;
+            z-index: 99;
             font-family: sans-serif;
         }
     </style>
@@ -40,8 +42,8 @@
 <body>
 
     <div id="loading" class="loading-screen">
-        <h2>Connecting to Secure Classroom…</h2>
-        <p>Peer-2-Peer PRO Live</p>
+        <h2>Connecting to Secure Classroom...</h2>
+        <p>Room: <span id="room-display">Detecting...</span></p>
     </div>
 
     <div id="meet"></div>
@@ -52,41 +54,43 @@
             const roomName = params.get('room');
 
             if (!roomName) {
-                alert("No room specified.");
-                window.location.href = "create-class.html";
+                alert("No Room ID found in URL.");
+                window.location.href = 'create-class.html';
                 return;
             }
 
+            document.getElementById('room-display').innerText = roomName;
+
+            // CONFIGURATION: This links your site to Jitsi's server
             const domain = "meet.jit.si";
             const options = {
-                roomName: roomName, // Ensure the variable is used
-                parentNode: document.getElementById("meet"),
+                roomName: roomName, // This is the 'P2P-xxx' from your URL
                 width: "100%",
                 height: "100%",
+                parentNode: document.querySelector('#meet'),
                 userInfo: {
-                    displayName: sessionStorage.getItem("p2p_name") || "Tutor"
+                    displayName: sessionStorage.getItem('p2p_name') || 'Tutor'
                 },
                 configOverwrite: {
-                    startWithAudioMuted: false,
-                    prejoinPageEnabled: false, // Skips the extra "Join" screen
-                    disableDeepLinking: true   // Prevents it from forcing the mobile app
+                    disableDeepLinking: true, // Forces browser mode (no app needed)
+                    prejoinPageEnabled: false // Skips the 'Join' button for speed
                 }
             };
 
+            // Start the Jitsi Interface
             try {
                 const api = new JitsiMeetExternalAPI(domain, options);
 
-                // Hide loading screen safely
-                api.addEventListener("videoConferenceJoined", () => {
-                    const loader = document.getElementById("loading");
-                    if (loader) loader.style.display = "none";
+                // Hide loader when the video actually starts
+                api.addEventListener('videoConferenceJoined', () => {
+                    document.getElementById('loading').style.display = 'none';
                 });
-            } catch (error) {
-                console.error("Jitsi failed to load:", error);
+            } catch (err) {
+                console.error("Jitsi Load Error:", err);
+                document.querySelector('#loading h2').innerText = "Connection Failed. Please Refresh.";
             }
-        }
+        };
     </script>
-
 </body>
 
 </html>

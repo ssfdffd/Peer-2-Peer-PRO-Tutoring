@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loadTutorClasses(savedEmail);
     }
 });
-
 async function scheduleClass() {
     const name = document.getElementById('tutorNameInput').value.trim();
     const email = document.getElementById('tutorEmailInput').value.trim();
@@ -30,6 +29,10 @@ async function scheduleClass() {
         showNotification("Please fill in all fields", "error");
         return;
     }
+
+    // Save user info for future use
+    sessionStorage.setItem('p2p_name', name);
+    sessionStorage.setItem('p2p_email', email);
 
     const btn = document.querySelector('.btn-launch');
     btn.disabled = true;
@@ -43,17 +46,28 @@ async function scheduleClass() {
             body: JSON.stringify({ email, name, topic, grade })
         });
 
-        if (!response.ok) throw new Error("Worker connection failed");
-
         const result = await response.json();
-        if (result.success) {
-            showNotification(`Class Live!`, 'success');
+
+        if (!response.ok) {
+            throw new Error(result.error || "Failed to schedule class");
+        }
+
+        if (result.success && result.roomName) {
+            showNotification(`Class Scheduled! Room: ${result.roomName}`, 'success');
             document.getElementById('classTopic').value = '';
+
+            // Store room name for immediate launch option
+            setTimeout(() => {
+                showNotification("Launching classroom...", "success");
+                goLive(result.roomName);
+            }, 1500);
+
+            // Refresh the meetings list
             loadTutorClasses(email);
         }
     } catch (err) {
-        console.error("Fetch Error:", err);
-        showNotification("Failed to connect. Check Worker CORS/Deployment.", "error");
+        console.error("Schedule Error:", err);
+        showNotification(err.message || "Failed to connect. Check Worker CORS/Deployment.", "error");
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Schedule & Broadcast</span> <i class="fas fa-paper-plane"></i>';

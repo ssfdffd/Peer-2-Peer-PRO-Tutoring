@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="google-site-verification" content="ZdR8iWtr7ZZRbiCcS5XCFZ54NSkF8KQjyZDikRTOp7M" />
+    <title>Peer-2-Peer Learning</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="index.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E21MVX6TQ1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-E21MVX6TQ1');
+    </script>
+
+</head>
+
+<body>
+
+    <nav id="navbar">
+        <div class="logo">
+            <img src="favicon.ico" alt="Logo">
+            Peer-2-Peer <span class="pro-text">PRO</span>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link-home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="login.html">
+                <button class="auth-btn login">Login</button>
+            </a>
+            <a href="login.html">
+                <button class="auth-btn signup">Sign Up</button>
+            </a>
+            <span id="openNav" class="menu-toggle">☰</span>
+        </div>
+    </nav>
+
+    <div id="side-menu" class="side-nav">
+        <a href="javascript:void(0)" id="closeNav" class="close-btn">×</a>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="school-dashboard.html">Dashboard for Schools</a></li>
+            <li><a href="terms.html">T's & C's</a></li>
+        </ul>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Empowering Students Through Peer-to-Peer Learning</h1>
+            <p>A smarter, more relatable way to learn.</p>
+        </div>
+    </section>
+
+    <!-- Advertisement Carousel Section -->
+    <section class="advertisement-section">
+        <div class="ad-container">
+            <h2 class="ad-section-title">Featured Content</h2>
+
+            <div class="ad-carousel">
+                <!-- Navigation Arrows -->
+                <button class="carousel-nav prev" onclick="changeSlide(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <!-- Slides Container -->
+                <div class="carousel-slides" id="carouselSlides">
+                    <!-- Slide 1 -->
+                    <div class="ad-slide active">
+                        <div class="ad-content">
+                            <div class="ad-image">
+                                <img src="" alt="Advertisement 1" id="adImage1">
+                            </div>
+                            <div class="ad-text">
+                                <h3>Discover Excellence</h3>
+                                <p>Join thousands of students achieving their academic goals</p>
+                                <a href="#" class="ad-cta">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="ad-slide">
+                        <div class="ad-content">
+                            <div class="ad-image">
+                                <img src="" alt="Advertisement 2" id="adImage2">
+                            </div>
+                            <div class="ad-text">
+                                <h3>Study Smarter</h3>
+                                <p>Access premium learning resources and live tutoring</p>
+                                <a href="#" class="ad-cta">Get Started</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="ad-slide">
+                        <div class="ad-content">
+                            <div class="ad-image">
+                                <img src="" alt="Advertisement 3" id="adImage3">
+                            </div>
+                            <div class="ad-text">
+                                <h3>Your Success Story</h3>
+                                <p>Transform your learning experience with our platform</p>
+                                <a href="#" class="ad-cta">Join Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button class="carousel-nav next" onclick="changeSlide(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators">
+                <span class="indicator active" onclick="goToSlide(0)"></span>
+                <span class="indicator" onclick="goToSlide(1)"></span>
+                <span class="indicator" onclick="goToSlide(2)"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <h2>Why Choose Peer-2-Peer PRO?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Expert Tutors</h3>
+                    <p>Learn from experienced educators and top-performing students</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Live Classes</h3>
+                    <p>Join interactive sessions in real-time from anywhere</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Rich Resources</h3>
+                    <p>Access comprehensive study materials and past papers</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community</h3>
+                    <p>Connect with peers and collaborate on learning</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-box">
+                <h4>Contact</h4>
+                <p>Email Support</p>
+                <p style="margin-top:12px;">Tutor Applications</p>
+                <a href="mailto:hr@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
+            </div>
+            <div class="footer-box">
+                <h4>Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="https://wa.me/27732792426">WhatsApp Us</a>
+                <a href="resources.html">Resources</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Peer-2-Peer PRO. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

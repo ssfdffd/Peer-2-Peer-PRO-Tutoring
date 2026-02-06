@@ -2,6 +2,93 @@
 // STUDENT PORTAL BLOCK FUNCTIONS
 // ============================================
 
+// Utility function to show messages (if not already defined elsewhere)
+function showMessage(message, type = "info") {
+    // Create or use existing message container
+    let messageContainer = document.getElementById('messageContainer');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.id = 'messageContainer';
+        messageContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        `;
+        document.body.appendChild(messageContainer);
+    }
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease-out;
+        max-width: 300px;
+    `;
+
+    // Set background color based on type
+    switch (type) {
+        case 'success':
+            messageDiv.style.backgroundColor = '#10b981';
+            break;
+        case 'error':
+            messageDiv.style.backgroundColor = '#ef4444';
+            break;
+        case 'info':
+            messageDiv.style.backgroundColor = '#3b82f6';
+            break;
+        case 'warning':
+            messageDiv.style.backgroundColor = '#f59e0b';
+            break;
+        default:
+            messageDiv.style.backgroundColor = '#3b82f6';
+    }
+
+    messageContainer.appendChild(messageDiv);
+
+    // Remove message after 3 seconds
+    setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Add CSS animations for messages
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
 // Feature Navigation Functions
 function openLiveClasses() {
     showMessage("Opening Live Classes...", "info");
@@ -138,12 +225,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Enhanced logout
+// Enhanced logout - NOW WORKING!
 function logout() {
     if (confirm("Are you sure you want to logout?")) {
-        showMessage("Logging out...", "info");
+        // Show loading state on logout button
+        const logoutBtn = document.querySelector('.logout-minimal');
+        const originalHTML = logoutBtn.innerHTML;
+        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        logoutBtn.disabled = true;
+
+        // Clear session storage
+        sessionStorage.clear();
+
+        // Redirect to login page
         setTimeout(() => {
-            sessionStorage.clear();
             window.location.href = "login.html";
         }, 1000);
     }

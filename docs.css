@@ -1,0 +1,210 @@
+/* Add this to your existing CSS file */
+
+/* =================================
+   STATS CONTAINER
+================================= */
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px auto;
+    max-width: 1200px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    min-width: 200px;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: rgba(50, 205, 50, 0.3);
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    color: var(--pro-green);
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--navy-bg);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* =================================
+   MODAL STYLES (for document viewer)
+================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: 15px;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    color: var(--navy-bg);
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    background: #f0f0f0;
+    color: var(--navy-bg);
+}
+
+.modal-body {
+    padding: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* =================================
+   NO RESULTS STYLING
+================================= */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    grid-column: 1 / -1;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.no-results i {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* =================================
+   LOADER STYLING
+================================= */
+.loader {
+    text-align: center;
+    padding: 60px 20px;
+    grid-column: 1 / -1;
+    color: var(--navy-bg);
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.loader::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f0f0f0;
+    border-top-color: var(--pro-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =================================
+   UPDATED HERO SECTION (since upload is removed)
+================================= */
+.resources-hero {
+    background: linear-gradient(rgba(0, 0, 51, 0.8), rgba(0, 0, 51, 0.8)),
+        url('study.jpg');
+    background-size: cover;
+    background-position: center;
+    color: var(--white);
+    padding: 100px 20px 60px;
+    text-align: center;
+    border-bottom: 1px solid rgba(50, 205, 50, 0.3);
+}
+
+/* =================================
+   RESPONSIVE ADJUSTMENTS
+================================= */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-card {
+        width: 100%;
+        max-width: 300px;
+        justify-content: flex-start;
+    }
+
+    .resources-hero {
+        padding: 60px 15px 40px;
+    }
+
+    .modal-content {
+        margin: 10px;
+    }
+}

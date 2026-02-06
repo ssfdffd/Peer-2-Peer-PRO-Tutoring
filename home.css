@@ -1,0 +1,729 @@
+/* =================================
+   CSS VARIABLES
+================================= */
+:root {
+    /* Updated to match login.css colors */
+    --primary-color: #000033;
+    /* Deep Navy from logo background */
+    --secondary-color: #32cd32;
+    /* Lime Green from "PRO" */
+    --text-color: #7fdff0;
+    /* Light Sky Blue accents */
+    --light-text: #ffffff;
+    --accent-color: #32cd32;
+    /* Same as secondary-color */
+    --transition-speed: 0.3s;
+    --overlay-dark: rgba(0, 0, 0, 0.6);
+    --light-bg: #f4f7f9;
+    /* Updated to match login.css */
+    --border-color: #e1e5eb;
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.12);
+    --navy-bg: #000033;
+    /* Added from login.css */
+    --pro-green: #32cd32;
+    /* Added from login.css */
+    --sky-blue: #7fdff0;
+    /* Added from login.css */
+    --white: #ffffff;
+    /* Added from login.css */
+}
+
+/* =================================
+   NAVBAR - UPDATED TO MATCH LOGIN.CSS
+================================= */
+#navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: var(--navy-bg);
+    /* Updated to match login.css */
+    color: var(--light-text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(0.9rem, 2vw, 1.2rem) 5%;
+    border-bottom: 3px solid var(--pro-green);
+    /* Added border like login.css */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo img {
+    height: 35px;
+    margin-right: 10px;
+}
+
+.logo span.pro-text {
+    color: var(--pro-green);
+    /* Updated to use pro-green variable */
+    margin-left: 5px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 2vw, 20px);
+}
+
+/* Home Link Styling */
+.nav-link-home {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    padding: 0.6rem 1rem;
+    border-radius: 50px;
+    transition: all var(--transition-speed) ease;
+    border: 1.5px solid transparent;
+}
+
+.nav-link-home:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--pro-green);
+    color: var(--pro-green);
+    transform: translateY(-2px);
+}
+
+.nav-link-home i {
+    font-size: 1.1rem;
+}
+
+.auth-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    /* Changed to match login.css button style */
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    text-decoration: none;
+}
+
+.login {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid #fff;
+}
+
+.login:hover {
+    background: #fff;
+    color: var(--navy-bg);
+    /* Updated to use navy-bg variable */
+}
+
+.signup {
+    background: var(--pro-green);
+    /* Updated to use pro-green variable */
+    color: #fff;
+}
+
+.signup:hover {
+    background: #28b528;
+    transform: translateY(-2px);
+}
+
+/* =================================
+   SIDE MENU - UPDATED COLORS
+================================= */
+.side-nav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1100;
+    top: 0;
+    right: 0;
+    background-color: var(--navy-bg);
+    /* Updated to match navbar */
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--pro-green);
+    /* Added border for consistency */
+}
+
+.side-nav a {
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #fff;
+    display: block;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.side-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding-left: 25px;
+    color: var(--pro-green);
+    /* Added color change on hover */
+}
+
+/* =================================
+   HERO SECTION - UPDATED ACCENT COLORS
+================================= */
+.hero {
+    min-height: clamp(55vh, 70vh, 85vh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 5%;
+    color: #fff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: backgroundSlider 15s infinite ease-in-out;
+    position: relative;
+}
+
+/* Hero overlay for better text readability */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 51, 0.7) 0%, rgba(0, 0, 51, 0.4) 100%);
+    z-index: 1;
+}
+
+@keyframes backgroundSlider {
+    0% {
+        background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
+    }
+
+    33% {
+        background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero2.jpeg");
+    }
+
+    66% {
+        background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero3.jpeg");
+    }
+
+    100% {
+        background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
+    }
+}
+
+/* Fallback in case images don't load */
+.hero {
+    background-color: var(--navy-bg);
+    /* Fallback color */
+}
+
+.hero-content {
+    max-width: 900px;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 51, 0.5);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-out;
+    border: 1px solid rgba(50, 205, 50, 0.3);
+    position: relative;
+    z-index: 2;
+    /* Ensure content is above overlay */
+}
+
+/* =================================
+   ADVERTISEMENT CAROUSEL SECTION
+================================= */
+.advertisement-section {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 5%;
+}
+
+.ad-section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--navy-bg);
+    margin-bottom: 3rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.ad-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy-bg), var(--pro-green));
+    border-radius: 2px;
+}
+
+.ad-container {
+    position: relative;
+}
+
+.ad-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-slides {
+    position: relative;
+    width: 100%;
+    height: 500px;
+}
+
+.ad-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    pointer-events: none;
+}
+
+.ad-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ad-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    height: 100%;
+    align-items: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.ad-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    position: relative;
+    background: linear-gradient(135deg, var(--navy-bg) 0%, var(--pro-green) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.ad-image:hover img {
+    transform: scale(1.05);
+}
+
+/* Placeholder for when no image is set */
+.ad-image img[src=""],
+.ad-image img:not([src]) {
+    display: none;
+}
+
+.ad-image:has(img[src=""]):before,
+.ad-image:has(img:not([src])):before {
+    content: 'Add Image URL';
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.ad-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.ad-text h3 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--navy-bg);
+    line-height: 1.2;
+}
+
+.ad-text p {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.ad-cta {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--navy-bg) 0%, var(--pro-green) 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3);
+    align-self: flex-start;
+}
+
+.ad-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(50, 205, 50, 0.4);
+}
+
+/* Carousel Navigation */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 51, 0.7);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.carousel-nav:hover {
+    background: var(--pro-green);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev {
+    left: 20px;
+}
+
+.carousel-nav.next {
+    right: 20px;
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 2rem;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: var(--pro-green);
+    width: 40px;
+    border-radius: 6px;
+}
+
+.indicator:hover {
+    background: var(--navy-bg);
+}
+
+/* =================================
+   FEATURES SECTION
+================================= */
+.features-section {
+    padding: 5rem 5%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features-container h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--navy-bg);
+    margin-bottom: 4rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+}
+
+.feature-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    border-color: var(--pro-green);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--navy-bg) 0%, var(--pro-green) 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: rotateY(360deg);
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    color: var(--navy-bg);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* =================================
+   FOOTER - UPDATED TO MATCH LOGIN.CSS
+================================= */
+.footer {
+    background-color: var(--navy-bg);
+    /* Updated to solid color like login.css */
+    color: #ffffff;
+    padding: 50px 5% 20px;
+    margin-top: auto;
+    border-top: 2px solid var(--pro-green);
+    /* Added border like login.css */
+}
+
+.footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    text-align: left;
+}
+
+.footer-box h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--pro-green);
+    /* Updated to use pro-green */
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-box h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background-color: var(--pro-green);
+    /* Updated to use pro-green */
+    border-radius: 2px;
+}
+
+.footer-box a {
+    display: block;
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 5px 0;
+    position: relative;
+}
+
+.footer-box a:hover {
+    color: var(--pro-green);
+    /* Updated to use pro-green */
+    padding-left: 8px;
+}
+
+.footer-box a::before {
+    content: "→";
+    position: absolute;
+    left: -15px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.footer-box a:hover::before {
+    left: 0;
+    opacity: 1;
+}
+
+.footer-bottom {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+}
+
+/* =================================
+   ANIMATIONS
+================================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+================================= */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block !important;
+    }
+
+    .auth-btn {
+        display: none;
+    }
+
+    .nav-link-home {
+        display: none;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .ad-content {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .carousel-slides {
+        height: 600px;
+    }
+
+    .ad-text h3 {
+        font-size: 2rem;
+    }
+
+    .ad-text p {
+        font-size: 1rem;
+    }
+
+    .carousel-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .carousel-nav.prev {
+        left: 10px;
+    }
+
+    .carousel-nav.next {
+        right: 10px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none;
+    }
+
+    .auth-btn {
+        display: inline-block;
+    }
+
+    .nav-link-home {
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    #navbar {
+        padding: 1rem 4%;
+    }
+
+    .hero {
+        padding: 40px 4%;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .ad-section-title {
+        font-size: 2rem;
+    }
+
+    .ad-text h3 {
+        font-size: 1.5rem;
+    }
+
+    .ad-cta {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+    }
+
+    .footer {
+        padding: 40px 4% 20px;
+    }
+
+    .features-container h2 {
+        font-size: 2rem;
+    }
+}

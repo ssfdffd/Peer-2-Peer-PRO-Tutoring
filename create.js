@@ -1,15 +1,17 @@
 /**
- * PEER-2-PEER PRO: FINAL CREATE.JS
- * Pointing to the Live Class Worker
+ * PEER-2-PEER PRO: CREATE.JS (v2.0)
+ * Updated to handle scheduling with Date/Time and Live status syncing.
  */
 
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Initial animations
     animateFormEntrance();
     animatePageLoad();
     setupInputAnimations();
 
+    // Pull tutor info from sessionStorage (Set by Login Worker)
     const savedEmail = sessionStorage.getItem('p2p_email');
     const savedName = sessionStorage.getItem('p2p_name');
 
@@ -19,132 +21,157 @@ document.addEventListener('DOMContentLoaded', function () {
         loadTutorClasses(savedEmail);
     }
 });
+
+/**
+ * SCHEDULE A CLASS
+ * Captures data from the form and sends it to the Cloudflare Worker
+ */
 async function scheduleClass() {
-    const name = document.getElementById('tutorNameInput').value.trim();
-    const email = document.getElementById('tutorEmailInput').value.trim();
     const topic = document.getElementById('classTopic').value.trim();
     const grade = document.getElementById('classGrade').value;
+    const date = document.getElementById('classDate').value; // New Field
+    const time = document.getElementById('classTime').value; // New Field
+    const email = document.getElementById('tutorEmailInput').value.trim();
+    const name = document.getElementById('tutorNameInput').value.trim();
 
-    if (!name || !email || !topic) {
-        showNotification("Please fill in all fields", "error");
+    // Validation
+    if (!topic || !date || !time || !email) {
+        showNotification("Please fill in Topic, Date, and Time", "error");
+        if (typeof shakeForm === 'function') shakeForm();
         return;
     }
 
-    // Save user info for future use
-    sessionStorage.setItem('p2p_name', name);
-    sessionStorage.setItem('p2p_email', email);
-
     const btn = document.querySelector('.btn-launch');
     btn.disabled = true;
-    btn.innerHTML = '<span>Broadcasting...</span> <i class="fas fa-spinner fa-spin"></i>';
+    btn.innerHTML = '<span>Scheduling...</span> <i class="fas fa-spinner fa-spin"></i>';
 
     try {
         const response = await fetch(`${API_BASE}/api/schedule-class`, {
             method: 'POST',
-            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, name, topic, grade })
+            body: JSON.stringify({
+                email,
+                name,
+                topic,
+                grade,
+                scheduled_date: date,
+                scheduled_time: time
+            })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(result.error || "Failed to schedule class");
-        }
-
-        if (result.success && result.roomName) {
-            showNotification(`Class Scheduled! Room: ${result.roomName}`, 'success');
+        if (data.success) {
+            showNotification("Class Scheduled Successfully!", "success");
+            // Reset fields
             document.getElementById('classTopic').value = '';
-
-            // Store room name for immediate launch option
-            setTimeout(() => {
-                showNotification("Launching classroom...", "success");
-                goLive(result.roomName);
-            }, 1500);
-
-            // Refresh the meetings list
+            // Refresh the list
             loadTutorClasses(email);
+        } else {
+            showNotification(data.error || "Schedule failed", "error");
         }
-    } catch (err) {
-        console.error("Schedule Error:", err);
-        showNotification(err.message || "Failed to connect. Check Worker CORS/Deployment.", "error");
+    } catch (error) {
+        console.error("Schedule Error:", error);
+        showNotification("Network error. Check connection.", "error");
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Schedule & Broadcast</span> <i class="fas fa-paper-plane"></i>';
     }
 }
 
+/**
+ * LOAD TUTOR CLASSES
+ * Fetches the list of classes for the specific tutor
+ */
 async function loadTutorClasses(email) {
     const container = document.getElementById('myMeetingsList');
-    if (!email || !container) return;
+    if (!container) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/get-classes?email=${encodeURIComponent(email)}`);
-        const classes = await res.json();
+        const response = await fetch(`${API_BASE}/api/get-classes?email=${email}`);
+        const classes = await response.json();
 
         container.innerHTML = '';
 
-        if (!classes || classes.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#8892b0; padding:20px;">No active classes.</p>';
+        if (classes.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#64748b; margin-top:20px;">No classes scheduled for today.</p>';
             return;
         }
 
-        classes.forEach(meeting => {
-            // We pass meeting.room_name directly into the goLive function
-            const card = document.createElement('div');
-            card.className = 'meeting-item';
-            card.innerHTML = `
-                <div class="meeting-info">
-                    <h4>${meeting.topic}</h4>
-                    <span><i class="fas fa-graduation-cap"></i> ${meeting.grade} • Active</span>
+        classes.forEach(cls => {
+            const isLive = cls.status === 'active';
+
+            container.innerHTML += `
+                <div class="meeting-item" style="border-left: 5px solid ${isLive ? '#ff4d4d' : '#32cd32'}">
+                    <div class="meeting-info">
+                        <h4>
+                            ${cls.topic} 
+                            ${isLive ? '<span class="live-indicator"><i class="fas fa-circle"></i> LIVE</span>' : ''}
+                        </h4>
+                        <p><i class="fas fa-calendar-day"></i> ${cls.scheduled_date} | <i class="fas fa-clock"></i> ${cls.scheduled_time}</p>
+                        <small class="grade-pill">${cls.grade}</small>
+                    </div>
+                    <div class="meeting-actions">
+                        <button class="btn-start-small" onclick="startMeeting('${cls.room_name}')">
+                            ${isLive ? 'REJOIN' : '<i class="fas fa-play"></i> START'}
+                        </button>
+                    </div>
                 </div>
-                <div class="meeting-actions">
-                    <button class="btn-start-small" onclick="goLive('${meeting.room_name}')">
-                        <i class="fas fa-play"></i> START CLASS
-                    </button>
-                </div>`;
-            container.appendChild(card);
+            `;
         });
     } catch (e) {
-        console.error("Load Error:", e);
+        console.error("Load error", e);
+        container.innerHTML = '<p style="color:red;">Error loading classes.</p>';
     }
 }
 
 /**
- * Handles the redirect to the Jitsi Session page
+ * START MEETING
+ * Updates status to 'active' so students can see it, then redirects
  */
-function goLive(roomName) {
-    if (!roomName) {
-        showNotification("Error: Room name missing", "error");
-        return;
+async function startMeeting(roomName) {
+    const email = sessionStorage.getItem('p2p_email');
+
+    // 1. Notify Worker that this class is now LIVE
+    try {
+        await fetch(`${API_BASE}/api/go-live`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, roomName })
+        });
+    } catch (err) {
+        console.warn("Could not sync live status, but proceeding to room.");
     }
 
-    // Clean the room name to ensure it's a valid string for Jitsi
-    const cleanRoom = roomName.trim().replace(/['"]+/g, '');
-
-    showNotification("Launching Classroom...", "success");
-
-    // We use a clean redirect to your session page
-    setTimeout(() => {
-        window.location.href = `live-session.html?room=${encodeURIComponent(cleanRoom)}`;
-    }, 600);
+    // 2. Redirect to the session page
+    window.location.href = `live-session.html?room=${roomName}`;
 }
 
-// --- ANIMATIONS & UI UTILITIES ---
-
-function showNotification(message, type = 'info') {
+/**
+ * UI NOTIFICATIONS
+ */
+function showNotification(message, type) {
     const n = document.createElement('div');
     n.className = `notification ${type}`;
     n.innerHTML = `<span>${message}</span>`;
+
+    // Dynamic styling
     Object.assign(n.style, {
         position: 'fixed', top: '20px', right: '20px', padding: '15px 25px',
-        background: type === 'success' ? '#32cd32' : '#ef4444', color: 'white',
-        borderRadius: '10px', zIndex: '9999', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        background: type === 'success' ? '#32cd32' : '#ef4444',
+        color: 'white', fontWeight: 'bold',
+        borderRadius: '10px', zIndex: '9999',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+        fontFamily: 'sans-serif'
     });
+
     document.body.appendChild(n);
     setTimeout(() => n.remove(), 4000);
 }
 
+/**
+ * ANIMATIONS (Requires Anime.js if available)
+ */
 function animateFormEntrance() {
     if (typeof anime !== 'undefined') {
         anime({
@@ -174,10 +201,24 @@ function setupInputAnimations() {
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => {
         input.addEventListener('focus', () => {
-            if (typeof anime !== 'undefined') anime({ targets: input, scale: 1.02, duration: 300 });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: input,
+                    scale: 1.02,
+                    duration: 200,
+                    easing: 'easeOutQuad'
+                });
+            }
         });
         input.addEventListener('blur', () => {
-            if (typeof anime !== 'undefined') anime({ targets: input, scale: 1, duration: 300 });
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: input,
+                    scale: 1,
+                    duration: 200,
+                    easing: 'easeOutQuad'
+                });
+            }
         });
     });
 }

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources Library | Peer-2-Peer PRO</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="docs.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="resources-body">
+
+    <nav id="navbar">
+        <div class="logo">
+            <img src="favicon.ico" alt="Logo">
+            Peer-2-Peer <span class="pro-text">PRO</span> | Library
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Home</a>
+        </div>
+    </nav>
+
+    <div class="animation-wrapper">
+        <div class="scrolling-text" id="scrollText">
+            <span><a href="https://wa.me/27732792426">Online Extra classes R20 per class • Join Now • The best online
+                    tutoring service in SA • </a></span>
+            <span><a href="https://wa.me/27732792426">Peer-2-Peer PRO • Join Now •Contact Us now </a></span>
+        </div>
+    </div>
+
+    <header class="resources-hero">
+        <div class="hero-content">
+            <h1>Study Material Hub</h1>
+            <p>Explore documents shared by your peers</p>
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by title, subject, or grade...">
+            </div>
+        </div>
+    </header>
+
+    <main class="content-container">
+        <!-- REMOVED UPLOAD SECTION -->
+
+        <div class="documents-section">
+            <div class="filter-controls">
+                <select id="subjectFilter">
+                    <option value="">All Subjects</option>
+                    <option value="mathematics">Mathematics</option>
+                    <option value="physics">Physics</option>
+                    <option value="accounting">Accounting</option>
+                    <option value="english">English</option>
+                    <option value="math_lit">Math Lit</option>
+                    <option value="tourism">Tourism</option>
+                    <option value="life_science">Life Science</option>
+                    <option value="it">IT</option>
+                    <option value="cat">CAT</option>
+                    <option value="history">History</option>
+                    <option value="geography">Geography</option>
+                    <option value="business">Business Studies</option>
+                    <option value="economics">Economics</option>
+                    <option value="isizulu">IsiZulu</option>
+                </select>
+                <select id="gradeFilter">
+                    <option value="">All Grades</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </div>
+
+            <div id="stats-container" class="stats-container">
+                <div class="stat-card">
+                    <i class="fas fa-book-open"></i>
+                    <div class="stat-content">
+                        <span class="stat-number" id="totalDocuments">0</span>
+                        <span class="stat-label">Total Documents</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div class="stat-content">
+                        <span class="stat-number" id="uniqueSubjects">0</span>
+                        <span class="stat-label">Subjects</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <div class="stat-content">
+                        <span class="stat-number" id="filteredCount">0</span>
+                        <span class="stat-label">Showing</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fileGrid" class="file-grid"></div>
+
+            <div class="pagination-container">
+                <button id="prevPage" class="p-btn">Previous</button>
+                <span id="pageInfo" class="pagination-info">Page 1 of 1</span>
+                <button id="nextPage" class="p-btn">Next</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-box">
+                <h4>Contact</h4>
+                <a href="mailto:info@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
+            </div>
+            <div class="footer-box">
+                <h4>Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="resources.html">Resources</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Document Viewer Modal -->
+    <div id="docModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Document Viewer</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="docViewer" style="width: 100%; height: 70vh; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="docs.js"></script>
+</body>
+
+</html>

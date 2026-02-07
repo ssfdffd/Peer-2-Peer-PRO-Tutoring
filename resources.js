@@ -332,6 +332,7 @@ function getFileIconClass(docType, fileUrl) {
 }
 
 // 10. VIEW DOCUMENT IN MODAL
+// 10. VIEW DOCUMENT IN MODAL
 function openDocument(url, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
@@ -342,9 +343,22 @@ function openDocument(url, title) {
 
         // Handle different file types
         let viewerUrl = url;
+
+        // For PDFs, use Google Docs viewer for better compatibility
         if (url.toLowerCase().endsWith('.pdf')) {
-            // Use Google Docs PDF viewer for better compatibility
             viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+        }
+        // For images, we can display them directly in an img tag
+        else if (url.match(/\.(jpg|jpeg|png|gif)$/i)) {
+            // We'll need to modify the modal to handle images
+            // For now, just open in new tab
+            window.open(url, '_blank');
+            return;
+        }
+        // For other documents, open in new tab
+        else if (url.match(/\.(doc|docx|xls|xlsx|ppt|pptx|txt)$/i)) {
+            window.open(url, '_blank');
+            return;
         }
 
         viewer.src = viewerUrl;
@@ -352,7 +366,7 @@ function openDocument(url, title) {
         document.body.style.overflow = 'hidden';
     }
 }
-
+// 11. UPLOAD DOCUMENT WITH ALL FIELDS
 // 11. UPLOAD DOCUMENT WITH ALL FIELDS
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
@@ -402,14 +416,16 @@ async function uploadDocument() {
     const reader = new FileReader();
 
     reader.onload = async (e) => {
-        const base64File = e.target.result.split(',')[1];
+        // Get base64 data
+        const base64Data = e.target.result.split(',')[1];
 
-        // Generate unique file key
+        // Generate unique file key with original extension
         const timestamp = Date.now();
-        const fileKey = `doc_${timestamp}_${file.name.replace(/[^a-z0-9]/gi, '_')}`;
+        const fileExtension = file.name.split('.').pop();
+        const fileKey = `doc_${timestamp}_${Math.random().toString(36).substr(2, 9)}.${fileExtension}`;
 
-        // Create file URL (you would upload to your server/CDN here)
-        const fileUrl = `https://peer-2-peer.co.za/uploads/${fileKey}`;
+        // Construct the actual file URL (pointing to your Worker)
+        const fileUrl = `${API_URL}/api/file/${fileKey}`;
 
         const payload = {
             title: titleInput.value,
@@ -420,7 +436,7 @@ async function uploadDocument() {
             doc_date: docDateInput.value,
             actual_file_key: fileKey,
             file_url: fileUrl,
-            file_data: base64File,
+            file_data: base64Data, // This is the actual file content
             file_name: file.name,
             file_type: file.type,
             file_size: file.size
@@ -435,7 +451,7 @@ async function uploadDocument() {
 
             const result = await res.json();
             if (res.ok) {
-                alert(`âœ… Success! "${titleInput.value}" has been added to the library.`);
+                alert(`✅ Success! "${titleInput.value}" has been added to the library.`);
                 // Clear form
                 document.getElementById('uploadForm').reset();
                 document.getElementById('selectedFileName').innerText = '';
@@ -456,7 +472,6 @@ async function uploadDocument() {
 
     reader.readAsDataURL(file);
 }
-
 // 12. UTILITIES
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');

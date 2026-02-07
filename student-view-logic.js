@@ -72,42 +72,50 @@ document.addEventListener('DOMContentLoaded', function () {
  * FETCH ALL LIVE CLASSES FROM API
  */
 async function loadAllLiveClasses() {
-    console.log("Loading all live classes...");
-
     const container = document.getElementById('liveClassesContainer');
-    if (!container) {
-        console.error("liveClassesContainer not found!");
-        return;
-    }
-
-    // Show loading state
-    container.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #32cd32;"></i>
-            <p style="margin-top: 15px; color: #94a3b8; font-size: 1.1rem;">Loading live classes...</p>
-        </div>
-    `;
 
     try {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const classes = await response.json();
-        console.log("Fetched classes:", classes);
 
+        // If no classes, show the "Empty" message
         if (!classes || classes.length === 0) {
-            showNoClassesMessage(container);
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding: 50px;">
+                    <i class="fas fa-calendar-day" style="font-size: 3rem; color: #475569;"></i>
+                    <p style="color: #94a3b8; margin-top:15px;">No classes scheduled right now.</p>
+                </div>`;
             return;
         }
 
-        renderLiveClasses(classes);
+        container.innerHTML = ''; // THIS REMOVES THE SPINNER
 
-    } catch (error) {
-        console.error("Error loading live classes:", error);
-        showErrorMessage(container, error);
+        classes.forEach(cls => {
+            const isLive = cls.status === 'active';
+            const card = document.createElement('div');
+            card.className = `class-card ${isLive ? 'active-live' : ''}`;
+
+            // Note: Using room_name as a fallback ID if cls.id is missing
+            const timerId = `timer-${cls.room_name || Math.random()}`;
+
+            card.innerHTML = `
+                ${isLive ? '<div class="live-tag">LIVE NOW</div>' : ''}
+                <h3 style="color: white; margin-bottom: 10px;">${cls.topic}</h3>
+                <p style="color: #94a3b8; font-size: 0.9rem;">Grade: ${cls.grade}</p>
+                <div id="${timerId}" class="timer-display" style="color: ${isLive ? '#32cd32' : '#7fdff0'}">
+                    ${isLive ? 'Session is active' : 'Scheduled: ' + cls.scheduled_time}
+                </div>
+                <button class="join-btn ${isLive ? 'btn-enabled' : 'btn-disabled'}" 
+                        onclick="${isLive ? `window.location.href='live-session.html?room=${cls.room_name}'` : ''}"
+                        ${!isLive ? 'disabled' : ''}>
+                    ${isLive ? 'JOIN NOW' : 'WAITING'}
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    } catch (err) {
+        container.innerHTML = "<p style='color:red; text-align:center;'>Connection Error. Please refresh.</p>";
+        console.error("Critical Load Error:", err);
     }
 }
 

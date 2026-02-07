@@ -2,7 +2,7 @@
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev";
 let allResources = [];
 let currentPage = 1;
-const itemsPerPage = 25; // Changed from 6 to 25
+const itemsPerPage = 25; // 25 documents per page
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimation();
 
     // Set today's date as default for upload
-    document.getElementById('docDate').valueAsDate = new Date();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('docDate').value = today;
 
     // Initialize filters
     populateFilterOptions();
@@ -21,6 +22,33 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.addEventListener('change', function () {
             updateFileName(this);
         });
+
+        // Add drag and drop support
+        const uploadArea = document.querySelector('.upload-area');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--pro-green)';
+                uploadArea.style.backgroundColor = 'rgba(50, 205, 50, 0.05)';
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.backgroundColor = 'rgba(244, 247, 249, 0.5)';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.backgroundColor = 'rgba(244, 247, 249, 0.5)';
+
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFileName(fileInput);
+                }
+            });
+        }
     }
 
     // Modal Close Logic
@@ -28,13 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.querySelector(".close-modal");
     if (closeBtn) {
         closeBtn.onclick = () => {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-            document.body.style.overflow = 'auto';
+            closeModal();
         };
     }
 
-    // Close modal on ESC key or clicking outside
+    // Close modal on ESC key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeModal();
@@ -75,6 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo({ top: 400, behavior: 'smooth' });
         }
     });
+
+    // Clear filters button
+    document.getElementById('clearFilters')?.addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('subjectFilter').value = '';
+        document.getElementById('gradeFilter').value = '';
+        document.getElementById('uploaderRoleFilter').value = '';
+        document.getElementById('docTypeFilter').value = '';
+        document.getElementById('dateFilter').value = '';
+        currentPage = 1;
+        renderCards(allResources);
+    });
 });
 
 // 3. POPULATE FILTER OPTIONS
@@ -96,11 +134,21 @@ function populateFilterOptions() {
     ].sort();
 
     const subjectFilter = document.getElementById('subjectFilter');
+    const subjectDataList = document.getElementById('subjectsList');
+
     subjects.forEach(subject => {
+        const formattedSubject = subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
+
+        // Add to filter dropdown
         const option = document.createElement('option');
         option.value = subject;
-        option.textContent = subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
+        option.textContent = formattedSubject;
         subjectFilter.appendChild(option);
+
+        // Add to datalist for type-to-search
+        const dataOption = document.createElement('option');
+        dataOption.value = formattedSubject;
+        subjectDataList.appendChild(dataOption);
     });
 }
 
@@ -111,34 +159,64 @@ async function loadLibrary() {
 
     try {
         const response = await fetch(`${API_URL}/api/resources`);
-        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
+        const data = await response.json();
         allResources = Array.isArray(data) ? data : (data.results || []);
 
-        // Fix missing file URLs
+        console.log(`Loaded ${allResources.length} resources from database`);
+
+        // Validate and fix file URLs
         allResources.forEach(resource => {
-            if (!resource.file_url || resource.file_url === '#') {
+            if (!resource.file_url || resource.file_url === '#' || resource.file_url.includes('undefined')) {
                 resource.file_url = generateFileUrl(resource);
+            }
+
+            // Ensure actual_file_key exists for download functionality
+            if (!resource.actual_file_key && resource.file_url) {
+                // Extract key from URL if possible
+                const match = resource.file_url.match(/\/([^\/]+)$/);
+                if (match) {
+                    resource.actual_file_key = match[1];
+                } else {
+                    resource.actual_file_key = `doc_${resource.id || Date.now()}`;
+                }
             }
         });
 
         renderCards(allResources);
     } catch (error) {
         console.error("Fetch error:", error);
-        grid.innerHTML = '<div class="no-results"><i class="fas fa-exclamation-triangle"></i><p>Failed to connect to library. Please check your connection.</p></div>';
+        grid.innerHTML = `
+            <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
+                <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Connection Error</h3>
+                <p style="color: #666; margin-bottom: 20px;">Failed to connect to library. Please check your connection and try again.</p>
+                <button onclick="loadLibrary()" style="background: var(--pro-green); color: var(--navy-bg); border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+        `;
     }
 }
 
 // 5. GENERATE FILE URL FOR MISSING FILES
 function generateFileUrl(resource) {
+    // If we have a file key, use the API endpoint
     if (resource.actual_file_key) {
-        return `https://peer-2-peer.co.za/uploads/${resource.actual_file_key}`;
+        return `${API_URL}/api/file/${resource.actual_file_key}`;
     }
 
-    // Fallback URL
-    const docType = resource.doc_type || 'pdf';
-    const fileName = resource.title ? encodeURIComponent(resource.title.replace(/[^a-z0-9]/gi, '_')) : 'document';
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(`https://peer-2-peer.co.za/uploads/${fileName}.${docType}`)}&embedded=true`;
+    // Fallback: Use Google Docs viewer for PDFs if we have a title
+    if (resource.title) {
+        const fileName = encodeURIComponent(resource.title.replace(/[^a-z0-9]/gi, '_') + '.pdf');
+        return `https://docs.google.com/viewer?url=${encodeURIComponent(`https://peer-2-peer.co.za/uploads/${fileName}`)}&embedded=true`;
+    }
+
+    // Final fallback
+    return `${API_URL}/api/file/placeholder`;
 }
 
 // 6. ADVANCED FILTERING LOGIC
@@ -149,14 +227,24 @@ function getFilteredData() {
     const roleTerm = document.getElementById('uploaderRoleFilter')?.value || "";
     const docTypeTerm = document.getElementById('docTypeFilter')?.value || "";
     const dateTerm = document.getElementById('dateFilter')?.value || "";
-    const searchWords = searchText.split(' ').filter(word => word.length > 0);
+
+    // Split search into words for Google-like search
+    const searchWords = searchText.split(' ').filter(word => word.length > 2); // Only words longer than 2 chars
 
     return allResources.filter(item => {
-        // Google-like search in title
+        // Google-like search in title and description
         let matchesSearch = true;
         if (searchWords.length > 0) {
             const title = (item.title || "").toLowerCase();
-            matchesSearch = searchWords.every(word => title.includes(word));
+            const description = (item.description || "").toLowerCase();
+            const subject = (item.subject || "").toLowerCase();
+
+            // Match any of the search words in title, description, or subject
+            matchesSearch = searchWords.some(word =>
+                title.includes(word) ||
+                description.includes(word) ||
+                subject.includes(word)
+            );
         }
 
         // Other filters
@@ -201,7 +289,14 @@ function renderCards(data) {
     const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
 
     if (paginatedItems.length === 0) {
-        grid.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>No documents found matching your search.</p><p>Try different keywords or filters.</p></div>';
+        grid.innerHTML = `
+            <div class="no-results" style="grid-column: 1 / -1;">
+                <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                <h3 style="color: var(--navy-bg); margin-bottom: 10px;">No documents found</h3>
+                <p style="color: #666; margin-bottom: 5px;">No documents match your search criteria.</p>
+                <p style="color: #999; font-size: 0.9rem;">Try different keywords or clear some filters.</p>
+            </div>
+        `;
         updatePaginationInfo(data.length);
         return;
     }
@@ -213,8 +308,8 @@ function renderCards(data) {
         // Highlight search terms in title
         let titleHTML = item.title || "Untitled Document";
         let displayTitle = titleHTML;
-        if (searchText) {
-            const regex = new RegExp(`(${searchText.split(' ').filter(w => w).join('|')})`, 'gi');
+        if (searchText && searchText.length > 2) {
+            const regex = new RegExp(`(${searchText.split(' ').filter(w => w.length > 2).join('|')})`, 'gi');
             displayTitle = displayTitle.replace(regex, '<span class="highlight">$1</span>');
         }
 
@@ -253,20 +348,25 @@ function renderCards(data) {
                         <strong>Uploaded:</strong> ${uploadDate}
                     </div>
                     ${item.description ? `
-                    <div class="info-item" style="flex: 1 0 100%; font-size: 0.8rem; color: #666;">
-                        <i class="fas fa-align-left"></i>
-                        <strong>Description:</strong> ${item.description}
+                    <div class="info-item" style="flex: 1 0 100%; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e1e5eb; font-size: 0.85rem; color: #666;">
+                        <i class="fas fa-align-left" style="align-self: flex-start; margin-top: 2px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="display: block; margin-bottom: 4px;">Description:</strong>
+                            <div style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                ${escapeHtml(item.description)}
+                            </div>
+                        </div>
                     </div>
                     ` : ''}
                 </div>
             </div>
             <div class="card-footer">
-                <button class="view-link" onclick="openDocument('${item.file_url}', '${item.title}')">
+                <button class="view-link" onclick="openDocument('${item.file_url}', '${escapeHtml(item.title)}', '${item.actual_file_key}')">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <a href="${item.file_url}" download="${item.title || 'document'}" class="down-link">
+                <button class="down-link" onclick="downloadDocument('${item.file_url}', '${escapeHtml(item.title)}', '${item.actual_file_key}')">
                     <i class="fas fa-download"></i> Download
-                </a>
+                </button>
             </div>
         `;
         grid.appendChild(card);
@@ -280,7 +380,9 @@ function updatePaginationInfo(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) {
-        pageInfo.innerHTML = `Page ${currentPage} of ${totalPages} <span style="font-size: 0.8rem; color: #666; margin-left: 10px;">(${totalItems} total documents)</span>`;
+        const startItem = ((currentPage - 1) * itemsPerPage) + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+        pageInfo.innerHTML = `Page ${currentPage} of ${totalPages} <span style="font-size: 0.85rem; color: #666; margin-left: 10px;">(Showing ${startItem}-${endItem} of ${totalItems} documents)</span>`;
     }
 
     // Update pagination button states
@@ -293,20 +395,24 @@ function updatePaginationInfo(totalItems) {
 
 // 10. FORMATTING FUNCTIONS
 function formatDate(date) {
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    try {
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+        if (diffDays === 0) return "Today";
+        if (diffDays === 1) return "Yesterday";
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
 
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (e) {
+        return "Recent";
+    }
 }
 
 function formatRole(role) {
@@ -321,7 +427,10 @@ function formatSubject(subject) {
 
 function formatDocType(docType) {
     if (!docType) return "Document";
-    return docType.charAt(0).toUpperCase() + docType.slice(1).replace(/_/g, ' ');
+    const words = docType.split('_').map(word =>
+        word.charAt(0).toUpperCase() + word.slice(1)
+    );
+    return words.join(' ');
 }
 
 // 11. GET FILE ICON CLASS
@@ -347,126 +456,218 @@ function getFileIconClass(docType, fileUrl) {
 
     // Fallback based on file extension
     if (fileUrl) {
-        if (fileUrl.toLowerCase().endsWith('.pdf')) return 'fa-file-pdf pdf-icon';
-        if (fileUrl.toLowerCase().endsWith('.doc') || fileUrl.toLowerCase().endsWith('.docx')) return 'fa-file-word word-icon';
-        if (fileUrl.toLowerCase().endsWith('.xls') || fileUrl.toLowerCase().endsWith('.xlsx')) return 'fa-file-excel excel-icon';
-        if (fileUrl.toLowerCase().endsWith('.ppt') || fileUrl.toLowerCase().endsWith('.pptx')) return 'fa-file-powerpoint ppt-icon';
-        if (fileUrl.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) return 'fa-file-image image-icon';
-        if (fileUrl.match(/\.(zip|rar|7z)$/i)) return 'fa-file-archive';
-        if (fileUrl.match(/\.(txt)$/i)) return 'fa-file-alt';
+        const urlLower = fileUrl.toLowerCase();
+        if (urlLower.endsWith('.pdf') || urlLower.includes('.pdf')) return 'fa-file-pdf pdf-icon';
+        if (urlLower.endsWith('.doc') || urlLower.endsWith('.docx') || urlLower.includes('.doc')) return 'fa-file-word word-icon';
+        if (urlLower.endsWith('.xls') || urlLower.endsWith('.xlsx') || urlLower.includes('.xls')) return 'fa-file-excel excel-icon';
+        if (urlLower.endsWith('.ppt') || urlLower.endsWith('.pptx') || urlLower.includes('.ppt')) return 'fa-file-powerpoint ppt-icon';
+        if (urlLower.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/)) return 'fa-file-image image-icon';
+        if (urlLower.match(/\.(zip|rar|7z|tar|gz)$/)) return 'fa-file-archive';
+        if (urlLower.match(/\.(txt|rtf|md)$/)) return 'fa-file-alt';
     }
 
     return 'fa-file general-icon';
 }
 
-// 12. VIEW DOCUMENT IN MODAL WITH PROPER EMBED
-function openDocument(url, title) {
+// 12. DOWNLOAD DOCUMENT FUNCTION
+async function downloadDocument(url, title, fileKey) {
+    const downloadBtn = event?.target || document.activeElement;
+    const originalHTML = downloadBtn.innerHTML;
+    const originalText = downloadBtn.textContent;
+
+    try {
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+        downloadBtn.disabled = true;
+
+        // Use file key for direct download if available
+        let downloadUrl = url;
+        if (fileKey && !url.includes('/api/file/')) {
+            downloadUrl = `${API_URL}/api/file/${fileKey}`;
+        } else if (!url.includes('/api/file/') && !url.startsWith('http')) {
+            // If URL is relative, make it absolute
+            downloadUrl = `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+        }
+
+        console.log('Downloading from:', downloadUrl);
+
+        // Fetch the file with credentials
+        const response = await fetch(downloadUrl, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': '*/*'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+        }
+
+        // Get the blob
+        const blob = await response.blob();
+
+        // Get filename from response headers or use title
+        let filename = title || 'document';
+        const contentDisposition = response.headers.get('content-disposition');
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+            if (match && match[1]) {
+                filename = match[1].replace(/['"]/g, '');
+            }
+        }
+
+        // Add file extension if missing
+        if (!filename.match(/\.[a-z0-9]+$/i)) {
+            const contentType = response.headers.get('content-type') || blob.type;
+            const extension = getExtensionFromMimeType(contentType);
+            if (extension) {
+                filename += extension;
+            }
+        }
+
+        // Clean filename
+        filename = filename.replace(/[^a-z0-9.\-_]/gi, '_');
+
+        // Create download link
+        const urlObject = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = urlObject;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(urlObject);
+            downloadBtn.innerHTML = originalHTML;
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = originalText;
+
+            // Show success message
+            showNotification(`Download started: ${filename}`, 'success');
+        }, 100);
+
+    } catch (error) {
+        console.error("Download error:", error);
+
+        // Fallback: Try direct link if fetch failed
+        try {
+            const downloadUrl = fileKey ? `${API_URL}/api/file/${fileKey}` : url;
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = (title || 'document').replace(/[^a-z0-9]/gi, '_') + getFileExtension(url);
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            showNotification('Download started in new tab', 'info');
+        } catch (fallbackError) {
+            console.error("Fallback download error:", fallbackError);
+            showNotification('Failed to download document. Please try again.', 'error');
+        }
+
+        downloadBtn.innerHTML = originalHTML;
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = originalText;
+    }
+}
+
+// 13. VIEW DOCUMENT IN MODAL
+function openDocument(url, title, fileKey) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
     const modalTitle = document.querySelector(".modal-header h3");
     const viewerContainer = document.querySelector(".doc-viewer-container");
 
-    if (modal && viewer) {
-        modalTitle.textContent = title || "Document Viewer";
+    if (!modal || !viewer) return;
 
-        // Show loading state
-        viewerContainer.classList.add('loading');
+    modalTitle.textContent = title || "Document Viewer";
 
-        // Handle different file types for proper embedding
-        let viewerUrl = url;
-        let embedType = 'iframe';
+    // Show loading state
+    viewerContainer.classList.add('loading');
 
-        // Check if URL is valid and not empty
-        if (!url || url === '#' || url.includes('undefined')) {
-            // Show error message in modal
-            viewer.src = "about:blank";
-            viewerContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
-                    <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Document Not Available</h3>
-                    <p>The document URL is not available or invalid.</p>
-                    <p style="margin-top: 20px;">
-                        <a href="${url}" class="down-link" style="display: inline-block; padding: 10px 20px;">
-                            <i class="fas fa-download"></i> Try Download Instead
-                        </a>
-                    </p>
-                </div>
-            `;
-            viewerContainer.classList.remove('loading');
-        } else if (url.toLowerCase().endsWith('.pdf')) {
-            // Use Google Docs PDF viewer for better compatibility
-            viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-            embedType = 'iframe';
-        } else if (url.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) {
-            // Display images directly
-            viewerContainer.innerHTML = `<img src="${url}" alt="${title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
-            embedType = 'image';
-        } else if (url.match(/\.(txt)$/i)) {
-            // Display text files
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    viewerContainer.innerHTML = `<pre style="padding: 20px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(text)}</pre>`;
-                    viewerContainer.classList.remove('loading');
-                })
-                .catch(() => {
-                    viewerContainer.innerHTML = `<p style="text-align: center; padding: 40px; color: #666;">Unable to load text file.</p>`;
-                    viewerContainer.classList.remove('loading');
-                });
-            embedType = 'text';
-            viewer.src = "about:blank";
-        } else {
-            // For other file types, try to embed or show download option
-            embedType = 'download';
-            viewerContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666;">
-                    <i class="fas fa-file" style="font-size: 3rem; color: var(--pro-green); margin-bottom: 20px;"></i>
-                    <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Document Preview Not Available</h3>
-                    <p>This file type cannot be previewed in the browser.</p>
-                    <p style="margin-top: 20px;">
-                        <a href="${url}" download="${title}" class="down-link" style="display: inline-block; padding: 12px 24px; font-size: 1rem;">
-                            <i class="fas fa-download"></i> Download Document
-                        </a>
-                    </p>
-                </div>
-            `;
-            viewerContainer.classList.remove('loading');
-        }
+    // Use file key for view endpoint if available
+    let viewerUrl = url;
+    if (fileKey && !url.includes('/api/view/')) {
+        viewerUrl = `${API_URL}/api/view/${fileKey}`;
+    } else if (!url.includes('/api/view/') && !url.startsWith('http')) {
+        // If URL is relative, make it absolute
+        viewerUrl = `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+    }
 
-        // Set iframe source if using iframe
-        if (embedType === 'iframe') {
+    console.log('Viewing document:', viewerUrl);
+
+    // Check if URL is valid
+    if (!viewerUrl || viewerUrl === '#' || viewerUrl.includes('undefined')) {
+        viewerContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
+                <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Document Not Available</h3>
+                <p>The document URL is not available or invalid.</p>
+                <p style="margin-top: 20px;">
+                    <button onclick="downloadDocument('${url}', '${title}', '${fileKey}')" 
+                            style="background: var(--pro-green); color: var(--navy-bg); border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer;">
+                        <i class="fas fa-download"></i> Try Download Instead
+                    </button>
+                </p>
+            </div>
+        `;
+        viewerContainer.classList.remove('loading');
+    } else {
+        // Clear previous iframe
+        viewer.src = "about:blank";
+
+        // Set up iframe for viewing
+        setTimeout(() => {
             viewer.src = viewerUrl;
-            viewer.onload = () => {
-                viewerContainer.classList.remove('loading');
-            };
-            viewer.onerror = () => {
-                viewerContainer.classList.remove('loading');
+            viewerContainer.classList.remove('loading');
+        }, 100);
+
+        // Handle iframe errors
+        viewer.onerror = () => {
+            viewerContainer.classList.remove('loading');
+
+            // Check file type and provide appropriate fallback
+            if (viewerUrl.toLowerCase().includes('.pdf') || viewerUrl.includes('application/pdf')) {
+                // Try Google Docs viewer as fallback for PDFs
+                const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(viewerUrl)}&embedded=true`;
+                viewer.src = googleViewerUrl;
+            } else if (viewerUrl.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i)) {
+                // Display images directly
+                viewerContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <img src="${viewerUrl}" alt="${title}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 5px;">
+                    </div>
+                `;
+            } else {
+                // Show download option for unsupported types
                 viewerContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
-                        <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Failed to Load Document</h3>
-                        <p>The document could not be loaded. Please try downloading it instead.</p>
+                        <i class="fas fa-file" style="font-size: 3rem; color: var(--pro-green); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Preview Not Available</h3>
+                        <p>This file type cannot be previewed in the browser.</p>
                         <p style="margin-top: 20px;">
-                            <a href="${url}" download="${title}" class="down-link" style="display: inline-block; padding: 10px 20px;">
+                            <button onclick="downloadDocument('${url}', '${title}', '${fileKey}')" 
+                                    style="background: var(--pro-green); color: var(--navy-bg); border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer;">
                                 <i class="fas fa-download"></i> Download Document
-                            </a>
+                            </button>
                         </p>
                     </div>
                 `;
-            };
-        }
+            }
+        };
 
-        // Show modal
-        modal.style.display = "flex";
-        document.body.style.overflow = 'hidden';
+        // Handle successful load
+        viewer.onload = () => {
+            viewerContainer.classList.remove('loading');
+        };
     }
-}
 
-// 13. HELPER FUNCTION TO ESCAPE HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    // Show modal
+    modal.style.display = "flex";
+    document.body.style.overflow = 'hidden';
 }
 
 // 14. CLOSE MODAL FUNCTION
@@ -477,16 +678,21 @@ function closeModal() {
 
     if (modal) {
         modal.style.display = "none";
-        if (viewer) viewer.src = "about:blank";
+        if (viewer) {
+            viewer.src = "about:blank";
+        }
         if (viewerContainer) {
             viewerContainer.classList.remove('loading');
-            viewerContainer.innerHTML = '<iframe id="docViewer" src="" title="Document Viewer"></iframe>';
+            // Reset to iframe if it was replaced
+            if (!viewerContainer.contains(viewer)) {
+                viewerContainer.innerHTML = '<iframe id="docViewer" src="" title="Document Viewer"></iframe>';
+            }
         }
         document.body.style.overflow = 'auto';
     }
 }
 
-// 15. UPLOAD DOCUMENT FUNCTION (Updated for all fields)
+// 15. UPLOAD DOCUMENT FUNCTION
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
     const titleInput = document.getElementById('fileName');
@@ -500,7 +706,15 @@ async function uploadDocument() {
 
     // Validate all required fields
     if (!fileInput.files[0]) {
-        alert("Please select a file to upload.");
+        showNotification("Please select a file to upload.", "error");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const maxSize = 50 * 1024 * 1024; // 50MB limit
+
+    if (file.size > maxSize) {
+        showNotification("File size exceeds 50MB limit. Please upload a smaller file.", "error");
         return;
     }
 
@@ -513,92 +727,211 @@ async function uploadDocument() {
     ];
 
     for (const { field, message } of requiredFields) {
-        if (!field.value) {
-            alert(message);
+        if (!field.value.trim()) {
+            showNotification(message, "error");
             return;
         }
     }
 
+    const originalBtnText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
     btn.disabled = true;
 
-    const file = fileInput.files[0];
     const reader = new FileReader();
 
     reader.onload = async (e) => {
-        const base64File = e.target.result.split(',')[1];
-
-        // Generate unique file key
-        const timestamp = Date.now();
-        const fileKey = `doc_${timestamp}_${file.name.replace(/[^a-z0-9]/gi, '_')}`;
-
-        // Create file URL
-        const fileUrl = `https://peer-2-peer.co.za/uploads/${fileKey}`;
-
-        const payload = {
-            title: titleInput.value,
-            subject: subjectInput.value.toLowerCase(),
-            grade: gradeInput.value,
-            uploader_role: roleInput.value,
-            doc_type: docTypeInput.value,
-            doc_date: docDateInput.value,
-            description: descriptionInput.value,
-            actual_file_key: fileKey,
-            file_url: fileUrl,
-            file_data: base64File,
-            file_name: file.name,
-            file_type: file.type,
-            file_size: file.size
-        };
-
         try {
-            const res = await fetch(`${API_URL}/api/upload`, {
+            const base64File = e.target.result.split(',')[1];
+
+            const payload = {
+                title: titleInput.value.trim(),
+                subject: subjectInput.value.toLowerCase().trim(),
+                grade: gradeInput.value,
+                uploader_role: roleInput.value,
+                doc_type: docTypeInput.value,
+                doc_date: docDateInput.value || new Date().toISOString().split('T')[0],
+                description: descriptionInput.value.trim(),
+                file_name: file.name,
+                file_type: file.type,
+                file_size: file.size,
+                file_data: base64File
+            };
+
+            console.log('Uploading document:', payload.title);
+
+            const response = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify(payload)
             });
 
-            const result = await res.json();
-            if (res.ok) {
-                alert(`✅ Success! "${titleInput.value}" has been added to the library.`);
+            const result = await response.json();
+
+            if (response.ok) {
+                showNotification(`✅ Success! "${titleInput.value}" has been added to the library.`, 'success');
+
                 // Clear form
                 document.getElementById('uploadForm').reset();
                 document.getElementById('selectedFileName').innerText = '';
-                document.getElementById('docDate').valueAsDate = new Date();
-                // Reload library
-                loadLibrary();
+                document.getElementById('docDate').value = new Date().toISOString().split('T')[0];
+
+                // Reload library after a short delay
+                setTimeout(() => {
+                    loadLibrary();
+                }, 1500);
+
             } else {
-                alert("Upload failed: " + (result.error || "Unknown error"));
+                throw new Error(result.error || "Upload failed");
             }
         } catch (error) {
-            console.error("Upload Error:", error);
-            alert("Connection to database failed. Please try again.");
+            console.error("Upload error:", error);
+            showNotification(`Upload failed: ${error.message}`, 'error');
         } finally {
-            btn.innerHTML = 'Upload Document';
+            btn.innerHTML = originalBtnText;
             btn.disabled = false;
         }
+    };
+
+    reader.onerror = () => {
+        showNotification("Error reading file. Please try again.", "error");
+        btn.innerHTML = originalBtnText;
+        btn.disabled = false;
     };
 
     reader.readAsDataURL(file);
 }
 
-// 16. UTILITIES
+// 16. HELPER FUNCTIONS
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');
     if (display && input.files && input.files[0]) {
-        const fileName = input.files[0].name;
-        const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // MB
-        display.innerHTML = `Selected: <strong>${fileName}</strong> (${fileSize} MB)`;
+        const file = input.files[0];
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        display.innerHTML = `<strong>${file.name}</strong> (${fileSize} MB)`;
         display.style.color = "var(--pro-green)";
+
+        // Auto-fill title from filename if empty
+        const titleInput = document.getElementById('fileName');
+        if (!titleInput.value.trim()) {
+            const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+            titleInput.value = nameWithoutExt.replace(/[_-]/g, ' ');
+        }
     }
 }
 
 function initScrollAnimation() {
     const scrollText = document.getElementById('scrollText');
-    if (scrollText) scrollText.style.display = 'block';
+    if (scrollText) {
+        // Duplicate content for seamless scrolling
+        const content = scrollText.innerHTML;
+        scrollText.innerHTML = content + content;
+    }
 }
 
 function filterDocuments() {
     currentPage = 1;
     renderCards(getFilteredData());
 }
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getFileExtension(url) {
+    if (!url) return '';
+    const match = url.match(/\.([a-z0-9]+)(?:[?#]|$)/i);
+    return match ? '.' + match[1].toLowerCase() : '';
+}
+
+function getExtensionFromMimeType(mimeType) {
+    const mimeMap = {
+        'application/pdf': '.pdf',
+        'application/msword': '.doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+        'application/vnd.ms-excel': '.xls',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+        'application/vnd.ms-powerpoint': '.ppt',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+        'image/jpeg': '.jpg',
+        'image/png': '.png',
+        'image/gif': '.gif',
+        'text/plain': '.txt',
+        'application/zip': '.zip',
+        'application/x-rar-compressed': '.rar'
+    };
+    return mimeMap[mimeType?.toLowerCase()] || '';
+}
+
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
+    // Create notification
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: inherit; cursor: pointer;">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+        border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+        padding: 15px 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        max-width: 400px;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+    `;
+
+    // Add keyframes for animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+}
+
+// 17. Export functions for global access
+window.downloadDocument = downloadDocument;
+window.openDocument = openDocument;
+window.closeModal = closeModal;
+window.uploadDocument = uploadDocument;
+window.updateFileName = updateFileName;
+window.loadLibrary = loadLibrary;
+window.filterDocuments = filterDocuments;

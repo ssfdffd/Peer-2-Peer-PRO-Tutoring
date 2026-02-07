@@ -30,41 +30,62 @@
             box-shadow: 0 0 20px rgba(50, 205, 50, 0.2);
         }
 
-        .status-badge {
+        .live-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 800;
-        }
-
-        .badge-live {
-            background: #ff4d4d;
-            color: white;
-            animation: pulse 1.5s infinite;
-        }
-
-        .badge-waiting {
+            top: 15px;
+            right: 15px;
             background: #32cd32;
             color: #000;
-        }
-
-        .countdown-timer {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.2rem;
-            color: #32cd32;
-            margin: 15px 0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse 2s infinite;
         }
 
-        .btn-join {
+        .class-header h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+        }
+
+        .grade-tag {
+            display: inline-block;
+            background: rgba(50, 205, 50, 0.1);
+            color: #32cd32;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-row i {
+            color: #32cd32;
+            width: 18px;
+        }
+
+        .countdown-text {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .join-btn {
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
             border: none;
-            font-weight: 700;
+            border-radius: 10px;
+            font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 15px;
@@ -111,14 +132,29 @@
     </nav>
 
     <header class="page-header" style="text-align: center; padding: 40px 0;">
-        <h1>Available <span class="premium">Live Sessions</span></h1>
-        <p style="color: #94a3b8;">Join active classes or wait for scheduled sessions to begin.</p>
+        <h1 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px;">Live <span
+                style="color: #32cd32;">Classroom</span></h1>
+        <p style="color: #94a3b8;">Join a live session or see what's coming up next.</p>
     </header>
 
     <div id="liveClassesContainer" class="live-grid">
+        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #32cd32;"></i>
+            <p style="margin-top: 15px; color: #94a3b8;">Syncing with live schedule...</p>
+        </div>
     </div>
 
     <script src="student-view-logic.js"></script>
+
+    <script>
+        // Internal logout function if not handled globally
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                sessionStorage.clear();
+                window.location.href = "login.html";
+            }
+        }
+    </script>
 </body>
 
 </html>

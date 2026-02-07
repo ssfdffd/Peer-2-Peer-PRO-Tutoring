@@ -18,6 +18,9 @@
             Peer-2-Peer <span class="pro-text">PRO</span> | Library
         </div>
         <div class="nav-right">
+            <a href="javascript:history.back()" class="home-btn" style="margin-right: 10px;">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
             <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Home</a>
         </div>
     </nav>
@@ -26,7 +29,7 @@
         <div class="scrolling-text" id="scrollText">
             <span><a href="https://wa.me/27732792426">Online Extra classes R20 per class • Join Now • The best online
                     tutoring service in SA • </a></span>
-            <span><a href="https://wa.me/27732792426">Peer-2-Peer PRO • Join Now •Contact Us now </a></span>
+            <span><a href="https://wa.me/27732792426">Peer-2-Peer PRO • Join Now • Contact Us now </a></span>
         </div>
     </div>
 
@@ -36,7 +39,7 @@
             <p>Explore documents shared by your peers</p>
             <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by title...">
+                <input type="text" id="searchInput" placeholder="Search by title or content...">
             </div>
         </div>
     </header>
@@ -50,43 +53,51 @@
                         <i class="fas fa-file-upload"></i>
                         <p>Click to browse or Drag & Drop</p>
                         <input type="file" id="fileInput" name="file" style="display: none;"
-                            onchange="updateFileName(this)">
+                            onchange="updateFileName(this)"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.zip">
                         <p id="selectedFileName" class="selected-file-name"></p>
                     </div>
 
                     <div class="form-grid">
                         <input type="text" id="fileName" placeholder="Document Title" required>
-                        <select id="fileGrade" required>
-                            <option value="">Select Grade</option>
-                            <option value="10">Grade 1</option>
-                            <option value="10">Grade 2</option>
-                            <option value="10">Grade 3</option>
-                            <option value="10">Grade 4</option>
-                            <option value="10">Grade 5</option>
-                            <option value="10">Grade 6</option>
-                            <option value="10">Grade 7</option>
-                            <option value="10">Grade 8</option>
-                            <option value="10">Grade 9</option>
-                            <option value="10">Grade 10</option>
-                            <option value="11">Grade 11</option>
-                            <option value="12">Grade 12</option>
+
+                        <select id="uploaderRole" required>
+                            <option value="">Your Role</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                            <option value="tutor">Tutor</option>
+                            <option value="administrator">Administrator</option>
+                            <option value="parent">Parent</option>
                         </select>
-                        <select id="fileSubject" required>
-                            <option value="mathematics">Mathematics</option>
+
+                        <select id="docType" required>
+                            <option value="">Document Type</option>
+                            <option value="notes">Notes</option>
+                            <option value="tests">Tests</option>
+                            <option value="worksheet">Worksheet</option>
+                            <option value="practice_material">Practice Material</option>
+                            <option value="task">Task</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="project">Project</option>
+                            <option value="literature">Literature</option>
+                            <option value="textbook">Textbook</option>
+                            <option value="past_paper">Past Paper</option>
+                            <option value="memo">Memo</option>
+                            <option value="study_guide">Study Guide</option>
+                            <option value="presentation">Presentation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <input list="subjectsList" id="fileSubject" placeholder="Type or select subject" required>
+                        <datalist id="subjectsList">
+                            <option value="accounting">Accounting</option>
                             <option value="afrikaans">Afrikaans</option>
-                            <option value="physics">Physics</option>
-                            <option value="isindebele">IsiNdebele</option>
-                            <option value="isiXhosa">IsiXhosa</option>
-                            <option value="isiZulu">IsiZulu</option>
-                            <option value="sesotho">Sesotho</option>
-                            <option value="sepedi">Sepedi</option>
-                            <option value="setswana">Setswana</option>
-                            <option value="siswati">Siswati</option>
-                            <option value="tshivenda">Tshivenda</option>
-                            <option value="xitsonga">Xitsonga</option>
                             <option value="agricultural management practices">Agricultural Management Practices</option>
                             <option value="agricultural science">Agricultural Science</option>
                             <option value="agricultural technology">Agricultural Technology</option>
+                            <option value="business">Business Studies</option>
+                            <option value="cat">CAT</option>
                             <option value="civil technology">Civil Technology</option>
                             <option value="computer applications technology">Computer Applications Technology</option>
                             <option value="consumer studies">Consumer Studies</option>
@@ -95,39 +106,68 @@
                             <option value="development studies">Development Studies</option>
                             <option value="dramatic arts">Dramatic Arts</option>
                             <option value="economic and management sciences">Economic and Management Sciences</option>
-                            <option value="economic">Economics</option>
-                            <option value="english">English</option>
+                            <option value="economics">Economics</option>
                             <option value="electrical technology">Electrical Technology</option>
                             <option value="engineering graphics and design">Engineering Graphics and Design</option>
+                            <option value="english">English</option>
                             <option value="equine studies">Equine Studies</option>
-                            <option value="life orientation">Life Orientation</option>
                             <option value="geography">Geography</option>
                             <option value="history">History</option>
                             <option value="hospitality studies">Hospitality Studies</option>
+                            <option value="isindebele">IsiNdebele</option>
+                            <option value="isixhosa">IsiXhosa</option>
+                            <option value="isizulu">IsiZulu</option>
+                            <option value="it">IT</option>
+                            <option value="life orientation">Life Orientation</option>
+                            <option value="life_science">Life Science</option>
                             <option value="marine sciences">Marine Sciences</option>
-                            <option value="Maritime Economics">Maritime Economics</option>
-                            <option value="Mechanical Technology">Mechanical Technology</option>
-                            <option value="Music">Music</option>
-                            <option value="Nautical Science">Nautical Science</option>
+                            <option value="maritime economics">Maritime Economics</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="math_lit">Math Lit</option>
+                            <option value="mechanical technology">Mechanical Technology</option>
+                            <option value="music">Music</option>
+                            <option value="nautical science">Nautical Science</option>
+                            <option value="physics">Physics</option>
                             <option value="religion studies">Religion Studies</option>
+                            <option value="sepedi">Sepedi</option>
+                            <option value="sesotho">Sesotho</option>
+                            <option value="setswana">Setswana</option>
+                            <option value="siswati">Siswati</option>
                             <option value="sport and exercise science">Sport and Exercise Science</option>
-                            <option value="accounting">Accounting</option>
                             <option value="technical maths">Technical Maths</option>
                             <option value="technical sciences">Technical Sciences</option>
-                            <option value="mechanical technology">Mechanical Technology</option>
-                            <option value="english">English</option>
-                            <option value="math_lit">Math Lit</option>
                             <option value="tourism">Tourism</option>
-                            <option value="life_science">Life Science</option>
-                            <option value="it">IT</option>
-                            <option value="cat">CAT</option>
-                            <option value="history">History</option>
+                            <option value="tshivenda">Tshivenda</option>
                             <option value="visual arts">Visual Arts</option>
-                            <option value="business">Business Studies</option>
-                            <option value="economics">Economics</option>
-                            <option value="isizulu">IsiZulu</option>
+                            <option value="xitsonga">Xitsonga</option>
+                        </datalist>
+
+                        <select id="fileGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                            <option value="university">University</option>
+                            <option value="college">College</option>
+                            <option value="other">Other</option>
                         </select>
+
+                        <input type="date" id="docDate" required>
                     </div>
+
+                    <div class="form-grid">
+                        <textarea id="docDescription" placeholder="Document description (optional)" rows="3"></textarea>
+                    </div>
+
                     <button type="submit" class="upload-btn" id="uploadBtn">Upload Document</button>
                 </form>
             </div>
@@ -135,79 +175,59 @@
 
         <div class="documents-section">
             <div class="filter-controls">
+                <select id="uploaderRoleFilter">
+                    <option value="">All Roles</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="student">Student</option>
+                    <option value="tutor">Tutor</option>
+                    <option value="administrator">Administrator</option>
+                    <option value="parent">Parent</option>
+                </select>
+
+                <select id="docTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="notes">Notes</option>
+                    <option value="tests">Tests</option>
+                    <option value="worksheet">Worksheet</option>
+                    <option value="practice_material">Practice Material</option>
+                    <option value="task">Task</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="project">Project</option>
+                    <option value="literature">Literature</option>
+                    <option value="textbook">Textbook</option>
+                    <option value="past_paper">Past Paper</option>
+                    <option value="memo">Memo</option>
+                    <option value="study_guide">Study Guide</option>
+                    <option value="presentation">Presentation</option>
+                </select>
+
                 <select id="subjectFilter">
                     <option value="">All Subjects</option>
-                    <option value="mathematics">Mathematics</option>
-                    <option value="afrikaans">Afrikaans</option>
-                    <option value="physics">Physics</option>
-                    <option value="isindebele">IsiNdebele</option>
-                    <option value="isiXhosa">IsiXhosa</option>
-                    <option value="isiZulu">IsiZulu</option>
-                    <option value="sesotho">Sesotho</option>
-                    <option value="sepedi">Sepedi</option>
-                    <option value="setswana">Setswana</option>
-                    <option value="siswati">Siswati</option>
-                    <option value="tshivenda">Tshivenda</option>
-                    <option value="xitsonga">Xitsonga</option>
-                    <option value="agricultural management practices">Agricultural Management Practices</option>
-                    <option value="agricultural science">Agricultural Science</option>
-                    <option value="agricultural technology">Agricultural Technology</option>
-                    <option value="civil technology">Civil Technology</option>
-                    <option value="computer applications technology">Computer Applications Technology</option>
-                    <option value="consumer studies">Consumer Studies</option>
-                    <option value="dance studies">Dance Studies</option>
-                    <option value="design">Design</option>
-                    <option value="development studies">Development Studies</option>
-                    <option value="dramatic arts">Dramatic Arts</option>
-                    <option value="economic and management sciences">Economic and Management Sciences</option>
-                    <option value="economic">Economics</option>
-                    <option value="english">English</option>
-                    <option value="electrical technology">Electrical Technology</option>
-                    <option value="engineering graphics and design">Engineering Graphics and Design</option>
-                    <option value="equine studies">Equine Studies</option>
-                    <option value="life orientation">Life Orientation</option>
-                    <option value="geography">Geography</option>
-                    <option value="history">History</option>
-                    <option value="hospitality studies">Hospitality Studies</option>
-                    <option value="marine sciences">Marine Sciences</option>
-                    <option value="Maritime Economics">Maritime Economics</option>
-                    <option value="Mechanical Technology">Mechanical Technology</option>
-                    <option value="Music">Music</option>
-                    <option value="Nautical Science">Nautical Science</option>
-                    <option value="religion studies">Religion Studies</option>
-                    <option value="sport and exercise science">Sport and Exercise Science</option>
-                    <option value="accounting">Accounting</option>
-                    <option value="technical maths">Technical Maths</option>
-                    <option value="technical sciences">Technical Sciences</option>
-                    <option value="mechanical technology">Mechanical Technology</option>
-                    <option value="english">English</option>
-                    <option value="math_lit">Math Lit</option>
-                    <option value="tourism">Tourism</option>
-                    <option value="life_science">Life Science</option>
-                    <option value="it">IT</option>
-                    <option value="cat">CAT</option>
-                    <option value="history">History</option>
-                    <option value="visual arts">Visual Arts</option>
-                    <option value="business">Business Studies</option>
-                    <option value="economics">Economics</option>
-                    <option value="isizulu">IsiZulu</option>
+                    <!-- Subjects will be populated by JavaScript -->
                 </select>
+
                 <select id="gradeFilter">
                     <option value="">All Grades</option>
-                    <option value="10">Grade 1</option>
-                    <option value="10">Grade 2</option>
-                    <option value="10">Grade 3</option>
-                    <option value="10">Grade 4</option>
-                    <option value="10">Grade 5</option>
-                    <option value="10">Grade 6</option>
-                    <option value="10">Grade 7</option>
-                    <option value="10">Grade 8</option>
-                    <option value="10">Grade 9</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
                     <option value="10">Grade 10</option>
                     <option value="11">Grade 11</option>
                     <option value="12">Grade 12</option>
+                    <option value="university">University</option>
+                    <option value="college">College</option>
+                    <option value="other">Other</option>
                 </select>
+
+                <input type="date" id="dateFilter" placeholder="Filter by date">
             </div>
+
             <div id="fileGrid" class="file-grid"></div>
 
             <div class="pagination-container">
@@ -223,17 +243,38 @@
             <div class="footer-box">
                 <h4>Contact</h4>
                 <a href="mailto:info@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
+                <a href="https://wa.me/27732792426">WhatsApp: +27 73 279 2426</a>
             </div>
             <div class="footer-box">
                 <h4>Quick Links</h4>
                 <a href="index.html">Home</a>
                 <a href="resources.html">Resources</a>
+                <a href="tutoring.html">Tutoring</a>
+            </div>
+            <div class="footer-box">
+                <h4>Support</h4>
+                <a href="faq.html">FAQ</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
+            <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved. | Quality Education for All</p>
         </div>
     </footer>
+
+    <!-- Modal for Document Viewing -->
+    <div id="docModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Document Viewer</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="doc-viewer-container">
+                <iframe id="docViewer" src="" title="Document Viewer"></iframe>
+            </div>
+        </div>
+    </div>
 
     <script src="resources.js"></script>
 </body>

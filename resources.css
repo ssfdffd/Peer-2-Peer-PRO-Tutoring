@@ -2,11 +2,15 @@
    1. BRAND COLORS & GLOBAL STYLES
 ================================= */
 :root {
-  --navy-bg: #000033;        /* Deep Navy from logo background */
-  --pro-green: #32cd32;      /* Vibrant Lime Green from Logo */
-  --sky-blue: #7fdff0;       /* Light Sky Blue accents */
+  --navy-bg: #000033;
+  /* Deep Navy from logo background */
+  --pro-green: #32cd32;
+  /* Vibrant Lime Green from Logo */
+  --sky-blue: #7fdff0;
+  /* Light Sky Blue accents */
   --white: #ffffff;
-  --bg-light: #f4f7f9;       /* Light background */
+  --bg-light: #f4f7f9;
+  /* Light background */
   --text-dark: #333333;
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -86,6 +90,110 @@ body {
   transform: translateY(-2px);
 }
 
+/* Add to resources.css after line ~300 */
+/* =================================
+   11. MODAL VIEWER STYLES
+================================= */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 33, 0.95);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--white);
+  padding: 20px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 1000px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 3px solid var(--pro-green);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  color: var(--navy-bg);
+  font-size: 1.3rem;
+}
+
+.close-modal {
+  color: var(--navy-bg);
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-modal:hover {
+  background-color: rgba(50, 205, 50, 0.1);
+  color: var(--pro-green);
+}
+
+.doc-viewer-container {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.doc-viewer-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Loading spinner */
+.loader {
+  text-align: center;
+  padding: 40px;
+  color: var(--navy-bg);
+  font-weight: 600;
+}
+
+.loader i {
+  margin-right: 10px;
+  color: var(--pro-green);
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+/* Data search highlight */
+.highlight {
+  background-color: rgba(50, 205, 50, 0.3);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
 /* =================================
    3. SCROLLING ANIMATION BAR
 ================================= */
@@ -94,7 +202,7 @@ body {
   overflow: hidden;
   white-space: nowrap;
   padding: 10px 0;
-  border-bottom: 2px solid rgba(0,0,0,0.1);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .scrolling-text {
@@ -111,16 +219,21 @@ body {
 }
 
 @keyframes scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* =================================
    4. HERO & SEARCH SECTION - UPDATED COLORS
 ================================= */
 .resources-hero {
-  background: linear-gradient(rgba(0, 0, 51, 0.8), rgba(0, 0, 51, 0.8)), 
-              url('study.jpg');
+  background: linear-gradient(rgba(0, 0, 51, 0.8), rgba(0, 0, 51, 0.8)),
+    url('study.jpg');
   background-size: cover;
   background-position: center;
   color: var(--white);
@@ -220,12 +333,14 @@ body {
 ================================= */
 .form-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr; /* Title, Grade, Subject */
+  grid-template-columns: 2fr 1fr 1fr;
+  /* Title, Grade, Subject */
   gap: 15px;
   margin-top: 20px;
 }
 
-.form-grid input, .form-grid select {
+.form-grid input,
+.form-grid select {
   padding: 12px 15px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -234,7 +349,8 @@ body {
   transition: var(--transition);
 }
 
-.form-grid input:focus, .form-grid select:focus {
+.form-grid input:focus,
+.form-grid select:focus {
   outline: none;
   border-color: var(--pro-green);
   box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.2);
@@ -288,6 +404,7 @@ body {
   border-color: var(--pro-green);
   outline: none;
 }
+
 /* =================================
    7. DOCUMENT GRID & CARDS - IMPROVED STYLING
 ================================= */
@@ -363,9 +480,10 @@ body {
   margin-bottom: 12px;
   line-height: 1.4;
   font-weight: 700;
-  min-height: 3.6em; /* Ensures consistent title height */
+  min-height: 3.6em;
+  /* Ensures consistent title height */
   display: -webkit-box;
- -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -411,7 +529,8 @@ body {
   margin-top: auto;
 }
 
-.view-link, .down-link {
+.view-link,
+.down-link {
   flex: 1;
   padding: 14px;
   text-align: center;
@@ -449,17 +568,36 @@ body {
   color: var(--pro-green);
 }
 
-.view-link i, .down-link i {
+.view-link i,
+.down-link i {
   font-size: 1rem;
 }
 
 /* Document type specific icons */
-.pdf-icon { color: #e74c3c; }
-.word-icon { color: #2b579a; }
-.excel-icon { color: #217346; }
-.ppt-icon { color: #d24726; }
-.image-icon { color: #e67e22; }
-.general-icon { color: var(--navy-bg); }
+.pdf-icon {
+  color: #e74c3c;
+}
+
+.word-icon {
+  color: #2b579a;
+}
+
+.excel-icon {
+  color: #217346;
+}
+
+.ppt-icon {
+  color: #d24726;
+}
+
+.image-icon {
+  color: #e67e22;
+}
+
+.general-icon {
+  color: var(--navy-bg);
+}
+
 /* =================================
    8. PAGINATION CONTROLS
 ================================= */
@@ -580,64 +718,64 @@ body {
    10. RESPONSIVENESS
 ================================= */
 @media (max-width: 768px) {
-  #navbar { 
-    padding: 10px 4%; 
+  #navbar {
+    padding: 10px 4%;
   }
-  
-  .logo { 
-    font-size: 1.1rem; 
+
+  .logo {
+    font-size: 1.1rem;
   }
-  
-  .resources-hero { 
-    padding: 40px 15px; 
+
+  .resources-hero {
+    padding: 40px 15px;
   }
-  
-  .resources-hero h1 { 
-    font-size: 1.5rem; 
+
+  .resources-hero h1 {
+    font-size: 1.5rem;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  
+
   .upload-card {
     width: 95%;
     padding: 20px;
     margin-top: -20px;
   }
-  
-  .footer-inner { 
-    flex-direction: column; 
-    text-align: center; 
+
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
     gap: 30px;
   }
-  
+
   .filter-controls {
     flex-direction: column;
     padding: 0 10%;
   }
-  
+
   .file-grid {
     grid-template-columns: 1fr;
     padding: 10px 5%;
     gap: 20px;
   }
-  
+
   .pagination-container {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .footer-box {
     text-align: center;
   }
-  
+
   .footer-box a {
     display: inline-block;
     margin: 0 10px 10px;
   }
-  
+
   .footer-box a::before {
     display: none;
   }
@@ -648,20 +786,20 @@ body {
     padding: 6px 15px;
     font-size: 0.8rem;
   }
-  
+
   .upload-card {
     padding: 15px;
   }
-  
+
   .upload-area {
     padding: 20px;
   }
-  
+
   .card-icon-header {
     padding: 20px;
     font-size: 2.5rem;
   }
-  
+
   .scrolling-text {
     font-size: 0.8rem;
   }

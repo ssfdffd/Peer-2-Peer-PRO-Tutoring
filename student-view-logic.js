@@ -5,6 +5,42 @@
 
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
+async function checkLiveStatus() {
+    try {
+        const response = await fetch(`${API_BASE}/api/get-all-classes`);
+        const classes = await response.json();
+
+        // Find the first class that is currently 'active'
+        const liveClass = classes.find(c => c.status === 'active');
+
+        const statusText = document.getElementById('heroClassStatus');
+        const topicText = document.getElementById('heroClassTopic');
+        const badgeContainer = document.getElementById('liveBadgeContainer');
+
+        if (liveClass) {
+            // Update the card to show something is LIVE
+            statusText.innerHTML = `<span style="color: #32cd32;">● LIVE NOW</span>`;
+            topicText.innerText = `${liveClass.topic} (Gr. ${liveClass.grade})`;
+
+            badgeContainer.innerHTML = `
+                <div class="live-pulse-badge">
+                    JOIN SESSION
+                </div>
+            `;
+
+            // Make the whole card go straight to the room if clicked
+            document.getElementById('heroLiveCard').onclick = () => {
+                window.location.href = `live-session.html?room=${liveClass.room_name}`;
+            };
+        }
+    } catch (err) {
+        console.error("Dashboard sync error:", err);
+    }
+}
+
+// Run this when the page loads
+document.addEventListener('DOMContentLoaded', checkLiveStatus);
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Student view loaded - fetching live classes");
 

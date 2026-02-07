@@ -186,11 +186,15 @@
         <p style="color: #94a3b8;">Join a live session or see what's coming up next.</p>
     </header>
 
-    <div id="liveClassesContainer" class="live-grid">
-        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #32cd32;"></i>
-            <p style="margin-top: 15px; color: #94a3b8;">Syncing with live schedule...</p>
+    <div class="quick-action-card" id="heroLiveCard" onclick="window.location.href='student-view.html'">
+        <div class="action-icon live-icon">
+            <i class="fas fa-broadcast-tower"></i>
         </div>
+        <div class="action-info">
+            <h4 id="heroClassStatus">Live Classes</h4>
+            <p id="heroClassTopic">View the daily schedule</p>
+        </div>
+        <div id="liveBadgeContainer"></div>
     </div>
 
     <script src="student-view-logic.js"></script>

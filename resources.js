@@ -2,14 +2,14 @@
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev";
 let allResources = [];
 let currentPage = 1;
-const itemsPerPage = 25; // Changed from 6 to 25
+const itemsPerPage = 6;
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
 
-    // Set today's date as default for upload
+    // Set today's date as default
     document.getElementById('docDate').valueAsDate = new Date();
 
     // Initialize filters
@@ -34,18 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Close modal on ESC key or clicking outside
+    // Close modal on ESC key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeModal();
-        }
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-        const modal = document.getElementById("docModal");
-        if (e.target === modal) {
-            closeModal();
+            modal.style.display = "none";
+            document.getElementById("docViewer").src = "";
+            document.body.style.overflow = 'auto';
         }
     });
 
@@ -107,7 +101,7 @@ function populateFilterOptions() {
 // 4. FETCH DATA FROM WORKER
 async function loadLibrary() {
     const grid = document.getElementById('fileGrid');
-    grid.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading Library Resources...</div>';
+    grid.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Accessing Cloud Library...</div>';
 
     try {
         const response = await fetch(`${API_URL}/api/resources`);
@@ -125,20 +119,20 @@ async function loadLibrary() {
         renderCards(allResources);
     } catch (error) {
         console.error("Fetch error:", error);
-        grid.innerHTML = '<div class="no-results"><i class="fas fa-exclamation-triangle"></i><p>Failed to connect to library. Please check your connection.</p></div>';
+        grid.innerHTML = '<p style="color:red; text-align:center;">Failed to connect to library. Please check your connection.</p>';
     }
 }
 
 // 5. GENERATE FILE URL FOR MISSING FILES
 function generateFileUrl(resource) {
+    // Generate a placeholder URL or use a fallback service
     if (resource.actual_file_key) {
         return `https://peer-2-peer.co.za/uploads/${resource.actual_file_key}`;
     }
 
-    // Fallback URL
+    // Use Google Drive viewer or other document viewer
     const docType = resource.doc_type || 'pdf';
-    const fileName = resource.title ? encodeURIComponent(resource.title.replace(/[^a-z0-9]/gi, '_')) : 'document';
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(`https://peer-2-peer.co.za/uploads/${fileName}.${docType}`)}&embedded=true`;
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(`https://peer-2-peer.co.za/placeholder.${docType}`)}&embedded=true`;
 }
 
 // 6. ADVANCED FILTERING LOGIC
@@ -189,7 +183,7 @@ function debounce(func, wait) {
     };
 }
 
-// 8. RENDER CARDS WITH HIGHLIGHTING AND TOOLTIP
+// 8. RENDER CARDS WITH HIGHLIGHTING
 function renderCards(data) {
     const grid = document.getElementById('fileGrid');
     if (!grid) return;
@@ -201,8 +195,7 @@ function renderCards(data) {
     const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
 
     if (paginatedItems.length === 0) {
-        grid.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>No documents found matching your search.</p><p>Try different keywords or filters.</p></div>';
-        updatePaginationInfo(data.length);
+        grid.innerHTML = '<p class="no-results"><i class="fas fa-search"></i> No documents found matching your search.</p>';
         return;
     }
 
@@ -212,33 +205,28 @@ function renderCards(data) {
 
         // Highlight search terms in title
         let titleHTML = item.title || "Untitled Document";
-        let displayTitle = titleHTML;
         if (searchText) {
             const regex = new RegExp(`(${searchText.split(' ').filter(w => w).join('|')})`, 'gi');
-            displayTitle = displayTitle.replace(regex, '<span class="highlight">$1</span>');
+            titleHTML = titleHTML.replace(regex, '<span class="highlight">$1</span>');
         }
 
-        // Get appropriate icon and role class
+        // Get appropriate icon
         const iconClass = getFileIconClass(item.doc_type, item.file_url);
-        const roleClass = `role-${item.uploader_role || 'unknown'}`;
 
         // Format date
-        const uploadDate = item.upload_date ? formatDate(new Date(item.upload_date)) : 'Unknown date';
-
-        // Get badge class for document type
-        const badgeClass = item.doc_type ? `badge-${item.doc_type}` : '';
+        const uploadDate = item.upload_date ? new Date(item.upload_date).toLocaleDateString() : 'Unknown';
 
         card.innerHTML = `
             <div class="card-icon-header">
-                <div class="category-tag ${badgeClass}">${item.doc_type ? formatDocType(item.doc_type) : 'Document'}</div>
+                <div class="category-tag">${item.doc_type ? item.doc_type.replace('_', ' ') : 'Document'}</div>
                 <i class="fas ${iconClass} file-type-icon"></i>
             </div>
             <div class="card-body">
-                <h3 data-fulltitle="${item.title || 'Untitled Document'}">${displayTitle}</h3>
+                <h3>${titleHTML}</h3>
                 <div class="document-info">
                     <div class="info-item">
-                        <i class="fas fa-user-tag ${roleClass}"></i>
-                        <strong>By:</strong> <span class="${roleClass}">${formatRole(item.uploader_role)}</span>
+                        <i class="fas fa-user-tag"></i>
+                        <strong>Uploaded by:</strong> ${item.uploader_role || 'Unknown'}
                     </div>
                     <div class="info-item">
                         <i class="fas fa-graduation-cap"></i>
@@ -246,25 +234,19 @@ function renderCards(data) {
                     </div>
                     <div class="info-item">
                         <i class="fas fa-book"></i>
-                        <strong>Subject:</strong> ${formatSubject(item.subject)}
+                        <strong>Subject:</strong> ${item.subject || "General"}
                     </div>
                     <div class="info-item">
                         <i class="fas fa-calendar"></i>
                         <strong>Uploaded:</strong> ${uploadDate}
                     </div>
-                    ${item.description ? `
-                    <div class="info-item" style="flex: 1 0 100%; font-size: 0.8rem; color: #666;">
-                        <i class="fas fa-align-left"></i>
-                        <strong>Description:</strong> ${item.description}
-                    </div>
-                    ` : ''}
                 </div>
             </div>
             <div class="card-footer">
                 <button class="view-link" onclick="openDocument('${item.file_url}', '${item.title}')">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <a href="${item.file_url}" download="${item.title || 'document'}" class="down-link">
+                <a href="${item.file_url}" download="${item.title}" class="down-link">
                     <i class="fas fa-download"></i> Download
                 </a>
             </div>
@@ -272,59 +254,16 @@ function renderCards(data) {
         grid.appendChild(card);
     });
 
-    updatePaginationInfo(data.length);
-}
-
-// 9. UPDATE PAGINATION INFO
-function updatePaginationInfo(totalItems) {
-    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
     const pageInfo = document.getElementById('pageInfo');
-    if (pageInfo) {
-        pageInfo.innerHTML = `Page ${currentPage} of ${totalPages} <span style="font-size: 0.8rem; color: #666; margin-left: 10px;">(${totalItems} total documents)</span>`;
-    }
+    if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 
     // Update pagination button states
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-
-    if (prevBtn) prevBtn.disabled = currentPage === 1;
-    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+    document.getElementById('prevPage').disabled = currentPage === 1;
+    document.getElementById('nextPage').disabled = currentPage === totalPages;
 }
 
-// 10. FORMATTING FUNCTIONS
-function formatDate(date) {
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
-
-function formatRole(role) {
-    if (!role) return "Unknown";
-    return role.charAt(0).toUpperCase() + role.slice(1);
-}
-
-function formatSubject(subject) {
-    if (!subject) return "General";
-    return subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
-}
-
-function formatDocType(docType) {
-    if (!docType) return "Document";
-    return docType.charAt(0).toUpperCase() + docType.slice(1).replace(/_/g, ' ');
-}
-
-// 11. GET FILE ICON CLASS
+// 9. GET FILE ICON CLASS
 function getFileIconClass(docType, fileUrl) {
     if (docType) {
         switch (docType.toLowerCase()) {
@@ -337,10 +276,6 @@ function getFileIconClass(docType, fileUrl) {
             case 'project': return 'fa-project-diagram';
             case 'literature': return 'fa-book-open';
             case 'textbook': return 'fa-book';
-            case 'past_paper': return 'fa-file-archive';
-            case 'memo': return 'fa-file-alt';
-            case 'study_guide': return 'fa-compass';
-            case 'presentation': return 'fa-presentation';
             default: return 'fa-file';
         }
     }
@@ -351,142 +286,35 @@ function getFileIconClass(docType, fileUrl) {
         if (fileUrl.toLowerCase().endsWith('.doc') || fileUrl.toLowerCase().endsWith('.docx')) return 'fa-file-word word-icon';
         if (fileUrl.toLowerCase().endsWith('.xls') || fileUrl.toLowerCase().endsWith('.xlsx')) return 'fa-file-excel excel-icon';
         if (fileUrl.toLowerCase().endsWith('.ppt') || fileUrl.toLowerCase().endsWith('.pptx')) return 'fa-file-powerpoint ppt-icon';
-        if (fileUrl.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) return 'fa-file-image image-icon';
-        if (fileUrl.match(/\.(zip|rar|7z)$/i)) return 'fa-file-archive';
-        if (fileUrl.match(/\.(txt)$/i)) return 'fa-file-alt';
+        if (fileUrl.match(/\.(jpg|jpeg|png|gif)$/i)) return 'fa-file-image image-icon';
     }
 
     return 'fa-file general-icon';
 }
 
-// 12. VIEW DOCUMENT IN MODAL WITH PROPER EMBED
+// 10. VIEW DOCUMENT IN MODAL
 function openDocument(url, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
     const modalTitle = document.querySelector(".modal-header h3");
-    const viewerContainer = document.querySelector(".doc-viewer-container");
 
     if (modal && viewer) {
         modalTitle.textContent = title || "Document Viewer";
 
-        // Show loading state
-        viewerContainer.classList.add('loading');
-
-        // Handle different file types for proper embedding
+        // Handle different file types
         let viewerUrl = url;
-        let embedType = 'iframe';
-
-        // Check if URL is valid and not empty
-        if (!url || url === '#' || url.includes('undefined')) {
-            // Show error message in modal
-            viewer.src = "about:blank";
-            viewerContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
-                    <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Document Not Available</h3>
-                    <p>The document URL is not available or invalid.</p>
-                    <p style="margin-top: 20px;">
-                        <a href="${url}" class="down-link" style="display: inline-block; padding: 10px 20px;">
-                            <i class="fas fa-download"></i> Try Download Instead
-                        </a>
-                    </p>
-                </div>
-            `;
-            viewerContainer.classList.remove('loading');
-        } else if (url.toLowerCase().endsWith('.pdf')) {
+        if (url.toLowerCase().endsWith('.pdf')) {
             // Use Google Docs PDF viewer for better compatibility
             viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-            embedType = 'iframe';
-        } else if (url.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) {
-            // Display images directly
-            viewerContainer.innerHTML = `<img src="${url}" alt="${title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
-            embedType = 'image';
-        } else if (url.match(/\.(txt)$/i)) {
-            // Display text files
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    viewerContainer.innerHTML = `<pre style="padding: 20px; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(text)}</pre>`;
-                    viewerContainer.classList.remove('loading');
-                })
-                .catch(() => {
-                    viewerContainer.innerHTML = `<p style="text-align: center; padding: 40px; color: #666;">Unable to load text file.</p>`;
-                    viewerContainer.classList.remove('loading');
-                });
-            embedType = 'text';
-            viewer.src = "about:blank";
-        } else {
-            // For other file types, try to embed or show download option
-            embedType = 'download';
-            viewerContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666;">
-                    <i class="fas fa-file" style="font-size: 3rem; color: var(--pro-green); margin-bottom: 20px;"></i>
-                    <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Document Preview Not Available</h3>
-                    <p>This file type cannot be previewed in the browser.</p>
-                    <p style="margin-top: 20px;">
-                        <a href="${url}" download="${title}" class="down-link" style="display: inline-block; padding: 12px 24px; font-size: 1rem;">
-                            <i class="fas fa-download"></i> Download Document
-                        </a>
-                    </p>
-                </div>
-            `;
-            viewerContainer.classList.remove('loading');
         }
 
-        // Set iframe source if using iframe
-        if (embedType === 'iframe') {
-            viewer.src = viewerUrl;
-            viewer.onload = () => {
-                viewerContainer.classList.remove('loading');
-            };
-            viewer.onerror = () => {
-                viewerContainer.classList.remove('loading');
-                viewerContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
-                        <h3 style="color: var(--navy-bg); margin-bottom: 10px;">Failed to Load Document</h3>
-                        <p>The document could not be loaded. Please try downloading it instead.</p>
-                        <p style="margin-top: 20px;">
-                            <a href="${url}" download="${title}" class="down-link" style="display: inline-block; padding: 10px 20px;">
-                                <i class="fas fa-download"></i> Download Document
-                            </a>
-                        </p>
-                    </div>
-                `;
-            };
-        }
-
-        // Show modal
+        viewer.src = viewerUrl;
         modal.style.display = "flex";
         document.body.style.overflow = 'hidden';
     }
 }
 
-// 13. HELPER FUNCTION TO ESCAPE HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// 14. CLOSE MODAL FUNCTION
-function closeModal() {
-    const modal = document.getElementById("docModal");
-    const viewer = document.getElementById("docViewer");
-    const viewerContainer = document.querySelector(".doc-viewer-container");
-
-    if (modal) {
-        modal.style.display = "none";
-        if (viewer) viewer.src = "about:blank";
-        if (viewerContainer) {
-            viewerContainer.classList.remove('loading');
-            viewerContainer.innerHTML = '<iframe id="docViewer" src="" title="Document Viewer"></iframe>';
-        }
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// 15. UPLOAD DOCUMENT FUNCTION (Updated for all fields)
+// 11. UPLOAD DOCUMENT WITH ALL FIELDS
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
     const titleInput = document.getElementById('fileName');
@@ -495,7 +323,6 @@ async function uploadDocument() {
     const roleInput = document.getElementById('uploaderRole');
     const docTypeInput = document.getElementById('docType');
     const docDateInput = document.getElementById('docDate');
-    const descriptionInput = document.getElementById('docDescription');
     const btn = document.getElementById('uploadBtn');
 
     // Validate all required fields
@@ -504,19 +331,29 @@ async function uploadDocument() {
         return;
     }
 
-    const requiredFields = [
-        { field: titleInput, message: "Please provide a document title." },
-        { field: subjectInput, message: "Please select or enter a subject." },
-        { field: gradeInput, message: "Please select a grade level." },
-        { field: roleInput, message: "Please select your role." },
-        { field: docTypeInput, message: "Please select a document type." }
-    ];
+    if (!titleInput.value.trim()) {
+        alert("Please provide a document title.");
+        return;
+    }
 
-    for (const { field, message } of requiredFields) {
-        if (!field.value) {
-            alert(message);
-            return;
-        }
+    if (!subjectInput.value) {
+        alert("Please select or enter a subject.");
+        return;
+    }
+
+    if (!gradeInput.value) {
+        alert("Please select a grade level.");
+        return;
+    }
+
+    if (!roleInput.value) {
+        alert("Please select your role.");
+        return;
+    }
+
+    if (!docTypeInput.value) {
+        alert("Please select a document type.");
+        return;
     }
 
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
@@ -532,7 +369,7 @@ async function uploadDocument() {
         const timestamp = Date.now();
         const fileKey = `doc_${timestamp}_${file.name.replace(/[^a-z0-9]/gi, '_')}`;
 
-        // Create file URL
+        // Create file URL (you would upload to your server/CDN here)
         const fileUrl = `https://peer-2-peer.co.za/uploads/${fileKey}`;
 
         const payload = {
@@ -542,7 +379,6 @@ async function uploadDocument() {
             uploader_role: roleInput.value,
             doc_type: docTypeInput.value,
             doc_date: docDateInput.value,
-            description: descriptionInput.value,
             actual_file_key: fileKey,
             file_url: fileUrl,
             file_data: base64File,
@@ -560,7 +396,7 @@ async function uploadDocument() {
 
             const result = await res.json();
             if (res.ok) {
-                alert(`✅ Success! "${titleInput.value}" has been added to the library.`);
+                alert(`âœ… Success! "${titleInput.value}" has been added to the library.`);
                 // Clear form
                 document.getElementById('uploadForm').reset();
                 document.getElementById('selectedFileName').innerText = '';
@@ -582,13 +418,11 @@ async function uploadDocument() {
     reader.readAsDataURL(file);
 }
 
-// 16. UTILITIES
+// 12. UTILITIES
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');
     if (display && input.files && input.files[0]) {
-        const fileName = input.files[0].name;
-        const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // MB
-        display.innerHTML = `Selected: <strong>${fileName}</strong> (${fileSize} MB)`;
+        display.innerText = "Selected: " + input.files[0].name;
         display.style.color = "var(--pro-green)";
     }
 }

@@ -122,7 +122,46 @@ async function loadLibrary() {
         grid.innerHTML = '<p style="color:red; text-align:center;">Failed to connect to library. Please check your connection.</p>';
     }
 }
+async function uploadFile() {
+    const fileInput = document.getElementById('fileInput');
+    const title = document.getElementById('resTitle').value;
+    const grade = document.getElementById('resGrade').value;
+    const email = sessionStorage.getItem('p2p_email');
 
+    if (!fileInput.files[0]) return alert("Select a file first");
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('title', title);
+    formData.append('grade', grade);
+    formData.append('email', email);
+
+    const response = await fetch(`${API_BASE}/api/upload-resource`, {
+        method: 'POST',
+        body: formData // Note: Do NOT set Content-Type header, browser does it for FormData
+    });
+
+    if (response.ok) {
+        alert("Upload Successful!");
+        loadResources();
+    }
+}
+
+async function loadResources() {
+    const container = document.getElementById('resourceList');
+    const res = await fetch(`${API_BASE}/api/get-resources`);
+    const files = await res.json();
+
+    container.innerHTML = files.map(file => `
+        <div class="file-card">
+            <h4>${file.title}</h4>
+            <p>${file.grade} • ${file.file_name}</p>
+            <a href="${API_BASE}/api/download/${file.file_key}" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+    `).join('');
+}
 // 5. GENERATE FILE URL FOR MISSING FILES
 function generateFileUrl(resource) {
     // Generate a placeholder URL or use a fallback service

@@ -145,8 +145,16 @@
     </div>
 
     <script src="student-view-logic.js"></script>
-
+    <!-- Add this after your existing script tags -->
     <script>
+        // Quick check for debugging
+        console.log("Student view page loaded");
+
+        // Make the loadAllLiveClasses function globally accessible
+        window.loadAllLiveClasses = loadAllLiveClasses || function () {
+            console.log("Function not loaded yet");
+        };
+
         // Internal logout function if not handled globally
         function logout() {
             if (confirm("Are you sure you want to logout?")) {

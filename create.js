@@ -121,10 +121,9 @@ function renderTutorClasses(classes) {
             <div class="meeting-actions">
                 ${cls.status === 'active' ?
             `<span class="badge-live-now"><i class="fas fa-circle"></i> LIVE</span>` :
-
-            // Inside your renderTutorClasses function:
+            // Ensure the button inside your class card is written exactly like this:
             `<button onclick="goLive('${cls.room_name}')" class="btn-start-small">
-    <i class="fas fa-play"></i> START
+    <i class="fas fa-play"></i> START LIVE
 </button>`
         }
             </div>
@@ -137,14 +136,7 @@ function renderTutorClasses(classes) {
  */
 async function goLive(roomName) {
     const email = sessionStorage.getItem('p2p_email');
-
-    if (!roomName) {
-        showNotification("Error: Room name missing", "error");
-        return;
-    }
-
     try {
-        // 1. Tell the Worker to set status to 'active'
         const response = await fetch(`${API_BASE}/api/go-live`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -152,17 +144,12 @@ async function goLive(roomName) {
         });
 
         const result = await response.json();
-
         if (result.success) {
-            // 2. Redirect to the classroom with the room parameter
-            // This MUST match the roomName used in live-session.html
+            // This is the critical line for redirection
             window.location.href = `live-session.html?room=${roomName}`;
-        } else {
-            showNotification(result.error || "Failed to sync live status", "error");
         }
     } catch (err) {
-        console.error("Go Live Error:", err);
-        showNotification("Connection error. Try again.", "error");
+        console.error("Redirection failed:", err);
     }
 }
 

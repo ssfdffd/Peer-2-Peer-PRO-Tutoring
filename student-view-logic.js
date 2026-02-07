@@ -95,5 +95,10 @@ function startCountdown(elementId, targetDate) {
 }
 
 function joinRoom(roomName) {
-    window.location.href = `student-session.html?room=${roomName}`;
+    if (!roomName) {
+        alert("Room name not found.");
+        return;
+    }
+    // Redirects student to the actual Jitsi session
+    window.location.href = `live-session.html?room=${roomName}`;
 }

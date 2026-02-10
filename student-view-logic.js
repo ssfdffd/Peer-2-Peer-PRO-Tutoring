@@ -5,42 +5,7 @@
 
 const API_BASE = "https://learnerattendlive.buhle-1ce.workers.dev";
 
-async function checkLiveStatus() {
-    try {
-        const response = await fetch(`${API_BASE}/api/get-all-classes`);
-        const classes = await response.json();
-
-        // Find the first class that is currently 'active'
-        const liveClass = classes.find(c => c.status === 'active');
-
-        const statusText = document.getElementById('heroClassStatus');
-        const topicText = document.getElementById('heroClassTopic');
-        const badgeContainer = document.getElementById('liveBadgeContainer');
-
-        if (liveClass) {
-            // Update the card to show something is LIVE
-            statusText.innerHTML = `<span style="color: #32cd32;">● LIVE NOW</span>`;
-            topicText.innerText = `${liveClass.topic} (Gr. ${liveClass.grade})`;
-
-            badgeContainer.innerHTML = `
-                <div class="live-pulse-badge">
-                    JOIN SESSION
-                </div>
-            `;
-
-            // Make the whole card go straight to the room if clicked
-            document.getElementById('heroLiveCard').onclick = () => {
-                window.location.href = `live-session.html?room=${liveClass.room_name}`;
-            };
-        }
-    } catch (err) {
-        console.error("Dashboard sync error:", err);
-    }
-}
-
-// Run this when the page loads
-document.addEventListener('DOMContentLoaded', checkLiveStatus);
-
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Student view loaded - fetching live classes");
 
@@ -54,18 +19,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Initial load
+    // Initialize dashboard hero card
+    checkLiveStatus();
+
+    // Load all live classes
     loadAllLiveClasses();
 
     // Auto-refresh every 30 seconds
     setInterval(loadAllLiveClasses, 30000);
-
-    // Add refresh button functionality if needed
-    document.addEventListener('click', function (e) {
-        if (e.target && e.target.id === 'refreshBtn') {
-            loadAllLiveClasses();
-        }
-    });
 });
 
 /**
@@ -73,48 +34,25 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 async function loadAllLiveClasses() {
     const container = document.getElementById('liveClassesContainer');
+    const loadingState = document.getElementById('loadingState');
 
     try {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
         const classes = await response.json();
 
-        // If no classes, show the "Empty" message
-        if (!classes || classes.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align:center; padding: 50px;">
-                    <i class="fas fa-calendar-day" style="font-size: 3rem; color: #475569;"></i>
-                    <p style="color: #94a3b8; margin-top:15px;">No classes scheduled right now.</p>
-                </div>`;
-            return;
-        }
+        // Hide loading, show container
+        loadingState.style.display = 'none';
+        container.style.display = 'grid';
 
-        container.innerHTML = ''; // THIS REMOVES THE SPINNER
+        // Render the classes using the render function
+        renderLiveClasses(classes);
 
-        classes.forEach(cls => {
-            const isLive = cls.status === 'active';
-            const card = document.createElement('div');
-            card.className = `class-card ${isLive ? 'active-live' : ''}`;
+        // Update last refresh time
+        updateRefreshTime();
 
-            // Note: Using room_name as a fallback ID if cls.id is missing
-            const timerId = `timer-${cls.room_name || Math.random()}`;
-
-            card.innerHTML = `
-                ${isLive ? '<div class="live-tag">LIVE NOW</div>' : ''}
-                <h3 style="color: white; margin-bottom: 10px;">${cls.topic}</h3>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Grade: ${cls.grade}</p>
-                <div id="${timerId}" class="timer-display" style="color: ${isLive ? '#32cd32' : '#7fdff0'}">
-                    ${isLive ? 'Session is active' : 'Scheduled: ' + cls.scheduled_time}
-                </div>
-                <button class="join-btn ${isLive ? 'btn-enabled' : 'btn-disabled'}" 
-                        onclick="${isLive ? `window.location.href='live-session.html?room=${cls.room_name}'` : ''}"
-                        ${!isLive ? 'disabled' : ''}>
-                    ${isLive ? 'JOIN NOW' : 'WAITING'}
-                </button>
-            `;
-            container.appendChild(card);
-        });
     } catch (err) {
-        container.innerHTML = "<p style='color:red; text-align:center;'>Connection Error. Please refresh.</p>";
+        loadingState.style.display = 'none';
+        showErrorMessage(container, err);
         console.error("Critical Load Error:", err);
     }
 }
@@ -137,7 +75,7 @@ function renderLiveClasses(classes) {
         return dateA - dateB;
     });
 
-    // Filter out completed classes if you want
+    // Filter out completed classes
     const activeClasses = sortedClasses.filter(cls => cls.status !== 'completed');
 
     if (activeClasses.length === 0) {
@@ -163,9 +101,9 @@ function renderLiveClasses(classes) {
         if (isActive) {
             buttonClass = 'btn-enabled';
             buttonText = '<i class="fas fa-sign-in-alt"></i> JOIN LIVE SESSION';
-            onClick = `window.location.href='live-session.html?room=${encodeURIComponent(cls.room_name)}'`;
+            onClick = `joinLiveSession('${encodeURIComponent(cls.room_name)}')`;
         } else if (isUpcoming) {
-            buttonClass = 'btn-disabled';
+            buttonClass = 'btn-upcoming';
             buttonText = `<i class="fas fa-clock"></i> STARTS IN ${getTimeUntilClass(cls)}`;
             onClick = '';
         } else {
@@ -176,7 +114,8 @@ function renderLiveClasses(classes) {
 
         return `
             <div class="class-card ${isActive ? 'active-live' : ''}">
-                ${isActive ? '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>' : ''}
+                ${isActive ? '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>' :
+                isUpcoming ? '<div class="upcoming-badge"><i class="fas fa-clock"></i> UPCOMING</div>' : ''}
                 
                 <div class="class-header">
                     <h3>${escapeHtml(cls.topic || 'Untitled Class')}</h3>
@@ -231,11 +170,94 @@ function renderLiveClasses(classes) {
             onmouseout="this.style.background='rgba(50, 205, 50, 0.1)'">
                 <i class="fas fa-sync-alt"></i> Refresh Classes
             </button>
-            <p style="color: #94a3b8; margin-top: 10px; font-size: 0.9rem;">
+            <p id="lastUpdated" style="color: #94a3b8; margin-top: 10px; font-size: 0.9rem;">
                 Last updated: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
         </div>
     `;
+}
+
+/**
+ * JOIN LIVE SESSION FUNCTION
+ */
+function joinLiveSession(roomName) {
+    // Decode room name
+    const decodedRoom = decodeURIComponent(roomName);
+
+    // Show loading notification
+    showNotification(`Joining ${decodedRoom}...`, 'success');
+
+    // Redirect to live session page with room parameter
+    setTimeout(() => {
+        window.location.href = `live-session.html?room=${roomName}`;
+    }, 1000);
+}
+
+/**
+ * UPDATE REFRESH TIME
+ */
+function updateRefreshTime() {
+    const lastUpdated = document.getElementById('lastUpdated');
+    if (lastUpdated) {
+        lastUpdated.textContent = `Last updated: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+}
+
+/**
+ * CHECK LIVE STATUS FOR HERO CARD
+ */
+async function checkLiveStatus() {
+    try {
+        const response = await fetch(`${API_BASE}/api/get-all-classes`);
+        const classes = await response.json();
+
+        // Find the first class that is currently 'active'
+        const liveClass = classes.find(c => c.status === 'active');
+
+        const statusText = document.getElementById('heroClassStatus');
+        const topicText = document.getElementById('heroClassTopic');
+        const badgeContainer = document.getElementById('liveBadgeContainer');
+        const heroCard = document.getElementById('heroLiveCard');
+
+        if (liveClass) {
+            // Update the card to show something is LIVE
+            statusText.innerHTML = `<span style="color: #32cd32;">● LIVE NOW</span>`;
+            topicText.innerText = `${liveClass.topic} (Gr. ${liveClass.grade})`;
+
+            badgeContainer.innerHTML = `
+                <div class="live-pulse-badge" style="
+                    background: #32cd32;
+                    color: black;
+                    padding: 8px 15px;
+                    border-radius: 20px;
+                    font-weight: bold;
+                    font-size: 0.9rem;
+                    animation: pulse 2s infinite;
+                ">
+                    <i class="fas fa-broadcast-tower"></i> JOIN SESSION
+                </div>
+            `;
+
+            // Make the whole card go straight to the room if clicked
+            heroCard.onclick = () => {
+                joinLiveSession(liveClass.room_name);
+            };
+
+            // Add hover effect
+            heroCard.style.cursor = 'pointer';
+            heroCard.style.borderColor = '#32cd32';
+        } else {
+            // Reset to default
+            statusText.textContent = 'Live Classes';
+            topicText.textContent = 'View the daily schedule';
+            badgeContainer.innerHTML = '';
+            heroCard.onclick = null;
+            heroCard.style.cursor = 'default';
+            heroCard.style.borderColor = '';
+        }
+    } catch (err) {
+        console.error("Dashboard sync error:", err);
+    }
 }
 
 /**
@@ -452,6 +474,16 @@ style.textContent = `
     .btn-enabled:hover {
         background: #228b22 !important;
         color: white !important;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+    
+    .live-pulse-badge {
+        animation: pulse 2s infinite;
     }
 `;
 document.head.appendChild(style);

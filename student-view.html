@@ -8,161 +8,40 @@
     <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
+        /* Keep all your existing CSS styles, just add this at the end of the style block */
+
+        /* Main container for live classes */
+        .main-content {
             padding: 20px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .class-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 25px;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .class-card.active-live {
-            border-color: #32cd32;
-            box-shadow: 0 0 20px rgba(50, 205, 50, 0.2);
-        }
-
-        .live-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #32cd32;
-            color: #000;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            animation: pulse 2s infinite;
-        }
-
-        .class-header h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.4rem;
-        }
-
-        .grade-tag {
-            display: inline-block;
-            background: rgba(50, 205, 50, 0.1);
-            color: #32cd32;
-            padding: 3px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        /* Loading spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
             color: #94a3b8;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
         }
 
-        .info-row i {
-            color: #32cd32;
-            width: 18px;
+        .spinner {
+            border: 3px solid rgba(50, 205, 50, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #32cd32;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
 
-        .countdown-text {
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .join-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 15px;
-        }
-
-        .btn-enabled {
-            background: #32cd32;
-            color: #000;
-        }
-
-        .btn-disabled {
-            background: #1e293b;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        @keyframes pulse {
+        @keyframes spin {
             0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
+                transform: rotate(0deg);
             }
 
             100% {
-                opacity: 1;
+                transform: rotate(360deg);
             }
-        }
-
-        /* Add these to your existing student-view.html style section */
-
-        .btn-upcoming {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #000;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: not-allowed;
-            transition: 0.3s;
-            margin-top: 15px;
-            width: 100%;
-            opacity: 0.9;
-        }
-
-        .upcoming-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #f59e0b;
-            color: #000;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .class-footer {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .class-header {
-            margin-bottom: 20px;
-        }
-
-        .class-info {
-            margin: 20px 0;
-        }
-
-        .class-info .info-row {
-            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -186,32 +65,40 @@
         <p style="color: #94a3b8;">Join a live session or see what's coming up next.</p>
     </header>
 
-    <div class="quick-action-card" id="heroLiveCard" onclick="window.location.href='student-view.html'">
-        <div class="action-icon live-icon">
-            <i class="fas fa-broadcast-tower"></i>
+    <div class="main-content">
+        <!-- Hero Live Card -->
+        <div class="quick-action-card" id="heroLiveCard" style="cursor: pointer; margin-bottom: 30px;">
+            <div class="action-icon live-icon">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="action-info">
+                <h4 id="heroClassStatus">Live Classes</h4>
+                <p id="heroClassTopic">View the daily schedule</p>
+            </div>
+            <div id="liveBadgeContainer"></div>
         </div>
-        <div class="action-info">
-            <h4 id="heroClassStatus">Live Classes</h4>
-            <p id="heroClassTopic">View the daily schedule</p>
-        </div>
-        <div id="liveBadgeContainer"></div>
+
+        <!-- Live Classes Section -->
+        <section style="margin-top: 40px;">
+            <h2 style="color: #fff; margin-bottom: 20px; font-size: 1.8rem;">
+                <i class="fas fa-chalkboard-teacher" style="color: #32cd32; margin-right: 10px;"></i>
+                Available Classes
+            </h2>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading classes...</p>
+            </div>
+
+            <!-- Classes Grid Container -->
+            <div id="liveClassesContainer" class="live-grid" style="display: none;">
+                <!-- Classes will be inserted here by JavaScript -->
+            </div>
+        </section>
     </div>
 
     <script src="student-view-logic.js"></script>
-    <div id="jitsi-container" style="height: 80vh; width: 100%;"></div>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomName = urlParams.get('room');
-
-        if (roomName) {
-            // Simply redirect to the Jitsi Web URL or use their IFrame API
-            window.location.href = `https://meet.jit.si/${roomName}#config.prejoinPageEnabled=false`;
-        } else {
-            alert("Invalid Room");
-            window.location.href = "student-view.html";
-        }
-    </script>
 </body>
 
 </html>

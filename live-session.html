@@ -3,143 +3,191 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Live Classroom | Peer-2-Peer PRO</title>
-    <script src="https://meet.jit.si/external_api.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Session | Peer-2-Peer PRO</title>
     <style>
-        html,
         body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-            background: #0a192f;
-            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: white;
         }
 
-        #meet {
-            width: 100%;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
+        .session-header {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e293b;
         }
 
-        .loading-screen {
-            position: fixed;
-            inset: 0;
+        .back-btn {
+            background: #32cd32;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .room-info {
+            text-align: center;
+        }
+
+        .room-name {
+            color: #32cd32;
+            font-weight: bold;
+        }
+
+        #jitsi-container {
+            height: calc(100vh - 80px);
+            width: 100%;
+        }
+
+        .loading {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            background: #0a192f;
-            color: white;
-            z-index: 99;
-            font-family: sans-serif;
+            justify-content: center;
+            height: 100vh;
+            color: #94a3b8;
+        }
+
+        .spinner {
+            border: 3px solid rgba(50, 205, 50, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #32cd32;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <div id="loading" class="loading-screen">
-        <h2>Connecting to Secure Classroom...</h2>
-        <p>Room: <span id="room-display">Detecting...</span></p>
+    <div class="session-header">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back to Classes
+        </button>
+        <div class="room-info">
+            <h3>Live Session: <span id="roomNameDisplay" class="room-name">Loading...</span></h3>
+        </div>
+        <div style="width: 100px;"></div> <!-- Spacer for balance -->
     </div>
 
-    <div id="meet"></div>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading Jitsi Meet session...</p>
+    </div>
+
+    <div id="jitsi-container" style="display: none;"></div>
+
+    <!-- Jitsi Meet API -->
+    <script src='https://meet.jit.si/external_api.js'></script>
+
     <script>
-        window.onload = () => {
-            const params = new URLSearchParams(window.location.search);
-            const roomName = params.get('room');
+        // Get room name from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomName = urlParams.get('room');
 
-            if (!roomName) {
-                alert("No Room ID found in URL.");
-                window.location.href = 'create-class.html';
-                return;
-            }
+        if (!roomName) {
+            alert("No room specified. Redirecting to classes page.");
+            window.location.href = "student-view.html";
+        }
 
-            document.getElementById('room-display').innerText = roomName;
+        // Display room name
+        document.getElementById('roomNameDisplay').textContent = decodeURIComponent(roomName);
 
-            // Jitsi Configuration
-            const domain = "meet.jit.si";
+        // Initialize Jitsi Meet
+        let jitsiApi = null;
+
+        function startJitsi() {
+            const domain = 'meet.jit.si';
             const options = {
                 roomName: roomName,
-                width: "100%",
-                height: "100%",
-                parentNode: document.querySelector('#meet'),
-                userInfo: {
-                    displayName: sessionStorage.getItem('p2p_name') || 'Tutor'
-                },
+                width: '100%',
+                height: '100%',
+                parentNode: document.querySelector('#jitsi-container'),
                 configOverwrite: {
-                    disableDeepLinking: true,
                     prejoinPageEnabled: false,
-                    startWithAudioMuted: true,
-                    startWithVideoMuted: false,
-                    enableWelcomePage: false
-                },
-                interfaceConfigOverwrite: {
-                    TOOLBAR_BUTTONS: [
+                    disableInviteFunctions: true,
+                    toolbarButtons: [
                         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
                         'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-                        'livestreaming', 'settings', 'raisehand', 'videoquality', 'filmstrip',
-                        'invite', 'feedback', 'stats', 'shortcuts', 'tileview', 'videobackgroundblur',
-                        'download', 'help', 'mute-everyone', 'security'
-                    ],
-                    SHOW_JITSI_WATERMARK: false,
-                    SHOW_WATERMARK_FOR_GUESTS: false,
-                    DEFAULT_BACKGROUND: '#0a192f',
-                    BRAND_WATERMARK_LINK: '',
-                    MOBILE_APP_PROMO: false
+                        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+                        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+                        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
+                        'e2ee'
+                    ]
+                },
+                interfaceConfigOverwrite: {
+                    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+                    SHOW_CHROME_EXTENSION_BANNER: false,
+                    MOBILE_APP_PROMO: false,
+                    HIDE_INVITE_MORE_HEADER: true
+                },
+                userInfo: {
+                    displayName: sessionStorage.getItem('p2p_email') || 'Student'
                 }
             };
 
-            // Start Jitsi with better error handling
-            try {
-                const api = new JitsiMeetExternalAPI(domain, options);
+            jitsiApi = new JitsiMeetExternalAPI(domain, options);
 
-                // Hide loader when conference starts
-                api.addEventListener('videoConferenceJoined', () => {
-                    console.log("Conference joined successfully");
-                    document.getElementById('loading').style.display = 'none';
-                });
+            // Hide loading, show Jitsi
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('jitsi-container').style.display = 'block';
 
-                // Handle connection errors
-                api.addEventListener('readyToClose', () => {
-                    console.log("Conference ended");
-                });
+            // Handle conference join
+            jitsiApi.addEventListeners({
+                readyToClose: () => {
+                    console.log("Ready to close");
+                    window.location.href = "student-view.html";
+                },
+                participantJoined: (participant) => {
+                    console.log("Participant joined:", participant);
+                },
+                participantLeft: (participant) => {
+                    console.log("Participant left:", participant);
+                }
+            });
+        }
 
-                // Handle errors
-                api.addEventListener('errorOccurred', (error) => {
-                    console.error("Jitsi Error:", error);
-                    document.querySelector('#loading h2').innerText = "Connection Error. Please Refresh.";
-                });
+        // Start Jitsi when page loads
+        window.onload = startJitsi;
 
-                // Fallback timeout
-                setTimeout(() => {
-                    if (document.getElementById('loading').style.display !== 'none') {
-                        console.warn("Loading timeout - trying to proceed");
-                        document.getElementById('loading').style.display = 'none';
-                    }
-                }, 10000);
-
-            } catch (err) {
-                console.error("Jitsi Load Error:", err);
-                document.getElementById('loading').innerHTML = `
-                <h2>Connection Failed</h2>
-                <p>Error: ${err.message}</p>
-                <button onclick="window.location.reload()" style="
-                    margin-top: 20px;
-                    padding: 10px 20px;
-                    background: #32cd32;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                ">Try Again</button>
-            `;
+        function goBack() {
+            if (jitsiApi) {
+                jitsiApi.executeCommand('hangup');
             }
-        };
+            window.location.href = "student-view.html";
+        }
+
+        // Handle back button
+        window.addEventListener('beforeunload', () => {
+            if (jitsiApi) {
+                jitsiApi.executeCommand('hangup');
+            }
+        });
     </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </body>
 
 </html>

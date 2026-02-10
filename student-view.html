@@ -198,22 +198,18 @@
     </div>
 
     <script src="student-view-logic.js"></script>
-    <!-- Add this after your existing script tags -->
+    <div id="jitsi-container" style="height: 80vh; width: 100%;"></div>
+
     <script>
-        // Quick check for debugging
-        console.log("Student view page loaded");
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomName = urlParams.get('room');
 
-        // Make the loadAllLiveClasses function globally accessible
-        window.loadAllLiveClasses = loadAllLiveClasses || function () {
-            console.log("Function not loaded yet");
-        };
-
-        // Internal logout function if not handled globally
-        function logout() {
-            if (confirm("Are you sure you want to logout?")) {
-                sessionStorage.clear();
-                window.location.href = "login.html";
-            }
+        if (roomName) {
+            // Simply redirect to the Jitsi Web URL or use their IFrame API
+            window.location.href = `https://meet.jit.si/${roomName}#config.prejoinPageEnabled=false`;
+        } else {
+            alert("Invalid Room");
+            window.location.href = "student-view.html";
         }
     </script>
 </body>

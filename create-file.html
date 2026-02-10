@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Document | Peer-2-Peer Pro</title>
+    <link rel="stylesheet" href="tutor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <style>
+        .doc-creation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .doc-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px var(--green-glow);
+        }
+
+        #editor-container {
+            height: 500px;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .ql-toolbar {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            background: #f8f9fa;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .terms-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--green);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .terms-content {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .terms-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-save {
+            background: var(--navy);
+            color: white;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: var(--navy-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-preview {
+            background: transparent;
+            border: 2px solid var(--navy);
+            color: var(--navy);
+        }
+
+        .btn-preview:hover {
+            background: var(--navy);
+            color: white;
+        }
+
+        .preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-content {
+            background: white;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            padding: 1.5rem;
+            background: var(--navy);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .close-preview {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .watermark {
+            opacity: 0.1;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 4rem;
+            color: var(--navy);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cover-page {
+            page-break-after: always;
+            padding: 3rem;
+            text-align: center;
+            border-bottom: 3px solid var(--green);
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 10px;
+        }
+
+        .cover-page h1 {
+            font-size: 2.5rem;
+            color: var(--navy);
+            margin: 2rem 0;
+        }
+
+        .cover-page .meta-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .meta-item h4 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .meta-item p {
+            color: var(--navy);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="glass-nav">
+        <div class="logo-container" onclick="window.location.href='tutor-portal.html'">
+            <img src="favicon.ico" alt="Logo">
+            <span class="brand-name">PEER-2-PEER <span class="green-text">PRO</span></span>
+        </div>
+        <div class="nav-right">
+            <div class="user-pill">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span id="tutorNameDisplay">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="doc-creation-container">
+        <div class="doc-header">
+            <h1>Create Professional Document</h1>
+            <p>Design and save educational materials with P2P Pro watermark and branding</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="docTitle">Document Title *</label>
+                <input type="text" id="docTitle" class="form-control" placeholder="e.g., Grade 10 Mathematics Notes"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="docType">Document Type *</label>
+                <select id="docType" class="form-control" required>
+                    <option value="">Select type...</option>
+                    <option value="Lesson Plan">Lesson Plan</option>
+                    <option value="Worksheet">Worksheet</option>
+                    <option value="Assessment">Assessment</option>
+                    <option value="Notes">Study Notes</option>
+                    <option value="Presentation">Presentation</option>
+                    <option value="Resource">Teaching Resource</option>
+                    <option value="Template">Template</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gradeLevel">Grade Level</label>
+                <select id="gradeLevel" class="form-control">
+                    <option value="">All Grades</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                    <option value="University">University</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" class="form-control" placeholder="e.g., Mathematics, Physics">
+            </div>
+
+            <div class="form-group">
+                <label for="authorInitials">Your Initials *</label>
+                <input type="text" id="authorInitials" class="form-control" placeholder="e.g., J.S." maxlength="5"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="authorSurname">Your Surname *</label>
+                <input type="text" id="authorSurname" class="form-control" placeholder="e.g., Smith" required>
+            </div>
+        </div>
+
+        <div id="editor-container">
+            <!-- Quill editor will be inserted here -->
+        </div>
+
+        <div class="terms-card">
+            <h3><i class="fas fa-file-contract"></i> Terms & Conditions</h3>
+            <div class="terms-content">
+                <p><strong>By saving your document, you agree to the following:</strong></p>
+                <ol>
+                    <li>Your document will include the official "Peer-2-Peer PRO" watermark on every page</li>
+                    <li>The first page will automatically include a P2P Pro cover page with your document details</li>
+                    <li>Your document will be stored in our secure R2 storage with the bucket name "p2p-resources"</li>
+                    <li>Document metadata will be saved to our database for easy retrieval and sharing</li>
+                    <li>You retain intellectual property rights while granting P2P Pro non-exclusive rights to display
+                        and distribute to students</li>
+                    <li>Documents must comply with educational standards and copyright laws</li>
+                    <li>All documents are subject to review for quality assurance</li>
+                    <li>You can download, edit, or delete your documents at any time from your dashboard</li>
+                </ol>
+            </div>
+            <div class="terms-checkbox">
+                <input type="checkbox" id="agreeTerms" onchange="toggleSaveButton()">
+                <label for="agreeTerms">I have read and agree to the terms and conditions above</label>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-preview" onclick="previewDocument()">
+                <i class="fas fa-eye"></i> Preview Document
+            </button>
+            <button class="btn btn-save" id="saveBtn" onclick="saveDocument()" disabled>
+                <i class="fas fa-save"></i> Save to P2P Pro
+            </button>
+        </div>
+    </main>
+
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <div class="preview-header">
+                <h3>Document Preview</h3>
+                <button class="close-preview" onclick="closePreview()">&times;</button>
+            </div>
+            <div class="preview-body" id="previewBody">
+                <!-- Preview content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <script src="tutor.js"></script>
+    <script>
+        // Initialize Quill Editor
+        const quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'script': 'sub' }, { 'script': 'super' }],
+                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'font': [] }],
+                    [{ 'align': [] }],
+                    ['link', 'image', 'video', 'formula'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Set default content
+        quill.root.innerHTML = `
+            <h2>Welcome to Your Document</h2>
+            <p>Start typing your educational content here...</p>
+            <p>You can use the toolbar above to format your text, add images, links, and more.</p>
+            <p>This editor supports rich text formatting and will preserve your layout when saved.</p>
+        `;
+
+        function toggleSaveButton() {
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            const title = document.getElementById('docTitle').value.trim();
+            const initials = document.getElementById('authorInitials').value.trim();
+            const surname = document.getElementById('authorSurname').value.trim();
+
+            document.getElementById('saveBtn').disabled = !(agreeTerms && title && initials && surname);
+        }
+
+        // Add validation to form fields
+        ['docTitle', 'authorInitials', 'authorSurname'].forEach(id => {
+            document.getElementById(id).addEventListener('input', toggleSaveButton);
+        });
+
+        function previewDocument() {
+            const modal = document.getElementById('previewModal');
+            const previewBody = document.getElementById('previewBody');
+
+            // Get form data
+            const title = document.getElementById('docTitle').value || "Untitled Document";
+            const docType = document.getElementById('docType').value || "Document";
+            const grade = document.getElementById('gradeLevel').value || "Not Specified";
+            const subject = document.getElementById('subject').value || "General";
+            const initials = document.getElementById('authorInitials').value || "A.B.";
+            const surname = document.getElementById('authorSurname').value || "Author";
+
+            // Generate preview HTML with cover page
+            const content = quill.root.innerHTML;
+
+            previewBody.innerHTML = `
+                <div class="cover-page">
+                    <img src="favicon.ico" alt="P2P Pro Logo" style="width: 100px; margin-bottom: 20px;">
+                    <h1>${title}</h1>
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <h4>Document Type</h4>
+                            <p>${docType}</p>
+                        </div>
+                        <div class="meta-item">
+                            <h4>Grade Level</h4>
+                            <p>${grade}</p>
+                        </div>
+                        <div class="meta-item">
+                            <h4>Subject</h4>
+                            <p>${subject}</p>
+                        </div>
+                        <div class="meta-item">
+                            <h4>Author</h4>
+                            <p>${initials} ${surname}</p>
+                        </div>
+                        <div class="meta-item">
+                            <h4>Created On</h4>
+                            <p>${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <div class="meta-item">
+                            <h4>Platform</h4>
+                            <p>Peer-2-Peer PRO</p>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-muted); margin-top: 2rem;">
+                        This document was created using the Peer-2-Peer Pro platform<br>
+                        and includes the official P2P Pro watermark.
+                    </p>
+                </div>
+                <div style="position: relative;">
+                    <div class="watermark">PEER-2-PEER PRO</div>
+                    ${content}
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        async function saveDocument() {
+            const title = document.getElementById('docTitle').value.trim();
+            const docType = document.getElementById('docType').value;
+            const grade = document.getElementById('gradeLevel').value;
+            const subject = document.getElementById('subject').value.trim();
+            const initials = document.getElementById('authorInitials').value.trim();
+            const surname = document.getElementById('authorSurname').value.trim();
+
+            if (!title || !initials || !surname || !docType) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Get editor content
+            const content = quill.root.innerHTML;
+            const fullName = `${initials} ${surname}`;
+
+            // Create document with cover page and watermark
+            const fullDocument = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${title} | P2P Pro Document</title>
+                    <style>
+                        body { 
+                            font-family: 'Inter', sans-serif; 
+                            line-height: 1.6; 
+                            color: #1e293b;
+                            margin: 0;
+                            padding: 20px;
+                        }
+                        .cover-page {
+                            page-break-after: always;
+                            text-align: center;
+                            padding: 40px 20px;
+                            border-bottom: 3px solid #32cd32;
+                            margin-bottom: 40px;
+                        }
+                        .watermark {
+                            opacity: 0.1;
+                            position: fixed;
+                            bottom: 20px;
+                            right: 20px;
+                            font-size: 60px;
+                            color: #000033;
+                            pointer-events: none;
+                            z-index: -1;
+                        }
+                        h1 { color: #000033; }
+                        .meta-grid {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 20px;
+                            margin: 40px 0;
+                            padding: 20px;
+                            background: #f8fafc;
+                            border-radius: 10px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="cover-page">
+                        <h1>${title}</h1>
+                        <div class="meta-grid">
+                            <div><strong>Type:</strong><br>${docType}</div>
+                            <div><strong>Grade:</strong><br>${grade || 'Not Specified'}</div>
+                            <div><strong>Subject:</strong><br>${subject || 'General'}</div>
+                            <div><strong>Author:</strong><br>${fullName}</div>
+                            <div><strong>Date:</strong><br>${new Date().toLocaleDateString()}</div>
+                            <div><strong>Platform:</strong><br>Peer-2-Peer PRO</div>
+                        </div>
+                        <p><em>Created with Peer-2-Peer Pro Educational Platform</em></p>
+                    </div>
+                    <div class="watermark">PEER-2-PEER PRO</div>
+                    ${content}
+                    <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.9em; color: #64748b;">
+                        Document ID: P2P-${Date.now()}<br>
+                        © ${new Date().getFullYear()} Peer-2-Peer Pro. All rights reserved.
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Create Blob for download
+            const blob = new Blob([fullDocument], { type: 'text/html' });
+            const fileName = `P2P_${title.replace(/\s+/g, '_')}_${Date.now()}.html`;
+
+            // Create form data for upload
+            const formData = new FormData();
+            formData.append('file', blob, fileName);
+            formData.append('title', title);
+            formData.append('doc_type', docType);
+            formData.append('grade_level', grade);
+            formData.append('subject', subject);
+            formData.append('author', fullName);
+            formData.append('email', sessionStorage.getItem('p2p_email'));
+            formData.append('uploader_role', 'tutor');
+
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-resource`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Also offer direct download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    alert('✅ Document saved successfully! It has been added to the resources library and downloaded to your device.');
+                    window.location.href = 'resources.html';
+                } else {
+                    alert('Failed to save document: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Failed to save document. Please check your connection.');
+            } finally {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        // Close preview on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreview();
+        });
+
+        // Close preview on outside click
+        document.getElementById('previewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'previewModal') closePreview();
+        });
+    </script>
+</body>
+
+</html>

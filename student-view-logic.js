@@ -3,7 +3,7 @@
  * Fetches and displays all live classes from the database
  */
 
-const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
+const API_BASE = "https://learnerattendlive.buhle-1ce.workers.dev";
 
 async function checkLiveStatus() {
     try {

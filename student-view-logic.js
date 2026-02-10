@@ -19,33 +19,51 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Get student's grade from sessionStorage (assuming it's stored)
+    const studentGrade = sessionStorage.getItem('p2p_grade');
+    if (!studentGrade) {
+        console.warn("Student grade not found in sessionStorage");
+        // You might want to fetch this from your user database
+    }
+
     // Initialize dashboard hero card
     checkLiveStatus();
 
-    // Load all live classes
-    loadAllLiveClasses();
+    // Load all classes (filtered by grade)
+    loadAllClasses();
 
     // Auto-refresh every 30 seconds
-    setInterval(loadAllLiveClasses, 30000);
+    setInterval(loadAllClasses, 30000);
 });
 
 /**
- * FETCH ALL LIVE CLASSES FROM API
+ * FETCH ALL CLASSES FROM API
  */
-async function loadAllLiveClasses() {
+async function loadAllClasses() {
     const container = document.getElementById('liveClassesContainer');
     const loadingState = document.getElementById('loadingState');
 
     try {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
-        const classes = await response.json();
+        const allClasses = await response.json();
+
+        // Get student's grade
+        const studentGrade = sessionStorage.getItem('p2p_grade');
+
+        // Filter classes by grade if student has a grade
+        let filteredClasses = allClasses;
+        if (studentGrade) {
+            filteredClasses = allClasses.filter(cls =>
+                cls.grade == studentGrade || !cls.grade
+            );
+        }
 
         // Hide loading, show container
         loadingState.style.display = 'none';
         container.style.display = 'grid';
 
-        // Render the classes using the render function
-        renderLiveClasses(classes);
+        // Render the filtered classes
+        renderAllClasses(filteredClasses);
 
         // Update last refresh time
         updateRefreshTime();
@@ -58,106 +76,129 @@ async function loadAllLiveClasses() {
 }
 
 /**
- * RENDER LIVE CLASSES TO THE GRID
+ * RENDER ALL CLASSES TO THE GRID
  */
-function renderLiveClasses(classes) {
+function renderAllClasses(classes) {
     const container = document.getElementById('liveClassesContainer');
+    const studentGrade = sessionStorage.getItem('p2p_grade');
 
-    // Sort classes: active first, then by date/time
+    // Sort classes: active first, then scheduled, then by date/time
     const sortedClasses = [...classes].sort((a, b) => {
-        // Active classes first
-        if (a.status === 'active' && b.status !== 'active') return -1;
-        if (a.status !== 'active' && b.status === 'active') return 1;
+        // Status priority: active > scheduled > others
+        const statusOrder = { 'active': 1, 'scheduled': 2, 'completed': 3 };
+        const statusA = statusOrder[a.status] || 4;
+        const statusB = statusOrder[b.status] || 4;
 
-        // Then by date and time
+        if (statusA !== statusB) return statusA - statusB;
+
+        // Then by date and time (soonest first)
         const dateA = new Date(`${a.scheduled_date || '9999-12-31'}T${a.scheduled_time || '23:59'}`);
         const dateB = new Date(`${b.scheduled_date || '9999-12-31'}T${b.scheduled_time || '23:59'}`);
         return dateA - dateB;
     });
 
-    // Filter out completed classes
-    const activeClasses = sortedClasses.filter(cls => cls.status !== 'completed');
-
-    if (activeClasses.length === 0) {
-        showNoClassesMessage(container);
+    if (sortedClasses.length === 0) {
+        showNoClassesMessage(container, studentGrade);
         return;
     }
 
-    container.innerHTML = activeClasses.map(cls => {
-        const isActive = cls.status === 'active';
-        const isScheduled = cls.status === 'scheduled';
-        const isUpcoming = isScheduled && isClassUpcoming(cls);
+    // Group classes by status
+    const activeClasses = sortedClasses.filter(cls => cls.status === 'active');
+    const scheduledClasses = sortedClasses.filter(cls => cls.status === 'scheduled');
+    const otherClasses = sortedClasses.filter(cls => !['active', 'scheduled'].includes(cls.status));
 
-        // Format date and time
-        const displayDate = formatDisplayDate(cls.scheduled_date);
-        const displayTime = formatDisplayTime(cls.scheduled_time);
+    let htmlContent = '';
 
-        // Determine button state and text
-        let buttonHtml = '';
-        let buttonClass = 'btn-disabled';
-        let buttonText = '';
-        let onClick = '';
-
-        if (isActive) {
-            buttonClass = 'btn-enabled';
-            buttonText = '<i class="fas fa-sign-in-alt"></i> JOIN LIVE SESSION';
-            onClick = `joinLiveSession('${encodeURIComponent(cls.room_name)}')`;
-        } else if (isUpcoming) {
-            buttonClass = 'btn-upcoming';
-            buttonText = `<i class="fas fa-clock"></i> STARTS IN ${getTimeUntilClass(cls)}`;
-            onClick = '';
-        } else {
-            buttonClass = 'btn-disabled';
-            buttonText = '<i class="fas fa-calendar"></i> SCHEDULED';
-            onClick = '';
-        }
-
-        return `
-            <div class="class-card ${isActive ? 'active-live' : ''}">
-                ${isActive ? '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>' :
-                isUpcoming ? '<div class="upcoming-badge"><i class="fas fa-clock"></i> UPCOMING</div>' : ''}
-                
-                <div class="class-header">
-                    <h3>${escapeHtml(cls.topic || 'Untitled Class')}</h3>
-                    <span class="grade-tag">Grade ${cls.grade || 'N/A'}</span>
-                </div>
-                
-                <div class="class-info">
-                    <div class="info-row">
-                        <i class="fas fa-user-tie"></i>
-                        <span>Tutor: ${escapeHtml(cls.tutor_name || 'Unknown Tutor')}</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Date: ${displayDate}</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <i class="fas fa-clock"></i>
-                        <span>Time: ${displayTime}</span>
-                        ${isUpcoming && !isActive ? `<span class="countdown-text">(${getTimeUntilClass(cls)})</span>` : ''}
-                    </div>
-                    
-                    ${cls.tutor_email ? `
-                    <div class="info-row">
-                        <i class="fas fa-envelope"></i>
-                        <span>Contact: ${escapeHtml(cls.tutor_email)}</span>
-                    </div>
-                    ` : ''}
-                </div>
-                
-                <button class="join-btn ${buttonClass}" ${onClick ? `onclick="${onClick}"` : 'disabled'}>
-                    ${buttonText}
-                </button>
+    // Show grade filter info
+    if (studentGrade) {
+        htmlContent += `
+            <div style="grid-column: 1/-1; margin-bottom: 20px; padding: 15px; background: rgba(50, 205, 50, 0.1); border-radius: 10px;">
+                <p style="color: #32cd32; margin: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-filter"></i>
+                    Showing classes for Grade ${studentGrade}
+                    <button onclick="showAllGrades()" style="
+                        background: transparent;
+                        color: #94a3b8;
+                        border: 1px solid #94a3b8;
+                        padding: 5px 15px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-left: auto;
+                        font-size: 0.9rem;
+                    ">
+                        Show All Grades
+                    </button>
+                </p>
             </div>
         `;
-    }).join('');
+    }
+
+    // Active Classes Section
+    if (activeClasses.length > 0) {
+        htmlContent += `
+            <div style="grid-column: 1/-1; margin: 20px 0 10px 0;">
+                <h3 style="color: #32cd32; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-broadcast-tower"></i>
+                    Live Now (${activeClasses.length})
+                </h3>
+            </div>
+        `;
+
+        htmlContent += activeClasses.map(cls => renderClassCard(cls)).join('');
+    }
+
+    // Scheduled/Upcoming Classes Section
+    if (scheduledClasses.length > 0) {
+        const upcomingClasses = scheduledClasses.filter(cls => isClassUpcoming(cls));
+        const futureClasses = scheduledClasses.filter(cls => !isClassUpcoming(cls));
+
+        if (upcomingClasses.length > 0) {
+            htmlContent += `
+                <div style="grid-column: 1/-1; margin: 40px 0 10px 0;">
+                    <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-clock"></i>
+                        Starting Soon (${upcomingClasses.length})
+                    </h3>
+                </div>
+            `;
+
+            htmlContent += upcomingClasses.map(cls => renderClassCard(cls)).join('');
+        }
+
+        if (futureClasses.length > 0) {
+            htmlContent += `
+                <div style="grid-column: 1/-1; margin: 40px 0 10px 0;">
+                    <h3 style="color: #94a3b8; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-calendar-alt"></i>
+                        Scheduled Classes (${futureClasses.length})
+                    </h3>
+                </div>
+            `;
+
+            htmlContent += futureClasses.map(cls => renderClassCard(cls)).join('');
+        }
+    }
+
+    // Other Classes Section
+    if (otherClasses.length > 0) {
+        htmlContent += `
+            <div style="grid-column: 1/-1; margin: 40px 0 10px 0;">
+                <h3 style="color: #64748b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-history"></i>
+                    Other Classes (${otherClasses.length})
+                </h3>
+            </div>
+        `;
+
+        htmlContent += otherClasses.map(cls => renderClassCard(cls)).join('');
+    }
+
+    container.innerHTML = htmlContent;
 
     // Add refresh button at the bottom
     container.innerHTML += `
         <div style="grid-column: 1/-1; text-align: center; padding: 20px; margin-top: 20px;">
-            <button onclick="loadAllLiveClasses()" style="
+            <button onclick="loadAllClasses()" style="
                 background: rgba(50, 205, 50, 0.1);
                 color: #32cd32;
                 border: 1px solid #32cd32;
@@ -173,8 +214,139 @@ function renderLiveClasses(classes) {
             <p id="lastUpdated" style="color: #94a3b8; margin-top: 10px; font-size: 0.9rem;">
                 Last updated: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
+            <p style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">
+                Showing ${sortedClasses.length} classes
+                ${studentGrade ? `(Filtered by Grade ${studentGrade})` : ''}
+            </p>
         </div>
     `;
+}
+
+/**
+ * RENDER INDIVIDUAL CLASS CARD
+ */
+function renderClassCard(cls) {
+    const isActive = cls.status === 'active';
+    const isScheduled = cls.status === 'scheduled';
+    const isUpcoming = isScheduled && isClassUpcoming(cls);
+    const isCompleted = cls.status === 'completed';
+
+    // Format date and time
+    const displayDate = formatDisplayDate(cls.scheduled_date);
+    const displayTime = formatDisplayTime(cls.scheduled_time);
+
+    // Determine badge, button state, and text
+    let badge = '';
+    let buttonClass = 'btn-disabled';
+    let buttonText = '';
+    let onClick = '';
+    let cardStatus = '';
+
+    if (isActive) {
+        badge = '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>';
+        buttonClass = 'btn-enabled';
+        buttonText = '<i class="fas fa-sign-in-alt"></i> JOIN LIVE SESSION';
+        onClick = `joinLiveSession('${encodeURIComponent(cls.room_name)}')`;
+        cardStatus = 'active-live';
+    } else if (isUpcoming) {
+        badge = '<div class="upcoming-badge"><i class="fas fa-clock"></i> UPCOMING</div>';
+        buttonClass = 'btn-upcoming';
+        buttonText = `<i class="fas fa-clock"></i> STARTS IN ${getTimeUntilClass(cls)}`;
+        onClick = '';
+        cardStatus = '';
+    } else if (isScheduled) {
+        badge = '<div class="scheduled-badge"><i class="fas fa-calendar"></i> SCHEDULED</div>';
+        buttonClass = 'btn-disabled';
+        buttonText = '<i class="fas fa-calendar"></i> SCHEDULED';
+        onClick = '';
+        cardStatus = '';
+    } else if (isCompleted) {
+        badge = '<div class="completed-badge"><i class="fas fa-check-circle"></i> COMPLETED</div>';
+        buttonClass = 'btn-disabled';
+        buttonText = '<i class="fas fa-check"></i> CLASS ENDED';
+        onClick = '';
+        cardStatus = '';
+    } else {
+        badge = `<div class="unknown-badge"><i class="fas fa-question-circle"></i> ${cls.status?.toUpperCase() || 'UNKNOWN'}</div>`;
+        buttonClass = 'btn-disabled';
+        buttonText = '<i class="fas fa-info-circle"></i> VIEW DETAILS';
+        onClick = '';
+        cardStatus = '';
+    }
+
+    return `
+        <div class="class-card ${cardStatus}">
+            ${badge}
+            
+            <div class="class-header">
+                <h3>${escapeHtml(cls.topic || 'Untitled Class')}</h3>
+                <span class="grade-tag">Grade ${cls.grade || 'N/A'}</span>
+                ${cls.grade ? `<span class="grade-match" style="
+                    display: inline-block;
+                    background: rgba(50, 205, 50, 0.1);
+                    color: #32cd32;
+                    padding: 2px 8px;
+                    border-radius: 5px;
+                    font-size: 0.75rem;
+                    margin-left: 5px;
+                "><i class="fas fa-check"></i> Your Grade</span>` : ''}
+            </div>
+            
+            <div class="class-info">
+                <div class="info-row">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Tutor: ${escapeHtml(cls.tutor_name || 'Unknown Tutor')}</span>
+                </div>
+                
+                <div class="info-row">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Date: ${displayDate}</span>
+                </div>
+                
+                <div class="info-row">
+                    <i class="fas fa-clock"></i>
+                    <span>Time: ${displayTime}</span>
+                    ${isUpcoming && !isActive ? `<span class="countdown-text">(${getTimeUntilClass(cls)})</span>` : ''}
+                </div>
+                
+                <div class="info-row">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Status: <span style="color: ${getStatusColor(cls.status)}">${cls.status || 'unknown'}</span></span>
+                </div>
+                
+                ${cls.tutor_email ? `
+                <div class="info-row">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact: ${escapeHtml(cls.tutor_email)}</span>
+                </div>
+                ` : ''}
+                
+                ${cls.room_name ? `
+                <div class="info-row">
+                    <i class="fas fa-door-closed"></i>
+                    <span>Room: ${escapeHtml(cls.room_name)}</span>
+                </div>
+                ` : ''}
+            </div>
+            
+            <button class="join-btn ${buttonClass}" ${onClick ? `onclick="${onClick}"` : 'disabled'}>
+                ${buttonText}
+            </button>
+        </div>
+    `;
+}
+
+/**
+ * GET STATUS COLOR
+ */
+function getStatusColor(status) {
+    switch (status) {
+        case 'active': return '#32cd32';
+        case 'scheduled': return '#f59e0b';
+        case 'completed': return '#94a3b8';
+        case 'cancelled': return '#ef4444';
+        default: return '#64748b';
+    }
 }
 
 /**
@@ -191,6 +363,15 @@ function joinLiveSession(roomName) {
     setTimeout(() => {
         window.location.href = `live-session.html?room=${roomName}`;
     }, 1000);
+}
+
+/**
+ * SHOW ALL GRADES (REMOVE FILTER)
+ */
+function showAllGrades() {
+    sessionStorage.removeItem('p2p_grade');
+    showNotification("Showing classes for all grades", "success");
+    loadAllClasses();
 }
 
 /**
@@ -211,8 +392,21 @@ async function checkLiveStatus() {
         const response = await fetch(`${API_BASE}/api/get-all-classes`);
         const classes = await response.json();
 
-        // Find the first class that is currently 'active'
-        const liveClass = classes.find(c => c.status === 'active');
+        // Get student's grade
+        const studentGrade = sessionStorage.getItem('p2p_grade');
+
+        // Find the first class that is currently 'active' and matches student's grade
+        let liveClass = classes.find(c => c.status === 'active');
+
+        // If student has a grade, try to find active class in their grade
+        if (studentGrade && liveClass && liveClass.grade != studentGrade) {
+            const gradeLiveClass = classes.find(c =>
+                c.status === 'active' && c.grade == studentGrade
+            );
+            if (gradeLiveClass) {
+                liveClass = gradeLiveClass;
+            }
+        }
 
         const statusText = document.getElementById('heroClassStatus');
         const topicText = document.getElementById('heroClassTopic');
@@ -247,13 +441,50 @@ async function checkLiveStatus() {
             heroCard.style.cursor = 'pointer';
             heroCard.style.borderColor = '#32cd32';
         } else {
-            // Reset to default
-            statusText.textContent = 'Live Classes';
-            topicText.textContent = 'View the daily schedule';
-            badgeContainer.innerHTML = '';
-            heroCard.onclick = null;
-            heroCard.style.cursor = 'default';
-            heroCard.style.borderColor = '';
+            // Check if there are any upcoming classes
+            const studentGrade = sessionStorage.getItem('p2p_grade');
+            let filteredClasses = classes;
+            if (studentGrade) {
+                filteredClasses = classes.filter(cls =>
+                    cls.grade == studentGrade || !cls.grade
+                );
+            }
+
+            const upcomingClass = filteredClasses.find(cls =>
+                cls.status === 'scheduled' && isClassUpcoming(cls)
+            );
+
+            if (upcomingClass) {
+                statusText.innerHTML = `<span style="color: #f59e0b;">⏰ UPCOMING</span>`;
+                topicText.innerText = `${upcomingClass.topic} starts in ${getTimeUntilClass(upcomingClass)}`;
+
+                badgeContainer.innerHTML = `
+                    <div style="
+                        background: #f59e0b;
+                        color: black;
+                        padding: 8px 15px;
+                        border-radius: 20px;
+                        font-weight: bold;
+                        font-size: 0.9rem;
+                    ">
+                        <i class="fas fa-clock"></i> COMING SOON
+                    </div>
+                `;
+
+                heroCard.onclick = null;
+                heroCard.style.cursor = 'default';
+                heroCard.style.borderColor = '';
+            } else {
+                // Reset to default
+                statusText.textContent = 'Live Classes';
+                topicText.textContent = studentGrade
+                    ? `View classes for Grade ${studentGrade}`
+                    : 'View all scheduled classes';
+                badgeContainer.innerHTML = '';
+                heroCard.onclick = null;
+                heroCard.style.cursor = 'default';
+                heroCard.style.borderColor = '';
+            }
         }
     } catch (err) {
         console.error("Dashboard sync error:", err);
@@ -343,27 +574,60 @@ function formatDisplayTime(timeString) {
 /**
  * SHOW NO CLASSES MESSAGE
  */
-function showNoClassesMessage(container) {
+function showNoClassesMessage(container, studentGrade) {
     container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
             <i class="fas fa-calendar-times" style="font-size: 3rem; color: #64748b; margin-bottom: 20px;"></i>
-            <h3 style="color: #fff; margin-bottom: 10px;">No Live Classes Available</h3>
+            <h3 style="color: #fff; margin-bottom: 10px;">
+                ${studentGrade ? `No Classes for Grade ${studentGrade}` : 'No Classes Available'}
+            </h3>
             <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px;">
-                There are no live or scheduled classes at the moment.
+                ${studentGrade
+            ? `There are no classes scheduled for Grade ${studentGrade} at the moment.`
+            : 'There are no live or scheduled classes at the moment.'}
                 Check back later or ask your tutor to schedule a session.
             </p>
-            <button onclick="loadAllLiveClasses()" style="
-                background: #32cd32;
-                color: #000;
-                border: none;
-                padding: 12px 30px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: bold;
-                font-size: 1rem;
-            ">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
+            ${studentGrade ? `
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="showAllGrades()" style="
+                        background: rgba(50, 205, 50, 0.1);
+                        color: #32cd32;
+                        border: 1px solid #32cd32;
+                        padding: 12px 25px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1rem;
+                    ">
+                        <i class="fas fa-filter"></i> Show All Grades
+                    </button>
+                    <button onclick="loadAllClasses()" style="
+                        background: #32cd32;
+                        color: #000;
+                        border: none;
+                        padding: 12px 25px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1rem;
+                    ">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            ` : `
+                <button onclick="loadAllClasses()" style="
+                    background: #32cd32;
+                    color: #000;
+                    border: none;
+                    padding: 12px 30px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    font-size: 1rem;
+                ">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            `}
         </div>
     `;
 }
@@ -382,7 +646,7 @@ function showErrorMessage(container, error) {
             <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px;">
                 Error: ${error.message}
             </p>
-            <button onclick="loadAllLiveClasses()" style="
+            <button onclick="loadAllClasses()" style="
                 background: rgba(239, 68, 68, 0.1);
                 color: #ef4444;
                 border: 1px solid #ef4444;
@@ -450,7 +714,7 @@ function showNotification(message, type) {
     }, 4000);
 }
 
-// Add CSS for animations
+// Add CSS for animations and badges
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -484,6 +748,66 @@ style.textContent = `
     
     .live-pulse-badge {
         animation: pulse 2s infinite;
+    }
+    
+    /* Badge Styles */
+    .scheduled-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .completed-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(100, 116, 139, 0.2);
+        color: #64748b;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .unknown-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(100, 116, 139, 0.2);
+        color: #64748b;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-upcoming {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #000;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: not-allowed;
+        transition: 0.3s;
+        margin-top: 15px;
+        width: 100%;
+        opacity: 0.9;
     }
 `;
 document.head.appendChild(style);

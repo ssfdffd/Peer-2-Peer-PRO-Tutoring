@@ -1,3 +1,5 @@
+[file name]: forum.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,13 +9,14 @@
     <title>Student Forum | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 
 <body class="forum-body">
     <nav id="navbar">
         <div class="logo">
-            <img src="favicon.ico" alt="Logo">
-            Peer-2-Peer <span class="pro-text">PRO</span> | Forum
+            <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo">
+            Peer-2-Peer <span class="pro-text">PRO</span> | Student Forum
         </div>
         <div class="nav-right">
             <a href="resources.html" class="home-btn"><i class="fas fa-book"></i> Library</a>
@@ -23,16 +26,60 @@
 
     <main class="forum-container">
         <div class="chat-header">
-            <h2><i class="fas fa-comments"></i> Community Discussion</h2>
-            <p>Ask questions and share knowledge with your peers</p>
+            <h2><i class="fas fa-comments"></i> Grade-Based Student Forum</h2>
+            <p>Connect with peers in your grade and get answers from teachers</p>
+        </div>
+
+        <div class="grade-filter-container">
+            <div class="grade-filter-header">
+                <h3><i class="fas fa-filter"></i> Filter by Grade Level</h3>
+                <div class="filter-controls">
+                    <select id="gradeSelect" class="grade-select">
+                        <option value="all">All Grades (1-12)</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                    <button id="toggleFilterBtn" class="toggle-filter-btn">
+                        <i class="fas fa-eye-slash"></i> Hide Other Grades
+                    </button>
+                </div>
+            </div>
+            <div class="grade-tags" id="gradeTags">
+                <!-- Grade tags will be generated here -->
+            </div>
         </div>
 
         <div id="chatBox" class="chat-box">
-            <div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading discussion...</div>
+            <div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading discussions...</div>
         </div>
 
         <form id="messageForm" class="message-input-area">
-            <input type="text" id="messageInput" placeholder="Type your message here..." required>
+            <input type="text" id="messageInput" placeholder="Type your question or message here..." required>
+            <select id="gradeSelectInput" class="grade-select" style="width: 150px;">
+                <option value="" selected disabled>Select Grade</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+            </select>
             <button type="submit" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
         </form>
     </main>

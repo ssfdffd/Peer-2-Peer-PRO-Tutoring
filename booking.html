@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer-2-Peer PRO | Book 1-on-1 </title>
+    <link rel="stylesheet" href="booking.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav id="navbar">
+        <div class="logo">Peer-2-Peer <span class="pro-text">PRO</span> |Book 1-on-1</div>
+        <a href="index.html" class="home-btn">Home</a>
+    </nav>
+
+    <div class="booking-container">
+        <div class="form-header">
+            <h2>Schedule Private Session</h2>
+            <p>Note: Sessions must be booked 1 week (7 days) in advance.</p>
+        </div>
+
+        <form id="bookingForm">
+            <div class="input-group">
+                <input type="text" id="stuName" placeholder="Student Name & Surname" required>
+                <input type="email" id="stuEmail" placeholder="Student Email" required>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="parContact" placeholder="Parent WhatsApp/Contact No." required>
+                <select id="subject" required>
+                    <option value="">Select Subject</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physical Science">Physical Science</option>
+                    <option value="English">English</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <div class="date-wrapper">
+                    <label>Select Date</label>
+                    <input type="date" id="bookDate" required>
+                </div>
+                <div class="date-wrapper">
+                    <label>Select Time</label>
+                    <input type="time" id="bookTime" required>
+                </div>
+            </div>
+
+            <div class="approval-area">
+                <input type="checkbox" id="approval" required>
+                <label for="approval">I have received parental approval for this session.</label>
+            </div>
+
+            <button type="submit" id="submitBtn">Schedule Class</button>
+        </form>
+
+        <div id="confirmationArea" class="hidden">
+            <div class="success-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>Booking Confirmed!</h3>
+                <p id="detailsText"></p>
+                <div class="link-box">
+                    <span>Your Private Jitsi Room:</span>
+                    <a id="roomLink" href="#" target="_blank"></a>
+                </div>
+                <small>Bookmark this page or save the link to join on the day.</small>
+            </div>
+        </div>
+    </div>
+
+    <script src="booking.js"></script>
+</body>
+
+</html>

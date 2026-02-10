@@ -1,3 +1,7 @@
+// ─────────────────────────────────────────────────────────────────
+// Peer-2-Peer PRO  |  Resources Library
+// ─────────────────────────────────────────────────────────────────
+
 // 1. CONFIGURATION & STATE
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev";
 let allResources = [];
@@ -9,69 +13,55 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
     initScrollAnimation();
 
-    // Set today's date as default
+    // Default date = today
     document.getElementById('docDate').valueAsDate = new Date();
 
-    // Initialize filters
     populateFilterOptions();
 
-    // File Input Listener
-    const fileInput = document.getElementById('fileInput');
-    if (fileInput) {
-        fileInput.addEventListener('change', function () {
-            updateFileName(this);
-        });
-    }
-
-    // Modal Close Logic
+    // Modal close logic
     const modal = document.getElementById("docModal");
     const closeBtn = document.querySelector(".close-modal");
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-            document.body.style.overflow = 'auto';
-        };
-    }
 
-    // Close modal on ESC key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-            document.body.style.overflow = 'auto';
-        }
+    const closeModal = () => {
+        modal.style.display = "none";
+        const viewer = document.getElementById("docViewer");
+        // Clear iframe src so it stops loading / streaming
+        viewer.src = "about:blank";
+        document.body.style.overflow = "auto";
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
     });
 
-    // Search and Filter Listeners
+    // Close modal when clicking the dark overlay
+    modal?.addEventListener('click', e => {
+        if (e.target === modal) closeModal();
+    });
+
+    // Search & filter listeners
     document.getElementById('searchInput')?.addEventListener('input', debounce(filterDocuments, 300));
-    document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('uploaderRoleFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('docTypeFilter')?.addEventListener('change', filterDocuments);
-    document.getElementById('dateFilter')?.addEventListener('change', filterDocuments);
+    ['subjectFilter', 'gradeFilter', 'uploaderRoleFilter', 'docTypeFilter', 'dateFilter']
+        .forEach(id => document.getElementById(id)?.addEventListener('change', filterDocuments));
 
-    // Pagination Listeners
+    // Pagination
     document.getElementById('prevPage')?.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderCards(getFilteredData());
-            window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
+        if (currentPage > 1) { currentPage--; renderCards(getFilteredData()); scrollToGrid(); }
     });
-
     document.getElementById('nextPage')?.addEventListener('click', () => {
         const filtered = getFilteredData();
         const maxPage = Math.ceil(filtered.length / itemsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderCards(filtered);
-            window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
+        if (currentPage < maxPage) { currentPage++; renderCards(filtered); scrollToGrid(); }
     });
 });
 
-// 3. POPULATE FILTER OPTIONS
+function scrollToGrid() {
+    document.getElementById('fileGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 3. POPULATE SUBJECT FILTER
 function populateFilterOptions() {
     const subjects = [
         "accounting", "afrikaans", "agricultural management practices",
@@ -89,129 +79,109 @@ function populateFilterOptions() {
         "technical sciences", "tourism", "tshivenda", "visual arts", "xitsonga"
     ].sort();
 
-    const subjectFilter = document.getElementById('subjectFilter');
-    subjects.forEach(subject => {
-        const option = document.createElement('option');
-        option.value = subject;
-        option.textContent = subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
-        subjectFilter.appendChild(option);
+    const el = document.getElementById('subjectFilter');
+    subjects.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ');
+        el.appendChild(opt);
     });
 }
 
-// 4. FETCH DATA FROM WORKER
+// 4. LOAD LIBRARY FROM WORKER
 async function loadLibrary() {
     const grid = document.getElementById('fileGrid');
-    grid.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Accessing Cloud Library...</div>';
+    grid.innerHTML = `<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading library...</div>`;
 
     try {
-        const response = await fetch(`${API_URL}/api/resources`);
-        const data = await response.json();
+        const res = await fetch(`${API_URL}/api/resources`);
+        const data = await res.json();
 
         allResources = Array.isArray(data) ? data : (data.results || []);
 
-        // Ensure file_url is properly set
-        allResources.forEach(resource => {
-            if (!resource.file_url || resource.file_url === '#') {
-                resource.file_url = `${API_URL}/api/file/${resource.actual_file_key}`;
-            }
+        // Ensure every resource has correct view & download URLs from our worker
+        allResources.forEach(r => {
+            r.file_url = `${API_URL}/api/file/${r.actual_file_key}`;
+            r.download_url = `${API_URL}/api/download/${r.actual_file_key}`;
         });
 
         renderCards(allResources);
-    } catch (error) {
-        console.error("Fetch error:", error);
-        grid.innerHTML = '<p style="color:red; text-align:center;">Failed to connect to library. Please check your connection.</p>';
+    } catch (err) {
+        console.error("loadLibrary error:", err);
+        grid.innerHTML = `
+            <div class="load-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Could not reach the library. Check your connection and try again.</p>
+                <button onclick="loadLibrary()">Retry</button>
+            </div>`;
     }
 }
 
-// 5. GENERATE FILE URL FOR MISSING FILES
-function generateFileUrl(resource) {
-    return `${API_URL}/api/file/${resource.actual_file_key}`;
-}
-
-// 6. ADVANCED FILTERING LOGIC
+// 5. FILTERING
 function getFilteredData() {
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
-    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
-    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
-    const roleTerm = document.getElementById('uploaderRoleFilter')?.value || "";
-    const docTypeTerm = document.getElementById('docTypeFilter')?.value || "";
-    const dateTerm = document.getElementById('dateFilter')?.value || "";
-    const searchWords = searchText.split(' ').filter(word => word.length > 0);
+    const search = (document.getElementById('searchInput')?.value || "").toLowerCase();
+    const subject = (document.getElementById('subjectFilter')?.value || "").toLowerCase();
+    const grade = document.getElementById('gradeFilter')?.value || "";
+    const role = document.getElementById('uploaderRoleFilter')?.value || "";
+    const docType = document.getElementById('docTypeFilter')?.value || "";
+    const date = document.getElementById('dateFilter')?.value || "";
+    const words = search.split(' ').filter(w => w.length > 0);
 
     return allResources.filter(item => {
-        // Google-like search in title
-        let matchesSearch = true;
-        if (searchWords.length > 0) {
-            const title = (item.title || "").toLowerCase();
-            matchesSearch = searchWords.every(word => title.includes(word));
-        }
-
-        // Other filters
-        const matchesSubject = subjectTerm === "" || (item.subject && item.subject.toLowerCase() === subjectTerm);
-        const matchesGrade = gradeTerm === "" || (item.grade_level && item.grade_level.toString() === gradeTerm);
-        const matchesRole = roleTerm === "" || (item.uploader_role && item.uploader_role.toLowerCase() === roleTerm);
-        const matchesDocType = docTypeTerm === "" || (item.doc_type && item.doc_type.toLowerCase() === docTypeTerm);
-
-        // Date filtering
-        let matchesDate = true;
-        if (dateTerm && item.upload_date) {
+        const title = (item.title || "").toLowerCase();
+        if (words.length && !words.every(w => title.includes(w))) return false;
+        if (subject && (item.subject || "").toLowerCase() !== subject) return false;
+        if (grade && String(item.grade_level || "") !== grade) return false;
+        if (role && (item.uploader_role || "").toLowerCase() !== role) return false;
+        if (docType && (item.doc_type || "").toLowerCase() !== docType) return false;
+        if (date && item.upload_date) {
             const itemDate = new Date(item.upload_date).toISOString().split('T')[0];
-            matchesDate = itemDate === dateTerm;
+            if (itemDate !== date) return false;
         }
-
-        return matchesSearch && matchesSubject && matchesGrade && matchesRole && matchesDocType && matchesDate;
+        return true;
     });
 }
 
-// 7. DEBOUNCE FUNCTION FOR SEARCH
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
+function filterDocuments() { currentPage = 1; renderCards(getFilteredData()); }
 
-// 8. RENDER CARDS WITH HIGHLIGHTING
+// 6. RENDER CARDS
 function renderCards(data) {
     const grid = document.getElementById('fileGrid');
     if (!grid) return;
     grid.innerHTML = "";
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = data.slice(startIndex, endIndex);
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
+    const start = (currentPage - 1) * itemsPerPage;
+    const pageData = data.slice(start, start + itemsPerPage);
+    const search = (document.getElementById('searchInput')?.value || "").toLowerCase();
 
-    if (paginatedItems.length === 0) {
-        grid.innerHTML = '<p class="no-results"><i class="fas fa-search"></i> No documents found matching your search.</p>';
+    if (pageData.length === 0) {
+        grid.innerHTML = `<p class="no-results"><i class="fas fa-search"></i> No documents found.</p>`;
+        updatePagination(data.length);
         return;
     }
 
-    paginatedItems.forEach(item => {
+    pageData.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
+        const iconClass = getFileIconClass(item.doc_type, item.file_url);
+        const uploadDate = item.upload_date ? new Date(item.upload_date).toLocaleDateString('en-ZA') : 'Unknown';
 
         // Highlight search terms in title
-        let titleHTML = item.title || "Untitled Document";
-        if (searchText) {
-            const regex = new RegExp(`(${searchText.split(' ').filter(w => w).join('|')})`, 'gi');
-            titleHTML = titleHTML.replace(regex, '<span class="highlight">$1</span>');
+        let titleHTML = escapeHtml(item.title || "Untitled Document");
+        if (search) {
+            const rx = new RegExp(`(${search.split(' ').filter(w => w).map(escapeRegex).join('|')})`, 'gi');
+            titleHTML = titleHTML.replace(rx, '<span class="highlight">$1</span>');
         }
 
-        // Get appropriate icon
-        const iconClass = getFileIconClass(item.doc_type, item.file_url);
-
-        // Format date
-        const uploadDate = item.upload_date ? new Date(item.upload_date).toLocaleDateString() : 'Unknown';
+        // Safe attributes for inline onclick
+        const safeUrl = item.file_url.replace(/'/g, "\\'");
+        const safeDlUrl = item.download_url.replace(/'/g, "\\'");
+        const safeTitle = (item.title || "document").replace(/'/g, "\\'");
+        const safeFile = (item.file_name || item.title || "document").replace(/'/g, "\\'");
 
         card.innerHTML = `
             <div class="card-icon-header">
-                <div class="category-tag">${item.doc_type ? item.doc_type.replace('_', ' ') : 'Document'}</div>
+                <div class="category-tag">${(item.doc_type || 'Document').replace(/_/g, ' ')}</div>
                 <i class="fas ${iconClass} file-type-icon"></i>
             </div>
             <div class="card-body">
@@ -219,106 +189,98 @@ function renderCards(data) {
                 <div class="document-info">
                     <div class="info-item">
                         <i class="fas fa-user-tag"></i>
-                        <strong>Uploaded by:</strong> ${item.uploader_role || 'Unknown'}
+                        <span><strong>Role:</strong> ${item.uploader_role || 'Unknown'}</span>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-graduation-cap"></i>
-                        <strong>Grade:</strong> ${item.grade_level || "N/A"}
+                        <span><strong>Grade:</strong> ${item.grade_level || 'N/A'}</span>
                     </div>
                     <div class="info-item">
                         <i class="fas fa-book"></i>
-                        <strong>Subject:</strong> ${item.subject || "General"}
+                        <span><strong>Subject:</strong> ${item.subject || 'General'}</span>
                     </div>
                     <div class="info-item">
-                        <i class="fas fa-calendar"></i>
-                        <strong>Uploaded:</strong> ${uploadDate}
+                        <i class="fas fa-calendar-alt"></i>
+                        <span><strong>Uploaded:</strong> ${uploadDate}</span>
                     </div>
                 </div>
             </div>
             <div class="card-footer">
-                <button class="view-link" onclick="openDocument('${item.file_url}', '${item.title}')">
+                <button class="view-link" onclick="openDocument('${safeUrl}', '${safeTitle}')">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <a href="${item.file_url}" download="${item.title}" class="down-link">
+                <button class="down-link" onclick="downloadFile('${safeDlUrl}', '${safeFile}')">
                     <i class="fas fa-download"></i> Download
-                </a>
-            </div>
-        `;
+                </button>
+            </div>`;
+
         grid.appendChild(card);
     });
 
-    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+    updatePagination(data.length);
+}
+
+function updatePagination(totalItems) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
     const pageInfo = document.getElementById('pageInfo');
-    if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
-
-    // Update pagination button states
+    if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
     document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages;
+    document.getElementById('nextPage').disabled = currentPage >= totalPages;
 }
 
-// 9. GET FILE ICON CLASS
-function getFileIconClass(docType, fileUrl) {
-    if (docType) {
-        switch (docType.toLowerCase()) {
-            case 'notes': return 'fa-sticky-note';
-            case 'tests': return 'fa-clipboard-check';
-            case 'worksheet': return 'fa-table';
-            case 'practice_material': return 'fa-dumbbell';
-            case 'task': return 'fa-tasks';
-            case 'assignment': return 'fa-file-signature';
-            case 'project': return 'fa-project-diagram';
-            case 'literature': return 'fa-book-open';
-            case 'textbook': return 'fa-book';
-            default: return 'fa-file';
-        }
-    }
-
-    // Fallback based on file extension
-    if (fileUrl) {
-        if (fileUrl.toLowerCase().endsWith('.pdf')) return 'fa-file-pdf pdf-icon';
-        if (fileUrl.toLowerCase().endsWith('.doc') || fileUrl.toLowerCase().endsWith('.docx')) return 'fa-file-word word-icon';
-        if (fileUrl.toLowerCase().endsWith('.xls') || fileUrl.toLowerCase().endsWith('.xlsx')) return 'fa-file-excel excel-icon';
-        if (fileUrl.toLowerCase().endsWith('.ppt') || fileUrl.toLowerCase().endsWith('.pptx')) return 'fa-file-powerpoint ppt-icon';
-        if (fileUrl.match(/\.(jpg|jpeg|png|gif)$/i)) return 'fa-file-image image-icon';
-    }
-
-    return 'fa-file general-icon';
-}
-
-// 10. VIEW DOCUMENT IN MODAL
-function openDocument(url, title) {
+// 7. VIEW DOCUMENT IN MODAL (inline via worker proxy)
+function openDocument(fileUrl, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
-    const modalTitle = document.querySelector(".modal-header h3");
+    const header = document.querySelector(".modal-header h3");
 
-    if (modal && viewer) {
-        modalTitle.textContent = title || "Document Viewer";
+    if (!modal || !viewer) return;
 
-        // For PDFs, use Google Docs viewer for better compatibility
-        if (url.toLowerCase().endsWith('.pdf')) {
-            viewer.src = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-        }
-        // For images, display directly
-        else if (url.match(/\.(jpg|jpeg|png|gif)$/i)) {
-            viewer.src = url;
-        }
-        // For other files that can be displayed in iframe
-        else if (url.match(/\.(txt|html|htm)$/i)) {
-            viewer.src = url;
-        }
-        // For documents that can't be displayed, download them
-        else {
-            window.open(url, '_blank');
-            return;
-        }
+    header.textContent = title || "Document Viewer";
 
-        modal.style.display = "flex";
-        document.body.style.overflow = 'hidden';
+    // Determine file type from the URL key segment or extension
+    const key = fileUrl.split('/api/file/')[1] || "";
+    const ext = key.split('.').pop().toLowerCase();
+
+    if (['pdf', 'txt', 'html', 'htm'].includes(ext)) {
+        // Worker returns inline Content-Disposition for /api/file/ — iframe can show it directly
+        viewer.src = fileUrl;
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
+        // Image — iframe works fine
+        viewer.src = fileUrl;
+    } else {
+        // Word / Excel / PPT etc. — use Office Online viewer (works with any publicly reachable URL)
+        // Our worker URL is public, so Office Online can fetch it.
+        viewer.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+    }
+
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+
+// 8. DOWNLOAD FILE (forces browser download via worker /api/download/ endpoint)
+async function downloadFile(downloadUrl, fileName) {
+    try {
+        showToast(`Downloading "${fileName}"…`);
+        const res = await fetch(downloadUrl);
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+        console.error("Download error:", err);
+        showToast("Download failed. Please try again.", "error");
     }
 }
 
-// 11. UPLOAD DOCUMENT WITH ALL FIELDS
-// 11. UPLOAD DOCUMENT WITH ALL FIELDS
+// 9. UPLOAD DOCUMENT → R2 via worker
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
     const titleInput = document.getElementById('fileName');
@@ -327,148 +289,185 @@ async function uploadDocument() {
     const roleInput = document.getElementById('uploaderRole');
     const docTypeInput = document.getElementById('docType');
     const docDateInput = document.getElementById('docDate');
-    const descriptionInput = document.getElementById('docDescription');
+    const descInput = document.getElementById('docDescription');
     const btn = document.getElementById('uploadBtn');
 
-    // Validate all required fields
-    if (!fileInput.files[0]) {
-        alert("Please select a file to upload.");
-        return;
+    // Validate
+    const file = fileInput.files[0];
+    if (!file) return showToast("Please select a file.", "error");
+    if (!titleInput.value.trim()) return showToast("Please provide a document title.", "error");
+    if (!subjectInput.value) return showToast("Please select or type a subject.", "error");
+    if (!gradeInput.value) return showToast("Please select a grade level.", "error");
+    if (!roleInput.value) return showToast("Please select your role.", "error");
+    if (!docTypeInput.value) return showToast("Please select a document type.", "error");
+
+    const MAX_MB = 20;
+    if (file.size > MAX_MB * 1024 * 1024) {
+        return showToast(`File too large. Maximum size is ${MAX_MB} MB.`, "error");
     }
 
-    if (!titleInput.value.trim()) {
-        alert("Please provide a document title.");
-        return;
-    }
-
-    if (!subjectInput.value) {
-        alert("Please select or enter a subject.");
-        return;
-    }
-
-    if (!gradeInput.value) {
-        alert("Please select a grade level.");
-        return;
-    }
-
-    if (!roleInput.value) {
-        alert("Please select your role.");
-        return;
-    }
-
-    if (!docTypeInput.value) {
-        alert("Please select a document type.");
-        return;
-    }
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading…';
     btn.disabled = true;
 
-    const file = fileInput.files[0];
+    try {
+        // Read file as base64
+        const base64Data = await readFileAsBase64(file);
 
-    // Check file size (limit to 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-        alert("File size too large. Maximum size is 10MB.");
-        btn.innerHTML = 'Upload Document';
-        btn.disabled = false;
-        return;
-    }
+        // Build a unique R2 key that preserves the original extension
+        const ext = file.name.includes('.') ? file.name.split('.').pop() : 'bin';
+        const fileKey = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 8)}.${ext}`;
 
-    const reader = new FileReader();
+        const payload = {
+            title: titleInput.value.trim(),
+            subject: subjectInput.value.toLowerCase().trim(),
+            grade: gradeInput.value,
+            uploader_role: roleInput.value,
+            doc_type: docTypeInput.value,
+            doc_date: docDateInput.value,
+            description: descInput.value || "",
+            actual_file_key: fileKey,
+            file_data: base64Data,     // base64-encoded binary
+            file_name: file.name,
+            file_type: file.type || "application/octet-stream",
+            file_size: file.size,
+        };
 
-    reader.onload = async (e) => {
-        try {
-            // Get base64 data
-            const base64Data = e.target.result.split(',')[1];
+        const res = await fetch(`${API_URL}/api/upload`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
 
-            // Generate unique file key with original extension
-            const timestamp = Date.now();
-            const fileExtension = file.name.split('.').pop();
-            const fileKey = `doc_${timestamp}_${Math.random().toString(36).substr(2, 9)}.${fileExtension}`;
+        const result = await res.json();
 
-            // Direct URL to file
-            const fileUrl = `${API_URL}/api/file/${fileKey}`;
-
-            const payload = {
-                title: titleInput.value,
-                subject: subjectInput.value.toLowerCase(),
-                grade: gradeInput.value,
-                uploader_role: roleInput.value,
-                doc_type: docTypeInput.value,
-                doc_date: docDateInput.value,
-                description: descriptionInput.value || "",
-                actual_file_key: fileKey,
-                file_url: fileUrl,
-                file_data: base64Data,
-                file_name: file.name,
-                file_type: file.type,
-                file_size: file.size
-            };
-
-            console.log("Uploading file:", {
-                title: payload.title,
-                file_name: payload.file_name,
-                file_size: payload.file_size
-            });
-
-            const res = await fetch(`${API_URL}/api/upload`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await res.json();
-
-            if (res.ok && result.success) {
-                alert(`✅ Success! "${titleInput.value}" has been added to the library.`);
-                // Clear form
-                document.getElementById('uploadForm').reset();
-                document.getElementById('selectedFileName').innerText = '';
-                document.getElementById('docDate').valueAsDate = new Date();
-                // Reload library
-                loadLibrary();
-            } else {
-                const errorMsg = result.error || "Upload failed. Please try again.";
-                console.error("Upload error:", errorMsg, result);
-                alert("Upload failed: " + errorMsg);
-            }
-        } catch (error) {
-            console.error("Upload Error:", error);
-            alert("Connection to database failed. Please try again.");
-        } finally {
-            btn.innerHTML = 'Upload Document';
-            btn.disabled = false;
+        if (res.ok && result.success) {
+            showToast(`✅ "${titleInput.value}" uploaded successfully!`, "success");
+            document.getElementById('uploadForm').reset();
+            document.getElementById('selectedFileName').textContent = '';
+            document.getElementById('docDate').valueAsDate = new Date();
+            // Reload library so new doc appears
+            await loadLibrary();
+        } else {
+            const msg = result.error || "Upload failed.";
+            console.error("Upload failed:", result);
+            showToast(`Upload failed: ${msg}`, "error");
         }
-    };
-
-    reader.onerror = (error) => {
-        console.error("FileReader error:", error);
-        alert("Error reading file. Please try again.");
-        btn.innerHTML = 'Upload Document';
+    } catch (err) {
+        console.error("Upload error:", err);
+        showToast("Upload error. Check your connection and try again.", "error");
+    } finally {
+        btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Document';
         btn.disabled = false;
-    };
-
-    reader.readAsDataURL(file);
+    }
 }
-// 12. UTILITIES
+
+// 10. UTILITIES
+
+function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');
     if (display && input.files && input.files[0]) {
-        display.innerText = "Selected: " + input.files[0].name;
-        display.style.color = "var(--pro-green)";
+        const f = input.files[0];
+        const sizeMB = (f.size / 1048576).toFixed(1);
+        display.textContent = `${f.name}  (${sizeMB} MB)`;
+        display.style.color = "var(--pro-green, #32cd32)";
     }
 }
 
-function initScrollAnimation() {
-    const scrollText = document.getElementById('scrollText');
-    if (scrollText) scrollText.style.display = 'block';
+function getFileIconClass(docType, fileUrl) {
+    if (docType) {
+        const map = {
+            notes: 'fa-sticky-note',
+            tests: 'fa-clipboard-check',
+            worksheet: 'fa-table',
+            practice_material: 'fa-dumbbell',
+            task: 'fa-tasks',
+            assignment: 'fa-file-signature',
+            project: 'fa-project-diagram',
+            literature: 'fa-book-open',
+            textbook: 'fa-book',
+            past_paper: 'fa-file-alt',
+            memo: 'fa-file-contract',
+            study_guide: 'fa-compass',
+            presentation: 'fa-file-powerpoint',
+        };
+        if (map[docType.toLowerCase()]) return map[docType.toLowerCase()];
+    }
+    if (fileUrl) {
+        const u = fileUrl.toLowerCase();
+        if (u.endsWith('.pdf')) return 'fa-file-pdf';
+        if (u.match(/\.(doc|docx)$/)) return 'fa-file-word';
+        if (u.match(/\.(xls|xlsx)$/)) return 'fa-file-excel';
+        if (u.match(/\.(ppt|pptx)$/)) return 'fa-file-powerpoint';
+        if (u.match(/\.(jpg|jpeg|png|gif)$/)) return 'fa-file-image';
+    }
+    return 'fa-file';
 }
 
-function filterDocuments() {
-    currentPage = 1;
-    renderCards(getFilteredData());
+function debounce(fn, wait) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), wait);
+    };
+}
+
+function initScrollAnimation() {
+    const el = document.getElementById('scrollText');
+    if (el) el.style.display = 'block';
+}
+
+function escapeHtml(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Simple toast notification (replaces all alert() calls)
+function showToast(message, type = "info") {
+    const existing = document.querySelector('.p2p-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `p2p-toast p2p-toast--${type}`;
+    toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>`;
+
+    Object.assign(toast.style, {
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+        zIndex: '9999',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '14px 20px',
+        borderRadius: '10px',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '0.92rem',
+        fontWeight: '500',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
+        background: type === 'success' ? '#f0fdf4' : type === 'error' ? '#fef2f2' : '#f0f9ff',
+        color: type === 'success' ? '#166534' : type === 'error' ? '#991b1b' : '#0c4a6e',
+        border: `1px solid ${type === 'success' ? '#bbf7d0' : type === 'error' ? '#fecaca' : '#bae6fd'}`,
+        transition: 'opacity 0.3s ease',
+    });
+
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4500);
 }

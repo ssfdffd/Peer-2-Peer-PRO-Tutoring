@@ -4,73 +4,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peer-2-Peer PRO | Book 1-on-1 </title>
+    <title>Peer-2-Peer PRO | Book 1-on-1</title>
     <link rel="stylesheet" href="booking.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
+
+    <!-- Navbar -->
     <nav id="navbar">
-        <div class="logo">Peer-2-Peer <span class="pro-text">PRO</span> |Book 1-on-1</div>
-        <a href="index.html" class="home-btn">Home</a>
+        <div class="logo">
+            Peer-2-Peer <span class="pro-text">PRO</span>
+        </div>
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
     </nav>
 
-    <div class="booking-container">
-        <div class="form-header">
-            <h2>Schedule Private Session</h2>
-            <p>Note: Sessions must be booked 1 week (7 days) in advance.</p>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="header-icon"><i class="fas fa-user-graduate"></i></div>
+            <div>
+                <h1>Book a 1-on-1 Session</h1>
+                <p>Private tutoring with a verified Peer-2-Peer PRO tutor.</p>
+            </div>
         </div>
-
-        <form id="bookingForm">
-            <div class="input-group">
-                <input type="text" id="stuName" placeholder="Student Name & Surname" required>
-                <input type="email" id="stuEmail" placeholder="Student Email" required>
-            </div>
-
-            <div class="input-group">
-                <input type="text" id="parContact" placeholder="Parent WhatsApp/Contact No." required>
-                <select id="subject" required>
-                    <option value="">Select Subject</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Physical Science">Physical Science</option>
-                    <option value="English">English</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <div class="date-wrapper">
-                    <label>Select Date</label>
-                    <input type="date" id="bookDate" required>
-                </div>
-                <div class="date-wrapper">
-                    <label>Select Time</label>
-                    <input type="time" id="bookTime" required>
-                </div>
-            </div>
-
-            <div class="approval-area">
-                <input type="checkbox" id="approval" required>
-                <label for="approval">I have received parental approval for this session.</label>
-            </div>
-
-            <button type="submit" id="submitBtn">Schedule Class</button>
-        </form>
-
-        <div id="confirmationArea" class="hidden">
-            <div class="success-card">
-                <i class="fas fa-check-circle"></i>
-                <h3>Booking Confirmed!</h3>
-                <p id="detailsText"></p>
-                <div class="link-box">
-                    <span>Your Private Jitsi Room:</span>
-                    <a id="roomLink" href="#" target="_blank"></a>
-                </div>
-                <small>Bookmark this page or save the link to join on the day.</small>
-            </div>
+        <div class="notice-bar">
+            <i class="fas fa-info-circle"></i>
+            Sessions must be booked <strong>at least 7 days in advance.</strong>
+            All sessions with students under 18 require verified parental consent before confirmation.
         </div>
     </div>
 
+    <!-- Main Form Card -->
+    <div class="booking-container">
+
+        <form id="bookingForm" novalidate>
+
+            <!-- ── SECTION 1: Student Details ── -->
+            <div class="form-section">
+                <div class="section-label">
+                    <span class="section-num">1</span>
+                    <span>Student Information</span>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="stuName">Full Name <span class="req">*</span></label>
+                        <input type="text" id="stuName" placeholder="e.g. Lebo Mokoena" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="stuEmail">Student Email <span class="req">*</span></label>
+                        <input type="email" id="stuEmail" placeholder="student@example.com" required>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="stuAge">Student Age <span class="req">*</span></label>
+                        <input type="number" id="stuAge" placeholder="e.g. 16" min="5" max="30" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="stuGrade">Grade / Year <span class="req">*</span></label>
+                        <select id="stuGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                            <option value="University">University / Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SECTION 2: Parent / Guardian Details ── -->
+            <div class="form-section safeguard-section">
+                <div class="section-label">
+                    <span class="section-num">2</span>
+                    <span>Parent / Guardian Details</span>
+                </div>
+                <div class="safeguard-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Safeguarding Notice</strong> — Because our sessions may involve students under 18,
+                        we are required to collect and verify a parent or guardian's contact details.
+                        A confirmation message will be sent to the parent before the session is approved.
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="parName">Parent / Guardian Full Name <span class="req">*</span></label>
+                        <input type="text" id="parName" placeholder="e.g. Mrs. Mokoena" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="parRelation">Relationship to Student <span class="req">*</span></label>
+                        <select id="parRelation" required>
+                            <option value="">Select Relationship</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Father">Father</option>
+                            <option value="Guardian">Legal Guardian</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="parContact">WhatsApp / Phone Number <span class="req">*</span></label>
+                        <input type="tel" id="parContact" placeholder="e.g. 082 000 0000" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="parEmail">Parent Email Address <span class="req">*</span></label>
+                        <input type="email" id="parEmail" placeholder="parent@example.com" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SECTION 3: Session Details ── -->
+            <div class="form-section">
+                <div class="section-label">
+                    <span class="section-num">3</span>
+                    <span>Session Details</span>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="subject">Subject <span class="req">*</span></label>
+                        <select id="subject" required>
+                            <option value="">Select Subject</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physical Science">Physical Science</option>
+                            <option value="English">English Home Language</option>
+                            <option value="English FAL">English First Additional Language</option>
+                            <option value="Life Sciences">Life Sciences / Biology</option>
+                            <option value="Accounting">Accounting</option>
+                            <option value="Economics">Economics</option>
+                            <option value="Geography">Geography</option>
+                            <option value="History">History</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="sessionDuration">Session Length <span class="req">*</span></label>
+                        <select id="sessionDuration" required>
+                            <option value="">Select Duration</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60" selected>1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="field-wrap">
+                        <label for="bookDate">Session Date <span class="req">*</span></label>
+                        <input type="date" id="bookDate" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label for="bookTime">Session Time <span class="req">*</span></label>
+                        <input type="time" id="bookTime" required>
+                    </div>
+                </div>
+
+                <div class="field-wrap full-width">
+                    <label for="sessionNotes">Specific Topics / Notes for Tutor <span
+                            class="optional">(optional)</span></label>
+                    <textarea id="sessionNotes"
+                        placeholder="e.g. Need help with quadratic equations and factorisation — specifically exam paper style questions."
+                        rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- ── SECTION 4: Consent & Confirmation ── -->
+            <div class="form-section">
+                <div class="section-label">
+                    <span class="section-num">4</span>
+                    <span>Consent &amp; Confirmation</span>
+                </div>
+
+                <div class="consent-list">
+                    <label class="consent-item">
+                        <input type="checkbox" id="approvalCheck" required>
+                        <span>
+                            I confirm that <strong>written or verbal parental / guardian approval</strong>
+                            has been obtained for this session and the parent listed above is aware.
+                        </span>
+                    </label>
+                    <label class="consent-item">
+                        <input type="checkbox" id="contactCheck" required>
+                        <span>
+                            I consent to Peer-2-Peer PRO contacting the parent / guardian via WhatsApp
+                            or email to <strong>verify this booking</strong> before it is confirmed.
+                        </span>
+                    </label>
+                    <label class="consent-item">
+                        <input type="checkbox" id="termsCheck" required>
+                        <span>
+                            I have read and agree to the
+                            <a href="terms.html" target="_blank">Terms &amp; Conditions</a>
+                            and understand that sessions are conducted via a secure video link.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">
+                <i class="fas fa-calendar-check"></i>
+                Request Session Booking
+            </button>
+        </form>
+
+        <!-- Confirmation Area (shown after submit) -->
+        <div id="confirmationArea" class="hidden">
+            <div class="success-card">
+                <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+                <h3>Booking Request Submitted!</h3>
+                <p id="detailsText"></p>
+
+                <div class="info-grid">
+                    <div class="info-cell">
+                        <i class="fas fa-envelope"></i>
+                        <span>A confirmation email has been sent to the student and parent.</span>
+                    </div>
+                    <div class="info-cell">
+                        <i class="fas fa-whatsapp fab"></i>
+                        <span>The parent / guardian will receive a WhatsApp verification message.</span>
+                    </div>
+                    <div class="info-cell">
+                        <i class="fas fa-clock"></i>
+                        <span>Sessions are confirmed only after parental approval is received.</span>
+                    </div>
+                </div>
+
+                <div class="link-box">
+                    <span><i class="fas fa-video"></i> Your Private Session Room:</span>
+                    <a id="roomLink" href="#" target="_blank"></a>
+                </div>
+                <p class="save-note"><i class="fas fa-bookmark"></i> Bookmark this page or save your room link to join
+                    on the day.</p>
+            </div>
+        </div>
+
+    </div><!-- /booking-container -->
+
     <script src="booking.js"></script>
+
 </body>
 
 </html>

@@ -1,15 +1,16 @@
 /**
- * STUDENT VIEW LOGIC - For student-view.html
- * Premium UI/UX with grade filtering and professional styling
+ * STUDENT VIEW LOGIC - Hero Section Filter Version
+ * Premium UI/UX with working grade filtering
  */
 
 const API_BASE = "https://learnerattendlive.buhle-1ce.workers.dev";
-let currentFilter = 'all'; // 'all', 'live', 'upcoming', 'scheduled', 'completed'
-let currentGradeFilter = 'all'; // 'all' or specific grade number
+let allClassesData = [];
+let currentFilter = 'all';
+let currentGradeFilter = 'all';
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Premium student view loaded");
+    console.log("Premium student view with hero filter loaded");
 
     // Check if user is logged in
     const studentEmail = sessionStorage.getItem('p2p_email');
@@ -21,14 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Get student's grade from sessionStorage
+    // Get student's grade
     const studentGrade = sessionStorage.getItem('p2p_grade');
     if (studentGrade) {
         currentGradeFilter = studentGrade;
     }
 
-    // Initialize UI components
-    initializeFilters();
+    // Create hero filter section
+    createHeroFilterSection();
 
     // Load all classes
     loadAllClasses();
@@ -36,119 +37,116 @@ document.addEventListener('DOMContentLoaded', function () {
     // Auto-refresh every 30 seconds
     setInterval(loadAllClasses, 30000);
 
-    // Add premium CSS styles
-    addPremiumStyles();
+    // Add additional styles
+    addAdditionalStyles();
 });
 
 /**
- * INITIALIZE FILTER COMPONENTS
+ * CREATE HERO FILTER SECTION
  */
-function initializeFilters() {
-    const filterContainer = document.createElement('div');
-    filterContainer.id = 'premiumFilterContainer';
-    filterContainer.style.cssText = `
-        grid-column: 1/-1;
-        margin: 20px 0;
-        padding: 20px;
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-    `;
+function createHeroFilterSection() {
+    const filterHeroSection = document.getElementById('filterHeroSection');
+    if (!filterHeroSection) return;
 
-    filterContainer.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="color: #fff; margin: 0; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-sliders-h" style="color: #32cd32;"></i>
-                Filter Classes
-            </h3>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <span style="color: #94a3b8; font-size: 0.9rem;">
-                    <i class="fas fa-sync-alt"></i> Auto-refresh: 30s
-                </span>
-            </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-            <!-- Status Filter -->
-            <div class="filter-group">
-                <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">
-                    <i class="fas fa-filter"></i> Status Filter
-                </label>
-                <div class="filter-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">
-                        <i class="fas fa-layer-group"></i> All Classes
-                    </button>
-                    <button class="filter-btn" data-filter="live" onclick="setFilter('live')">
-                        <i class="fas fa-broadcast-tower"></i> Live Now
-                    </button>
-                    <button class="filter-btn" data-filter="upcoming" onclick="setFilter('upcoming')">
-                        <i class="fas fa-clock"></i> Upcoming
-                    </button>
-                    <button class="filter-btn" data-filter="scheduled" onclick="setFilter('scheduled')">
-                        <i class="fas fa-calendar"></i> Scheduled
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Grade Filter -->
-            <div class="filter-group">
-                <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: block;">
-                    <i class="fas fa-graduation-cap"></i> Grade Filter
-                </label>
-                <div class="grade-filter" style="display: flex; align-items: center; gap: 10px;">
-                    <div class="grade-selector" style="position: relative; flex: 1;">
-                        <select id="gradeFilterSelect" onchange="setGradeFilter(this.value)" 
-                                style="width: 100%; padding: 10px 15px; background: rgba(30, 41, 59, 0.9); 
-                                       border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; 
-                                       color: #fff; font-size: 0.95rem; appearance: none; cursor: pointer;">
-                            <option value="all">All Grades</option>
-                            ${generateGradeOptions()}
-                        </select>
-                        <i class="fas fa-chevron-down" style="position: absolute; right: 15px; top: 50%; 
-                            transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+    filterHeroSection.innerHTML = `
+        <div class="filter-hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span class="hero-main">Live <span class="hero-accent">Classroom</span></span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Discover, filter, and join classes. Real-time updates, smart filtering, and seamless integration.
+                    </p>
+                    
+                    <!-- Quick Stats -->
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalClassesStat">0</div>
+                            <div class="stat-label">Total Classes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="liveClassesStat">0</div>
+                            <div class="stat-label">Live Now</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="upcomingClassesStat">0</div>
+                            <div class="stat-label">Upcoming</div>
+                        </div>
                     </div>
-                    <button onclick="resetFilters()" class="reset-btn">
-                        <i class="fas fa-redo"></i> Reset
-                    </button>
+                </div>
+                
+                <div class="hero-filters">
+                    <!-- Status Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-filter"></i> Filter by Status
+                        </label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">
+                                <i class="fas fa-layer-group"></i> All Classes
+                            </button>
+                            <button class="filter-btn ${currentFilter === 'live' ? 'active' : ''}" onclick="setFilter('live')">
+                                <i class="fas fa-broadcast-tower"></i> Live Now
+                            </button>
+                            <button class="filter-btn ${currentFilter === 'upcoming' ? 'active' : ''}" onclick="setFilter('upcoming')">
+                                <i class="fas fa-clock"></i> Upcoming
+                            </button>
+                            <button class="filter-btn ${currentFilter === 'scheduled' ? 'active' : ''}" onclick="setFilter('scheduled')">
+                                <i class="fas fa-calendar"></i> Scheduled
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Grade Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <i class="fas fa-graduation-cap"></i> Filter by Grade
+                        </label>
+                        <div class="grade-filter-container">
+                            <div class="grade-select-wrapper">
+                                <select id="gradeFilterSelect" class="grade-select" onchange="setGradeFilter(this.value)">
+                                    <option value="all" ${currentGradeFilter === 'all' ? 'selected' : ''}>All Grades</option>
+                                    ${generateGradeOptions()}
+                                </select>
+                                <i class="fas fa-chevron-down select-icon"></i>
+                            </div>
+                            <button class="reset-filters-btn" onclick="resetFilters()">
+                                <i class="fas fa-redo"></i> Reset Filters
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Statistics -->
-            <div class="stats-group" style="display: flex; gap: 15px; justify-content: center; align-items: center;">
-                <div class="stat-card" style="text-align: center;">
-                    <div class="stat-number" style="color: #32cd32; font-size: 1.5rem; font-weight: bold;" id="totalClasses">0</div>
-                    <div class="stat-label" style="color: #94a3b8; font-size: 0.85rem;">Total</div>
+            <!-- Active Filters Display -->
+            <div class="active-filters-bar">
+                <div class="filters-summary">
+                    <i class="fas fa-sliders-h"></i>
+                    <span id="filtersText">Loading classes...</span>
                 </div>
-                <div class="stat-card" style="text-align: center;">
-                    <div class="stat-number" style="color: #f59e0b; font-size: 1.5rem; font-weight: bold;" id="liveClasses">0</div>
-                    <div class="stat-label" style="color: #94a3b8; font-size: 0.85rem;">Live</div>
-                </div>
-                <div class="stat-card" style="text-align: center;">
-                    <div class="stat-number" style="color: #3b82f6; font-size: 1.5rem; font-weight: bold;" id="upcomingClasses">0</div>
-                    <div class="stat-label" style="color: #94a3b8; font-size: 0.85rem;">Upcoming</div>
+                <div class="filter-actions">
+                    <button class="export-btn" onclick="exportSchedule()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="refresh-btn" onclick="loadAllClasses()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                 </div>
             </div>
         </div>
     `;
-
-    // Insert after header
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        const header = mainContent.querySelector('section');
-        if (header) {
-            header.after(filterContainer);
-        }
-    }
 }
 
 /**
- * GENERATE GRADE OPTIONS (1-12)
+ * GENERATE GRADE OPTIONS
  */
 function generateGradeOptions() {
     let options = '';
     for (let i = 1; i <= 12; i++) {
-        options += `<option value="${i}">Grade ${i}</option>`;
+        const selected = currentGradeFilter == i ? 'selected' : '';
+        options += `<option value="${i}" ${selected}>Grade ${i}</option>`;
     }
     return options;
 }
@@ -162,13 +160,16 @@ function setFilter(filter) {
     // Update button states
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.filter === filter) {
-            btn.classList.add('active');
-        }
     });
 
-    // Reload classes with new filter
-    loadAllClasses();
+    const activeBtn = document.querySelector(`.filter-btn[onclick*="setFilter('${filter}')"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+
+    // Apply filters
+    applyFilters();
+    updateActiveFiltersDisplay();
 }
 
 /**
@@ -176,8 +177,8 @@ function setFilter(filter) {
  */
 function setGradeFilter(grade) {
     currentGradeFilter = grade;
-    document.getElementById('gradeFilterSelect').value = grade;
-    loadAllClasses();
+    applyFilters();
+    updateActiveFiltersDisplay();
 }
 
 /**
@@ -190,50 +191,31 @@ function resetFilters() {
     // Update UI
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.filter === 'all') {
+        if (btn.onclick && btn.onclick.toString().includes("setFilter('all')")) {
             btn.classList.add('active');
         }
     });
 
     document.getElementById('gradeFilterSelect').value = 'all';
 
-    loadAllClasses();
-    showNotification("Filters reset", "success");
+    applyFilters();
+    updateActiveFiltersDisplay();
+    showNotification("All filters have been reset", "success");
 }
 
 /**
- * FETCH ALL CLASSES FROM API
+ * APPLY FILTERS
  */
-async function loadAllClasses() {
-    const container = document.getElementById('liveClassesContainer');
-    const loadingState = document.getElementById('loadingState');
+function applyFilters() {
+    if (allClassesData.length === 0) return;
 
-    try {
-        const response = await fetch(`${API_BASE}/api/get-all-classes`);
-        const allClasses = await response.json();
-
-        // Filter classes
-        const filteredClasses = filterClasses(allClasses);
-
-        // Hide loading, show container
-        loadingState.style.display = 'none';
-        container.style.display = 'grid';
-
-        // Render the filtered classes
-        renderAllClasses(filteredClasses, allClasses);
-
-        // Update stats
-        updateStatistics(allClasses);
-
-    } catch (err) {
-        loadingState.style.display = 'none';
-        showErrorMessage(container, err);
-        console.error("Critical Load Error:", err);
-    }
+    const filteredClasses = filterClasses(allClassesData);
+    renderFilteredClasses(filteredClasses);
+    updateStatistics(allClassesData);
 }
 
 /**
- * FILTER CLASSES BASED ON CURRENT FILTERS
+ * FILTER CLASSES
  */
 function filterClasses(classes) {
     let filtered = [...classes];
@@ -259,40 +241,89 @@ function filterClasses(classes) {
         case 'completed':
             filtered = filtered.filter(cls => cls.status === 'completed');
             break;
-        // 'all' shows everything
     }
 
     return filtered;
 }
 
 /**
- * UPDATE STATISTICS
+ * UPDATE ACTIVE FILTERS DISPLAY
  */
-function updateStatistics(classes) {
-    const total = classes.length;
-    const live = classes.filter(c => c.status === 'active').length;
-    const upcoming = classes.filter(c =>
-        c.status === 'scheduled' && isClassUpcoming(c)
-    ).length;
+function updateActiveFiltersDisplay() {
+    const filtersText = document.getElementById('filtersText');
+    if (!filtersText) return;
 
-    document.getElementById('totalClasses').textContent = total;
-    document.getElementById('liveClasses').textContent = live;
-    document.getElementById('upcomingClasses').textContent = upcoming;
+    let text = 'Showing ';
+
+    if (currentFilter !== 'all') {
+        const filterLabels = {
+            'live': 'live classes',
+            'upcoming': 'upcoming classes',
+            'scheduled': 'scheduled classes',
+            'completed': 'completed classes'
+        };
+        text += filterLabels[currentFilter] || currentFilter;
+    } else {
+        text += 'all classes';
+    }
+
+    if (currentGradeFilter !== 'all') {
+        text += ` for Grade ${currentGradeFilter}`;
+    }
+
+    if (allClassesData.length > 0) {
+        const filteredClasses = filterClasses(allClassesData);
+        text += ` (${filteredClasses.length} of ${allClassesData.length})`;
+    }
+
+    filtersText.textContent = text;
 }
 
 /**
- * RENDER ALL CLASSES TO THE GRID
+ * FETCH ALL CLASSES
  */
-function renderAllClasses(classes, allClasses) {
+async function loadAllClasses() {
     const container = document.getElementById('liveClassesContainer');
-    const studentGrade = sessionStorage.getItem('p2p_grade');
+    const loadingState = document.getElementById('loadingState');
+
+    try {
+        const response = await fetch(`${API_BASE}/api/get-all-classes`);
+        allClassesData = await response.json();
+
+        // Apply filters
+        const filteredClasses = filterClasses(allClassesData);
+
+        // Update UI
+        if (loadingState) loadingState.style.display = 'none';
+        if (container) {
+            container.style.display = 'grid';
+            renderFilteredClasses(filteredClasses);
+        }
+
+        // Update statistics and filters display
+        updateStatistics(allClassesData);
+        updateActiveFiltersDisplay();
+
+    } catch (err) {
+        if (loadingState) loadingState.style.display = 'none';
+        showErrorMessage(container, err);
+        console.error("Error loading classes:", err);
+    }
+}
+
+/**
+ * RENDER FILTERED CLASSES
+ */
+function renderFilteredClasses(classes) {
+    const container = document.getElementById('liveClassesContainer');
+    if (!container) return;
 
     if (classes.length === 0) {
-        showNoClassesMessage(container, allClasses.length);
+        showNoClassesMessage(container, allClassesData.length);
         return;
     }
 
-    // Sort classes: active first, then upcoming, then by date
+    // Sort classes
     const sortedClasses = [...classes].sort((a, b) => {
         const priority = { 'active': 1, 'scheduled': 2, 'completed': 3 };
         const priorityA = priority[a.status] || 4;
@@ -300,47 +331,40 @@ function renderAllClasses(classes, allClasses) {
 
         if (priorityA !== priorityB) return priorityA - priorityB;
 
-        // Then by date/time (soonest first)
         const dateA = new Date(`${a.scheduled_date || '9999-12-31'}T${a.scheduled_time || '23:59'}`);
         const dateB = new Date(`${b.scheduled_date || '9999-12-31'}T${b.scheduled_time || '23:59'}`);
         return dateA - dateB;
     });
 
-    // Index the classes
+    // Render classes with indexing
     let index = 1;
     container.innerHTML = sortedClasses.map(cls => {
-        const card = renderPremiumClassCard(cls, index++);
+        const card = createClassCard(cls, index++);
         return card;
     }).join('');
 
-    // Add footer with summary
-    addGridFooter(classes.length, allClasses.length);
+    // Add footer
+    addGridFooter(classes.length, allClassesData.length);
 }
 
 /**
- * RENDER PREMIUM CLASS CARD
+ * CREATE CLASS CARD
  */
-function renderPremiumClassCard(cls, index) {
+function createClassCard(cls, index) {
     const isActive = cls.status === 'active';
     const isUpcoming = cls.status === 'scheduled' && isClassUpcoming(cls);
-    const isScheduled = cls.status === 'scheduled' && !isUpcoming;
-
-    const statusConfig = getStatusConfig(cls.status, isUpcoming);
-    const timeInfo = getTimeInfo(cls);
     const gradeMatch = sessionStorage.getItem('p2p_grade') == cls.grade;
 
     return `
-        <div class="premium-class-card ${isActive ? 'active-card' : ''}" data-status="${cls.status}">
+        <div class="class-card premium-class-card ${isActive ? 'active-live' : ''}">
             <!-- Card Header -->
             <div class="card-header">
                 <div class="class-index">
                     <span class="index-number">${String(index).padStart(2, '0')}</span>
                     <span class="index-label">CLASS</span>
                 </div>
-                <div class="status-badge" style="background: ${statusConfig.bgColor}; color: ${statusConfig.color};">
-                    <i class="${statusConfig.icon}"></i>
-                    ${statusConfig.label}
-                </div>
+                ${isActive ? '<div class="live-badge"><i class="fas fa-circle"></i> LIVE NOW</div>' :
+            isUpcoming ? '<div class="upcoming-badge"><i class="fas fa-clock"></i> UPCOMING</div>' : ''}
             </div>
             
             <!-- Card Body -->
@@ -361,176 +385,39 @@ function renderPremiumClassCard(cls, index) {
                     </div>
                 </div>
                 
-                <div class="class-info-grid">
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-calendar-day"></i> Date
-                        </div>
-                        <div class="info-value">${formatDisplayDate(cls.scheduled_date)}</div>
+                <div class="class-info">
+                    <div class="info-row">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Date: ${formatDisplayDate(cls.scheduled_date)}</span>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-clock"></i> Time
-                        </div>
-                        <div class="info-value">${formatDisplayTime(cls.scheduled_time)}</div>
+                    
+                    <div class="info-row">
+                        <i class="fas fa-clock"></i>
+                        <span>Time: ${formatDisplayTime(cls.scheduled_time)}</span>
+                        ${isUpcoming ? `<span class="countdown-text">(${getTimeUntilClass(cls)})</span>` : ''}
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-hourglass-half"></i> Status
-                        </div>
-                        <div class="info-value">${timeInfo.text}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-door-open"></i> Room
-                        </div>
-                        <div class="info-value room-name">${escapeHtml(cls.room_name || 'TBD')}</div>
+                    
+                    <div class="info-row">
+                        <i class="fas fa-door-open"></i>
+                        <span>Room: <span class="room-name">${escapeHtml(cls.room_name || 'TBD')}</span></span>
                     </div>
                 </div>
-                
-                <!-- Progress/Countdown Bar -->
-                ${isUpcoming ? `
-                <div class="countdown-container">
-                    <div class="countdown-label">
-                        <i class="fas fa-rocket"></i> Starts in
-                        <span class="countdown-timer">${getTimeUntilClass(cls)}</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${getProgressPercentage(cls)}%"></div>
-                    </div>
-                </div>
-                ` : ''}
             </div>
             
             <!-- Card Footer -->
             <div class="card-footer">
-                <div class="footer-actions">
-                    ${isActive ? `
-                    <button class="join-action-btn" onclick="joinLiveSession('${encodeURIComponent(cls.room_name)}')">
-                        <i class="fas fa-video"></i> Join Live Session
-                        <span class="btn-badge"><i class="fas fa-users"></i> Live Now</span>
-                    </button>
-                    ` : `
-                    <button class="view-details-btn" onclick="showClassDetails('${cls.id}')">
-                        <i class="fas fa-eye"></i> View Details
-                    </button>
-                    `}
-                    
-                    <div class="action-icons">
-                        <button class="icon-btn" title="Add to Calendar">
-                            <i class="fas fa-calendar-plus"></i>
-                        </button>
-                        <button class="icon-btn" title="Share">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                        <button class="icon-btn" title="Set Reminder">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                    </div>
-                </div>
+                ${isActive ? `
+                <button class="join-btn btn-enabled" onclick="joinLiveSession('${encodeURIComponent(cls.room_name)}')">
+                    <i class="fas fa-video"></i> Join Live Session
+                </button>
+                ` : `
+                <button class="join-btn btn-disabled" disabled>
+                    <i class="fas fa-clock"></i> ${isUpcoming ? `Starts in ${getTimeUntilClass(cls)}` : 'Scheduled'}
+                </button>
+                `}
             </div>
-            
-            <!-- Card Glow Effect -->
-            <div class="card-glow"></div>
         </div>
     `;
-}
-
-/**
- * GET STATUS CONFIGURATION
- */
-function getStatusConfig(status, isUpcoming) {
-    const configs = {
-        'active': {
-            label: 'LIVE NOW',
-            icon: 'fas fa-broadcast-tower',
-            bgColor: 'rgba(50, 205, 50, 0.15)',
-            color: '#32cd32'
-        },
-        'scheduled': isUpcoming ? {
-            label: 'UPCOMING',
-            icon: 'fas fa-clock',
-            bgColor: 'rgba(245, 158, 11, 0.15)',
-            color: '#f59e0b'
-        } : {
-            label: 'SCHEDULED',
-            icon: 'fas fa-calendar',
-            bgColor: 'rgba(59, 130, 246, 0.15)',
-            color: '#3b82f6'
-        },
-        'completed': {
-            label: 'COMPLETED',
-            icon: 'fas fa-check-circle',
-            bgColor: 'rgba(148, 163, 184, 0.15)',
-            color: '#94a3b8'
-        }
-    };
-
-    return configs[status] || {
-        label: status?.toUpperCase() || 'UNKNOWN',
-        icon: 'fas fa-question-circle',
-        bgColor: 'rgba(100, 116, 139, 0.15)',
-        color: '#64748b'
-    };
-}
-
-/**
- * GET TIME INFORMATION
- */
-function getTimeInfo(cls) {
-    if (cls.status === 'active') {
-        return {
-            text: 'Session in progress',
-            color: '#32cd32'
-        };
-    }
-
-    if (cls.status === 'scheduled') {
-        if (isClassUpcoming(cls)) {
-            return {
-                text: `Starts in ${getTimeUntilClass(cls)}`,
-                color: '#f59e0b'
-            };
-        }
-        return {
-            text: 'Scheduled',
-            color: '#3b82f6'
-        };
-    }
-
-    if (cls.status === 'completed') {
-        return {
-            text: 'Class ended',
-            color: '#94a3b8'
-        };
-    }
-
-    return {
-        text: cls.status || 'Unknown',
-        color: '#64748b'
-    };
-}
-
-/**
- * GET PROGRESS PERCENTAGE FOR UPCOMING CLASSES
- */
-function getProgressPercentage(cls) {
-    if (!cls.scheduled_date || !cls.scheduled_time || cls.status !== 'scheduled') {
-        return 0;
-    }
-
-    const classTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
-    const now = new Date();
-
-    // Consider class as upcoming if within 24 hours
-    const totalWindow = 24 * 60 * 60 * 1000; // 24 hours
-    const startTime = new Date(classTime.getTime() - totalWindow);
-
-    if (now < startTime) return 0;
-    if (now > classTime) return 100;
-
-    const elapsed = now - startTime;
-    return Math.min(100, Math.max(0, (elapsed / totalWindow) * 100));
 }
 
 /**
@@ -538,40 +425,37 @@ function getProgressPercentage(cls) {
  */
 function addGridFooter(filteredCount, totalCount) {
     const container = document.getElementById('liveClassesContainer');
+    if (!container) return;
+
+    // Remove existing footer
+    const existingFooter = container.querySelector('.grid-footer');
+    if (existingFooter) existingFooter.remove();
 
     container.innerHTML += `
         <div class="grid-footer" style="grid-column: 1/-1; margin-top: 30px;">
-            <div class="footer-content" style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px;
-                background: rgba(30, 41, 59, 0.5);
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-            ">
+            <div class="footer-content">
                 <div class="footer-stats">
-                    <div class="stat-display" style="display: flex; gap: 20px;">
+                    <div class="stat-display">
                         <div class="stat">
-                            <div class="stat-value" style="color: #fff; font-size: 1.2rem; font-weight: bold;">${filteredCount}</div>
-                            <div class="stat-label" style="color: #94a3b8; font-size: 0.9rem;">Showing</div>
+                            <div class="stat-value">${filteredCount}</div>
+                            <div class="stat-label">Showing</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-value" style="color: #94a3b8; font-size: 1.2rem; font-weight: bold;">${totalCount}</div>
-                            <div class="stat-label" style="color: #94a3b8; font-size: 0.9rem;">Total</div>
+                            <div class="stat-value">${totalCount}</div>
+                            <div class="stat-label">Total</div>
                         </div>
                         ${currentGradeFilter !== 'all' ? `
                         <div class="stat">
-                            <div class="stat-value" style="color: #f59e0b; font-size: 1.2rem; font-weight: bold;">${currentGradeFilter}</div>
-                            <div class="stat-label" style="color: #94a3b8; font-size: 0.9rem;">Grade Filter</div>
+                            <div class="stat-value grade-stat">${currentGradeFilter}</div>
+                            <div class="stat-label">Grade Filter</div>
                         </div>
                         ` : ''}
                     </div>
                 </div>
                 
-                <div class="footer-actions" style="display: flex; gap: 10px;">
+                <div class="footer-actions">
                     <button onclick="exportSchedule()" class="export-btn">
-                        <i class="fas fa-file-export"></i> Export Schedule
+                        <i class="fas fa-file-export"></i> Export
                     </button>
                     <button onclick="loadAllClasses()" class="refresh-btn">
                         <i class="fas fa-sync-alt"></i> Refresh
@@ -579,7 +463,7 @@ function addGridFooter(filteredCount, totalCount) {
                 </div>
             </div>
             
-            <p style="color: #64748b; text-align: center; margin-top: 15px; font-size: 0.85rem;">
+            <p class="footer-note">
                 <i class="fas fa-info-circle"></i>
                 ${currentFilter === 'all' ? 'Showing all classes' : `Filtered by: ${currentFilter}`}
                 ${currentGradeFilter !== 'all' ? ` • Grade ${currentGradeFilter}` : ''}
@@ -590,324 +474,32 @@ function addGridFooter(filteredCount, totalCount) {
 }
 
 /**
- * JOIN LIVE SESSION FUNCTION
+ * UPDATE STATISTICS
  */
-function joinLiveSession(roomName) {
-    const decodedRoom = decodeURIComponent(roomName);
+function updateStatistics(classes) {
+    const total = classes.length;
+    const live = classes.filter(c => c.status === 'active').length;
+    const upcoming = classes.filter(c =>
+        c.status === 'scheduled' && isClassUpcoming(c)
+    ).length;
 
-    // Show premium notification
-    showPremiumNotification(`Joining <strong>${decodedRoom}</strong>`, 'success', 'video');
+    // Update hero stats
+    const totalEl = document.getElementById('totalClassesStat');
+    const liveEl = document.getElementById('liveClassesStat');
+    const upcomingEl = document.getElementById('upcomingClassesStat');
 
-    // Add loading animation
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(15, 23, 42, 0.95);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    `;
-
-    overlay.innerHTML = `
-        <div class="loading-animation" style="text-align: center;">
-            <div style="
-                width: 80px;
-                height: 80px;
-                border: 3px solid rgba(50, 205, 50, 0.3);
-                border-top: 3px solid #32cd32;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin-bottom: 20px;
-            "></div>
-            <h3 style="color: #fff; margin-bottom: 10px;">Connecting to Live Session</h3>
-            <p style="color: #94a3b8; margin-bottom: 20px;">${decodedRoom}</p>
-            <div style="display: flex; gap: 10px;">
-                <div class="dot" style="
-                    width: 10px;
-                    height: 10px;
-                    background: #32cd32;
-                    border-radius: 50%;
-                    animation: pulseDot 1.5s infinite;
-                "></div>
-                <div class="dot" style="
-                    width: 10px;
-                    height: 10px;
-                    background: #32cd32;
-                    border-radius: 50%;
-                    animation: pulseDot 1.5s infinite 0.2s;
-                "></div>
-                <div class="dot" style="
-                    width: 10px;
-                    height: 10px;
-                    background: #32cd32;
-                    border-radius: 50%;
-                    animation: pulseDot 1.5s infinite 0.4s;
-                "></div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    // Redirect after short delay
-    setTimeout(() => {
-        window.location.href = `live-session.html?room=${roomName}`;
-    }, 1500);
+    if (totalEl) totalEl.textContent = total;
+    if (liveEl) liveEl.textContent = live;
+    if (upcomingEl) upcomingEl.textContent = upcoming;
 }
 
 /**
- * SHOW CLASS DETAILS
+ * ADD ADDITIONAL STYLES
  */
-function showClassDetails(classId) {
-    showPremiumNotification("Class details feature coming soon!", "info", "info-circle");
-    // Implement class details modal here
-}
-
-/**
- * EXPORT SCHEDULE
- */
-function exportSchedule() {
-    showPremiumNotification("Exporting schedule as CSV...", "success", "file-export");
-    // Implement export functionality here
-}
-
-/**
- * SHOW NO CLASSES MESSAGE
- */
-function showNoClassesMessage(container, totalClasses) {
-    const message = currentFilter === 'all'
-        ? 'No classes available'
-        : `No ${currentFilter} classes found`;
-
-    container.innerHTML = `
-        <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-            <div style="
-                width: 100px;
-                height: 100px;
-                background: rgba(30, 41, 59, 0.5);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 25px;
-                border: 2px solid rgba(255, 255, 255, 0.1);
-            ">
-                <i class="fas fa-calendar-times" style="font-size: 2.5rem; color: #64748b;"></i>
-            </div>
-            
-            <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.5rem;">${message}</h3>
-            
-            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px; line-height: 1.6;">
-                ${totalClasses > 0
-            ? `There are ${totalClasses} total classes, but none match your current filters.`
-            : 'No classes have been scheduled yet. Check back later or contact your tutor.'
-        }
-            </p>
-            
-            ${totalClasses > 0 ? `
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button onclick="resetFilters()" class="action-btn primary" style="
-                        background: #32cd32;
-                        color: #000;
-                        border: none;
-                        padding: 12px 25px;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-weight: bold;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    ">
-                        <i class="fas fa-redo"></i> Reset Filters
-                    </button>
-                    <button onclick="setFilter('all')" class="action-btn secondary" style="
-                        background: rgba(50, 205, 50, 0.1);
-                        color: #32cd32;
-                        border: 1px solid #32cd32;
-                        padding: 12px 25px;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-weight: bold;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    ">
-                        <i class="fas fa-eye"></i> Show All
-                    </button>
-                </div>
-            ` : ''}
-        </div>
-    `;
-}
-
-/**
- * SHOW ERROR MESSAGE
- */
-function showErrorMessage(container, error) {
-    container.innerHTML = `
-        <div class="error-state" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-            <div style="
-                width: 100px;
-                height: 100px;
-                background: rgba(239, 68, 68, 0.1);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 25px;
-                border: 2px solid rgba(239, 68, 68, 0.3);
-            ">
-                <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: #ef4444;"></i>
-            </div>
-            
-            <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.5rem;">Connection Error</h3>
-            
-            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 15px;">
-                Failed to connect to the server. Please check your internet connection.
-            </p>
-            
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 30px; max-width: 500px; margin: 0 auto 30px;">
-                <i class="fas fa-code"></i> Error: ${error.message}
-            </p>
-            
-            <button onclick="loadAllClasses()" class="action-btn" style="
-                background: rgba(239, 68, 68, 0.1);
-                color: #ef4444;
-                border: 1px solid #ef4444;
-                padding: 12px 30px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: bold;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin: 0 auto;
-            ">
-                <i class="fas fa-redo"></i> Try Again
-            </button>
-        </div>
-    `;
-}
-
-/**
- * SHOW PREMIUM NOTIFICATION
- */
-function showPremiumNotification(message, type, icon = 'info-circle') {
-    const icons = {
-        success: 'check-circle',
-        error: 'exclamation-circle',
-        warning: 'exclamation-triangle',
-        info: 'info-circle',
-        video: 'video'
-    };
-
-    const colors = {
-        success: '#10b981',
-        error: '#ef4444',
-        warning: '#f59e0b',
-        info: '#3b82f6',
-        video: '#32cd32'
-    };
-
-    // Remove existing notifications
-    const existing = document.querySelector('.premium-notification');
-    if (existing) existing.remove();
-
-    const n = document.createElement('div');
-    n.className = 'premium-notification';
-    n.innerHTML = `
-        <div class="notification-icon" style="
-            width: 40px;
-            height: 40px;
-            background: ${colors[type]}20;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        ">
-            <i class="fas fa-${icon || icons[type]}" style="color: ${colors[type]}; font-size: 1.2rem;"></i>
-        </div>
-        <div class="notification-content">
-            <div class="notification-title" style="color: #fff; font-weight: 600; margin-bottom: 4px;">
-                ${type.charAt(0).toUpperCase() + type.slice(1)}
-            </div>
-            <div class="notification-message" style="color: #94a3b8;">
-                ${message}
-            </div>
-        </div>
-        <button class="notification-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-
-    Object.assign(n.style, {
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        padding: '20px',
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98))',
-        color: 'white',
-        borderRadius: '12px',
-        zIndex: '9999',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-        fontFamily: 'Inter, sans-serif',
-        display: 'flex',
-        alignItems: 'center',
-        maxWidth: '400px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        animation: 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        backdropFilter: 'blur(10px)'
-    });
-
-    document.body.appendChild(n);
-
-    // Auto-remove after 4 seconds
-    setTimeout(() => {
-        n.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => n.remove(), 300);
-    }, 4000);
-}
-
-/**
- * ADD PREMIUM STYLES
- */
-function addPremiumStyles() {
+function addAdditionalStyles() {
     const style = document.createElement('style');
     style.textContent = `
-        /* Animations */
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulseDot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.5; }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        /* Premium Class Cards */
+        /* Premium Class Card Styles */
         .premium-class-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
             border-radius: 16px;
@@ -920,39 +512,21 @@ function addPremiumStyles() {
         }
         
         .premium-class-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             border-color: rgba(50, 205, 50, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
         
-        .premium-class-card.active-card {
+        .active-live {
             border-color: rgba(50, 205, 50, 0.5);
-            box-shadow: 0 0 40px rgba(50, 205, 50, 0.1);
+            box-shadow: 0 0 30px rgba(50, 205, 50, 0.1);
         }
         
-        .premium-class-card.active-card .card-glow {
-            opacity: 1;
-        }
-        
-        .card-glow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #32cd32, transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Card Header */
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .class-index {
@@ -976,7 +550,9 @@ function addPremiumStyles() {
             letter-spacing: 1px;
         }
         
-        .status-badge {
+        .live-badge {
+            background: rgba(50, 205, 50, 0.15);
+            color: #32cd32;
             padding: 6px 15px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -984,13 +560,24 @@ function addPremiumStyles() {
             display: flex;
             align-items: center;
             gap: 6px;
-            backdrop-filter: blur(5px);
+            animation: pulse 2s infinite;
         }
         
-        /* Card Body */
+        .upcoming-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
         .class-title {
             color: #fff;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 15px;
             line-height: 1.4;
         }
@@ -1022,315 +609,157 @@ function addPremiumStyles() {
         
         .meta-item i {
             color: #32cd32;
-            width: 16px;
         }
         
-        /* Info Grid */
-        .class-info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+        .class-info {
             margin-bottom: 20px;
         }
         
-        .info-item {
-            background: rgba(30, 41, 59, 0.5);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .info-label {
-            color: #94a3b8;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .info-value {
-            color: #fff;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        
-        .room-name {
-            color: #32cd32 !important;
-            font-family: 'Courier New', monospace;
-        }
-        
-        /* Countdown Container */
-        .countdown-container {
-            background: rgba(245, 158, 11, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        
-        .countdown-label {
-            color: #f59e0b;
+        .info-row {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 10px;
-            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
         }
         
-        .countdown-timer {
-            background: rgba(245, 158, 11, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
+        .info-row i {
+            color: #32cd32;
+            width: 18px;
+        }
+        
+        .countdown-text {
+            color: #f59e0b;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .room-name {
+            color: #32cd32;
             font-family: 'Courier New', monospace;
-            font-weight: 700;
         }
         
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-        
-        /* Card Footer */
         .card-footer {
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .footer-actions {
+        .join-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
-        .join-action-btn {
+        .btn-enabled {
             background: linear-gradient(135deg, #32cd32, #22c55e);
             color: #000;
             border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
         }
         
-        .join-action-btn:hover {
+        .btn-enabled:hover {
+            background: linear-gradient(135deg, #28a428, #1a8c1a);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(50, 205, 50, 0.3);
         }
         
-        .view-details-btn {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .view-details-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .btn-badge {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .action-icons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .icon-btn {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.05);
+        .btn-disabled {
+            background: rgba(30, 41, 59, 0.8);
+            color: #64748b;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            cursor: not-allowed;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Grid Footer */
+        .grid-footer .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .grid-footer .stat-display {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .grid-footer .stat {
+            text-align: center;
+        }
+        
+        .grid-footer .stat-value {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .grid-footer .grade-stat {
+            color: #f59e0b !important;
+        }
+        
+        .grid-footer .stat-label {
             color: #94a3b8;
-            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .footer-note {
+            color: #64748b;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            gap: 8px;
         }
         
-        .icon-btn:hover {
-            background: rgba(50, 205, 50, 0.1);
-            color: #32cd32;
-            border-color: rgba(50, 205, 50, 0.3);
-        }
-        
-        /* Filter Buttons */
-        .filter-btn {
-            background: rgba(30, 41, 59, 0.8);
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            color: white;
+            border-radius: 12px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #94a3b8;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            animation: slideInRight 0.3s ease-out;
         }
         
-        .filter-btn:hover {
-            background: rgba(50, 205, 50, 0.1);
-            color: #32cd32;
-        }
-        
-        .filter-btn.active {
-            background: rgba(50, 205, 50, 0.15);
-            color: #32cd32;
-            border-color: rgba(50, 205, 50, 0.3);
-        }
-        
-        /* Reset Button */
-        .reset-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-        
-        .reset-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-        
-        /* Footer Buttons */
-        .export-btn {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-        
-        .export-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-        }
-        
-        .refresh-btn {
-            background: rgba(50, 205, 50, 0.1);
-            color: #32cd32;
-            border: 1px solid rgba(50, 205, 50, 0.3);
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-        
-        .refresh-btn:hover {
-            background: rgba(50, 205, 50, 0.2);
-        }
-        
-        /* Notification Close */
-        .notification-close {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 5px;
-            margin-left: 15px;
-            border-radius: 5px;
-            transition: all 0.2s ease;
-        }
-        
-        .notification-close:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-        }
-        
-        /* Live Grid Layout */
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 25px;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .live-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .live-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .class-info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-actions {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .action-icons {
-                justify-content: center;
-                width: 100%;
-            }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     `;
     document.head.appendChild(style);
 }
 
-// Keep all existing helper functions (they remain the same as before)
-function isClassUpcoming(cls) { /* ... */ }
-function getTimeUntilClass(cls) { /* ... */ }
-function formatDisplayDate(dateString) { /* ... */ }
-function formatDisplayTime(timeString) { /* ... */ }
-function escapeHtml(text) { /* ... */ }
-function showNotification(message, type) { /* ... */ }
-
-// Initialize helper functions
+// Helper Functions (keep your existing ones)
 function isClassUpcoming(cls) {
     if (!cls.scheduled_date || !cls.scheduled_time) return false;
     const classDateTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
@@ -1383,5 +812,94 @@ function escapeHtml(text) {
 }
 
 function showNotification(message, type) {
-    showPremiumNotification(message, type);
+    // Remove existing notifications
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+
+    const n = document.createElement('div');
+    n.className = 'notification';
+    n.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" 
+           style="color: ${type === 'success' ? '#32cd32' : type === 'error' ? '#ef4444' : '#f59e0b'}"></i>
+        <span>${message}</span>
+    `;
+
+    document.body.appendChild(n);
+
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        n.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => n.remove(), 300);
+    }, 4000);
+}
+
+function joinLiveSession(roomName) {
+    const decodedRoom = decodeURIComponent(roomName);
+    showNotification(`Joining ${decodedRoom}...`, "success");
+
+    setTimeout(() => {
+        window.location.href = `live-session.html?room=${roomName}`;
+    }, 1000);
+}
+
+function exportSchedule() {
+    showNotification("Export feature coming soon!", "info");
+}
+
+function showNoClassesMessage(container, totalCount) {
+    container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+            <i class="fas fa-calendar-times" style="font-size: 3rem; color: #64748b; margin-bottom: 20px;"></i>
+            <h3 style="color: #fff; margin-bottom: 10px;">No Classes Found</h3>
+            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px;">
+                ${totalCount > 0
+            ? `No classes match your current filters. Try adjusting your filter settings.`
+            : 'No classes have been scheduled yet.'
+        }
+            </p>
+            <button onclick="resetFilters()" style="
+                background: #32cd32;
+                color: #000;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0 auto;
+            ">
+                <i class="fas fa-redo"></i> Reset Filters
+            </button>
+        </div>
+    `;
+}
+
+function showErrorMessage(container, error) {
+    if (!container) return;
+    container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 20px;"></i>
+            <h3 style="color: #fff; margin-bottom: 10px;">Connection Error</h3>
+            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 15px;">
+                Failed to load classes. Please check your internet connection.
+            </p>
+            <button onclick="loadAllClasses()" style="
+                background: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+                border: 1px solid #ef4444;
+                padding: 12px 30px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0 auto;
+            ">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+    `;
 }

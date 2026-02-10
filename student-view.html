@@ -8,13 +8,21 @@
     <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Keep all your existing CSS styles, just add this at the end of the style block */
+        /* Add this to your existing student-view.html style section */
 
-        /* Main container for live classes */
+        /* Main container styling */
         .main-content {
             padding: 20px 5%;
             max-width: 1400px;
             margin: 0 auto;
+        }
+
+        /* Live Grid */
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
         }
 
         /* Loading spinner */
@@ -22,6 +30,7 @@
             text-align: center;
             padding: 50px;
             color: #94a3b8;
+            grid-column: 1/-1;
         }
 
         .spinner {
@@ -43,6 +52,392 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Hero Section Styles */
+        .filter-hero-section {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+            padding: 3rem 2rem;
+            border-radius: 0 0 30px 30px;
+            margin: -1px 0 2rem 0;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #32cd32, #3b82f6, #f59e0b);
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .hero-text {
+            padding-right: 2rem;
+        }
+
+        .hero-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+            color: #fff;
+            font-size: 2.8rem;
+            line-height: 1.2;
+        }
+
+        .hero-title i {
+            color: #32cd32;
+            font-size: 2.5rem;
+        }
+
+        .hero-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-accent {
+            color: #32cd32;
+            font-weight: 800;
+            text-shadow: 0 0 15px rgba(50, 205, 50, 0.3);
+        }
+
+        .hero-subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .hero-stats .stat-item {
+            text-align: center;
+        }
+
+        .hero-stats .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #32cd32, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .hero-stats .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Filter Controls */
+        .hero-filters {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-label i {
+            color: #32cd32;
+            font-size: 1.1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: rgba(50, 205, 50, 0.1);
+            color: #32cd32;
+            border-color: rgba(50, 205, 50, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: rgba(50, 205, 50, 0.15);
+            color: #32cd32;
+            border-color: rgba(50, 205, 50, 0.4);
+            box-shadow: 0 5px 15px rgba(50, 205, 50, 0.15);
+        }
+
+        /* Grade Filter */
+        .grade-filter-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .grade-select-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .grade-select {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            appearance: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .grade-select:focus {
+            outline: none;
+            border-color: #32cd32;
+            box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.2);
+        }
+
+        .select-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+            font-size: 1.1rem;
+        }
+
+        .reset-filters-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .reset-filters-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Active Filters Bar */
+        .active-filters-bar {
+            max-width: 1200px;
+            margin: 2rem auto 0 auto;
+            padding: 1.2rem 2rem;
+            background: rgba(50, 205, 50, 0.07);
+            border-radius: 15px;
+            border: 1px solid rgba(50, 205, 50, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .filters-summary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #32cd32;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .filters-summary i {
+            font-size: 1.2rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .export-btn,
+        .refresh-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .export-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn {
+            background: rgba(50, 205, 50, 0.1);
+            color: #32cd32;
+            border: 1px solid rgba(50, 205, 50, 0.3);
+        }
+
+        .refresh-btn:hover {
+            background: rgba(50, 205, 50, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .hero-text {
+                padding-right: 0;
+                text-align: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .filter-hero-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .hero-filters {
+                padding: 1.5rem;
+            }
+
+            .active-filters-bar {
+                flex-direction: column;
+                gap: 1.2rem;
+                text-align: center;
+            }
+
+            .filter-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .grade-filter-container {
+                flex-direction: column;
+            }
+
+            .reset-filters-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .live-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -59,43 +454,20 @@
         </div>
     </nav>
 
-    <header class="page-header" style="text-align: center; padding: 40px 0;">
-        <h1 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px;">Live <span
-                style="color: #32cd32;">Classroom</span></h1>
-        <p style="color: #94a3b8;">Join a live session or see what's coming up next.</p>
-    </header>
+    <!-- Hero Filter Section (Replaces the old header) -->
+    <div id="filterHeroSection"></div>
 
     <div class="main-content">
-        <!-- Hero Live Card -->
-        <div class="quick-action-card" id="heroLiveCard" style="cursor: pointer; margin-bottom: 30px;">
-            <div class="action-icon live-icon">
-                <i class="fas fa-broadcast-tower"></i>
-            </div>
-            <div class="action-info">
-                <h4 id="heroClassStatus">Live Classes</h4>
-                <p id="heroClassTopic">View the daily schedule</p>
-            </div>
-            <div id="liveBadgeContainer"></div>
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading classes...</p>
         </div>
 
-        <!-- Live Classes Section -->
-        <section style="margin-top: 40px;">
-            <h2 style="color: #fff; margin-bottom: 20px; font-size: 1.8rem;">
-                <i class="fas fa-chalkboard-teacher" style="color: #32cd32; margin-right: 10px;"></i>
-                Available Classes
-            </h2>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="loading-spinner">
-                <div class="spinner"></div>
-                <p>Loading classes...</p>
-            </div>
-
-            <!-- Classes Grid Container -->
-            <div id="liveClassesContainer" class="live-grid" style="display: none;">
-                <!-- Classes will be inserted here by JavaScript -->
-            </div>
-        </section>
+        <!-- Classes Grid Container -->
+        <div id="liveClassesContainer" class="live-grid" style="display: none;">
+            <!-- Classes will be inserted here by JavaScript -->
+        </div>
     </div>
 
     <script src="student-view-logic.js"></script>

@@ -8,6 +8,66 @@
     <link rel="stylesheet" href="class.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Additional styles for Jitsi integration */
+        .jitsi-info {
+            background: rgba(50, 205, 50, 0.1);
+            border-left: 4px solid #32cd32;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .jitsi-info h4 {
+            color: #32cd32;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-link {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #32cd32;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .copy-btn:hover {
+            background: #2db82d;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,72 +87,581 @@
             <section class="form-container fade-in">
                 <div class="form-header">
                     <i class="fas fa-video pulse-icon"></i>
-                    <h2>Launch <span class="green-text">Live Class</span></h2>
-                    <p>Enter your details to schedule a new session.</p>
+                    <h2>Schedule <span class="green-text">Live Class</span></h2>
+                    <p>Create a new live teaching session using Jitsi Meet</p>
+                </div>
+
+                <div class="jitsi-info">
+                    <h4><i class="fas fa-info-circle"></i> Using Jitsi Meet (Free)</h4>
+                    <p>✅ No time limits • ✅ Up to 75 participants • ✅ Completely free</p>
+                    <p>Classes run on <strong>meet.jit.si</strong> - no account needed!</p>
                 </div>
 
                 <div class="p2p-form">
                     <div class="input-group">
-                        <label for="tutorNameInput">Your Name</label>
-                        <input type="text" id="tutorNameInput" placeholder="Dr. Sarah Johnson">
+                        <label for="tutorNameInput"><i class="fas fa-user"></i> Your Name</label>
+                        <input type="text" id="tutorNameInput" placeholder="e.g. Mr. Johnson">
                     </div>
 
                     <div class="input-group">
-                        <label for="tutorEmailInput">Your Email</label>
-                        <input type="email" id="tutorEmailInput" placeholder="tutor@example.com"
-                            oninput="loadTutorClasses(this.value)">
+                        <label for="tutorEmailInput"><i class="fas fa-envelope"></i> Your Email</label>
+                        <input type="email" id="tutorEmailInput" placeholder="you@example.com">
                     </div>
 
                     <div class="input-group">
                         <label for="classTopic"><i class="fas fa-book"></i> Lesson Topic</label>
-                        <input type="text" id="classTopic" placeholder="e.g. Calculus Basics">
+                        <input type="text" id="classTopic" placeholder="e.g. Calculus Basics, Biology Chapter 3">
                     </div>
-                    <div class="input-group">
-                        <label for="classDate"><i class="fas fa-calendar"></i> Scheduled Date</label>
-                        <input type="date" id="classDate" required>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="classDate"><i class="fas fa-calendar"></i> Date</label>
+                            <input type="date" id="classDate" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="classTime"><i class="fas fa-clock"></i> Time</label>
+                            <input type="time" id="classTime" required>
+                        </div>
                     </div>
 
                     <div class="input-group">
-                        <label for="classTime"><i class="fas fa-clock"></i> Scheduled Time</label>
-                        <input type="time" id="classTime" required>
-                    </div>
-                    <div class="input-group">
                         <label for="classGrade"><i class="fas fa-graduation-cap"></i> Select Grade</label>
                         <select id="classGrade">
-                            <option value="Grade 1">Grade 1</option>
-                            <option value="Grade 2">Grade 2</option>
-                            <option value="Grade 3">Grade 3</option>
-                            <option value="Grade 4">Grade 4</option>
-                            <option value="Grade 5">Grade 5</option>
-                            <option value="Grade 6">Grade 6</option>
-                            <option value="Grade 7">Grade 7</option>
+                            <option value="">Select Grade</option>
                             <option value="Grade 8">Grade 8</option>
                             <option value="Grade 9">Grade 9</option>
                             <option value="Grade 10">Grade 10</option>
                             <option value="Grade 11">Grade 11</option>
                             <option value="Grade 12">Grade 12</option>
-
+                            <option value="University">University</option>
+                            <option value="Adult">Adult Learning</option>
                         </select>
                     </div>
 
                     <button class="btn-launch" onclick="scheduleClass()">
-                        <span>Schedule & Broadcast</span>
-                        <i class="fas fa-paper-plane"></i>
+                        <span>Schedule Class</span>
+                        <i class="fas fa-calendar-plus"></i>
                     </button>
+
+                    <div class="instructions">
+                        <h5><i class="fas fa-lightbulb"></i> How it works:</h5>
+                        <ul>
+                            <li>1. Schedule your class (room is created automatically)</li>
+                            <li>2. Share the room link with students</li>
+                            <li>3. Click "Start Live" when ready to begin</li>
+                            <li>4. Teach using Jitsi's video, audio, and screen sharing</li>
+                            <li>5. No time limits - teach as long as you need</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
 
             <section class="queue-container fade-in" style="animation-delay: 0.2s;">
                 <div class="queue-header">
-                    <h3><i class="fas fa-clock"></i> Scheduled Today</h3>
+                    <h3><i class="fas fa-calendar-alt"></i> Your Scheduled Classes</h3>
+                    <button onclick="refreshClasses()" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                 </div>
+
+                <div id="classStatus" class="status-message">
+                    <i class="fas fa-spinner fa-spin"></i> Loading your classes...
+                </div>
+
                 <div id="myMeetingsList" class="meeting-cards-stack">
+                    <!-- Classes will be loaded here by JavaScript -->
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h4>No Classes Scheduled</h4>
+                    <p>Schedule your first class using the form on the left!</p>
+                    <p class="small-text">Your classes will appear here once scheduled.</p>
                 </div>
             </section>
         </div>
     </main>
 
-    <script src="create.js"></script>
+    <script>
+        // Global variables
+        const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
+        let currentEmail = '';
+
+        // Function to schedule a class
+        async function scheduleClass() {
+            const topic = document.getElementById('classTopic').value.trim();
+            const grade = document.getElementById('classGrade').value;
+            const date = document.getElementById('classDate').value;
+            const time = document.getElementById('classTime').value;
+            const email = document.getElementById('tutorEmailInput').value.trim();
+            const name = document.getElementById('tutorNameInput').value.trim();
+
+            currentEmail = email;
+
+            // Validation
+            if (!topic || !date || !time || !email) {
+                alert("Please fill in all required fields");
+                return;
+            }
+
+            const btn = document.querySelector('.btn-launch');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/schedule-class`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        name: name,
+                        topic: topic,
+                        grade: grade,
+                        scheduled_date: date,
+                        scheduled_time: time
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Class Scheduled Successfully!\n\nRoom Name: ${result.roomName}\n\nShare this link with students:\nhttps://meet.jit.si/${result.roomName}`);
+
+                    // Clear form
+                    document.getElementById('classTopic').value = '';
+
+                    // Set next hour as default time
+                    const nextHour = new Date();
+                    nextHour.setHours(nextHour.getHours() + 1);
+                    document.getElementById('classTime').value = `${nextHour.getHours().toString().padStart(2, '0')}:00`;
+
+                    // Load updated classes
+                    loadTutorClasses(email);
+
+                } else {
+                    alert("❌ Error: " + (result.error || "Failed to schedule class"));
+                }
+            } catch (error) {
+                alert("❌ Network error. Please check your connection.");
+                console.error("Schedule error:", error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // Function to load tutor's classes
+        async function loadTutorClasses(email) {
+            const status = document.getElementById('classStatus');
+            const list = document.getElementById('myMeetingsList');
+            const emptyState = document.getElementById('emptyState');
+
+            status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading classes...';
+            status.style.display = 'block';
+            list.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/get-classes?email=${encodeURIComponent(email)}`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch classes');
+                }
+
+                const classes = await response.json();
+                status.style.display = 'none';
+
+                if (!classes || classes.length === 0) {
+                    emptyState.style.display = 'block';
+                    list.style.display = 'none';
+                    return;
+                }
+
+                list.style.display = 'block';
+                emptyState.style.display = 'none';
+                renderTutorClasses(classes);
+
+            } catch (error) {
+                status.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Failed to load classes. Please try again.';
+                console.error("Load classes error:", error);
+            }
+        }
+
+        // Function to render classes
+        function renderTutorClasses(classes) {
+            const list = document.getElementById('myMeetingsList');
+
+            // Sort classes: active first, then by date
+            const sortedClasses = [...classes].sort((a, b) => {
+                if (a.status === 'active' && b.status !== 'active') return -1;
+                if (a.status !== 'active' && b.status === 'active') return 1;
+
+                const dateA = new Date(`${a.scheduled_date}T${a.scheduled_time || '00:00'}`);
+                const dateB = new Date(`${b.scheduled_date}T${b.scheduled_time || '00:00'}`);
+                return dateA - dateB;
+            });
+
+            list.innerHTML = sortedClasses.map(cls => {
+                const isActive = cls.status === 'active';
+                const isCompleted = cls.status === 'completed';
+                const isScheduled = cls.status === 'scheduled';
+
+                // Format date
+                const date = new Date(cls.scheduled_date);
+                const dateStr = date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                // Format time
+                let timeStr = cls.scheduled_time || 'Not set';
+                if (cls.scheduled_time) {
+                    const [hours, minutes] = cls.scheduled_time.split(':');
+                    const hour = parseInt(hours);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour % 12 || 12;
+                    timeStr = `${displayHour}:${minutes} ${ampm}`;
+                }
+
+                // Status badge
+                let statusBadge = '';
+                if (isActive) {
+                    statusBadge = '<span class="status-badge live">🔴 LIVE NOW</span>';
+                } else if (isCompleted) {
+                    statusBadge = '<span class="status-badge completed">✅ COMPLETED</span>';
+                } else {
+                    statusBadge = '<span class="status-badge scheduled">⏰ SCHEDULED</span>';
+                }
+
+                // Action button
+                let actionButton = '';
+                if (isActive) {
+                    actionButton = `<button onclick="joinClass('${cls.room_name}')" class="action-btn join-btn">
+                        <i class="fas fa-sign-in-alt"></i> Join Class
+                    </button>`;
+                } else if (isScheduled) {
+                    actionButton = `<button onclick="startClass('${cls.room_name}', '${cls.tutor_email}')" class="action-btn start-btn">
+                        <i class="fas fa-play"></i> Start Live
+                    </button>`;
+                } else {
+                    actionButton = '<button disabled class="action-btn disabled-btn">Completed</button>';
+                }
+
+                // Room info
+                const roomInfo = cls.room_name ?
+                    `<div class="room-info">
+                        <small><i class="fas fa-link"></i> Room: ${cls.room_name}</small>
+                        <button onclick="copyLink('${cls.room_name}')" class="copy-btn-small">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    </div>` : '';
+
+                return `
+                <div class="meeting-card ${isActive ? 'active' : ''}">
+                    <div class="card-header">
+                        <h4>${escapeHtml(cls.topic)}</h4>
+                        ${statusBadge}
+                    </div>
+                    
+                    ${roomInfo}
+                    
+                    <div class="card-details">
+                        <div class="detail">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>${cls.grade || 'Not specified'}</span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-calendar"></i>
+                            <span>${dateStr}</span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-clock"></i>
+                            <span>${timeStr}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="tutor-info">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>${escapeHtml(cls.tutor_name)}</span>
+                        </div>
+                        ${actionButton}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Function to start a class
+        async function startClass(roomName, email) {
+            if (!confirm('Start this live class? Students can join once you start.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/go-live`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, roomName })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Open Jitsi in new tab
+                    window.open(`live-session.html?room=${encodeURIComponent(roomName)}`, '_blank');
+                    // Refresh classes list
+                    setTimeout(() => loadTutorClasses(email), 2000);
+                } else {
+                    alert('Failed to start class: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+                console.error("Start class error:", error);
+            }
+        }
+
+        // Function to join a class
+        function joinClass(roomName) {
+            window.open(`live-session.html?room=${encodeURIComponent(roomName)}`, '_blank');
+        }
+
+        // Function to copy room link
+        function copyLink(roomName) {
+            const link = `https://meet.jit.si/${roomName}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Link copied to clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                prompt('Copy this link:', link);
+            });
+        }
+
+        // Function to refresh classes
+        function refreshClasses() {
+            if (currentEmail) {
+                loadTutorClasses(currentEmail);
+            }
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set default date to today
+            const today = new Date();
+            document.getElementById('classDate').value = today.toISOString().split('T')[0];
+
+            // Set default time to next hour
+            const nextHour = new Date();
+            nextHour.setHours(nextHour.getHours() + 1);
+            document.getElementById('classTime').value = `${nextHour.getHours().toString().padStart(2, '0')}:00`;
+
+            // Try to load saved tutor info
+            const savedEmail = sessionStorage.getItem('p2p_email');
+            const savedName = sessionStorage.getItem('p2p_name');
+
+            if (savedEmail) {
+                document.getElementById('tutorEmailInput').value = savedEmail;
+                document.getElementById('tutorNameInput').value = savedName || '';
+                currentEmail = savedEmail;
+                loadTutorClasses(savedEmail);
+            }
+
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                if (currentEmail) {
+                    loadTutorClasses(currentEmail);
+                }
+            }, 30000);
+        });
+    </script>
+
+    <!-- Link to external CSS -->
+    <style>
+        .status-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .meeting-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #32cd32;
+        }
+
+        .meeting-card.active {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            color: #333;
+            flex: 1;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-badge.live {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-badge.scheduled {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-badge.completed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .room-info {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn-small {
+            background: #32cd32;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+
+        .card-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .tutor-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .start-btn {
+            background: #32cd32;
+            color: white;
+        }
+
+        .join-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .disabled-btn {
+            background: #9ca3af;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .refresh-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
 </body>
 
 </html>

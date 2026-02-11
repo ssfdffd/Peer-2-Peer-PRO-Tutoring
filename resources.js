@@ -319,6 +319,7 @@ function openDocument(url, title) {
 
 // 11. UPLOAD DOCUMENT WITH ALL FIELDS
 // 11. UPLOAD DOCUMENT WITH ALL FIELDS
+// 11. UPLOAD DOCUMENT WITH ALL FIELDS - TEMPORARY FIX
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
     const titleInput = document.getElementById('fileName');
@@ -327,7 +328,6 @@ async function uploadDocument() {
     const roleInput = document.getElementById('uploaderRole');
     const docTypeInput = document.getElementById('docType');
     const docDateInput = document.getElementById('docDate');
-    const descriptionInput = document.getElementById('docDescription');
     const btn = document.getElementById('uploadBtn');
 
     // Validate all required fields
@@ -366,65 +366,44 @@ async function uploadDocument() {
 
     const file = fileInput.files[0];
 
-    // Check file size (limit to 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-        alert("File size too large. Maximum size is 10MB.");
-        btn.innerHTML = 'Upload Document';
-        btn.disabled = false;
-        return;
-    }
-
+    // TEMPORARY: Convert file to data URL for inline viewing
     const reader = new FileReader();
 
     reader.onload = async (e) => {
+        // Use data URL directly (not base64)
+        const dataUrl = e.target.result;
+
+        // Generate unique ID
+        const timestamp = Date.now();
+        const fileKey = `doc_${timestamp}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Store as data URL
+        const fileUrl = dataUrl; // Use the data URL directly
+
+        const payload = {
+            title: titleInput.value,
+            subject: subjectInput.value.toLowerCase(),
+            grade: gradeInput.value,
+            uploader_role: roleInput.value,
+            doc_type: docTypeInput.value,
+            doc_date: docDateInput.value,
+            actual_file_key: fileKey,
+            file_url: fileUrl,
+            // Don't send file_data to avoid storage issues
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size
+        };
+
         try {
-            // Get base64 data
-            const base64Data = e.target.result.split(',')[1];
-
-            // Generate unique file key with original extension
-            const timestamp = Date.now();
-            const fileExtension = file.name.split('.').pop();
-            const fileKey = `doc_${timestamp}_${Math.random().toString(36).substr(2, 9)}.${fileExtension}`;
-
-            // Direct URL to file
-            // In the uploadDocument function, ensure the fileUrl is properly set:
-            const fileUrl = `${API_URL}/api/file/${fileKey}`;
-
-            const payload = {
-                title: titleInput.value,
-                subject: subjectInput.value.toLowerCase(),
-                grade: gradeInput.value,
-                uploader_role: roleInput.value,
-                doc_type: docTypeInput.value,
-                doc_date: docDateInput.value,
-                description: descriptionInput.value || "",
-                actual_file_key: fileKey,
-                file_url: fileUrl,
-                file_data: base64Data,
-                file_name: file.name,
-                file_type: file.type,
-                file_size: file.size
-            };
-
-            console.log("Uploading file:", {
-                title: payload.title,
-                file_name: payload.file_name,
-                file_size: payload.file_size
-            });
-
             const res = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
             const result = await res.json();
-
-            if (res.ok && result.success) {
+            if (res.ok) {
                 alert(`✅ Success! "${titleInput.value}" has been added to the library.`);
                 // Clear form
                 document.getElementById('uploadForm').reset();
@@ -433,9 +412,7 @@ async function uploadDocument() {
                 // Reload library
                 loadLibrary();
             } else {
-                const errorMsg = result.error || "Upload failed. Please try again.";
-                console.error("Upload error:", errorMsg, result);
-                alert("Upload failed: " + errorMsg);
+                alert("Upload failed: " + (result.error || "Unknown error"));
             }
         } catch (error) {
             console.error("Upload Error:", error);
@@ -446,15 +423,10 @@ async function uploadDocument() {
         }
     };
 
-    reader.onerror = (error) => {
-        console.error("FileReader error:", error);
-        alert("Error reading file. Please try again.");
-        btn.innerHTML = 'Upload Document';
-        btn.disabled = false;
-    };
-
     reader.readAsDataURL(file);
 }
+
+
 // 12. UTILITIES
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');

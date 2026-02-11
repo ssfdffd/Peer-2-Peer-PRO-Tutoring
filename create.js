@@ -1,6 +1,6 @@
 /**
- * PEER-2-PEER PRO: FINAL WORKING CREATE.JS
- * Complete solution with working "START LIVE" button functionality
+ * PEER-2-PEER PRO: FINAL CREATE.JS WITH MIROTALK INTEGRATION
+ * Complete solution for scheduling and launching Mirotalk live classes
  */
 
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
@@ -33,13 +33,18 @@ window.goLive = async function (roomName) {
 
         const result = await response.json();
         if (result.success) {
-            showNotification("Starting live session...", "success");
-            // Small delay to ensure UI updates
+            showNotification("Opening Mirotalk session...", "success");
+            // Open Mirotalk in a new tab
             setTimeout(() => {
-                window.location.href = `live-session.html?room=${encodeURIComponent(roomName)}`;
-            }, 800);
+                const mirotalkUrl = `https://mirotalk.xyz/${roomName}`;
+                window.open(mirotalkUrl, '_blank');
+                // Reset button after a moment
+                setTimeout(() => {
+                    loadTutorClasses(email);
+                }, 1000);
+            }, 500);
         } else {
-            showNotification("Failed to start live session", "error");
+            showNotification("Failed to start live session: " + (result.error || "Unknown error"), "error");
             // Reset buttons
             loadTutorClasses(email);
         }
@@ -51,12 +56,30 @@ window.goLive = async function (roomName) {
     }
 };
 
+// Add function to join as student
+window.joinClass = function (roomName) {
+    console.log("Joining class:", roomName);
+    const mirotalkUrl = `https://mirotalk.xyz/${roomName}`;
+    // Open Mirotalk in a new tab
+    window.open(mirotalkUrl, '_blank');
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("DOM loaded - initializing create page");
 
     animateFormEntrance();
     animatePageLoad();
     setupInputAnimations();
+
+    // Set default date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('classDate').value = tomorrow.toISOString().split('T')[0];
+
+    // Set default time to next hour
+    const nextHour = new Date();
+    nextHour.setHours(nextHour.getHours() + 1);
+    document.getElementById('classTime').value = `${nextHour.getHours().toString().padStart(2, '0')}:00`;
 
     // Pull tutor info from sessionStorage
     const savedEmail = sessionStorage.getItem('p2p_email');
@@ -144,7 +167,7 @@ async function scheduleClass() {
         console.log("Schedule response:", result);
 
         if (result.success) {
-            showNotification("Class Scheduled Successfully!", "success");
+            showNotification(`Class Scheduled Successfully! Room: ${result.roomName}`, "success");
             // Clear the topic field for next entry
             document.getElementById('classTopic').value = "";
             // Set default date to tomorrow
@@ -223,7 +246,7 @@ async function loadTutorClasses(email) {
 }
 
 /**
- * RENDER THE SIDEBAR LIST OF CLASSES
+ * RENDER THE SIDEBAR LIST OF CLASSES WITH MIROTALK INTEGRATION
  */
 function renderTutorClasses(classes) {
     const list = document.getElementById('myMeetingsList');
@@ -241,11 +264,11 @@ function renderTutorClasses(classes) {
 
     list.innerHTML = sortedClasses.map(cls => {
         // Create safe strings for display
-        const safeTopic = cls.topic ? cls.topic.replace(/</g, '&lt;').replace(/>/g, '&gt;') : 'Untitled Class';
-        const safeRoomName = cls.room_name ? cls.room_name.replace(/'/g, "\\'").replace(/"/g, '\\"') : '';
-        const grade = cls.grade || 'Not Specified';
-        const date = cls.scheduled_date || 'No Date';
-        const time = cls.scheduled_time || 'No Time';
+        const safeTopic = escapeHtml(cls.topic) || 'Untitled Class';
+        const safeRoomName = escapeHtml(cls.room_name) || '';
+        const grade = escapeHtml(cls.grade) || 'Not Specified';
+        const date = formatDisplayDate(cls.scheduled_date);
+        const time = formatDisplayTime(cls.scheduled_time);
 
         // Determine status and button
         const isActive = cls.status === 'active';
@@ -256,8 +279,8 @@ function renderTutorClasses(classes) {
 
         if (isActive) {
             statusBadge = '<span class="badge-live-now"><i class="fas fa-circle"></i> LIVE NOW</span>';
-            actionButton = `<button onclick="window.location.href='live-session.html?room=${encodeURIComponent(safeRoomName)}'" class="btn-join-live">
-                <i class="fas fa-sign-in-alt"></i> JOIN
+            actionButton = `<button onclick="window.joinClass('${safeRoomName}')" class="btn-join-live">
+                <i class="fas fa-video"></i> Join Mirotalk
             </button>`;
         } else if (isCompleted) {
             statusBadge = '<span class="badge-completed"><i class="fas fa-check-circle"></i> COMPLETED</span>';
@@ -265,7 +288,7 @@ function renderTutorClasses(classes) {
         } else {
             statusBadge = '<span class="badge-scheduled"><i class="fas fa-clock"></i> SCHEDULED</span>';
             actionButton = `<button onclick="window.goLive('${safeRoomName}')" class="btn-start-small">
-                <i class="fas fa-play"></i> START LIVE
+                <i class="fas fa-play"></i> Start Mirotalk
             </button>`;
         }
 
@@ -274,12 +297,20 @@ function renderTutorClasses(classes) {
         const isToday = cls.scheduled_date === today;
         const todayBadge = isToday ? '<span class="badge-today">TODAY</span>' : '';
 
+        // Room info display
+        const roomInfo = cls.room_name ?
+            `<div class="room-info">
+                <small><i class="fas fa-link"></i> Room: ${cls.room_name}</small>
+                <br><small>Students join at: https://mirotalk.xyz/${cls.room_name}</small>
+            </div>` : '';
+
         return `
         <div class="meeting-item ${isActive ? 'active-live' : ''} animate__animated animate__fadeIn">
             <div class="meeting-header">
                 <div class="meeting-topic">${safeTopic}</div>
                 ${todayBadge}
             </div>
+            ${roomInfo}
             <div class="meeting-details">
                 <div class="detail-row">
                     <span class="detail-label"><i class="fas fa-graduation-cap"></i> Grade:</span>
@@ -456,14 +487,17 @@ function formatDisplayTime(timeString) {
         const hour = parseInt(hours);
         const ampm = hour >= 12 ? 'PM' : 'AM';
         const displayHour = hour % 12 || 12;
-        return `${displayHour}:${minutes} ${ampm}`;
+        return `${displayHour}:${minutes.padStart(2, '0')} ${ampm}`;
     }
 
     return timeString;
 }
 
-// Add utility function to escape HTML
+/**
+ * ESCAPE HTML TO PREVENT XSS
+ */
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;

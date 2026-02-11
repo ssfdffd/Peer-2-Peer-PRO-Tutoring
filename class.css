@@ -172,6 +172,56 @@ body {
     }
 }
 
+/* Mirotalk specific styles */
+.btn-join-live {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.btn-join-live:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-start-small {
+    background: linear-gradient(135deg, #32cd32 0%, #228b22 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.btn-start-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(50, 205, 50, 0.4);
+}
+
+.room-info {
+    padding: 5px 10px;
+    background: rgba(50, 205, 50, 0.1);
+    border-radius: 5px;
+    margin: 5px 0;
+    font-size: 0.85em;
+    border-left: 3px solid #32cd32;
+}
+
 /* Red Pulsing Dot for Live effect */
 .btn-start-small::before {
     content: "";

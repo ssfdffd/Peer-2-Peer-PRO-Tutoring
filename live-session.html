@@ -12,95 +12,131 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0f172a;
             color: white;
-        }
-
-        .session-header {
-            background: rgba(30, 41, 59, 0.8);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1e293b;
-        }
-
-        .back-btn {
-            background: #32cd32;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .room-info {
-            text-align: center;
-        }
-
-        .room-name {
-            color: #32cd32;
-            font-weight: bold;
-        }
-
-        #jitsi-container {
-            height: calc(100vh - 80px);
-            width: 100%;
-        }
-
-        .loading {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            color: #94a3b8;
+            min-height: 100vh;
+            text-align: center;
         }
 
-        .spinner {
-            border: 3px solid rgba(50, 205, 50, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #32cd32;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            color: #32cd32;
+            font-size: 2.5em;
             margin-bottom: 20px;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        h1 {
+            color: #32cd32;
+            margin-bottom: 10px;
+        }
 
-            100% {
-                transform: rotate(360deg);
-            }
+        .room-name {
+            background: rgba(50, 205, 50, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #32cd32;
+            font-family: monospace;
+            font-size: 1.2em;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: #32cd32;
+            color: black;
+        }
+
+        .btn-secondary {
+            background: #475569;
+            color: white;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="session-header">
-        <button class="back-btn" onclick="goBack()">
-            <i class="fas fa-arrow-left"></i> Back to Classes
-        </button>
-        <div class="room-info">
-            <h3>Live Session: <span id="roomNameDisplay" class="room-name">Loading...</span></h3>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-video"></i> PEER-2-PEER <span class="green-text">PRO</span>
         </div>
-        <div style="width: 100px;"></div> <!-- Spacer for balance -->
+
+        <h1>Live Session</h1>
+        <p>You're about to join a live class using Mirotalk</p>
+
+        <div class="room-name" id="roomNameDisplay">Loading...</div>
+
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="joinMirotalk()">
+                <i class="fas fa-play-circle"></i> Join Mirotalk Session
+            </button>
+            <button class="btn btn-secondary" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back to Classes
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Instructions:</h3>
+            <ul>
+                <li>Click "Join Mirotalk Session" to open the video conference</li>
+                <li>Allow camera and microphone permissions when prompted</li>
+                <li>Share the room name above with your students</li>
+                <li>Students can join at: <strong>https://mirotalk.xyz/[room-name]</strong></li>
+                <li>No account needed - it's completely free!</li>
+            </ul>
+        </div>
     </div>
-
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>Loading Jitsi Meet session...</p>
-    </div>
-
-    <div id="jitsi-container" style="display: none;"></div>
-
-    <!-- Jitsi Meet API -->
-    <script src='https://meet.jit.si/external_api.js'></script>
 
     <script>
         // Get room name from URL
@@ -109,82 +145,29 @@
 
         if (!roomName) {
             alert("No room specified. Redirecting to classes page.");
-            window.location.href = "student-view.html";
+            window.location.href = "create-class.html";
         }
 
         // Display room name
         document.getElementById('roomNameDisplay').textContent = decodeURIComponent(roomName);
 
-        // Initialize Jitsi Meet
-        let jitsiApi = null;
-
-        function startJitsi() {
-            const domain = 'meet.jit.si';
-            const options = {
-                roomName: roomName,
-                width: '100%',
-                height: '100%',
-                parentNode: document.querySelector('#jitsi-container'),
-                configOverwrite: {
-                    prejoinPageEnabled: false,
-                    disableInviteFunctions: true,
-                    toolbarButtons: [
-                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-                        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-                        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-                        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-                        'e2ee'
-                    ]
-                },
-                interfaceConfigOverwrite: {
-                    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-                    SHOW_CHROME_EXTENSION_BANNER: false,
-                    MOBILE_APP_PROMO: false,
-                    HIDE_INVITE_MORE_HEADER: true
-                },
-                userInfo: {
-                    displayName: sessionStorage.getItem('p2p_email') || 'Student'
-                }
-            };
-
-            jitsiApi = new JitsiMeetExternalAPI(domain, options);
-
-            // Hide loading, show Jitsi
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('jitsi-container').style.display = 'block';
-
-            // Handle conference join
-            jitsiApi.addEventListeners({
-                readyToClose: () => {
-                    console.log("Ready to close");
-                    window.location.href = "student-view.html";
-                },
-                participantJoined: (participant) => {
-                    console.log("Participant joined:", participant);
-                },
-                participantLeft: (participant) => {
-                    console.log("Participant left:", participant);
-                }
-            });
+        function joinMirotalk() {
+            const mirotalkUrl = `https://mirotalk.xyz/${encodeURIComponent(roomName)}`;
+            // Open in new tab
+            window.open(mirotalkUrl, '_blank');
         }
-
-        // Start Jitsi when page loads
-        window.onload = startJitsi;
 
         function goBack() {
-            if (jitsiApi) {
-                jitsiApi.executeCommand('hangup');
-            }
-            window.location.href = "student-view.html";
+            window.location.href = "create-class.html";
         }
 
-        // Handle back button
-        window.addEventListener('beforeunload', () => {
-            if (jitsiApi) {
-                jitsiApi.executeCommand('hangup');
+        // Auto-join after 3 seconds (optional)
+        setTimeout(() => {
+            const autoJoin = confirm("Ready to join the Mirotalk session? Click OK to open.");
+            if (autoJoin) {
+                joinMirotalk();
             }
-        });
+        }, 3000);
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

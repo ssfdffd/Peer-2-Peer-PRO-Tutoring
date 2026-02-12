@@ -1,17 +1,17 @@
 /**
-STUDENT VIEW - PAYMENT STATUS ENABLED
+STUDENT VIEW - USER PAYMENT STATUS CHECK
 CRITICAL FIXES:
-Fixed console.log typo
-Fixed variable shadowing (isUpcoming function vs variable)
-Fixed && operator syntax
-Cleaned HTML attribute quoting
-Added null safety for grade filter
-ADDED: Payment status check for join button
+- Payment status now checked from USER table (not class table)
+- Added user payment status API call on page load
+- Join button enabled/disabled based on logged-in user's payment status
+- Fixed console.log typo and variable shadowing
+- Added null safety for grade filter
 */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 let allClasses = [];
 let currentFilter = 'all';
 let currentGrade = 'all';
+let userPaymentStatus = null;
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🎓 Student view loaded');
@@ -24,20 +24,78 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Load user payment status FIRST
+    loadUserPaymentStatus(email).then(() => {
+        // Then load classes
+        loadClasses();
+    });
+
     // Set grade filter from profile
     const savedGrade = sessionStorage.getItem('p2p_grade');
     if (savedGrade && savedGrade !== 'null' && savedGrade !== 'undefined') {
         currentGrade = savedGrade;
     }
 
-    loadClasses();
     setupFilters();
 
     // Auto-refresh every 30 seconds when tab is visible
     setInterval(() => {
-        if (!document.hidden) loadClasses();
+        if (!document.hidden) {
+            const email = sessionStorage.getItem('p2p_email');
+            if (email) {
+                loadUserPaymentStatus(email).then(() => {
+                    loadClasses();
+                });
+            }
+        }
     }, 30000);
 });
+
+// NEW: Load user payment status from users table
+async function loadUserPaymentStatus(email) {
+    try {
+        console.log('💳 Loading user payment status...');
+        const response = await fetch(`${API_BASE}/api/user-payment-status?email=${encodeURIComponent(email)}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            userPaymentStatus = data;
+            console.log('✅ User payment status loaded:', userPaymentStatus);
+
+            // Update UI to show payment status
+            updatePaymentStatusUI();
+        } else {
+            console.error('Failed to load payment status:', data.error);
+        }
+
+    } catch (error) {
+        console.error('Load payment status error:', error);
+        userPaymentStatus = {
+            payment_status: 'pending',
+            amount_paid: 0,
+            is_paid: false
+        };
+    }
+}
+
+function updatePaymentStatusUI() {
+    const statusEl = document.getElementById('paymentStatusBadge');
+    const amountEl = document.getElementById('paymentAmountDisplay');
+
+    if (statusEl) {
+        statusEl.textContent = userPaymentStatus.payment_status === 'paid' ? '✅ Paid' : '⏳ Pending';
+        statusEl.style.backgroundColor = userPaymentStatus.payment_status === 'paid' ? '#10b981' : '#f59e0b';
+    }
+
+    if (amountEl) {
+        amountEl.textContent = `R${userPaymentStatus.amount_paid.toFixed(2)}`;
+    }
+}
 
 async function loadClasses() {
     const container = document.getElementById('liveClassesContainer');
@@ -123,15 +181,13 @@ function renderClasses(classes) {
         return;
     }
 
+    // Get current user's payment status
+    const isUserPaid = userPaymentStatus?.is_paid || false;
+    const userGrade = sessionStorage.getItem('p2p_grade');
+
     container.innerHTML = classes.map((cls, i) => {
         const isLive = cls.status === 'active';
-        // FIXED: Renamed variable to avoid shadowing function + fixed && syntax
         const isScheduledAndUpcoming = cls.status === 'scheduled' && isClassUpcoming(cls);
-        const userGrade = sessionStorage.getItem('p2p_grade');
-
-        // PAYMENT STATUS CHECK
-        const paymentStatus = cls.payment_status || 'pending';
-        const isPaid = paymentStatus === 'paid';
 
         return `
       <div class="premium-class-card ${isLive ? 'active-card' : ''}" style="
@@ -185,7 +241,7 @@ function renderClasses(classes) {
         </div>
         
         ${isLive ? `
-          ${isPaid ? `
+          ${isUserPaid ? `
             <button onclick="joinClass('${cls.room_name}')" style="
               width: 100%;
               background: #32cd32;
@@ -230,7 +286,7 @@ function renderClasses(classes) {
               font-size: 0.9rem;
               text-align: center;
             ">
-              <i class="fas fa-info-circle"></i> Please complete payment to access this class
+              <i class="fas fa-info-circle"></i> Please complete payment to access live classes
             </div>
           `}
         ` : `
@@ -247,7 +303,6 @@ function joinClass(roomName) {
     window.open(`https://meet.jit.si/${roomName}`, '_blank');
 }
 
-// FIXED: Renamed function to avoid conflict with variable name
 function isClassUpcoming(cls) {
     if (!cls.scheduled_date || !cls.scheduled_time) return false;
     // Parse as LOCAL time (critical for timezone safety)
@@ -363,3 +418,4 @@ window.joinClass = joinClass;
 window.setFilter = window.setFilter || function () { };
 window.setGradeFilter = window.setGradeFilter || function () { };
 window.resetFilters = window.resetFilters || function () { };
+window.loadUserPaymentStatus = loadUserPaymentStatus;

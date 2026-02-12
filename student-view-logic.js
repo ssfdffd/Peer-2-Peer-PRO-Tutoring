@@ -1,12 +1,13 @@
 /**
- * STUDENT VIEW - FIXED VERSION
- * CRITICAL FIXES:
- * 1. Fixed console.log typo
- * 2. Fixed variable shadowing (isUpcoming function vs variable)
- * 3. Fixed && operator syntax
- * 4. Cleaned HTML attribute quoting
- * 5. Added null safety for grade filter
- */
+STUDENT VIEW - PAYMENT STATUS ENABLED
+CRITICAL FIXES:
+Fixed console.log typo
+Fixed variable shadowing (isUpcoming function vs variable)
+Fixed && operator syntax
+Cleaned HTML attribute quoting
+Added null safety for grade filter
+ADDED: Payment status check for join button
+*/
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 let allClasses = [];
 let currentFilter = 'all';
@@ -41,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
 async function loadClasses() {
     const container = document.getElementById('liveClassesContainer');
     const loading = document.getElementById('loadingState');
-
     if (loading) loading.style.display = 'block';
     if (container) container.style.display = 'none';
 
@@ -129,6 +129,10 @@ function renderClasses(classes) {
         const isScheduledAndUpcoming = cls.status === 'scheduled' && isClassUpcoming(cls);
         const userGrade = sessionStorage.getItem('p2p_grade');
 
+        // PAYMENT STATUS CHECK
+        const paymentStatus = cls.payment_status || 'pending';
+        const isPaid = paymentStatus === 'paid';
+
         return `
       <div class="premium-class-card ${isLive ? 'active-card' : ''}" style="
         background: rgba(30, 41, 59, 0.7);
@@ -155,7 +159,7 @@ function renderClasses(classes) {
         <h3 style="color: #fff; margin: 0 0 15px 0; font-size: 1.2rem;">
           ${escapeHtml(cls.topic || 'Untitled Class')}
           ${cls.grade && userGrade && cls.grade.toString() === userGrade.toString() ?
-                '<span style="background: rgba(50,205,50,0.2); color: #32cd32; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px;">Your Grade</span>' : ''}
+                ' <span style="background: rgba(50,205,50,0.2); color: #32cd32; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px;">Your Grade</span>' : ''}
         </h3>
         
         <div style="display: flex; gap: 15px; margin-bottom: 15px; color: #94a3b8;">
@@ -181,22 +185,54 @@ function renderClasses(classes) {
         </div>
         
         ${isLive ? `
-          <button onclick="joinClass('${cls.room_name}')" style="
-            width: 100%;
-            background: #32cd32;
-            color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-          ">
-            <i class="fas fa-video"></i> Join Live Session
-          </button>
+          ${isPaid ? `
+            <button onclick="joinClass('${cls.room_name}')" style="
+              width: 100%;
+              background: #32cd32;
+              color: black;
+              border: none;
+              padding: 12px;
+              border-radius: 8px;
+              font-weight: bold;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+            ">
+              <i class="fas fa-video"></i> Join Live Session
+            </button>
+          ` : `
+            <div style="
+              width: 100%;
+              background: #6b7280;
+              color: #fff;
+              border: none;
+              padding: 12px;
+              border-radius: 8px;
+              font-weight: bold;
+              cursor: not-allowed;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              opacity: 0.7;
+            ">
+              <i class="fas fa-lock"></i> Payment Required to Join
+            </div>
+            <div style="
+              margin-top: 10px;
+              padding: 10px;
+              background: rgba(239, 68, 68, 0.1);
+              border: 1px solid #ef4444;
+              border-radius: 8px;
+              color: #ef4444;
+              font-size: 0.9rem;
+              text-align: center;
+            ">
+              <i class="fas fa-info-circle"></i> Please complete payment to access this class
+            </div>
+          `}
         ` : `
           <div style="color: #94a3b8; text-align: center; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
             <i class="fas fa-clock"></i> Not started yet
@@ -214,7 +250,6 @@ function joinClass(roomName) {
 // FIXED: Renamed function to avoid conflict with variable name
 function isClassUpcoming(cls) {
     if (!cls.scheduled_date || !cls.scheduled_time) return false;
-
     // Parse as LOCAL time (critical for timezone safety)
     const classTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
     if (isNaN(classTime.getTime())) return false;
@@ -226,7 +261,6 @@ function isClassUpcoming(cls) {
 
 function getTimeUntil(cls) {
     if (!cls.scheduled_date || !cls.scheduled_time) return 'Scheduled';
-
     const classTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
     if (isNaN(classTime.getTime())) return 'Scheduled';
 
@@ -244,7 +278,6 @@ function formatDate(dateStr) {
     if (!dateStr) return 'TBD';
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-
     const today = new Date();
     if (d.toDateString() === today.toDateString()) return 'Today';
 
@@ -278,7 +311,6 @@ function updateStats() {
     const upcoming = allClasses.filter(c =>
         c.status === 'scheduled' && isClassUpcoming(c)
     ).length;
-
     const totalEl = document.getElementById('totalClassesStat');
     const liveEl = document.getElementById('liveClassesStat');
     const upcomingEl = document.getElementById('upcomingClassesStat');
@@ -292,7 +324,6 @@ function setupFilters() {
     window.setFilter = function (filter) {
         currentFilter = filter;
         applyFilters();
-
         // Update UI buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');

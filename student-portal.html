@@ -3,62 +3,1010 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Student Portal | Peer-2-Peer PRO</title>
-    <link rel="stylesheet" href="student.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ============================================
+           COMPLETE FIXED STUDENT PORTAL - MOBILE OPTIMIZED
+           ============================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #000033;
+            --navy-light: #1a1a4a;
+            --green: #32cd32;
+            --green-dark: #28a428;
+            --sky-blue: #7fdff0;
+            --white: #ffffff;
+            --light-bg: #f4f7f9;
+            --gray: #e1e5eb;
+            --gray-dark: #64748b;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light-bg);
+            color: #333;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* ============================================
+           FIXED NAVBAR WITH MOBILE TOGGLE
+           ============================================ */
+
+        .navbar {
+            background: var(--navy);
+            border-bottom: 3px solid var(--green);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid var(--green);
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--green);
+        }
+
+        /* Desktop Navigation Menu */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--green);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--green);
+        }
+
+        /* User Profile Section */
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green), #28a428);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            color: var(--sky-blue);
+        }
+
+        .logout-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 68, 68, 0.1);
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Mobile Menu Toggle Button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ============================================
+           FIXED HERO SECTION - NO CUTTING
+           ============================================ */
+
+        .hero {
+            background: linear-gradient(135deg, var(--navy) 0%, #000044 100%);
+            padding: 3rem 1.5rem;
+            position: relative;
+            overflow: visible;
+            width: 100%;
+            min-height: auto;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            color: var(--white);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-highlight {
+            color: var(--green);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(50, 205, 50, 0.2);
+            z-index: 0;
+            border-radius: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--sky-blue);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--green);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.25rem;
+        }
+
+        /* Hero Visual - Fixed Positioning */
+        .hero-visual {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-elements {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .element-1 {
+            top: 10%;
+            left: 5%;
+            background: linear-gradient(135deg, var(--green), #28a428);
+            color: var(--navy);
+            animation-delay: 0s;
+        }
+
+        .element-2 {
+            top: 50%;
+            right: 5%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            animation-delay: 1.5s;
+        }
+
+        .element-3 {
+            bottom: 10%;
+            left: 20%;
+            background: linear-gradient(135deg, var(--sky-blue), #4a90e2);
+            animation-delay: 3s;
+        }
+
+        .element-4 {
+            top: 30%;
+            right: 25%;
+            background: linear-gradient(135deg, #ff6b6b, #ee5253);
+            animation-delay: 4.5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        /* ============================================
+           MAIN CONTENT - FIXED GRID
+           ============================================ */
+
+        .main-content {
+            flex: 1;
+            padding: 2rem 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--navy), var(--navy-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .section-desc {
+            color: var(--gray-dark);
+            margin-left: 4rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Feature Cards Grid - Fully Responsive */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(50, 205, 50, 0.15);
+            border-color: var(--green);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--navy), var(--navy-light));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .card-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-live {
+            background: #ff4444;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .badge-new {
+            background: var(--green);
+            color: var(--navy);
+        }
+
+        .badge-upcoming {
+            background: #f39c12;
+            color: white;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray);
+        }
+
+        .card-link {
+            color: var(--green);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .card-link i {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-link i {
+            transform: translateX(5px);
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray-dark);
+            font-size: 0.85rem;
+        }
+
+        .card-meta i {
+            color: var(--green);
+            margin-right: 0.25rem;
+        }
+
+        /* Activity Section */
+        .activity-section {
+            margin-top: 2rem;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .activity-item {
+            background: var(--white);
+            padding: 1.25rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            border-color: var(--green);
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(50, 205, 50, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green);
+            font-size: 1.1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN - COMPLETELY FIXED
+           ============================================ */
+
+        /* Tablet - 992px and below */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .floating-element {
+                width: 80px;
+                height: 80px;
+                font-size: 1.8rem;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .user-profile {
+                padding: 0.4rem;
+            }
+        }
+
+        /* Mobile - 768px and below */
+        @media (max-width: 768px) {
+
+            /* Mobile Navbar */
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 73px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 73px);
+                background: var(--navy);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 2rem;
+                transition: left 0.3s ease;
+                z-index: 999;
+                overflow-y: auto;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 1rem 0;
+                font-size: 1.1rem;
+                width: 100%;
+            }
+
+            .nav-link.active::after {
+                display: none;
+            }
+
+            .user-section {
+                display: none;
+            }
+
+            /* Mobile Hero - COMPLETELY FIXED */
+            .hero {
+                padding: 2rem 1.25rem;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-content {
+                text-align: center;
+                order: 2;
+            }
+
+            .hero-title {
+                font-size: 1.9rem;
+            }
+
+            .hero-subtitle {
+                max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: 1;
+                height: 200px;
+                min-height: 200px;
+            }
+
+            .floating-elements {
+                max-width: 300px;
+            }
+
+            .floating-element {
+                width: 65px;
+                height: 65px;
+                font-size: 1.5rem;
+            }
+
+            .element-1 {
+                top: 5%;
+                left: 0;
+            }
+
+            .element-2 {
+                top: 60%;
+                right: 0;
+            }
+
+            .element-3 {
+                bottom: 5%;
+                left: 15%;
+            }
+
+            .element-4 {
+                top: 25%;
+                right: 15%;
+            }
+
+            /* Mobile Content */
+            .main-content {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.5rem;
+            }
+
+            .section-desc {
+                margin-left: 3.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Small Mobile - 480px and below */
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+
+            .hero {
+                padding: 1.5rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 1.6rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .hero-visual {
+                height: 160px;
+                min-height: 160px;
+            }
+
+            .floating-element {
+                width: 55px;
+                height: 55px;
+                font-size: 1.3rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.3rem;
+            }
+
+            .section-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+
+            .section-desc {
+                margin-left: 3rem;
+                font-size: 0.9rem;
+            }
+
+            .card {
+                padding: 1.25rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .card-badge {
+                align-self: flex-start;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .activity-content {
+                text-align: center;
+            }
+        }
+
+        /* Extra Small Mobile - 360px and below */
+        @media (max-width: 360px) {
+            .hero-title {
+                font-size: 1.4rem;
+            }
+
+            .hero-visual {
+                height: 140px;
+            }
+
+            .floating-element {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.2rem;
+            }
+
+            .card h3 {
+                font-size: 1.1rem;
+            }
+
+            .card p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Fix for notched phones */
+        @supports (padding: max(0px)) {
+            .navbar {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+
+            .hero {
+                padding-left: max(1.5rem, env(safe-area-inset-left));
+                padding-right: max(1.5rem, env(safe-area-inset-right));
+            }
+
+            .main-content {
+                padding-left: max(1.5rem, env(safe-area-inset-left));
+                padding-right: max(1.5rem, env(safe-area-inset-right));
+            }
+        }
+    </style>
 </head>
 
-<body class="light-mode">
-
-    <!-- Main Navigation -->
-    <nav class="glass-nav">
+<body>
+    <!-- FIXED NAVBAR WITH MOBILE TOGGLE -->
+    <nav class="navbar">
         <div class="nav-container">
-            <div class="logo-container">
-                <img src="favicon.ico" alt="Logo" class="nav-logo">
-                <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></div>
+            <div class="logo">
+                <img src="favicon.ico" alt="Logo">
+                <span class="logo-text">Peer-2-Peer <span>PRO</span></span>
             </div>
-            <div class="nav-right">
+
+            <!-- Mobile Menu Toggle Button -->
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Menu -->
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-video"></i> Live Classes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-book"></i> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i> Forum
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </a>
+                </li>
+            </ul>
+
+            <!-- User Section - Desktop Only -->
+            <div class="user-section">
                 <div class="user-profile">
-                    <div class="avatar-small" id="userAvatar">
-                        <i class="fas fa-user-graduate"></i>
+                    <div class="avatar">
+                        <span>JD</span>
                     </div>
                     <div class="user-info">
-                        <span id="studentNameDisplay">Student</span>
-                        <span class="user-role">Learner</span>
+                        <span class="user-name">John Doe</span>
+                        <span class="user-role">Student</span>
                     </div>
                 </div>
-                <button class="logout-minimal" onclick="logout()">
+                <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- FIXED HERO SECTION - NO CUTTING -->
+    <section class="hero">
         <div class="hero-container">
-            <div class="hero-content animate__animated animate__fadeInLeft">
+            <div class="hero-content">
                 <h1 class="hero-title">
-                    Welcome to Your <span class="hero-highlight">Student Portal</span>
+                    Welcome back, <span class="hero-highlight">John!</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Continue your journey with personalized tools, live sessions, and
-                    collaborative learning experiences designed just for you.
+                    Continue your learning journey with live classes, study materials, and peer collaboration.
                 </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Classes Attended</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Certificates</div>
+                    </div>
+                </div>
             </div>
-            <div class="hero-visual animate__animated animate__fadeInRight">
+            <div class="hero-visual">
                 <div class="floating-elements">
                     <div class="floating-element element-1">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div class="floating-element element-2">
-                        <i class="fas fa-book-open"></i>
+                        <i class="fas fa-video"></i>
                     </div>
                     <div class="floating-element element-3">
-                        <i class="fas fa-video"></i>
+                        <i class="fas fa-book-open"></i>
                     </div>
                     <div class="floating-element element-4">
                         <i class="fas fa-users"></i>
@@ -68,167 +1016,280 @@
         </div>
     </section>
 
-
-    <!-- Main Features Grid -->
-    <main class="main-panel">
-        <div class="features-container">
-
-            <!-- Row 1: Learning Core -->
-            <section class="features-section">
-                <div class="section-header">
-                    <div class="section-title">
-                        <i class="fas fa-brain section-icon"></i>
-                        <h2>Upcoming live classes</h2>
-                    </div>
-                    <p class="section-description">Se your next live class.</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card" onclick="window.location.href='student-view.html'">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon pulse-animation">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div class="feature-badge live">Live Now</div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Live Interactive Classes</h3>
-                            <p>Join real-time sessions with expert tutors and peers</p>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Join Now</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-
-                    <div class="feature-card" onclick="window.location.href='resources.html'">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="feature-badge new">Updated</div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Study Materials Library</h3>
-                            <p>Access comprehensive notes, past papers, and resources</p>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Explore</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-
-
-                </div>
-            </section>
-
-            <!-- Row 2: Collaboration -->
-            <section class="features-section">
-                <div class="section-header">
-                    <div class="section-title">
-                        <i class="fas fa-users section-icon"></i>
-                        <h2>Collaboration Hub</h2>
-                    </div>
-                    <p class="section-description">Learn together with peers and mentors</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card" onclick="window.location.href='forum.html'">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-user-friends"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Peer-2-Peer Forum</h3>
-                            <p>Ask Questions and help other learners</p>
-
-                        </div>
-                        <div class="feature-cta">
-                            <span>Contribute to forum</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-
-            </section>
-
-            <!-- Row 3: Tools & Progress -->
-            <section class="features-section">
-                <div class="section-header">
-                    <div class="section-title">
-                        <i class="fas fa-tools section-icon"></i>
-                        <h2>Tools & Progress</h2>
-                    </div>
-                    <p class="section-description">Track your learning journey</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card" onclick="window.location.href='progress-tracker.html'">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Progress Analytics</h3>
-                            <p>Monitor your learning progress with detailed insights</p>
-                            <div class="feature-progress">
-                                <div class="progress-info">
-                                    <span>Overall Progress</span>
-                                    <span>0%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="feature-cta">
-                            <span>View Analytics</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-
-                    <div class="feature-card" onclick="openTutoringRequests()">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-hands-helping"></i>
-                            </div>
-                        </div>
-                        <div class="feature-content">
-                            <h3>Personal Tutoring</h3>
-                            <p>Book one-on-one sessions with specialized tutors</p>
-                        </div>
-                        <div class="feature-cta">
-                            <span>Book Now</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
-            </section>
+    <!-- MAIN CONTENT - FIXED GRID -->
+    <main class="main-content">
+        <!-- Live Classes Section -->
+        <div class="section-title">
+            <div class="section-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <h2>Live & Upcoming</h2>
         </div>
-    </main>
+        <p class="section-desc">Join interactive sessions happening now or scheduled for later</p>
 
-    <!-- Recent Activity -->
-    <section class="activity-section">
-        <div class="activity-container">
-            <h3><i class="fas fa-history"></i> Recent Activity</h3>
-            <div class="activity-grid">
+        <div class="cards-grid">
+            <div class="card" onclick="window.location.href='live-class.html'">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <span class="card-badge badge-live">
+                        <i class="fas fa-circle"></i> LIVE NOW
+                    </span>
+                </div>
+                <h3>Mathematics Grade 12</h3>
+                <p>Calculus - Differentiation rules and applications with practice problems.</p>
+                <div class="card-meta">
+                    <span><i class="fas fa-user-tie"></i> Mr. Johnson</span>
+                    <span><i class="fas fa-users"></i> 18 students</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-link">
+                        Join Class <i class="fas fa-arrow-right"></i>
+                    </span>
+                    <span style="color: var(--green); font-size: 0.85rem;">
+                        <i class="fas fa-clock"></i> In progress
+                    </span>
+                </div>
+            </div>
 
-                <div class="activity-item">
-                    <i class="fas fa-file-upload activity-icon"></i>
-                    <div class="activity-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <span class="card-badge badge-upcoming">
+                        <i class="fas fa-clock"></i> 2:00 PM
+                    </span>
+                </div>
+                <h3>Physics Grade 11</h3>
+                <p>Newton's Laws of Motion - Forces, acceleration, and problem solving.</p>
+                <div class="card-meta">
+                    <span><i class="fas fa-user-tie"></i> Dr. Williams</span>
+                    <span><i class="fas fa-users"></i> 12 enrolled</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-link">
+                        Set Reminder <i class="fas fa-bell"></i>
+                    </span>
+                    <span style="color: #f39c12; font-size: 0.85rem;">
+                        <i class="fas fa-hourglass-half"></i> In 45 min
+                    </span>
+                </div>
+            </div>
 
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <span class="card-badge badge-new">NEW</span>
+                </div>
+                <h3>Computer Science</h3>
+                <p>Introduction to Python programming - Variables, loops, and functions.</p>
+                <div class="card-meta">
+                    <span><i class="fas fa-user-tie"></i> Ms. Davis</span>
+                    <span><i class="fas fa-users"></i> 24 enrolled</span>
+                </div>
+                <div class="card-footer">
+                    <span class="card-link">
+                        Learn More <i class="fas fa-arrow-right"></i>
+                    </span>
+                    <span style="color: var(--gray-dark); font-size: 0.85rem;">
+                        <i class="fas fa-calendar"></i> Tomorrow, 10 AM
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Resources Section -->
+        <div class="section-title" style="margin-top: 2rem;">
+            <div class="section-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h2>Study Resources</h2>
+        </div>
+        <p class="section-desc">Access notes, past papers, and practice materials</p>
+
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-file-pdf"></i>
                     </div>
                 </div>
-                <div class="activity-item">
-                    <i class="fas fa-trophy activity-icon"></i>
-                    <div class="activity-content">
+                <h3>Mathematics Notes</h3>
+                <p>Complete study notes for Grade 12 Calculus and Algebra.</p>
+                <div class="card-footer">
+                    <span class="card-link">
+                        Download <i class="fas fa-download"></i>
+                    </span>
+                    <span style="color: var(--gray-dark);">2.4 MB</span>
+                </div>
+            </div>
 
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                </div>
+                <h3>Recording: Physics</h3>
+                <p>Newton's Laws - Full session recording with examples.</p>
+                <div class="card-footer">
+                    <span class="card-link">
+                        Watch <i class="fas fa-play"></i>
+                    </span>
+                    <span style="color: var(--gray-dark);">45 min</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h2>Recent Activity</h2>
+            </div>
+
+            <div class="activity-grid">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed Mathematics quiz</div>
+                        <div class="activity-time">Score: 85% • 2 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Downloaded Physics notes</div>
+                        <div class="activity-time">Chapter 5: Thermodynamics • 5 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Posted in forum</div>
+                        <div class="activity-time">"Help with calculus problem" • Yesterday</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Earned certificate</div>
+                        <div class="activity-time">Python Basics • 3 days ago</div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <script src="auth.js"></script>
-    <script src="student.js"></script>
+    <!-- MOBILE NAVBAR TOGGLE SCRIPT -->
+    <script>
+        // Mobile Menu Toggle - COMPLETELY FIXED
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
 
+            if (menuToggle && navMenu) {
+                // Toggle menu
+                menuToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    navMenu.classList.toggle('active');
+
+                    // Change icon
+                    const icon = this.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+
+                // Close menu when clicking on a link
+                navMenu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function () {
+                        navMenu.classList.remove('active');
+                        const icon = menuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    });
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!navMenu.contains(event.target) && !menuToggle.contains(event.target)) {
+                        navMenu.classList.remove('active');
+                        const icon = menuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+
+                // Prevent menu from closing when clicking inside
+                navMenu.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Update active nav link
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Handle window resize - close mobile menu
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+
+                if (navMenu && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+
+        // Prevent body scroll when mobile menu is open
+        document.addEventListener('touchmove', function (e) {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu && navMenu.classList.contains('active') && e.target.closest('.nav-menu')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        console.log('✅ Student Portal - Fully Responsive & Fixed!');
+    </script>
 </body>
 
 </html>

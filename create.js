@@ -1,11 +1,7 @@
-/**
- * PEER-2-PEER PRO: CREATE.JS - FIXED VERSION
- * CRITICAL FIXES:
- * 1. Fixed result.success typo
- * 2. Fixed broken string literals and quotes
- * 3. Added null safety for session storage
- * 4. Cleaned HTML attribute quoting
- */
+// * PEER-2-PEER PRO: CREATE.JS - FIXED VERSION
+// * CRITICAL FIXES:
+
+// *S
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 
 // Global function to start a live class
@@ -126,7 +122,13 @@ async function scheduleClass() {
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scheduling...';
+    const subject = document.getElementById('classSubject').value.trim(); // ADD THIS
 
+    // Validation
+    if (!topic || !subject || !date || !time || !email) { // ADD subject to validation
+        showNotification("Please fill all required fields", "error");
+        return;
+    }
     try {
         const payload = {
             email,
@@ -134,7 +136,8 @@ async function scheduleClass() {
             topic,
             grade,
             scheduled_date: date,
-            scheduled_time: time
+            scheduled_time: time,
+            subject // ADD THIS LINE
         };
 
         const response = await fetch(`${API_BASE}/api/schedule-class`, {

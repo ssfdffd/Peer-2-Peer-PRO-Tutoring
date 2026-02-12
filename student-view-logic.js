@@ -1,16 +1,21 @@
 /**
-STUDENT VIEW - USER PAYMENT STATUS CHECK
-Payment status checked from USER table
-Join button enabled only if user's payment_status = 'paid'
-*/
+ * STUDENT VIEW - COMPLETE IMPLEMENTATION
+ * Features:
+ * - Payment status check from users table
+ * - Subject and grade filtering
+ * - Beautiful UI with hero section
+ * - Payment-gated join buttons
+ * - Real-time updates
+ */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 let allClasses = [];
-let currentFilter = 'all';
+let currentFilter = 'all'; // Status filter: all, live, upcoming
 let currentGrade = 'all';
+let currentSubject = 'all';
 let userPaymentStatus = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('🎓 Student view loaded');
+    console.log('🎓 Student view loaded with filters');
 
     // Check login
     const email = sessionStorage.getItem('p2p_email');
@@ -29,9 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedGrade = sessionStorage.getItem('p2p_grade');
     if (savedGrade && savedGrade !== 'null' && savedGrade !== 'undefined') {
         currentGrade = savedGrade;
+        document.getElementById('gradeFilter').value = savedGrade;
     }
-
-    setupFilters();
 
     // Auto-refresh every 30 seconds when tab is visible
     setInterval(() => {
@@ -107,17 +111,21 @@ async function loadClasses() {
         console.error('Load error:', error);
         if (loading) {
             loading.innerHTML = `
-        <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 2rem;"></i>
-        <p style="color: #ef4444; margin-top: 1rem;">Failed to load classes</p>
+        <div class="spinner" style="border-color: rgba(239, 68, 68, 0.3); border-top-color: #ef4444;"></div>
+        <p style="color: #ef4444; margin-top: 15px; font-size: 1.1rem;">Failed to load classes</p>
         <button onclick="loadClasses()" style="
-          background: #32cd32;
-          color: black;
+          background: linear-gradient(45deg, #32cd32, #10b981);
+          color: white;
           border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          margin-top: 1rem;
+          padding: 12px 30px;
+          border-radius: 14px;
+          margin-top: 20px;
           cursor: pointer;
           font-weight: bold;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          box-shadow: 0 4px 15px rgba(50, 205, 50, 0.4);
         ">
           <i class="fas fa-redo"></i> Try Again
         </button>
@@ -126,17 +134,25 @@ async function loadClasses() {
     }
 }
 
+// Apply all filters (status, grade, subject)
 function applyFilters() {
     let filtered = [...allClasses];
 
     // Filter by grade
     if (currentGrade !== 'all') {
         filtered = filtered.filter(c =>
-            c.grade && c.grade.toString() === currentGrade.toString()
+            c.grade && c.grade.toString().toLowerCase() === currentGrade.toString().toLowerCase()
         );
     }
 
-    // Filter by status
+    // Filter by subject
+    if (currentSubject !== 'all') {
+        filtered = filtered.filter(c =>
+            c.subject && c.subject.toString().toLowerCase() === currentSubject.toString().toLowerCase()
+        );
+    }
+
+    // Filter by status (live/upcoming)
     if (currentFilter === 'live') {
         filtered = filtered.filter(c => c.status === 'active');
     } else if (currentFilter === 'upcoming') {
@@ -149,16 +165,41 @@ function applyFilters() {
     updateStats();
 }
 
+// Subject filter handler
+function applySubjectFilter(subject) {
+    currentSubject = subject;
+    applyFilters();
+}
+
+// Grade filter handler
+function applyGradeFilter(grade) {
+    currentGrade = grade;
+    applyFilters();
+}
+
+// Reset all filters
+function resetFilters() {
+    currentFilter = 'all';
+    currentGrade = 'all';
+    currentSubject = 'all';
+
+    // Reset UI elements
+    document.getElementById('subjectFilter').value = 'all';
+    document.getElementById('gradeFilter').value = 'all';
+
+    applyFilters();
+}
+
 function renderClasses(classes) {
     const container = document.getElementById('liveClassesContainer');
     if (!container) return;
 
     if (classes.length === 0) {
         container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-        <i class="fas fa-calendar-times" style="font-size: 3rem; color: #64748b;"></i>
-        <h3 style="color: #fff; margin-top: 20px;">No Classes Found</h3>
-        <p style="color: #94a3b8;">Try adjusting your filters</p>
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <h3>No Classes Found</h3>
+        <p>Try adjusting your filters or check back later</p>
       </div>
     `;
         return;
@@ -166,124 +207,92 @@ function renderClasses(classes) {
 
     // Get current user's payment status
     const isUserPaid = userPaymentStatus?.is_paid || false;
-    const userGrade = sessionStorage.getItem('p2p_grade');
 
     container.innerHTML = classes.map((cls, i) => {
         const isLive = cls.status === 'active';
-        const isScheduledAndUpcoming = cls.status === 'scheduled' && isClassUpcoming(cls);
+        const isUpcoming = cls.status === 'scheduled' && isClassUpcoming(cls);
+        const badgeClass = isLive ? 'badge-live' : (isUpcoming ? 'badge-upcoming' : 'badge-scheduled');
+        const badgeText = isLive ? '🔴 LIVE NOW' : (isUpcoming ? '⏰ UPCOMING' : '📅 SCHEDULED');
+
+        // Payment status UI
+        let joinButtonHTML = '';
+        if (isLive) {
+            if (isUserPaid) {
+                joinButtonHTML = `
+          <button class="join-button btn-join" onclick="joinClass('${cls.room_name}')">
+            <i class="fas fa-video"></i> Join Live Session
+          </button>
+        `;
+            } else {
+                joinButtonHTML = `
+          <button class="join-button btn-disabled" disabled>
+            <i class="fas fa-lock"></i> Payment Required
+          </button>
+          <div class="payment-notice">
+            <i class="fas fa-info-circle"></i> Complete payment to access live classes
+          </div>
+        `;
+            }
+        } else {
+            joinButtonHTML = `
+        <div style="text-align: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 16px; margin-top: 5px;">
+          <i class="fas fa-clock" style="margin-right: 8px;"></i>
+          ${isUpcoming ? 'Starts in ' + getTimeUntil(cls) : 'Scheduled for later'}
+        </div>
+      `;
+        }
 
         return `
-      <div class="premium-class-card ${isLive ? 'active-card' : ''}" style="
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        padding: 20px;
-      ">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-          <span style="color: #64748b;">CLASS ${String(i + 1).padStart(2, '0')}</span>
-          <span style="
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            background: ${isLive ? 'rgba(50,205,50,0.15)' : 'rgba(59,130,246,0.15)'};
-            color: ${isLive ? '#32cd32' : '#3b82f6'};
-          ">
-            <i class="fas ${isLive ? 'fa-broadcast-tower' : 'fa-calendar'}"></i>
-            ${isLive ? 'LIVE NOW' : (isScheduledAndUpcoming ? 'UPCOMING' : 'SCHEDULED')}
-          </span>
+      <div class="premium-class-card ${isLive ? 'active-card' : ''}">
+        <div class="class-header">
+          <div class="class-number">CLASS ${String(i + 1).padStart(2, '0')}</div>
+          <span class="class-badge ${badgeClass}">${badgeText}</span>
         </div>
         
-        <h3 style="color: #fff; margin: 0 0 15px 0; font-size: 1.2rem;">
+        <h3 class="class-title">
           ${escapeHtml(cls.topic || 'Untitled Class')}
-          ${cls.grade && userGrade && cls.grade.toString() === userGrade.toString() ?
-                ' <span style="background: rgba(50,205,50,0.2); color: #32cd32; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px;">Your Grade</span>' : ''}
         </h3>
         
-        <div style="display: flex; gap: 15px; margin-bottom: 15px; color: #94a3b8;">
-          <div><i class="fas fa-graduation-cap"></i> Grade ${cls.grade || 'N/A'}</div>
-          <div><i class="fas fa-user-tie"></i> ${escapeHtml(cls.tutor_name || 'Tutor')}</div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
-          <div>
-            <div style="color: #64748b; font-size: 0.8rem;">DATE</div>
-            <div style="color: #fff; font-weight: bold;">${formatDate(cls.scheduled_date)}</div>
+        <div class="class-meta">
+          <div class="meta-item">
+            <i class="fas fa-book"></i>
+            <span>${escapeHtml(cls.subject || 'General')}</span>
           </div>
-          <div>
-            <div style="color: #64748b; font-size: 0.8rem;">TIME</div>
-            <div style="color: #fff; font-weight: bold;">${formatTime(cls.scheduled_time)}</div>
+          <div class="meta-item">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Grade ${cls.grade || 'N/A'}</span>
           </div>
-          <div>
-            <div style="color: #64748b; font-size: 0.8rem;">STATUS</div>
-            <div style="color: ${isLive ? '#32cd32' : '#f59e0b'}; font-weight: bold;">
-              ${isLive ? 'In Progress' : getTimeUntil(cls)}
-            </div>
+          <div class="meta-item">
+            <i class="fas fa-user-tie"></i>
+            <span>${escapeHtml(cls.tutor_name || 'Tutor')}</span>
           </div>
         </div>
         
-        ${isLive ? `
-          ${isUserPaid ? `
-            <button onclick="joinClass('${cls.room_name}')" style="
-              width: 100%;
-              background: #32cd32;
-              color: black;
-              border: none;
-              padding: 12px;
-              border-radius: 8px;
-              font-weight: bold;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 10px;
-            ">
-              <i class="fas fa-video"></i> Join Live Session
-            </button>
-          ` : `
-            <div style="
-              width: 100%;
-              background: #6b7280;
-              color: #fff;
-              border: none;
-              padding: 12px;
-              border-radius: 8px;
-              font-weight: bold;
-              cursor: not-allowed;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 10px;
-              opacity: 0.7;
-            ">
-              <i class="fas fa-lock"></i> Payment Required to Join
-            </div>
-            <div style="
-              margin-top: 10px;
-              padding: 10px;
-              background: rgba(239, 68, 68, 0.1);
-              border: 1px solid #ef4444;
-              border-radius: 8px;
-              color: #ef4444;
-              font-size: 0.9rem;
-              text-align: center;
-            ">
-              <i class="fas fa-info-circle"></i> Please complete payment to access live classes
-            </div>
-          `}
-        ` : `
-          <div style="color: #94a3b8; text-align: center; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-            <i class="fas fa-clock"></i> Not started yet
+        <div class="class-timing">
+          <div>
+            <div class="timing-label">Date</div>
+            <div class="timing-value">${formatDate(cls.scheduled_date)}</div>
           </div>
-        `}
+          <div>
+            <div class="timing-label">Time</div>
+            <div class="timing-value">${formatTime(cls.scheduled_time)}</div>
+          </div>
+          <div>
+            <div class="timing-label">Status</div>
+            <div class="timing-value" style="color: ${isLive ? '#32cd32' : '#f59e0b'};">
+              ${isLive ? 'Live' : (isUpcoming ? getTimeUntil(cls) : 'Scheduled')}
+            </div>
+          </div>
+        </div>
+        
+        ${joinButtonHTML}
       </div>
     `;
     }).join('');
 }
 
 function joinClass(roomName) {
-    window.open(`https://meet.jit.si/${roomName}`, '_blank');
+    window.open(`https://meet.jit.si/${roomName}`, '_blank', 'noopener,noreferrer');
 }
 
 function isClassUpcoming(cls) {
@@ -293,17 +302,16 @@ function isClassUpcoming(cls) {
 
     const now = new Date();
     const diff = classTime - now;
-    return diff > 0 && diff <= 86400000;
+    return diff > 0 && diff <= 86400000; // Within next 24 hours
 }
 
 function getTimeUntil(cls) {
-    if (!cls.scheduled_date || !cls.scheduled_time) return 'Scheduled';
+    if (!cls.scheduled_date || !cls.scheduled_time) return 'Soon';
     const classTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
-    if (isNaN(classTime.getTime())) return 'Scheduled';
+    if (isNaN(classTime.getTime())) return 'Soon';
 
     const now = new Date();
     const diff = classTime - now;
-
     if (diff <= 0) return 'Starting soon';
 
     const hours = Math.floor(diff / 3600000);
@@ -315,6 +323,7 @@ function formatDate(dateStr) {
     if (!dateStr) return 'TBD';
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
+
     const today = new Date();
     if (d.toDateString() === today.toDateString()) return 'Today';
 
@@ -348,50 +357,16 @@ function updateStats() {
     const upcoming = allClasses.filter(c =>
         c.status === 'scheduled' && isClassUpcoming(c)
     ).length;
-    const totalEl = document.getElementById('totalClassesStat');
-    const liveEl = document.getElementById('liveClassesStat');
-    const upcomingEl = document.getElementById('upcomingClassesStat');
 
-    if (totalEl) totalEl.textContent = total;
-    if (liveEl) liveEl.textContent = live;
-    if (upcomingEl) upcomingEl.textContent = upcoming;
-}
-
-function setupFilters() {
-    window.setFilter = function (filter) {
-        currentFilter = filter;
-        applyFilters();
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.filter === filter) {
-                btn.classList.add('active');
-            }
-        });
-    };
-
-    window.setGradeFilter = function (grade) {
-        currentGrade = grade;
-        applyFilters();
-        const select = document.getElementById('gradeFilterSelect');
-        if (select) select.value = grade;
-    };
-
-    window.resetFilters = function () {
-        currentFilter = 'all';
-        currentGrade = sessionStorage.getItem('p2p_grade') || 'all';
-        applyFilters();
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === 'all');
-        });
-        const select = document.getElementById('gradeFilterSelect');
-        if (select) select.value = currentGrade;
-    };
+    document.getElementById('totalClassesStat').textContent = total;
+    document.getElementById('liveClassesStat').textContent = live;
+    document.getElementById('upcomingClassesStat').textContent = upcoming;
 }
 
 // Make functions globally accessible
 window.loadClasses = loadClasses;
 window.joinClass = joinClass;
-window.setFilter = window.setFilter || function () { };
-window.setGradeFilter = window.setGradeFilter || function () { };
-window.resetFilters = window.resetFilters || function () { };
+window.applySubjectFilter = applySubjectFilter;
+window.applyGradeFilter = applyGradeFilter;
+window.resetFilters = resetFilters;
 window.loadUserPaymentStatus = loadUserPaymentStatus;

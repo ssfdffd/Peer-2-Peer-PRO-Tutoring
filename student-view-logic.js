@@ -1,15 +1,13 @@
 /**
 STUDENT VIEW - USER PAYMENT STATUS CHECK
-CRITICAL FIXES:
-- Payment status now checked from USER table (not class table)
-- Added user payment status API call on page load
-- Join button enabled/disabled based on logged-in user's payment status
+Payment status checked from USER table
+Join button enabled only if user's payment_status = 'paid'
 */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 let allClasses = [];
 let currentFilter = 'all';
 let currentGrade = 'all';
-let userPaymentStatus = null; // Store user's payment status
+let userPaymentStatus = null;
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🎓 Student view loaded');
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load user payment status FIRST
     loadUserPaymentStatus(email).then(() => {
-        // Then load classes
         loadClasses();
     });
 
@@ -49,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 30000);
 });
 
-// NEW: Load user payment status from users table
+// Load user payment status from users table
 async function loadUserPaymentStatus(email) {
     try {
         console.log('💳 Loading user payment status...');
@@ -64,13 +61,6 @@ async function loadUserPaymentStatus(email) {
         if (data.success) {
             userPaymentStatus = data;
             console.log('✅ User payment status loaded:', userPaymentStatus);
-
-            // Update UI to show payment status if badge exists
-            const statusEl = document.getElementById('paymentStatusBadge');
-            if (statusEl) {
-                statusEl.textContent = userPaymentStatus.is_paid ? '✅ Paid' : '⏳ Pending';
-                statusEl.style.backgroundColor = userPaymentStatus.is_paid ? '#10b981' : '#f59e0b';
-            }
         } else {
             console.error('Failed to load payment status:', data.error);
             userPaymentStatus = {
@@ -139,7 +129,7 @@ async function loadClasses() {
 function applyFilters() {
     let filtered = [...allClasses];
 
-    // Filter by grade (handle "all" and null grades)
+    // Filter by grade
     if (currentGrade !== 'all') {
         filtered = filtered.filter(c =>
             c.grade && c.grade.toString() === currentGrade.toString()

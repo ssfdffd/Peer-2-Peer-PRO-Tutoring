@@ -5,273 +5,1135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resources Library | Peer-2-Peer PRO</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="resources.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #32cd32;
+            --primary-green-dark: #2d8e2d;
+            --primary-green-light: #10b981;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--card-bg) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 50px;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-green);
+            background: rgba(50, 205, 50, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* UPLOAD SECTION */
+        .upload-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--primary-green);
+        }
+
+        .form-control {
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.7);
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.2);
+        }
+
+        .file-upload-container {
+            grid-column: 1 / -1;
+            border: 2px dashed rgba(50, 205, 50, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-container:hover {
+            border-color: var(--primary-green);
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .file-upload-container i {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-container p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-container small {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        #selectedFileName {
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--success-color);
+            min-height: 24px;
+        }
+
+        .btn-upload {
+            grid-column: 1 / -1;
+            background: linear-gradient(45deg, var(--primary-green), var(--primary-green-light));
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(50, 205, 50, 0.4);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(50, 205, 50, 0.6);
+        }
+
+        .btn-upload:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* FILTERS SECTION */
+        .filters-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .filters-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.7);
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .reset-filters {
+            grid-column: 1 / -1;
+            background: rgba(100, 116, 139, 0.3);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .reset-filters:hover {
+            background: rgba(100, 116, 139, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* DOCUMENTS GRID */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .file-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            cursor: default;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(50, 205, 50, 0.4);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-green-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .file-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-tag {
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--primary-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .file-type-icon {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+        }
+
+        .card-body h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: white;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 2.8em;
+            transition: var(--transition);
+        }
+
+        .file-card:hover .card-body h3 {
+            color: var(--primary-green);
+        }
+
+        .document-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .info-item i {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+            min-width: 20px;
+        }
+
+        .info-item strong {
+            color: var(--text-primary);
+            margin-right: 5px;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .view-link,
+        .down-link {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .view-link {
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--primary-green);
+        }
+
+        .view-link:hover {
+            background: rgba(50, 205, 50, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .down-link {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .down-link:hover {
+            background: rgba(100, 116, 139, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-info {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .page-btn {
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--primary-green);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary-green);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* LOADING & EMPTY STATES */
+        .loading-container,
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(50, 205, 50, 0.3);
+            border-top: 5px solid var(--primary-green);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .no-results {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: var(--danger-color);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 20px;
+            height: calc(90vh - 100px);
+            overflow: auto;
+        }
+
+        #docViewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer a {
+            color: var(--primary-green);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--primary-green-light);
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-form,
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .file-upload-container {
+                padding: 25px 15px;
+            }
+
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-body h3 {
+                font-size: 1.3rem;
+            }
+
+            .card-footer {
+                flex-direction: column;
+            }
+
+            .view-link,
+            .down-link {
+                width: 100%;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .page-info {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo i {
+                font-size: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .page-header p {
+                font-size: 1rem;
+            }
+
+            .upload-section,
+            .filters-section {
+                padding: 20px 15px;
+            }
+
+            .form-control,
+            .filter-group select,
+            .filter-group input {
+                padding: 12px 10px;
+                font-size: 0.95rem;
+            }
+
+            .btn-upload,
+            .reset-filters {
+                padding: 14px 20px;
+                font-size: 1rem;
+            }
+
+            .file-card {
+                padding: 20px 15px;
+            }
+
+            .card-body h3 {
+                font-size: 1.2rem;
+                min-height: 2.4em;
+            }
+
+            .document-info {
+                gap: 10px;
+                padding: 12px 0;
+            }
+
+            .info-item {
+                font-size: 0.9rem;
+            }
+
+            .file-type-icon {
+                font-size: 2rem;
+            }
+
+            .category-tag {
+                padding: 5px 12px;
+                font-size: 0.8rem;
+            }
+
+            .modal-content {
+                width: 98%;
+                max-height: 85vh;
+            }
+
+            .modal-body {
+                height: calc(85vh - 90px);
+            }
+        }
+
+        /* HOVER TOOLTIP FOR FULL TITLE */
+        .file-card:hover .card-body h3 {
+            -webkit-line-clamp: unset;
+            white-space: normal;
+            overflow: visible;
+            position: relative;
+            z-index: 10;
+            background: rgba(30, 41, 59, 0.95);
+            padding: 5px 10px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            margin: -5px -10px;
+        }
+    </style>
 </head>
 
-<body class="resources-body">
-
-    <nav id="navbar">
-        <div class="logo">
-            <img src="favicon.ico" alt="Logo">
-            Peer-2-Peer <span class="pro-text">PRO</span> | Library
-        </div>
-        <div class="nav-right">
-            <a href="javascript:history.back()" class="home-btn" style="margin-right: 10px;">
-                <i class="fas fa-arrow-left"></i> Back
-            </a>
-            <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Home</a>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>PEER-2-PEER PRO</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="student-portal.html"><i class="fas fa-user-graduate"></i> Dashboard</a>
+            <a href="student-view.html"><i class="fas fa-video"></i> Live Classes</a>
+            <a href="resources.html" class="active"><i class="fas fa-book-open"></i> Resources</a>
+            <a href="https://wa.me/27732792426" target="_blank"><i class="fas fa-comments"></i> Contact</a>
         </div>
     </nav>
 
-    <div class="animation-wrapper">
-        <div class="scrolling-text" id="scrollText">
-            <span><a href="https://wa.me/27732792426">Online Extra classes R20 per class • Join Now • The best online
-                    tutoring service in SA • </a></span>
-            <span><a href="https://wa.me/27732792426">Peer-2-Peer PRO • Join Now • Contact Us now </a></span>
-        </div>
-    </div>
-
-    <header class="resources-hero">
-        <div class="hero-content">
-            <h1>Study Material Hub</h1>
-            <p>Explore documents shared by your peers</p>
-            <div class="search-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by title or content...">
-            </div>
-        </div>
-    </header>
-
-    <main class="content-container">
-        <div class="upload-section">
-            <div class="upload-card">
-                <form id="uploadForm" onsubmit="event.preventDefault(); uploadDocument();">
-                    <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
-                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-file-upload"></i>
-                        <p>Click to browse or Drag & Drop</p>
-                        <input type="file" id="fileInput" name="file" style="display: none;"
-                            onchange="updateFileName(this)"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.zip">
-                        <p id="selectedFileName" class="selected-file-name"></p>
-                    </div>
-
-                    <div class="form-grid">
-                        <input type="text" id="fileName" placeholder="Document Title" required>
-
-                        <select id="uploaderRole" required>
-                            <option value="">Your Role</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="student">Student</option>
-                            <option value="tutor">Tutor</option>
-                            <option value="administrator">Administrator</option>
-                            <option value="parent">Parent</option>
-                        </select>
-
-                        <select id="docType" required>
-                            <option value="">Document Type</option>
-                            <option value="notes">Notes</option>
-                            <option value="tests">Tests</option>
-                            <option value="worksheet">Worksheet</option>
-                            <option value="practice_material">Practice Material</option>
-                            <option value="task">Task</option>
-                            <option value="assignment">Assignment</option>
-                            <option value="project">Project</option>
-                            <option value="literature">Literature</option>
-                            <option value="textbook">Textbook</option>
-                            <option value="past_paper">Past Paper</option>
-                            <option value="memo">Memo</option>
-                            <option value="study_guide">Study Guide</option>
-                            <option value="presentation">Presentation</option>
-                        </select>
-                    </div>
-
-                    <div class="form-grid">
-                        <input list="subjectsList" id="fileSubject" placeholder="Type or select subject" required>
-                        <datalist id="subjectsList">
-                            <option value="accounting">Accounting</option>
-                            <option value="afrikaans">Afrikaans</option>
-                            <option value="agricultural management practices">Agricultural Management Practices</option>
-                            <option value="agricultural science">Agricultural Science</option>
-                            <option value="agricultural technology">Agricultural Technology</option>
-                            <option value="business">Business Studies</option>
-                            <option value="cat">CAT</option>
-                            <option value="civil technology">Civil Technology</option>
-                            <option value="computer applications technology">Computer Applications Technology</option>
-                            <option value="consumer studies">Consumer Studies</option>
-                            <option value="dance studies">Dance Studies</option>
-                            <option value="design">Design</option>
-                            <option value="development studies">Development Studies</option>
-                            <option value="dramatic arts">Dramatic Arts</option>
-                            <option value="economic and management sciences">Economic and Management Sciences</option>
-                            <option value="economics">Economics</option>
-                            <option value="electrical technology">Electrical Technology</option>
-                            <option value="engineering graphics and design">Engineering Graphics and Design</option>
-                            <option value="english">English</option>
-                            <option value="equine studies">Equine Studies</option>
-                            <option value="geography">Geography</option>
-                            <option value="history">History</option>
-                            <option value="hospitality studies">Hospitality Studies</option>
-                            <option value="isindebele">IsiNdebele</option>
-                            <option value="isixhosa">IsiXhosa</option>
-                            <option value="isizulu">IsiZulu</option>
-                            <option value="it">IT</option>
-                            <option value="life orientation">Life Orientation</option>
-                            <option value="life_science">Life Science</option>
-                            <option value="marine sciences">Marine Sciences</option>
-                            <option value="maritime economics">Maritime Economics</option>
-                            <option value="mathematics">Mathematics</option>
-                            <option value="math_lit">Math Lit</option>
-                            <option value="mechanical technology">Mechanical Technology</option>
-                            <option value="music">Music</option>
-                            <option value="nautical science">Nautical Science</option>
-                            <option value="physics">Physics</option>
-                            <option value="religion studies">Religion Studies</option>
-                            <option value="sepedi">Sepedi</option>
-                            <option value="sesotho">Sesotho</option>
-                            <option value="setswana">Setswana</option>
-                            <option value="siswati">Siswati</option>
-                            <option value="sport and exercise science">Sport and Exercise Science</option>
-                            <option value="technical maths">Technical Maths</option>
-                            <option value="technical sciences">Technical Sciences</option>
-                            <option value="tourism">Tourism</option>
-                            <option value="tshivenda">Tshivenda</option>
-                            <option value="visual arts">Visual Arts</option>
-                            <option value="xitsonga">Xitsonga</option>
-                        </datalist>
-
-                        <select id="fileGrade" required>
-                            <option value="">Select Grade</option>
-                            <option value="1">Grade 1</option>
-                            <option value="2">Grade 2</option>
-                            <option value="3">Grade 3</option>
-                            <option value="4">Grade 4</option>
-                            <option value="5">Grade 5</option>
-                            <option value="6">Grade 6</option>
-                            <option value="7">Grade 7</option>
-                            <option value="8">Grade 8</option>
-                            <option value="9">Grade 9</option>
-                            <option value="10">Grade 10</option>
-                            <option value="11">Grade 11</option>
-                            <option value="12">Grade 12</option>
-
-                        </select>
-
-                        <input type="date" id="docDate" required>
-                    </div>
-
-                    <div class="form-grid">
-                        <textarea id="docDescription" placeholder="Document description (optional)" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit" class="upload-btn" id="uploadBtn">Upload Document</button>
-                </form>
-            </div>
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-book-open"></i> Study Material Hub</h1>
+            <p>Explore documents shared by your peers. Upload your own materials to help others learn!</p>
         </div>
 
-        <div class="documents-section">
-            <div class="filter-controls">
-                <select id="uploaderRoleFilter">
-                    <option value="">All Roles</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="student">Student</option>
-                    <option value="tutor">Tutor</option>
-                    <option value="administrator">Administrator</option>
-                    <option value="parent">Parent</option>
-                </select>
+        <!-- UPLOAD SECTION -->
+        <section class="upload-section">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Upload Document</h2>
+            <form id="uploadForm" class="upload-form">
+                <div class="form-group">
+                    <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
+                    <input type="text" id="fileName" class="form-control" placeholder="e.g., Grade 10 Math Notes"
+                        required>
+                </div>
 
-                <select id="docTypeFilter">
-                    <option value="">All Types</option>
-                    <option value="notes">Notes</option>
-                    <option value="tests">Tests</option>
-                    <option value="worksheet">Worksheet</option>
-                    <option value="practice_material">Practice Material</option>
-                    <option value="task">Task</option>
-                    <option value="assignment">Assignment</option>
-                    <option value="project">Project</option>
-                    <option value="literature">Literature</option>
-                    <option value="textbook">Textbook</option>
-                    <option value="past_paper">Past Paper</option>
-                    <option value="memo">Memo</option>
-                    <option value="study_guide">Study Guide</option>
-                    <option value="presentation">Presentation</option>
-                </select>
+                <div class="form-group">
+                    <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
+                    <select id="fileSubject" class="form-control" required>
+                        <option value="">-- Select Subject --</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="science">Science</option>
+                        <option value="english">English</option>
+                        <option value="history">History</option>
+                        <option value="geography">Geography</option>
+                        <option value="life_skills">Life Skills</option>
+                        <option value="physical_education">Physical Education</option>
+                        <option value="art">Art</option>
+                        <option value="music">Music</option>
+                        <option value="technology">Technology</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="business_studies">Business Studies</option>
+                        <option value="economics">Economics</option>
+                        <option value="life_science">Life Science</option>
+                        <option value="physical_science">Physical Science</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
 
-                <select id="subjectFilter">
-                    <option value="">All Subjects</option>
-                    <!-- Subjects will be populated by JavaScript -->
-                </select>
+                <div class="form-group">
+                    <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
+                    <select id="fileGrade" class="form-control" required>
+                        <option value="">-- Select Grade --</option>
+                        <option value="Grade 1">Grade 1</option>
+                        <option value="Grade 2">Grade 2</option>
+                        <option value="Grade 3">Grade 3</option>
+                        <option value="Grade 4">Grade 4</option>
+                        <option value="Grade 5">Grade 5</option>
+                        <option value="Grade 6">Grade 6</option>
+                        <option value="Grade 7">Grade 7</option>
+                        <option value="Grade 8">Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
+                        <option value="Grade 10">Grade 10</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                    </select>
+                </div>
 
-                <select id="gradeFilter">
-                    <option value="">All Grades</option>
-                    <option value="1">Grade 1</option>
-                    <option value="2">Grade 2</option>
-                    <option value="3">Grade 3</option>
-                    <option value="4">Grade 4</option>
-                    <option value="5">Grade 5</option>
-                    <option value="6">Grade 6</option>
-                    <option value="7">Grade 7</option>
-                    <option value="8">Grade 8</option>
-                    <option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
+                <div class="form-group">
+                    <label for="uploaderRole"><i class="fas fa-user-tag"></i> Your Role</label>
+                    <select id="uploaderRole" class="form-control" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                        <option value="tutor">Tutor</option>
+                        <option value="administrator">Administrator</option>
+                        <option value="parent">Parent</option>
+                    </select>
+                </div>
 
-                </select>
+                <div class="form-group">
+                    <label for="docType"><i class="fas fa-file-alt"></i> Document Type</label>
+                    <select id="docType" class="form-control" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="notes">Notes</option>
+                        <option value="tests">Tests</option>
+                        <option value="worksheet">Worksheet</option>
+                        <option value="practice_material">Practice Material</option>
+                        <option value="task">Task</option>
+                        <option value="assignment">Assignment</option>
+                        <option value="project">Project</option>
+                        <option value="literature">Literature</option>
+                        <option value="textbook">Textbook</option>
+                        <option value="past_paper">Past Paper</option>
+                        <option value="memo">Memo</option>
+                        <option value="study_guide">Study Guide</option>
+                        <option value="presentation">Presentation</option>
+                    </select>
+                </div>
 
-                <input type="date" id="dateFilter" placeholder="Filter by date">
+                <div class="form-group">
+                    <label for="docDate"><i class="fas fa-calendar"></i> Document Date</label>
+                    <input type="date" id="docDate" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="docDescription"><i class="fas fa-sticky-note"></i> Description (Optional)</label>
+                    <textarea id="docDescription" class="form-control" rows="3"
+                        placeholder="Brief description of the document..."></textarea>
+                </div>
+
+                <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-file-upload"></i>
+                    <p><strong>Click to browse</strong> or Drag & Drop</p>
+                    <small>PDF, DOC, PPT, Images, Videos (Max 100MB)</small>
+                    <input type="file" id="fileInput"
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.mp4,.mov" style="display: none;"
+                        required>
+                    <div id="selectedFileName" style="margin-top: 10px; font-weight: 600; color: #10b981;"></div>
+                </div>
+
+                <button type="button" id="uploadBtn" class="btn-upload" onclick="uploadDocument()">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload Document
+                </button>
+            </form>
+        </section>
+
+        <!-- FILTERS SECTION -->
+        <section class="filters-section">
+            <h2><i class="fas fa-filter"></i> Filter Resources</h2>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="searchInput"><i class="fas fa-search"></i> Search</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
+                    <select id="subjectFilter" class="form-control">
+                        <option value="all">All Subjects</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="science">Science</option>
+                        <option value="english">English</option>
+                        <option value="history">History</option>
+                        <option value="geography">Geography</option>
+                        <option value="life_skills">Life Skills</option>
+                        <option value="physical_education">Physical Education</option>
+                        <option value="art">Art</option>
+                        <option value="music">Music</option>
+                        <option value="technology">Technology</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="business_studies">Business Studies</option>
+                        <option value="economics">Economics</option>
+                        <option value="life_science">Life Science</option>
+                        <option value="physical_science">Physical Science</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
+                    <select id="gradeFilter" class="form-control">
+                        <option value="all">All Grades</option>
+                        <option value="Grade 1">Grade 1</option>
+                        <option value="Grade 2">Grade 2</option>
+                        <option value="Grade 3">Grade 3</option>
+                        <option value="Grade 4">Grade 4</option>
+                        <option value="Grade 5">Grade 5</option>
+                        <option value="Grade 6">Grade 6</option>
+                        <option value="Grade 7">Grade 7</option>
+                        <option value="Grade 8">Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
+                        <option value="Grade 10">Grade 10</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="uploaderRoleFilter"><i class="fas fa-user-tag"></i> Uploader Role</label>
+                    <select id="uploaderRoleFilter" class="form-control">
+                        <option value="all">All Roles</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                        <option value="tutor">Tutor</option>
+                        <option value="administrator">Administrator</option>
+                        <option value="parent">Parent</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="docTypeFilter"><i class="fas fa-file-alt"></i> Document Type</label>
+                    <select id="docTypeFilter" class="form-control">
+                        <option value="all">All Types</option>
+                        <option value="notes">Notes</option>
+                        <option value="tests">Tests</option>
+                        <option value="worksheet">Worksheet</option>
+                        <option value="practice_material">Practice Material</option>
+                        <option value="task">Task</option>
+                        <option value="assignment">Assignment</option>
+                        <option value="project">Project</option>
+                        <option value="literature">Literature</option>
+                        <option value="textbook">Textbook</option>
+                        <option value="past_paper">Past Paper</option>
+                        <option value="memo">Memo</option>
+                        <option value="study_guide">Study Guide</option>
+                        <option value="presentation">Presentation</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="dateFilter"><i class="fas fa-calendar"></i> Upload Date</label>
+                    <input type="date" id="dateFilter" class="form-control">
+                </div>
+
+                <button type="button" class="reset-filters" onclick="resetFilters()">
+                    <i class="fas fa-sync-alt"></i> Reset Filters
+                </button>
             </div>
+        </section>
 
-            <div id="fileGrid" class="file-grid"></div>
-
-            <div class="pagination-container">
-                <button id="prevPage" class="p-btn">Previous</button>
-                <span id="pageInfo" class="pagination-info">Page 1 of 1</span>
-                <button id="nextPage" class="p-btn">Next</button>
+        <!-- DOCUMENTS GRID -->
+        <div id="fileGrid" class="documents-grid">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p>Loading library resources...</p>
             </div>
         </div>
-    </main>
 
-    <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-box">
-                <h4>Contact</h4>
-                <a href="mailto:info@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
-                <a href="https://wa.me/27732792426">WhatsApp: +27 73 279 2426</a>
+        <!-- PAGINATION -->
+        <div class="pagination">
+            <button id="prevPage" class="page-btn" onclick="changePage(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="page-info" id="pageInfo">Page 1 of 1</div>
+            <button id="nextPage" class="page-btn" onclick="changePage(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- DOCUMENT VIEWER MODAL -->
+        <div id="docModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Document Viewer</h3>
+                    <button class="close-modal" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="docViewer" frameborder="0"></iframe>
+                </div>
             </div>
-            <div class="footer-box">
-                <h4>Quick Links</h4>
-                <a href="index.html">Home</a>
-                <a href="resources.html">Resources</a>
-                <a href="tutoring.html">Tutoring</a>
-            </div>
-            <div class="footer-box">
-                <h4>Support</h4>
-                <a href="faq.html">FAQ</a>
-                <a href="privacy.html">Privacy Policy</a>
+        </div>
+
+        <footer class="footer">
+            <p>
+                <strong>Contact:</strong>
+                <a href="mailto:admin@peer-2-peer.co.za">admin@peer-2-peer.co.za</a> |
+                <a href="https://wa.me/27732792426" target="_blank">WhatsApp: +27 73 279 2426</a>
+            </p>
+            <p>
+                <strong>Quick Links:</strong>
+                <a href="index.html">Home</a> |
+                <a href="resources.html">Resources</a> |
+                <a href="tutoring.html">Tutoring</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="privacy.html">Privacy Policy</a> |
                 <a href="terms.html">Terms of Service</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved. | Quality Education for All</p>
-        </div>
-    </footer>
-
-    <!-- Modal for Document Viewing -->
-    <div id="docModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Document Viewer</h3>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="doc-viewer-container">
-                <iframe id="docViewer" src="" title="Document Viewer"></iframe>
-            </div>
-        </div>
+            </p>
+            <p>&copy; <span id="currentYear"></span> Peer-2-Peer PRO. All Rights Reserved. | Quality Education for All
+            </p>
+        </footer>
     </div>
 
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Initialize today's date for document date
+        document.getElementById('docDate').valueAsDate = new Date();
+
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                const sizeDisplay = file.size > 1024 * 1024 * 1024
+                    ? `${(file.size / (1024 * 1024 * 1024)).toFixed(2)} GB`
+                    : `${sizeInMB} MB`;
+                document.getElementById('selectedFileName').textContent = `${file.name} (${sizeDisplay})`;
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('docModal').style.display = 'none';
+            document.getElementById('docViewer').src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Reset filters function
+        window.resetFilters = function () {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('subjectFilter').value = 'all';
+            document.getElementById('gradeFilter').value = 'all';
+            document.getElementById('uploaderRoleFilter').value = 'all';
+            document.getElementById('docTypeFilter').value = 'all';
+            document.getElementById('dateFilter').value = '';
+            if (typeof filterDocuments === 'function') {
+                filterDocuments();
+            }
+        };
+
+        // Change page function
+        window.changePage = function (direction) {
+            if (typeof changePageLogic === 'function') {
+                changePageLogic(direction);
+            }
+        };
+    </script>
     <script src="resources.js"></script>
 </body>
 

@@ -2,20 +2,28 @@
 const API_URL = "https://lucky-mud-57bd.buhle-1ce.workers.dev";
 let allResources = [];
 let currentPage = 1;
-const itemsPerPage = 6;
+const itemsPerPage = 25; // CHANGED FROM 6 TO 25
+let currentFilters = {
+    search: '',
+    subject: 'all',
+    grade: 'all',
+    role: 'all',
+    docType: 'all',
+    date: ''
+};
 
 // 2. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
-    initScrollAnimation();
+    initEventListeners();
 
     // Set today's date as default
     document.getElementById('docDate').valueAsDate = new Date();
+});
 
-    // Initialize filters
-    populateFilterOptions();
-
-    // File Input Listener
+// 3. EVENT LISTENERS
+function initEventListeners() {
+    // File input listener
     const fileInput = document.getElementById('fileInput');
     if (fileInput) {
         fileInput.addEventListener('change', function () {
@@ -23,27 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modal Close Logic
-    const modal = document.getElementById("docModal");
-    const closeBtn = document.querySelector(".close-modal");
+    // Modal close logic
+    const closeBtn = document.querySelector('.close-modal');
     if (closeBtn) {
-        closeBtn.onclick = () => {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-            document.body.style.overflow = 'auto';
-        };
+        closeBtn.onclick = closeModal;
     }
 
-    // Close modal on ESC key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            modal.style.display = "none";
-            document.getElementById("docViewer").src = "";
-            document.body.style.overflow = 'auto';
-        }
-    });
-
-    // Search and Filter Listeners
+    // Filter listeners
     document.getElementById('searchInput')?.addEventListener('input', debounce(filterDocuments, 300));
     document.getElementById('subjectFilter')?.addEventListener('change', filterDocuments);
     document.getElementById('gradeFilter')?.addEventListener('change', filterDocuments);
@@ -51,57 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('docTypeFilter')?.addEventListener('change', filterDocuments);
     document.getElementById('dateFilter')?.addEventListener('change', filterDocuments);
 
-    // Pagination Listeners
-    document.getElementById('prevPage')?.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderCards(getFilteredData());
-            window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
-    });
-
-    document.getElementById('nextPage')?.addEventListener('click', () => {
-        const filtered = getFilteredData();
-        const maxPage = Math.ceil(filtered.length / itemsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderCards(filtered);
-            window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
-    });
-});
-
-// 3. POPULATE FILTER OPTIONS
-function populateFilterOptions() {
-    const subjects = [
-        "accounting", "afrikaans", "agricultural management practices",
-        "agricultural science", "agricultural technology", "business",
-        "cat", "civil technology", "computer applications technology",
-        "consumer studies", "dance studies", "design", "development studies",
-        "dramatic arts", "economic and management sciences", "economics",
-        "electrical technology", "engineering graphics and design", "english",
-        "equine studies", "geography", "history", "hospitality studies",
-        "isindebele", "isixhosa", "isizulu", "it", "life orientation",
-        "life_science", "marine sciences", "maritime economics", "mathematics",
-        "math_lit", "mechanical technology", "music", "nautical science",
-        "physics", "religion studies", "sepedi", "sesotho", "setswana",
-        "siswati", "sport and exercise science", "technical maths",
-        "technical sciences", "tourism", "tshivenda", "visual arts", "xitsonga"
-    ].sort();
-
-    const subjectFilter = document.getElementById('subjectFilter');
-    subjects.forEach(subject => {
-        const option = document.createElement('option');
-        option.value = subject;
-        option.textContent = subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
-        subjectFilter.appendChild(option);
-    });
+    // Pagination buttons
+    document.getElementById('prevPage')?.addEventListener('click', () => changePage(-1));
+    document.getElementById('nextPage')?.addEventListener('click', () => changePage(1));
 }
 
 // 4. FETCH DATA FROM WORKER
 async function loadLibrary() {
     const grid = document.getElementById('fileGrid');
-    grid.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Accessing Cloud Library...</div>';
+    grid.innerHTML = `
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Accessing Cloud Library...</p>
+    </div>
+  `;
 
     try {
         const response = await fetch(`${API_URL}/api/resources`);
@@ -109,7 +66,7 @@ async function loadLibrary() {
 
         allResources = Array.isArray(data) ? data : (data.results || []);
 
-        // Ensure file_url is properly set - use the API endpoint
+        // Ensure file_url is properly set
         allResources.forEach(resource => {
             if (!resource.file_url || resource.file_url === '#') {
                 resource.file_url = `${API_URL}/api/file/${resource.actual_file_key}`;
@@ -119,89 +76,114 @@ async function loadLibrary() {
         renderCards(allResources);
     } catch (error) {
         console.error("Fetch error:", error);
-        grid.innerHTML = '<p style="color:red; text-align:center;">Failed to connect to library. Please check your connection.</p>';
+        grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+        <p class="no-results">Failed to connect to library. Please check your connection.</p>
+        <button class="btn-upload" style="margin-top: 20px; width: auto;" onclick="loadLibrary()">
+          <i class="fas fa-redo"></i> Try Again
+        </button>
+      </div>
+    `;
     }
 }
 
-// 5. GENERATE FILE URL FOR MISSING FILES
-function generateFileUrl(resource) {
-    return `${API_URL}/api/file/${resource.actual_file_key}`;
+// 5. FILTERING LOGIC
+function filterDocuments() {
+    currentFilters.search = document.getElementById('searchInput')?.value.toLowerCase() || "";
+    currentFilters.subject = document.getElementById('subjectFilter')?.value || "all";
+    currentFilters.grade = document.getElementById('gradeFilter')?.value || "all";
+    currentFilters.role = document.getElementById('uploaderRoleFilter')?.value || "all";
+    currentFilters.docType = document.getElementById('docTypeFilter')?.value || "all";
+    currentFilters.date = document.getElementById('dateFilter')?.value || "";
+
+    currentPage = 1;
+    applyFilters();
 }
 
-// 6. ADVANCED FILTERING LOGIC
-function getFilteredData() {
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
-    const subjectTerm = document.getElementById('subjectFilter')?.value.toLowerCase() || "";
-    const gradeTerm = document.getElementById('gradeFilter')?.value || "";
-    const roleTerm = document.getElementById('uploaderRoleFilter')?.value || "";
-    const docTypeTerm = document.getElementById('docTypeFilter')?.value || "";
-    const dateTerm = document.getElementById('dateFilter')?.value || "";
-    const searchWords = searchText.split(' ').filter(word => word.length > 0);
+function applyFilters() {
+    let filtered = [...allResources];
 
-    return allResources.filter(item => {
-        // Google-like search in title
-        let matchesSearch = true;
-        if (searchWords.length > 0) {
+    // Search filter
+    if (currentFilters.search) {
+        const searchWords = currentFilters.search.split(' ').filter(word => word.length > 0);
+        filtered = filtered.filter(item => {
             const title = (item.title || "").toLowerCase();
-            matchesSearch = searchWords.every(word => title.includes(word));
-        }
+            return searchWords.every(word => title.includes(word));
+        });
+    }
 
-        // Other filters
-        const matchesSubject = subjectTerm === "" || (item.subject && item.subject.toLowerCase() === subjectTerm);
-        const matchesGrade = gradeTerm === "" || (item.grade_level && item.grade_level.toString() === gradeTerm);
-        const matchesRole = roleTerm === "" || (item.uploader_role && item.uploader_role.toLowerCase() === roleTerm);
-        const matchesDocType = docTypeTerm === "" || (item.doc_type && item.doc_type.toLowerCase() === docTypeTerm);
+    // Subject filter
+    if (currentFilters.subject !== "all") {
+        filtered = filtered.filter(item =>
+            item.subject && item.subject.toLowerCase() === currentFilters.subject
+        );
+    }
 
-        // Date filtering
-        let matchesDate = true;
-        if (dateTerm && item.upload_date) {
+    // Grade filter
+    if (currentFilters.grade !== "all") {
+        filtered = filtered.filter(item =>
+            item.grade_level && item.grade_level.toString() === currentFilters.grade
+        );
+    }
+
+    // Role filter
+    if (currentFilters.role !== "all") {
+        filtered = filtered.filter(item =>
+            item.uploader_role && item.uploader_role.toLowerCase() === currentFilters.role
+        );
+    }
+
+    // Doc type filter
+    if (currentFilters.docType !== "all") {
+        filtered = filtered.filter(item =>
+            item.doc_type && item.doc_type.toLowerCase() === currentFilters.docType
+        );
+    }
+
+    // Date filter
+    if (currentFilters.date) {
+        filtered = filtered.filter(item => {
+            if (!item.upload_date) return false;
             const itemDate = new Date(item.upload_date).toISOString().split('T')[0];
-            matchesDate = itemDate === dateTerm;
-        }
+            return itemDate === currentFilters.date;
+        });
+    }
 
-        return matchesSearch && matchesSubject && matchesGrade && matchesRole && matchesDocType && matchesDate;
-    });
+    renderCards(filtered);
 }
 
-// 7. DEBOUNCE FUNCTION FOR SEARCH
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// 8. RENDER CARDS WITH HIGHLIGHTING
+// 6. RENDER CARDS WITH HOVER TOOLTIP
 function renderCards(data) {
     const grid = document.getElementById('fileGrid');
     if (!grid) return;
+
+    // Clear grid
     grid.innerHTML = "";
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedItems = data.slice(startIndex, endIndex);
-    const searchText = document.getElementById('searchInput')?.value.toLowerCase() || "";
 
     if (paginatedItems.length === 0) {
-        grid.innerHTML = '<p class="no-results"><i class="fas fa-search"></i> No documents found matching your search.</p>';
+        grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search" style="font-size: 3rem; color: #64748b;"></i>
+        <p class="no-results">No documents found matching your search.</p>
+        <button class="reset-filters" style="margin-top: 20px; width: auto;" onclick="resetFilters()">
+          <i class="fas fa-sync-alt"></i> Reset Filters
+        </button>
+      </div>
+    `;
+        updatePagination(0);
         return;
     }
 
+    // Render cards
     paginatedItems.forEach(item => {
         const card = document.createElement('div');
         card.className = 'file-card';
-
-        // Highlight search terms in title
-        let titleHTML = item.title || "Untitled Document";
-        if (searchText) {
-            const regex = new RegExp(`(${searchText.split(' ').filter(w => w).join('|')})`, 'gi');
-            titleHTML = titleHTML.replace(regex, '<span class="highlight">$1</span>');
-        }
+        card.title = item.title || "Untitled Document"; // HOVER TOOLTIP FOR FULL TITLE
 
         // Get appropriate icon
         const iconClass = getFileIconClass(item.doc_type, item.file_url);
@@ -209,56 +191,75 @@ function renderCards(data) {
         // Format date
         const uploadDate = item.upload_date ? new Date(item.upload_date).toLocaleDateString() : 'Unknown';
 
+        // Truncate title for display (full title shown on hover via title attribute)
+        const displayTitle = item.title || "Untitled Document";
+
         card.innerHTML = `
-            <div class="card-icon-header">
-                <div class="category-tag">${item.doc_type ? item.doc_type.replace(/_/g, ' ') : 'Document'}</div>
-                <i class="fas ${iconClass} file-type-icon"></i>
-            </div>
-            <div class="card-body">
-                <h3>${titleHTML}</h3>
-                <div class="document-info">
-                    <div class="info-item">
-                        <i class="fas fa-user-tag"></i>
-                        <strong>Uploaded by:</strong> ${item.uploader_role || 'Unknown'}
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <strong>Grade:</strong> ${item.grade_level || "N/A"}
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-book"></i>
-                        <strong>Subject:</strong> ${item.subject || "General"}
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar"></i>
-                        <strong>Uploaded:</strong> ${uploadDate}
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button class="view-link" onclick="openDocument('${item.file_url}', '${item.title.replace(/'/g, "\\'")}')">
-                    <i class="fas fa-eye"></i> View
-                </button>
-                <a href="${item.file_url}" download="${item.title}" class="down-link">
-                    <i class="fas fa-download"></i> Download
-                </a>
-            </div>
-        `;
+      <div class="card-icon-header">
+        <div class="category-tag">${item.doc_type ? item.doc_type.replace(/_/g, ' ') : 'Document'}</div>
+        <i class="fas ${iconClass} file-type-icon"></i>
+      </div>
+      <div class="card-body">
+        <h3>${escapeHtml(displayTitle)}</h3>
+        <div class="document-info">
+          <div class="info-item">
+            <i class="fas fa-user-tag"></i>
+            <strong>Uploaded by:</strong> ${item.uploader_role || 'Unknown'}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-graduation-cap"></i>
+            <strong>Grade:</strong> ${item.grade_level || "N/A"}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-book"></i>
+            <strong>Subject:</strong> ${item.subject || "General"}
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar"></i>
+            <strong>Uploaded:</strong> ${uploadDate}
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="view-link" onclick="openDocument('${item.file_url.replace(/'/g, "\\'")}', '${item.title.replace(/'/g, "\\'")}')">
+          <i class="fas fa-eye"></i> View
+        </button>
+        <a href="${item.file_url}" download="${item.title}" class="down-link">
+          <i class="fas fa-download"></i> Download
+        </a>
+      </div>
+    `;
+
         grid.appendChild(card);
     });
 
-    const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+    updatePagination(data.length);
+}
+
+// 7. PAGINATION
+function updatePagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 
-    // Update pagination button states
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
     if (prevBtn) prevBtn.disabled = currentPage === 1;
     if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 }
 
-// 9. GET FILE ICON CLASS
+function changePage(direction) {
+    const totalPages = Math.ceil(allResources.length / itemsPerPage) || 1;
+    const newPage = currentPage + direction;
+
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        applyFilters();
+        window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+}
+
+// 8. FILE ICONS & UTILITIES
 function getFileIconClass(docType, fileUrl) {
     if (docType) {
         switch (docType.toLowerCase()) {
@@ -282,24 +283,31 @@ function getFileIconClass(docType, fileUrl) {
     // Fallback based on file extension
     if (fileUrl) {
         const url = fileUrl.toLowerCase();
-        if (url.endsWith('.pdf')) return 'fa-file-pdf pdf-icon';
-        if (url.endsWith('.doc') || url.endsWith('.docx')) return 'fa-file-word word-icon';
-        if (url.endsWith('.xls') || url.endsWith('.xlsx')) return 'fa-file-excel excel-icon';
-        if (url.endsWith('.ppt') || url.endsWith('.pptx')) return 'fa-file-powerpoint ppt-icon';
-        if (url.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)) return 'fa-file-image image-icon';
-        if (url.match(/\.(mp4|mov|avi|mkv|webm)$/i)) return 'fa-file-video video-icon';
-        if (url.match(/\.(mp3|wav|ogg|m4a)$/i)) return 'fa-file-audio audio-icon';
-        if (url.match(/\.(zip|rar|7z|tar|gz)$/i)) return 'fa-file-archive archive-icon';
+        if (url.endsWith('.pdf')) return 'fa-file-pdf';
+        if (url.endsWith('.doc') || url.endsWith('.docx')) return 'fa-file-word';
+        if (url.endsWith('.xls') || url.endsWith('.xlsx')) return 'fa-file-excel';
+        if (url.endsWith('.ppt') || url.endsWith('.pptx')) return 'fa-file-powerpoint';
+        if (url.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)) return 'fa-file-image';
+        if (url.match(/\.(mp4|mov|avi|mkv|webm)$/i)) return 'fa-file-video';
+        if (url.match(/\.(mp3|wav|ogg|m4a)$/i)) return 'fa-file-audio';
+        if (url.match(/\.(zip|rar|7z|tar|gz)$/i)) return 'fa-file-archive';
     }
 
-    return 'fa-file-alt general-icon';
+    return 'fa-file-alt';
 }
 
-// 10. VIEW DOCUMENT IN MODAL
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 9. DOCUMENT VIEWER
 function openDocument(url, title) {
     const modal = document.getElementById("docModal");
     const viewer = document.getElementById("docViewer");
-    const modalTitle = document.querySelector(".modal-header h3");
+    const modalTitle = document.getElementById("modalTitle");
 
     if (modal && viewer) {
         modalTitle.textContent = title || "Document Viewer";
@@ -335,7 +343,13 @@ function openDocument(url, title) {
     }
 }
 
-// 11. UPLOAD DOCUMENT - NO SIZE LIMIT, HANDLES LARGE FILES
+function closeModal() {
+    document.getElementById('docModal').style.display = 'none';
+    document.getElementById('docViewer').src = '';
+    document.body.style.overflow = 'auto';
+}
+
+// 10. UPLOAD DOCUMENT
 async function uploadDocument() {
     const fileInput = document.getElementById('fileInput');
     const titleInput = document.getElementById('fileName');
@@ -398,13 +412,8 @@ async function uploadDocument() {
     btn.disabled = true;
 
     try {
-        // Show upload progress
-        console.log(`Starting upload: ${file.name} (${sizeDisplay})`);
-
         // Convert file to base64
         const base64Data = await fileToBase64(file);
-
-        // Remove the data URL prefix
         const base64String = base64Data.split(',')[1];
 
         // Generate unique file key
@@ -450,14 +459,15 @@ async function uploadDocument() {
 
             // Reset to first page
             currentPage = 1;
+            applyFilters();
         } else {
             throw new Error(result.error || "Upload failed");
         }
     } catch (error) {
-        console.error("Upload Error:", error);
+        console.error("Upload Error: ", error);
         alert(`❌ Upload failed: ${error.message}\n\nPlease try again.`);
     } finally {
-        btn.innerHTML = 'Upload Document';
+        btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Document';
         btn.disabled = false;
     }
 }
@@ -478,7 +488,6 @@ function fileToBase64(file) {
 // Helper function to get MIME type from extension
 function getMimeType(extension) {
     const mimeTypes = {
-        // Documents
         'pdf': 'application/pdf',
         'doc': 'application/msword',
         'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -487,51 +496,19 @@ function getMimeType(extension) {
         'ppt': 'application/vnd.ms-powerpoint',
         'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'txt': 'text/plain',
-        'rtf': 'application/rtf',
-        'csv': 'text/csv',
-
-        // Images
         'jpg': 'image/jpeg',
         'jpeg': 'image/jpeg',
         'png': 'image/png',
         'gif': 'image/gif',
-        'bmp': 'image/bmp',
-        'svg': 'image/svg+xml',
-        'webp': 'image/webp',
-
-        // Video
         'mp4': 'video/mp4',
         'mov': 'video/quicktime',
-        'avi': 'video/x-msvideo',
-        'mkv': 'video/x-matroska',
-        'webm': 'video/webm',
-
-        // Audio
         'mp3': 'audio/mpeg',
-        'wav': 'audio/wav',
-        'ogg': 'audio/ogg',
-        'm4a': 'audio/mp4',
-
-        // Archives
-        'zip': 'application/zip',
-        'rar': 'application/vnd.rar',
-        '7z': 'application/x-7z-compressed',
-        'tar': 'application/x-tar',
-        'gz': 'application/gzip',
-
-        // Other
-        'json': 'application/json',
-        'xml': 'application/xml',
-        'html': 'text/html',
-        'htm': 'text/html',
-        'css': 'text/css',
-        'js': 'application/javascript'
+        'zip': 'application/zip'
     };
-
     return mimeTypes[extension.toLowerCase()] || 'application/octet-stream';
 }
 
-// 12. UTILITIES
+// Update file name display
 function updateFileName(input) {
     const display = document.getElementById('selectedFileName');
     if (display && input.files && input.files[0]) {
@@ -541,33 +518,33 @@ function updateFileName(input) {
         const sizeDisplay = file.size > 1024 * 1024 * 1024
             ? `${sizeInGB} GB`
             : `${sizeInMB} MB`;
-
-        display.innerText = `Selected: ${file.name} (${sizeDisplay})`;
-        display.style.color = "#00ff88";
-        display.style.fontWeight = "500";
+        display.innerText = `${file.name} (${sizeDisplay})`;
     }
 }
 
-function initScrollAnimation() {
-    const scrollText = document.getElementById('scrollText');
-    if (scrollText) scrollText.style.display = 'block';
+// Debounce function for search
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
-function filterDocuments() {
-    currentPage = 1;
-    renderCards(getFilteredData());
-}
-
-// 13. ERROR HANDLING FOR NETWORK ISSUES
-window.addEventListener('online', function () {
-    console.log('Network connection restored');
-    loadLibrary();
-});
-
-window.addEventListener('offline', function () {
-    console.log('Network connection lost');
+// Network status handling
+window.addEventListener('online', () => loadLibrary());
+window.addEventListener('offline', () => {
     const grid = document.getElementById('fileGrid');
     if (grid) {
-        grid.innerHTML = '<p style="color:#ff6b6b; text-align:center;"><i class="fas fa-wifi-slash"></i> You are offline. Please check your internet connection.</p>';
+        grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-wifi-slash" style="font-size: 3rem; color: #ef4444;"></i>
+        <p class="no-results">You are offline. Please check your internet connection.</p>
+      </div>
+    `;
     }
 });

@@ -1,230 +1,505 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- sm btns -->
+<style>
+    body {
+        margin: 0;
+        background-color: #000;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calm Online Class · Anime.js</title>
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(145deg, #f6f9fc 0%, #e6f0f5 100%);
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow-x: hidden;
-        }
+    .port-set {
+        height: 100%;
+        margin: auto;
+        padding: 50px;
+        max-width: 800px;
+        align-items: center;
+        position: relative;
+    }
 
-        /* Soft blurry particles container */
-        .atmosphere {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            /* Allows interaction with content behind */
-            z-index: 1;
-        }
+    /* .port-container z-index has to be set for this to work */
+    .port-container {
+        z-index: 1;
+    }
 
-        .orb {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 245, 0.6), rgba(200, 230, 255, 0.2));
-            filter: blur(40px);
-            opacity: 0.65;
-            will-change: transform;
-        }
+    .under-port-container {
+        z-index: 0;
+        display: block;
+        overflow: hidden;
+        position: relative;
+    }
 
-        /* Main card – calm and focused */
-        .class-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 48px;
-            padding: 3rem 4rem;
-            box-shadow: 0 25px 40px -20px rgba(0, 30, 40, 0.15),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-            text-align: center;
-            z-index: 2;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            max-width: 600px;
-            margin: 2rem;
-        }
+    .port-container {
+        display: block;
+        position: relative;
 
-        h1 {
-            font-weight: 400;
-            font-size: 2.4rem;
-            letter-spacing: -0.01em;
-            color: #1a3e4c;
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-        }
+    }
 
-        .sub {
-            color: #3c6e7c;
-            font-size: 1.2rem;
-            font-weight: 350;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(120, 160, 170, 0.2);
-            padding-bottom: 1.2rem;
-        }
+    .portfolio {
+        display: grid;
+        grid-template-rows: repeat(8, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: 10px;
+        margin: auto;
+        position: relative;
+        width: 440px;
+        padding: 10px;
+        top: -46.970em;
+    }
 
-        .pulse-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #6fa3b3;
-            border-radius: 50%;
-            margin-right: 8px;
-            opacity: 0.7;
-        }
+    .under-portfolio {
+        display: grid;
+        grid-template-rows: repeat(8, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: 10px;
+        margin: auto;
+        position: relative;
+        width: 440px;
+        padding: 10px;
+    }
 
-        .status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2e5a67;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-    </style>
-</head>
+    .under-items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border: .2em solid rgb(0, 230, 255);
+    }
 
-<body>
+    .item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        background-color: rgba(12, 22, 24, 0.85);
+        border: .2em solid rgb(0, 230, 255);
+        border-radius: 0px;
+        box-shadow: none;
+        transform: translateZ(0);
+    }
 
-    <div class="atmosphere">
-        <!-- Three orbs that will move with floating calm -->
-        <div id="orb1" class="orb" style="top: 15%; left: 20%;"></div>
-        <div id="orb2" class="orb" style="top: 60%; left: 70%; width: 200px; height: 200px; opacity: 0.4;"></div>
-        <div id="orb3" class="orb"
-            style="top: 75%; left: 15%; width: 110px; height: 110px; opacity: 0.5; background: radial-gradient(circle, rgba(225,245,240,0.7), rgba(190,220,230,0.2));">
+
+    svg {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    circle {
+        transform-origin: 50% 50%;
+        transform: scale(0);
+        transition: transform 500ms;
+    }
+
+    text {
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        text-anchor: middle;
+        letter-spacing: 1px;
+    }
+
+    .svg-text {
+        fill: #eeeeee;
+        display: block;
+        font-family: 'Archivo', sans-serif;
+    }
+
+    image {
+        transform: scale(2);
+        transform-origin: 50% 50%;
+        transition: transform 100ms cubic-bezier(0.25, 0.46, 0.45, 0.24);
+    }
+
+    .small {
+        grid-row: span 1;
+        grid-column: span 1;
+    }
+
+    .medium {
+        grid-row: span 2;
+        grid-column: span 2;
+    }
+
+    .large {
+        grid-row: span 3;
+        grid-column: span 3;
+    }
+
+    .tall {
+        grid-row: span 3;
+        grid-column: span 2;
+    }
+
+    .wide {
+        grid-row: span 2;
+        grid-column: span 3;
+    }
+
+    .item:hover circle {
+        transform: scale(5);
+    }
+
+    .item:hover image {
+        transform: scale(1);
+    }
+
+    .port-heading {
+        font-size: 2rem;
+        color: #eeeeee;
+        font-weight: bold;
+        text-decoration: underline rgb(0, 230, 255);
+        margin: auto;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .big-box {
+        font-size: 1rem;
+    }
+
+    .small-box {
+        font-size: 3em;
+    }
+
+
+
+
+
+
+
+
+
+
+    /*  sm btn styles  */
+    .twitter-btn {
+        position: fixed;
+        margin: auto;
+        bottom: 0;
+        background-color: #1da1f2;
+        border: 0.15em solid #1da1f2;
+        border-left: none;
+        border-bottom: none;
+        border-radius: 0% 100% 0% 0% / 0% 100% 0% 93%;
+        height: 50px;
+        width: 50px;
+        cursor: pointer;
+    }
+
+    .in-btn {
+        position: fixed;
+        margin: auto;
+        bottom: 0;
+        right: 0;
+        border: 0.15em solid #0072b1;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 100% 0% 0% 0% / 100% 0% 0% 0%;
+        background-color: #0072b1;
+        height: 50px;
+        width: 50px;
+        cursor: pointer;
+    }
+
+    .fa-twitter {
+        position: absolute;
+        left: 0em;
+        right: .4em;
+        top: .5em;
+        bottom: 0;
+        color: #fff;
+        font-size: 1.8em;
+    }
+
+    .fa-linkedin-in {
+        position: absolute;
+        left: .4em;
+        right: 0em;
+        top: .55em;
+        bottom: 0;
+        color: #fff;
+        font-size: 1.8em;
+    }
+
+    .in-btn:hover {
+        background-color: #000;
+    }
+
+    .twitter-btn:hover {
+        background-color: #000;
+    }
+</style>
+<a href="https://twitter.com/cmlohr"><button class="twitter-btn"><i class="fab fa-twitter"></i></button></a>
+
+<a href="https://www.linkedin.com/in/cmlohr/"><button class="in-btn"><i class="fab fa-linkedin-in"></i></button></a>
+<!-- ################## Under Grid Start ################# -->
+<div class='under-port-container'>
+    <div class='under-portfolio'>
+        <!-- A  -->
+        <div class='under-items large'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2019/06/13/13/06/monster-4271569_960_720.png'></image>
+            </svg>
+        </div>
+
+        <!--   B    -->
+        <div class='under-items medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2017/12/28/12/31/desktop-3045123_960_720.jpg'></image>
+            </svg>
+        </div>
+
+        <!-- C  -->
+        <div class='under-items medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2019/09/14/09/44/cat-4475583_960_720.png'></image>
+            </svg>
+        </div>
+
+        <!--   D   -->
+        <div class='under-items tall'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2014/04/03/00/35/giraffe-308771_960_720.png'></image>
+            </svg>
+        </div>
+
+        <!--  E  -->
+        <div class='under-items small'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2018/10/02/15/18/cloud-3719093_960_720.png'></image>
+            </svg>
+        </div>
+
+        <!--    F    -->
+        <div class='under-items wide'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2019/08/09/19/22/leaves-4395694_960_720.png'></image>
+            </svg>
+        </div>
+
+        <!--   G     -->
+        <div class='under-items wide'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2016/01/02/16/21/girl-1118419_960_720.jpg'></image>
+            </svg>
+        </div>
+
+        <!--   H     -->
+        <div class='under-items medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%' class='under-img'
+                    href='https://cdn.pixabay.com/photo/2020/08/02/03/33/red-fox-5456627_960_720.jpg'></image>
+            </svg>
         </div>
     </div>
+</div>
 
-    <div class="class-card">
-        <div class="status">
-            <span class="pulse-dot"></span> LIVE · CREATIVE CODE
+
+<!-- #################### Surface Grid Start #################### -->
+<div class='port-container'>
+    <div class='items portfolio'>
+        <!-- A  -->
+        <div class='item large'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-0'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text big-box' dy='.3em' x='50%' y='50%'>
+                    A
+                </text>
+                <g clip-path='url(#clip-0)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2019/06/13/13/06/monster-4271569_960_720.png'></image>
+                </g>
+            </svg>
         </div>
-        <h1>afternoon sketch</h1>
-        <div class="sub">gentle animations · calm focus</div>
-        <p style="color: #2e5a67; font-size: 1.1rem; line-height: 1.6; opacity: 0.9;">
-            Breathe. The particles follow softly.<br>
-            <span style="opacity: 0.7; font-size: 0.95rem;">move your cursor — they respond slowly</span>
-        </p>
+
+
+        <!--   B    -->
+        <div class='item medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-1'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    B
+                </text>
+                <g clip-path='url(#clip-1)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2017/12/28/12/31/desktop-3045123_960_720.jpg'></image>
+                </g>
+            </svg>
+        </div>
+
+        <!-- C  -->
+        <div class='item medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-2'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    C
+                </text>
+                <g clip-path='url(#clip-2)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2019/09/14/09/44/cat-4475583_960_720.png'></image>
+                </g>
+            </svg>
+        </div>
+
+        <!--    D    -->
+        <div class='item tall'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-3'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    D
+                </text>
+                <g clip-path='url(#clip-3)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2014/04/03/00/35/giraffe-308771_960_720.png' </image>
+                </g>
+            </svg>
+        </div>
+
+        <!--   E     -->
+        <div class='item small'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-4'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text small-box' dy='.3em' x='50%' y='50%'>
+                    E
+                </text>
+                <g clip-path='url(#clip-4)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2018/10/02/15/18/cloud-3719093_960_720.png'></image>
+                </g>
+            </svg>
+        </div>
+
+        <!--   F   -->
+        <div class='item wide'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-5'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    F
+                </text>
+                <g clip-path='url(#clip-5)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2019/08/09/19/22/leaves-4395694_960_720.png'></image>
+                </g>
+            </svg>
+        </div>
+
+        <!-- G -->
+        <div class='item wide'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-6'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    G
+                </text>
+                <g clip-path='url(#clip-6)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2016/01/02/16/21/girl-1118419_960_720.jpg'></image>
+                </g>
+            </svg>
+        </div>
+
+        <!-- H -->
+        <div class='item medium'>
+            <svg preserveAspectRatio='xMidYMid slice' viewBox='0 0 300 200'>
+                <defs>
+                    <clipPath id='clip-7'>
+                        <circle cx='0' cy='0' fill='#000' r='150px'></circle>
+                    </clipPath>
+                </defs>
+                <text class='svg-text' dy='.3em' x='50%' y='50%'>
+                    H
+                </text>
+                <g clip-path='url(#clip-7)'>
+                    <image height='100%' preserveAspectRatio='xMinYMin slice' width='100%'
+                        href='https://cdn.pixabay.com/photo/2020/08/02/03/33/red-fox-5456627_960_720.jpg' </image>
+                </g>
+            </svg>
+        </div>
     </div>
+</div>
+<script>
+    var items = [],
+        point = document.querySelector("svg").createSVGPoint();
 
-    <!-- Import Anime.js from CDN -->
-    <script type="importmap">
-        {
-            "imports": {
-                "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/+esm",
-                "animejs/animatable": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/animatable/+esm"
-            }
+    function getCoordinates(e, svg) {
+        point.x = e.clientX;
+        point.y = e.clientY;
+        return point.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function changeColor(e) {
+        document.body.className = e.currentTarget.className;
+    }
+
+    function Item(config) {
+        Object.keys(config).forEach(function (item) {
+            this[item] = config[item];
+        }, this);
+        this.el.addEventListener("mousemove", this.mouseMoveHandler.bind(this));
+        this.el.addEventListener("touchmove", this.touchMoveHandler.bind(this));
+    }
+
+    Item.prototype = {
+        update: function update(c) {
+            this.clip.setAttribute("cx", c.x);
+            this.clip.setAttribute("cy", c.y);
+        },
+        mouseMoveHandler: function mouseMoveHandler(e) {
+            this.update(getCoordinates(e, this.svg));
+        },
+        touchMoveHandler: function touchMoveHandler(e) {
+            e.preventDefault();
+            var touch = e.targetTouches[0];
+            if (touch) return this.update(getCoordinates(touch, this.svg));
         }
-    </script>
+    };
 
-    <script type="module">
-        import { createAnimatable, utils } from 'animejs';
-
-        // --- Calm, continuous floating base animation (gentle breathing) ---
-        const orb1 = document.getElementById('orb1');
-        const orb2 = document.getElementById('orb2');
-        const orb3 = document.getElementById('orb3');
-
-        // Create animatables for x and y with *slow* durations — this is key for calmness.
-        const calmOrb1 = createAnimatable(orb1, {
-            x: 1000,      // 1000ms = 1 second follow speed (slow, serene)
-            y: 1000,
-            ease: 'out(3)' // gentle deceleration
+    [].slice
+        .call(document.querySelectorAll(".item"), 0)
+        .forEach(function (item, index) {
+            items.push(
+                new Item({
+                    el: item,
+                    svg: item.querySelector("svg"),
+                    clip: document.querySelector("#clip-" + index + " circle")
+                })
+            );
         });
 
-        const calmOrb2 = createAnimatable(orb2, {
-            x: 1400,      // even slower
-            y: 1400,
-            ease: 'out(2.8)'
+    [].slice
+        .call(document.querySelectorAll("button"), 0)
+        .forEach(function (button) {
+            button.addEventListener("click", changeColor);
         });
-
-        const calmOrb3 = createAnimatable(orb3, {
-            x: 1200,
-            y: 1200,
-            ease: 'out(3.2)'
-        });
-
-        // --- Automatic "breathing" drift: very subtle idle movement ---
-        let idlePhase = 0;
-        function idleDrift() {
-            // tiny sine-wave offsets so they're never truly static
-            const drift1x = Math.sin(idlePhase) * 6;
-            const drift1y = Math.cos(idlePhase * 0.8) * 6;
-            const drift2x = Math.cos(idlePhase * 0.7) * 10;
-            const drift2y = Math.sin(idlePhase * 0.5) * 10;
-            const drift3x = Math.sin(idlePhase * 0.9) * 8;
-            const drift3y = Math.cos(idlePhase * 0.6) * 8;
-
-            // Use the animatable setters — they animate smoothly to these tiny offsets
-            calmOrb1.x(calmOrb1.x() + drift1x); // relative current value + drift
-            calmOrb1.y(calmOrb1.y() + drift1y);
-
-            calmOrb2.x(calmOrb2.x() + drift2x);
-            calmOrb2.y(calmOrb2.y() + drift2y);
-
-            calmOrb3.x(calmOrb3.x() + drift3x);
-            calmOrb3.y(calmOrb3.y() + drift3y);
-
-            idlePhase += 0.015;
-            requestAnimationFrame(idleDrift);
-        }
-        // Start the subtle drifting
-        idleDrift();
-
-        // --- Mouse following — very damped thanks to long duration/ease ---
-        const onMouseMove = (e) => {
-            // map mouse position to a soft zone: not too extreme movement
-            const xPos = (e.clientX / window.innerWidth) * 40 - 20;  // range -20px to +20px
-            const yPos = (e.clientY / window.innerHeight) * 30 - 15; // range -15px to +15px
-
-            // For orb1: base + mouse influence
-            calmOrb1.x(20 + xPos * 0.5);
-            calmOrb1.y(15 + yPos * 0.4);
-
-            // orb2: different sensitivity, more subtle
-            calmOrb2.x(-30 + xPos * 0.3);
-            calmOrb2.y(-20 + yPos * 0.3);
-
-            // orb3: responds a bit more, but still soft
-            calmOrb3.x(40 + xPos * 0.7);
-            calmOrb3.y(50 + yPos * 0.6);
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        // Optional: gentle reset when mouse leaves so they don't stick to edge
-        window.addEventListener('mouseleave', () => {
-            calmOrb1.x(20);
-            calmOrb1.y(15);
-            calmOrb2.x(-30);
-            calmOrb2.y(-20);
-            calmOrb3.x(40);
-            calmOrb3.y(50);
-        });
-
-        // Ensure they start at these calm positions
-        calmOrb1.x(20);
-        calmOrb1.y(15);
-        calmOrb2.x(-30);
-        calmOrb2.y(-20);
-        calmOrb3.x(40);
-        calmOrb3.y(50);
-
-        console.log('✨ Calm classroom atmosphere ready — using Anime.js Animatable');
-    </script>
-</body>
-
-</html>
+</script>

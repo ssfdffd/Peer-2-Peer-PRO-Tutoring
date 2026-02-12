@@ -4,14 +4,12 @@ CRITICAL FIXES:
 - Payment status now checked from USER table (not class table)
 - Added user payment status API call on page load
 - Join button enabled/disabled based on logged-in user's payment status
-- Fixed console.log typo and variable shadowing
-- Added null safety for grade filter
 */
 const API_BASE = "https://liveclass.buhle-1ce.workers.dev";
 let allClasses = [];
 let currentFilter = 'all';
 let currentGrade = 'all';
-let userPaymentStatus = null;
+let userPaymentStatus = null; // Store user's payment status
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🎓 Student view loaded');
@@ -67,10 +65,19 @@ async function loadUserPaymentStatus(email) {
             userPaymentStatus = data;
             console.log('✅ User payment status loaded:', userPaymentStatus);
 
-            // Update UI to show payment status
-            updatePaymentStatusUI();
+            // Update UI to show payment status if badge exists
+            const statusEl = document.getElementById('paymentStatusBadge');
+            if (statusEl) {
+                statusEl.textContent = userPaymentStatus.is_paid ? '✅ Paid' : '⏳ Pending';
+                statusEl.style.backgroundColor = userPaymentStatus.is_paid ? '#10b981' : '#f59e0b';
+            }
         } else {
             console.error('Failed to load payment status:', data.error);
+            userPaymentStatus = {
+                payment_status: 'pending',
+                amount_paid: 0,
+                is_paid: false
+            };
         }
 
     } catch (error) {
@@ -80,20 +87,6 @@ async function loadUserPaymentStatus(email) {
             amount_paid: 0,
             is_paid: false
         };
-    }
-}
-
-function updatePaymentStatusUI() {
-    const statusEl = document.getElementById('paymentStatusBadge');
-    const amountEl = document.getElementById('paymentAmountDisplay');
-
-    if (statusEl) {
-        statusEl.textContent = userPaymentStatus.payment_status === 'paid' ? '✅ Paid' : '⏳ Pending';
-        statusEl.style.backgroundColor = userPaymentStatus.payment_status === 'paid' ? '#10b981' : '#f59e0b';
-    }
-
-    if (amountEl) {
-        amountEl.textContent = `R${userPaymentStatus.amount_paid.toFixed(2)}`;
     }
 }
 
@@ -305,13 +298,12 @@ function joinClass(roomName) {
 
 function isClassUpcoming(cls) {
     if (!cls.scheduled_date || !cls.scheduled_time) return false;
-    // Parse as LOCAL time (critical for timezone safety)
     const classTime = new Date(`${cls.scheduled_date}T${cls.scheduled_time}`);
     if (isNaN(classTime.getTime())) return false;
 
     const now = new Date();
     const diff = classTime - now;
-    return diff > 0 && diff <= 86400000; // Within next 24 hours
+    return diff > 0 && diff <= 86400000;
 }
 
 function getTimeUntil(cls) {
@@ -379,7 +371,6 @@ function setupFilters() {
     window.setFilter = function (filter) {
         currentFilter = filter;
         applyFilters();
-        // Update UI buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.filter === filter) {
@@ -391,8 +382,6 @@ function setupFilters() {
     window.setGradeFilter = function (grade) {
         currentGrade = grade;
         applyFilters();
-
-        // Update select element if exists
         const select = document.getElementById('gradeFilterSelect');
         if (select) select.value = grade;
     };
@@ -401,12 +390,9 @@ function setupFilters() {
         currentFilter = 'all';
         currentGrade = sessionStorage.getItem('p2p_grade') || 'all';
         applyFilters();
-
-        // Reset UI
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.filter === 'all');
         });
-
         const select = document.getElementById('gradeFilterSelect');
         if (select) select.value = currentGrade;
     };

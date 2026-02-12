@@ -7,45 +7,59 @@
     <title>Student Forum | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body class="forum-body">
     <nav id="navbar">
-        <div class="logo">
+        <a href="index.html" class="logo">
             <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo">
-            Peer-2-Peer <span class="pro-text">PRO</span> | Student Forum
-        </div>
+            Peer-2-Peer <span class="pro-text">PRO</span>
+        </a>
         <div class="nav-right">
-            <a href="resources.html" class="home-btn"><i class="fas fa-book"></i> Library</a>
-            <a href="index.html" class="home-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="resources.html" class="nav-btn"><i class="fas fa-book-open"></i> Library</a>
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="profile.html" class="nav-btn"><i class="fas fa-user"></i> Profile</a>
         </div>
     </nav>
 
     <main class="forum-container">
         <div class="chat-header">
-            <h2><i class="fas fa-comments"></i> Grade-Based Student Forum</h2>
-            <p>Connect with peers in your grade and get answers from teachers</p>
+            <h2>
+                <i class="fas fa-comments"></i>
+                Grade-Based Forum
+            </h2>
+            <p>Connect with peers, ask questions, and get help from teachers</p>
+            <div style="margin-top: 1rem;">
+                <span class="grade-badge">📚 1,200+ Students Online</span>
+                <span class="grade-badge" style="margin-left: 0.5rem;">👨‍🏫 24 Teachers Active</span>
+            </div>
         </div>
 
         <div class="grade-filter-container">
             <div class="grade-filter-header">
-                <h3><i class="fas fa-filter"></i> Filter by Grade Level</h3>
+                <h3>
+                    <i class="fas fa-filter"></i>
+                    Filter by Grade Level
+                </h3>
                 <div class="filter-controls">
                     <select id="gradeSelect" class="grade-select">
-                        <option value="all">All Grades (1-12)</option>
-                        <option value="1">Grade 1</option>
-                        <option value="2">Grade 2</option>
-                        <option value="3">Grade 3</option>
-                        <option value="4">Grade 4</option>
-                        <option value="5">Grade 5</option>
-                        <option value="6">Grade 6</option>
-                        <option value="7">Grade 7</option>
-                        <option value="8">Grade 8</option>
-                        <option value="9">Grade 9</option>
-                        <option value="10">Grade 10</option>
-                        <option value="11">Grade 11</option>
-                        <option value="12">Grade 12</option>
+                        <option value="all">🏫 All Grades (1-12)</option>
+                        <option value="1">📘 Grade 1</option>
+                        <option value="2">📗 Grade 2</option>
+                        <option value="3">📕 Grade 3</option>
+                        <option value="4">📔 Grade 4</option>
+                        <option value="5">📙 Grade 5</option>
+                        <option value="6">📘 Grade 6</option>
+                        <option value="7">📗 Grade 7</option>
+                        <option value="8">📕 Grade 8</option>
+                        <option value="9">📔 Grade 9</option>
+                        <option value="10">📙 Grade 10</option>
+                        <option value="11">📘 Grade 11</option>
+                        <option value="12">📗 Grade 12</option>
                     </select>
                     <button id="toggleFilterBtn" class="toggle-filter-btn">
                         <i class="fas fa-eye-slash"></i> Hide Other Grades
@@ -57,29 +71,57 @@
             </div>
         </div>
 
+        <!-- Replying to indicator -->
+        <div id="replyingTo" class="reply-indicator"
+            style="display: none; margin-bottom: 1rem; padding: 0.8rem 1.2rem; background: rgba(50, 205, 50, 0.1); border-radius: 12px; border-left: 4px solid var(--pro-green);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <i class="fas fa-reply" style="color: var(--pro-green); margin-right: 8px;"></i>
+                    <span id="replyingToText">Replying to message...</span>
+                </div>
+                <button id="cancelReplyBtn"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 20px;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+
         <div id="chatBox" class="chat-box">
-            <div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading discussions...</div>
+            <div class="loader">
+                <i class="fas fa-spinner fa-spin"></i> Loading discussions...
+            </div>
         </div>
 
         <form id="messageForm" class="message-input-area">
-            <input type="text" id="messageInput" placeholder="Type your question or message here..." required>
-            <select id="gradeSelectInput" class="grade-select" style="width: 150px;">
-                <option value="" selected disabled>Select Grade</option>
-                <option value="1">Grade 1</option>
-                <option value="2">Grade 2</option>
-                <option value="3">Grade 3</option>
-                <option value="4">Grade 4</option>
-                <option value="5">Grade 5</option>
-                <option value="6">Grade 6</option>
-                <option value="7">Grade 7</option>
-                <option value="8">Grade 8</option>
-                <option value="9">Grade 9</option>
-                <option value="10">Grade 10</option>
-                <option value="11">Grade 11</option>
-                <option value="12">Grade 12</option>
-            </select>
-            <button type="submit" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            <div class="message-input-wrapper">
+                <textarea id="messageInput" placeholder="Type your question or message here..." rows="2"></textarea>
+                <div class="input-controls">
+                    <select id="gradeSelectInput" class="grade-select">
+                        <option value="" selected disabled>🎯 Select Grade</option>
+                        <option value="1">📘 Grade 1</option>
+                        <option value="2">📗 Grade 2</option>
+                        <option value="3">📕 Grade 3</option>
+                        <option value="4">📔 Grade 4</option>
+                        <option value="5">📙 Grade 5</option>
+                        <option value="6">📘 Grade 6</option>
+                        <option value="7">📗 Grade 7</option>
+                        <option value="8">📕 Grade 8</option>
+                        <option value="9">📔 Grade 9</option>
+                        <option value="10">📙 Grade 10</option>
+                        <option value="11">📘 Grade 11</option>
+                        <option value="12">📗 Grade 12</option>
+                    </select>
+                    <button type="submit" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
         </form>
+
+        <div style="text-align: center; margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+            <i class="fas fa-shield-alt" style="color: var(--pro-green);"></i> Be respectful • Stay on topic • Help
+            others learn
+        </div>
     </main>
 
     <script src="forum.js"></script>

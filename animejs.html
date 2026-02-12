@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Anime.js Layout Demo | Peer-2-Peer PRO</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Import Map for Anime.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "animejs": "https://esm.sh/animejs@3.2.2",
+                "animejs/layout": "https://esm.sh/animejs@3.2.2/lib/layout.js"
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================
+           MODERN RESET & VARIABLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0a0a23;
+            --navy-light: #1a1a3a;
+            --green: #32cd32;
+            --green-dark: #28a428;
+            --green-glow: rgba(50, 205, 50, 0.3);
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray: #e9ecef;
+            --gray-dark: #6c757d;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 30px 40px rgba(0, 0, 0, 0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Container */
+        .demo-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .demo-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: -1px;
+        }
+
+        .demo-header h1 span {
+            background: linear-gradient(135deg, #32cd32, #98fb98);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .demo-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Layout Controls */
+        .layout-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn:hover {
+            background: var(--green);
+            border-color: white;
+            color: var(--navy);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(50, 205, 50, 0.3);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* MAIN LAYOUT CONTAINER - ANIME.JS TARGET */
+        .layout-container {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+        }
+
+        /* GRID PRESET 1 - ASYMMETRIC HERO */
+        .layout-container[data-layout="1"] {
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: auto auto;
+        }
+
+        .layout-container[data-layout="1"] .layout-item:nth-child(1) {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .layout-container[data-layout="1"] .layout-item:nth-child(2) {
+            grid-column: 2 / 4;
+            grid-row: 1;
+        }
+
+        .layout-container[data-layout="1"] .layout-item:nth-child(3) {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .layout-container[data-layout="1"] .layout-item:nth-child(4) {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        /* GRID PRESET 2 - BALANCED 2x2 */
+        .layout-container[data-layout="2"] {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+        }
+
+        .layout-container[data-layout="2"] .layout-item {
+            min-height: 200px;
+        }
+
+        /* GRID PRESET 3 - MASONRY STYLE */
+        .layout-container[data-layout="3"] {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto;
+        }
+
+        .layout-container[data-layout="3"] .layout-item:nth-child(1) {
+            grid-column: 1 / 3;
+            grid-row: 1;
+        }
+
+        .layout-container[data-layout="3"] .layout-item:nth-child(2) {
+            grid-column: 3;
+            grid-row: 1 / 3;
+        }
+
+        .layout-container[data-layout="3"] .layout-item:nth-child(3) {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .layout-container[data-layout="3"] .layout-item:nth-child(4) {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        /* GRID PRESET 4 - FEATURED LAYOUT */
+        .layout-container[data-layout="4"] {
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+        }
+
+        .layout-container[data-layout="4"] .layout-item:nth-child(1) {
+            grid-column: 1 / 3;
+        }
+
+        .layout-container[data-layout="4"] .layout-item:nth-child(2) {
+            grid-column: 3 / 5;
+        }
+
+        .layout-container[data-layout="4"] .layout-item:nth-child(3),
+        .layout-container[data-layout="4"] .layout-item:nth-child(4) {
+            grid-column: span 2;
+        }
+
+        /* GRID PRESET 5 - CENTER STAGE */
+        .layout-container[data-layout="5"] {
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: auto auto;
+        }
+
+        .layout-container[data-layout="5"] .layout-item:nth-child(1) {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .layout-container[data-layout="5"] .layout-item:nth-child(2) {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .layout-container[data-layout="5"] .layout-item:nth-child(3) {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .layout-container[data-layout="5"] .layout-item:nth-child(4) {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        /* LAYOUT ITEMS - CARDS */
+        .layout-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            min-height: 180px;
+        }
+
+        .layout-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--green);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .layout-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .layout-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Card Colors */
+        .layout-item:nth-child(1) {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .layout-item:nth-child(2) {
+            background: linear-gradient(145deg, #f8f9fa, #ffffff);
+        }
+
+        .layout-item:nth-child(3) {
+            background: linear-gradient(145deg, #ffffff, #e3f2fd);
+        }
+
+        .layout-item:nth-child(4) {
+            background: linear-gradient(145deg, #e8f5e9, #ffffff);
+        }
+
+        /* Card Icons */
+        .item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--green);
+            background: rgba(50, 205, 50, 0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+        }
+
+        .layout-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--navy);
+            font-weight: 700;
+        }
+
+        .layout-item p {
+            color: var(--gray-dark);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .item-tag {
+            margin-top: auto;
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--green);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            align-self: flex-start;
+        }
+
+        /* Status Dashboard */
+        .status-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0 2rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            color: white;
+        }
+
+        .status-card h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Timeline Container */
+        .timeline-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .timeline-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--navy);
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gray-light);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: var(--green);
+            color: white;
+        }
+
+        .timeline-item i {
+            width: 30px;
+            text-align: center;
+        }
+
+        /* Animation Classes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Layout Badge */
+        .layout-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--navy);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--green);
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        .layout-badge i {
+            color: var(--green);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+
+            .layout-container[data-layout] {
+                grid-template-columns: 1fr !important;
+            }
+
+            .layout-container[data-layout] .layout-item {
+                grid-column: 1 !important;
+                grid-row: auto !important;
+            }
+
+            .status-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .layout-controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <header class="demo-header">
+            <h1>
+                <span>Anime.js</span> Layout
+            </h1>
+            <p class="demo-subtitle">Smooth grid transitions with createLayout()</p>
+
+            <!-- Controls -->
+            <div class="layout-controls">
+                <button class="control-btn" id="layout1Btn">
+                    <i class="fas fa-th-large"></i> Layout 1
+                </button>
+                <button class="control-btn" id="layout2Btn">
+                    <i class="fas fa-th"></i> Layout 2
+                </button>
+                <button class="control-btn" id="layout3Btn">
+                    <i class="fas fa-columns"></i> Layout 3
+                </button>
+                <button class="control-btn" id="layout4Btn">
+                    <i class="fas fa-table"></i> Layout 4
+                </button>
+                <button class="control-btn" id="layout5Btn">
+                    <i class="fas fa-border-all"></i> Layout 5
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT CONTAINER - ANIME.JS TARGET -->
+        <div class="layout-container" id="mainLayout" data-layout="1">
+            <!-- Item 1 - Featured -->
+            <div class="layout-item">
+                <div class="item-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Featured Course</h3>
+                <p>Advanced Mathematics with interactive exercises and real-time feedback.</p>
+                <span class="item-tag">POPULAR</span>
+            </div>
+
+            <!-- Item 2 - Live Now -->
+            <div class="layout-item">
+                <div class="item-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Live Session</h3>
+                <p>Physics: Quantum Mechanics - Join now! 12 students active.</p>
+                <span class="item-tag" style="background: #ff4757;">🔴 LIVE</span>
+            </div>
+
+            <!-- Item 3 - Upcoming -->
+            <div class="layout-item">
+                <div class="item-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Upcoming Class</h3>
+                <p>Chemistry Lab: Organic Compounds - Starts in 2 hours</p>
+                <span class="item-tag">SCHEDULED</span>
+            </div>
+
+            <!-- Item 4 - Resources -->
+            <div class="layout-item">
+                <div class="item-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>Study Materials</h3>
+                <p>Downloadable notes, practice tests, and video recordings.</p>
+                <span class="item-tag">NEW</span>
+            </div>
+        </div>
+
+        <!-- Status Dashboard -->
+        <div class="status-dashboard">
+            <div class="status-card">
+                <h4>CURRENT LAYOUT</h4>
+                <div class="status-number" id="currentLayoutDisplay">1</div>
+                <div class="status-label">Asymmetric Hero</div>
+            </div>
+            <div class="status-card">
+                <h4>DURATION</h4>
+                <div class="status-number">1000</div>
+                <div class="status-label">ms</div>
+            </div>
+            <div class="status-card">
+                <h4>EASING</h4>
+                <div class="status-number">Elastic</div>
+                <div class="status-label">outElastic(1, 0.5)</div>
+            </div>
+            <div class="status-card">
+                <h4>STAGGER</h4>
+                <div class="status-number">80ms</div>
+                <div class="status-label">From Center</div>
+            </div>
+        </div>
+
+        <!-- Timeline / Activity Section with Anime Layout -->
+        <div class="timeline-container">
+            <div class="timeline-title">
+                <i class="fas fa-history" style="color: var(--green); font-size: 1.5rem;"></i>
+                <h2>Recent Activity Timeline</h2>
+            </div>
+            <div class="timeline-grid" id="timelineLayout">
+                <div class="timeline-item">
+                    <i class="fas fa-user-graduate" style="color: var(--green);"></i>
+                    <div>
+                        <strong>Sarah joined</strong>
+                        <div style="font-size: 0.85rem;">2 minutes ago</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <i class="fas fa-file-upload" style="color: var(--green);"></i>
+                    <div>
+                        <strong>New notes uploaded</strong>
+                        <div style="font-size: 0.85rem;">15 minutes ago</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <i class="fas fa-trophy" style="color: var(--green);"></i>
+                    <div>
+                        <strong>Certificate earned</strong>
+                        <div style="font-size: 0.85rem;">1 hour ago</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <i class="fas fa-comment" style="color: var(--green);"></i>
+                    <div>
+                        <strong>New forum post</strong>
+                        <div style="font-size: 0.85rem;">3 hours ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Status Badge -->
+    <div class="layout-badge" id="layoutBadge">
+        <i class="fas fa-cube"></i>
+        <span id="badgeText">Layout 1: Asymmetric Hero</span>
+    </div>
+
+    <!-- ANIME.JS LAYOUT IMPLEMENTATION -->
+    <script type="module">
+        import { createLayout, stagger, utils } from 'animejs/layout';
+
+        // ============================================
+        // MAIN LAYOUT ANIMATION
+        // ============================================
+
+        // Create layout instance for the grid
+        const layout = createLayout('#mainLayout', {
+            duration: 1000,
+            ease: 'outElastic(1, 0.5)',
+            delay: stagger(80, {
+                from: 'center',
+                grid: [2, 2]
+            }),
+            modifiers: {
+                x: utils.round(0),
+                y: utils.round(0)
+            },
+            onBegin: () => {
+                console.log('🎬 Layout animation started');
+            },
+            onComplete: () => {
+                console.log('✅ Layout animation completed');
+            },
+            onUpdate: (progress) => {
+                // Update progress indicator
+                // console.log(`Progress: ${Math.round(progress * 100)}%`);
+            }
+        });
+
+        // ============================================
+        // TIMELINE LAYOUT ANIMATION
+        // ============================================
+
+        const timelineLayout = createLayout('#timelineLayout', {
+            duration: 800,
+            ease: 'outCirc',
+            delay: stagger(100, { start: 0 }),
+            onBegin: () => {
+                console.log('📊 Timeline layout animating');
+            }
+        });
+
+        // ============================================
+        // LAYOUT PRESETS
+        // ============================================
+
+        const layouts = {
+            1: { name: 'Asymmetric Hero', icon: 'th-large' },
+            2: { name: 'Balanced Grid', icon: 'th' },
+            3: { name: 'Masonry Style', icon: 'columns' },
+            4: { name: 'Featured Layout', icon: 'table' },
+            5: { name: 'Center Stage', icon: 'border-all' }
+        };
+
+        // Update layout function
+        function updateLayout(layoutNumber) {
+            layout.update(({ root }) => {
+                // Change the data-layout attribute
+                root.setAttribute('data-layout', layoutNumber);
+
+                // Update display
+                document.getElementById('currentLayoutDisplay').textContent = layoutNumber;
+                document.getElementById('badgeText').innerHTML = `
+                    <i class="fas fa-${layouts[layoutNumber].icon}"></i>
+                    Layout ${layoutNumber}: ${layouts[layoutNumber].name}
+                `;
+
+                // Add animation class to cards
+                root.querySelectorAll('.layout-item').forEach((item, index) => {
+                    item.style.animation = 'none';
+                    item.offsetHeight; // Trigger reflow
+                    item.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                });
+
+            }, {
+                duration: 1000,
+                ease: 'outElastic(1, 0.4)',
+                delay: stagger(60, {
+                    grid: [2, 2],
+                    from: 'edges'
+                })
+            });
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        document.getElementById('layout1Btn').addEventListener('click', () => updateLayout(1));
+        document.getElementById('layout2Btn').addEventListener('click', () => updateLayout(2));
+        document.getElementById('layout3Btn').addEventListener('click', () => updateLayout(3));
+        document.getElementById('layout4Btn').addEventListener('click', () => updateLayout(4));
+        document.getElementById('layout5Btn').addEventListener('click', () => updateLayout(5));
+
+        // ============================================
+        // AUTO CYCLE LAYOUT DEMO
+        // ============================================
+
+        let autoCycle = true;
+        let currentLayout = 1;
+
+        function cycleLayout() {
+            if (!autoCycle) return;
+
+            currentLayout = (currentLayout % 5) + 1;
+            updateLayout(currentLayout);
+
+            // Schedule next cycle
+            setTimeout(cycleLayout, 4000);
+        }
+
+        // Start auto-cycling after 2 seconds
+        setTimeout(() => {
+            console.log('🔄 Auto layout cycling started');
+            cycleLayout();
+        }, 2000);
+
+        // Stop cycling on user interaction
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                autoCycle = false;
+            });
+        });
+
+        // ============================================
+        // INITIAL ANIMATION
+        // ============================================
+
+        // Animate layout on load
+        window.addEventListener('load', () => {
+            // Initial animation for main layout
+            setTimeout(() => {
+                layout.animate();
+                timelineLayout.animate();
+            }, 500);
+        });
+
+        // ============================================
+        // RESPONSIVE REFRESH
+        // ============================================
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                layout.refresh();
+                timelineLayout.refresh();
+            }, 250);
+        });
+
+        // ============================================
+        // CARD INTERACTIVITY
+        // ============================================
+
+        // Add click handlers to cards
+        document.querySelectorAll('.layout-item').forEach((card, index) => {
+            card.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Expand card animation
+                layout.update(({ root }) => {
+                    // Reset all cards
+                    root.querySelectorAll('.layout-item').forEach(c => {
+                        c.style.transform = 'scale(1)';
+                        c.style.opacity = '1';
+                        c.style.boxShadow = 'var(--shadow-md)';
+                    });
+
+                    // Highlight clicked card
+                    this.style.transform = 'scale(1.02)';
+                    this.style.boxShadow = '0 20px 30px rgba(50,205,50,0.3)';
+
+                }, {
+                    duration: 400,
+                    ease: 'outCubic'
+                });
+
+                // Show notification
+                const badge = document.getElementById('layoutBadge');
+                badge.style.background = 'var(--green)';
+                badge.style.color = 'var(--navy)';
+                setTimeout(() => {
+                    badge.style.background = 'var(--navy)';
+                    badge.style.color = 'white';
+                }, 500);
+            });
+        });
+
+        // ============================================
+        // EXPORT FOR GLOBAL ACCESS
+        // ============================================
+
+        window.animeLayout = {
+            updateLayout,
+            layout,
+            timelineLayout,
+            layouts
+        };
+
+        console.log('🚀 Anime.js Layout System Ready!');
+    </script>
+
+    <!-- Additional Script for Smooth Scrolling -->
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector('#mainLayout').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            });
+        });
+
+        // Initialize tooltips
+        document.querySelectorAll('.item-tag').forEach(tag => {
+            tag.title = 'Click to learn more';
+        });
+    </script>
+</body>
+
+</html>

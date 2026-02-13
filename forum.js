@@ -92,15 +92,6 @@ function setupEventListeners() {
     // Cancel reply button
     const cancelReplyBtn = document.getElementById('cancelReplyBtn');
     cancelReplyBtn.addEventListener('click', cancelReply);
-
-    // Typing indicator
-    const messageInput = document.getElementById('messageInput');
-    messageInput.addEventListener('input', function () {
-        const grade = document.getElementById('gradeSelectInput').value;
-        if (grade && this.value.length > 0) {
-            showTypingIndicator(grade);
-        }
-    });
 }
 
 function setActiveGradeFilter(grade) {
@@ -189,32 +180,7 @@ async function loadMessages(gradeFilter = 'all', hideOtherGrades = false) {
             });
         });
 
-        // Add event listeners to cancel reply buttons in forms
-        document.querySelectorAll('.reply-cancel').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const form = btn.closest('.reply-form');
-                if (form) form.classList.add('hidden');
-            });
-        });
-
-        // Add event listeners to reply form submissions
-        document.querySelectorAll('.reply-form').forEach(form => {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const messageId = form.dataset.messageId;
-                const replyInput = form.querySelector('.reply-input');
-                const message = replyInput.value.trim();
-
-                if (message) {
-                    await sendReply(messageId, message);
-                    replyInput.value = '';
-                    form.classList.add('hidden');
-                }
-            });
-        });
-
-        // Scroll to bottom if new message
+        // Scroll to bottom
         chatBox.scrollTop = chatBox.scrollHeight;
 
     } catch (err) {
@@ -243,7 +209,7 @@ function renderMessage(msg) {
 
     // Render replies
     const repliesHTML = msg.replies && msg.replies.length > 0
-        ? msg.replies.map(reply => renderReply(reply, msg.id)).join('')
+        ? msg.replies.map(reply => renderReply(reply)).join('')
         : '';
 
     const replyCount = msg.reply_count || 0;
@@ -275,20 +241,11 @@ function renderMessage(msg) {
             <div class="replies-container">
                 ${repliesHTML}
             </div>
-            <div id="reply-form-${msg.id}" class="reply-form hidden" data-message-id="${msg.id}">
-                <textarea class="reply-input" placeholder="Write your reply..." rows="2"></textarea>
-                <div class="reply-actions">
-                    <button type="button" class="reply-cancel">Cancel</button>
-                    <button type="submit" class="reply-submit">
-                        <i class="fas fa-paper-plane"></i> Post Reply
-                    </button>
-                </div>
-            </div>
         </div>
     `;
 }
 
-function renderReply(reply, parentId) {
+function renderReply(reply) {
     const isMe = reply.user_email === currentUser.email;
     const time = new Date(reply.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const date = new Date(reply.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -327,7 +284,7 @@ async function sendMessage() {
         return;
     }
 
-    if (!grade) {
+    if (!grade && !replyingTo) {
         alert('Please select a grade for your question');
         return;
     }
@@ -336,7 +293,7 @@ async function sendMessage() {
         email: currentUser.email,
         name: currentUser.name,
         role: currentUser.role,
-        grade: grade,
+        grade: replyingTo ? null : grade, // Replies don't need a grade
         message: msg,
         parent_id: replyingTo ? replyingTo.id : null
     };
@@ -345,10 +302,6 @@ async function sendMessage() {
     input.value = '';
     gradeSelect.value = '';
 
-    if (replyingTo) {
-        cancelReply();
-    }
-
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
@@ -359,57 +312,27 @@ async function sendMessage() {
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error('Failed to send message');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to send message');
+        }
 
         // Refresh messages
         await loadMessages(currentGradeFilter, filterEnabled);
 
-        // Set grade filter to show the new message
-        setActiveGradeFilter(grade);
+        // If it's a new thread (not a reply), set grade filter to show the new message
+        if (!replyingTo) {
+            setActiveGradeFilter(grade);
+        } else {
+            cancelReply();
+        }
 
     } catch (err) {
-        alert("Message failed to send. Please try again.");
+        alert("Message failed to send: " + err.message);
         console.error(err);
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
-    }
-}
-
-async function sendReply(parentId, message) {
-    const btn = document.querySelector(`#reply-form-${parentId} .reply-submit`);
-    const originalText = btn.innerHTML;
-
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-
-    const payload = {
-        email: currentUser.email,
-        name: currentUser.name,
-        role: currentUser.role,
-        grade: null, // Replies inherit parent's grade visibility
-        message: message,
-        parent_id: parentId
-    };
-
-    try {
-        const response = await fetch(`${FORUM_API}/api/forum/send`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) throw new Error('Failed to send reply');
-
-        // Refresh messages
-        await loadMessages(currentGradeFilter, filterEnabled);
-
-    } catch (err) {
-        alert("Reply failed to send. Please try again.");
-        console.error(err);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Reply';
     }
 }
 
@@ -420,46 +343,10 @@ function escapeHTML(str) {
     return div.innerHTML;
 }
 
-// Typing indicator
-let typingTimeout;
-function showTypingIndicator(grade) {
-    const chatBox = document.getElementById('chatBox');
-
-    // Remove existing indicator
-    const existing = document.getElementById('typing-indicator');
-    if (existing) existing.remove();
-
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'typing-indicator';
-    typingIndicator.id = 'typing-indicator';
-    typingIndicator.innerHTML = `
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <span>Someone is typing in Grade ${grade}...</span>
-    `;
-
-    chatBox.appendChild(typingIndicator);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    // Clear previous timeout
-    if (typingTimeout) clearTimeout(typingTimeout);
-
-    // Remove indicator after 3 seconds
-    typingTimeout = setTimeout(() => {
-        const indicator = document.getElementById('typing-indicator');
-        if (indicator) indicator.remove();
-    }, 3000);
-}
-
-// Check if user is logged in
+// Check if user is logged in (optional)
 function checkAuth() {
     if (!sessionStorage.getItem('p2p_email')) {
-        // Store current page for redirect after login
         sessionStorage.setItem('redirectAfterLogin', window.location.href);
         window.location.href = 'login.html';
     }
 }
-
-// Optional: Call checkAuth on page load if authentication is required
-// window.addEventListener('load', checkAuth);

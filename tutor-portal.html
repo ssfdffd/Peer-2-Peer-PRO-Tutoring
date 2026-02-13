@@ -65,10 +65,58 @@
                 <h3>Create Your Document</h3>
                 <p>Create your own personalized documents for your lessons.</p>
             </div>
-        </div>
+            <!-- Add this card to tutor-portal.html -->
+            <div class="card" id="tutorProfileCard">
+                <div class="card-header">
+                    <h3>
+                        <i class="fas fa-user-graduate"></i> Tutor Profile
+                        <span id="profileStatusDot" class="status-dot"></span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p id="profileStatusText">Complete your tutor profile to start receiving bookings</p>
+                </div>
+            </div>
     </main>
 
     <script src="tutor.js"></script>
+    <script>
+        // Check tutor profile status on page load
+        document.addEventListener('DOMContentLoaded', async function () {
+            const userData = JSON.parse(localStorage.getItem('p2p_user')) ||
+                JSON.parse(sessionStorage.getItem('p2p_user'));
+
+            if (userData && userData.email) {
+                try {
+                    const response = await fetch(`https://booking-worker.buhle-1ce.workers.dev/api/tutor/profile/status?email=${encodeURIComponent(userData.email)}`);
+                    const status = await response.json();
+
+                    const statusDot = document.getElementById('profileStatusDot');
+                    const statusText = document.getElementById('profileStatusText');
+                    const setupBtn = document.getElementById('setupProfileBtn');
+
+                    if (status.complete) {
+                        statusDot.classList.add('complete');
+                        statusDot.classList.remove('status-dot'); // Remove red
+                        statusText.textContent = `Profile complete! ${status.verified ? '✓ Verified' : 'Pending verification'}`;
+                        setupBtn.innerHTML = '<i class="fas fa-eye"></i> View Profile';
+                        setupBtn.onclick = function () {
+                            window.location.href = 'tutor-profile-setup.html';
+                        };
+                    } else {
+                        statusDot.classList.add('status-dot');
+                        statusText.textContent = 'Complete your tutor profile to start receiving bookings';
+                        setupBtn.innerHTML = '<i class="fas fa-edit"></i> Setup Profile';
+                        setupBtn.onclick = function () {
+                            window.location.href = 'tutor-profile-setup.html';
+                        };
+                    }
+                } catch (error) {
+                    console.error('Error checking profile status:', error);
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

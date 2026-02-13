@@ -10,16 +10,19 @@
     <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
 </head>
 
-<body class="planner-body">
+<body class="planner-body light-mode">
     <nav id="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
         <a href="index.html" class="logo">
             <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo">
             Peer-2-Peer <span class="pro-text">PRO</span>
         </a>
         <div class="nav-right">
-            <a href="resources.html" class="nav-btn"><i class="fas fa-book-open"></i> Library</a>
-            <a href="forum.html" class="nav-btn"><i class="fas fa-comments"></i> Forum</a>
-            <a href="profile.html" class="nav-btn"><i class="fas fa-user"></i> Profile</a>
+            <!-- Empty for spacing -->
         </div>
     </nav>
 

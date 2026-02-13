@@ -1,9 +1,9 @@
-const STUDY_API = "https://study-planner-worker.buhle-1ce.workers.dev";
+const STUDY_API = "https://study-planner.buhle-1ce.workers.dev";
 
 // Global variables
 let currentUser = {
-    email: sessionStorage.getItem('p2p_email') || "guest@peer.co.za",
-    name: sessionStorage.getItem('p2p_name') || "Guest Student"
+    email: sessionStorage.getItem('p2p_email') || localStorage.getItem('p2p_email') || "guest@peer.co.za",
+    name: sessionStorage.getItem('p2p_name') || localStorage.getItem('p2p_name') || "Guest Student"
 };
 
 let subjects = [];
@@ -16,27 +16,49 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePlanner();
 });
 
+// Back button function
+function goBack() {
+    window.history.back();
+}
+
 async function initializePlanner() {
-    // Load user preferences
-    await loadUserPreferences();
+    try {
+        // Load user preferences
+        await loadUserPreferences();
 
-    // Load existing study plans
-    await loadStudyPlans();
+        // Load existing subjects from localStorage as backup
+        loadLocalSubjects();
 
-    // Load study sessions
-    await loadStudySessions();
+        // Load study sessions
+        await loadStudySessions();
 
-    // Get random quote
-    await refreshQuote();
+        // Get random quote
+        await refreshQuote();
 
-    // Get break tip
-    await refreshBreakTip();
+        // Get break tip
+        await refreshBreakTip();
 
-    // Set up event listeners
-    setupEventListeners();
+        // Set up event listeners
+        setupEventListeners();
 
-    // Update timer display
-    updateTimerDisplay();
+        // Update timer display
+        updateTimerDisplay();
+    } catch (error) {
+        console.error('Error initializing planner:', error);
+        showNotification('Error loading planner data', 'error');
+    }
+}
+
+function loadLocalSubjects() {
+    const savedSubjects = localStorage.getItem('studyPlanner_subjects');
+    if (savedSubjects) {
+        subjects = JSON.parse(savedSubjects);
+        renderSubjects();
+    }
+}
+
+function saveSubjectsToLocal() {
+    localStorage.setItem('studyPlanner_subjects', JSON.stringify(subjects));
 }
 
 function setupEventListeners() {
@@ -84,6 +106,12 @@ function setupEventListeners() {
 async function loadUserPreferences() {
     try {
         const response = await fetch(`${STUDY_API}/api/study/preferences?email=${encodeURIComponent(currentUser.email)}`);
+
+        if (response.status === 404) {
+            // No preferences found, use defaults
+            return;
+        }
+
         if (!response.ok) throw new Error('Failed to load preferences');
 
         const prefs = await response.json();
@@ -110,7 +138,8 @@ async function loadUserPreferences() {
 
             // Update timer if not running
             if (!isTimerRunning) {
-                timerSeconds = prefs.preferred_session_length * 60 || 2700;
+                timerSeconds = (prefs.preferred_session_length || 45) * 60;
+                document.getElementById('sessionLength').value = prefs.preferred_session_length || 45;
                 updateTimerDisplay();
             }
         }
@@ -156,23 +185,11 @@ async function saveUserPreferences() {
         showNotification('Preferences saved successfully!', 'success');
     } catch (err) {
         console.error('Error saving preferences:', err);
-        showNotification('Failed to save preferences', 'error');
-    }
-}
+        showNotification('Failed to save preferences. Using local storage.', 'info');
 
-async function loadStudyPlans() {
-    try {
-        const response = await fetch(`${STUDY_API}/api/study/plans?email=${encodeURIComponent(currentUser.email)}`);
-        if (!response.ok) throw new Error('Failed to load study plans');
-
-        const plans = await response.json();
-
-        if (plans.length > 0 && plans[0].subjects) {
-            subjects = plans[0].subjects;
-            renderSubjects();
-        }
-    } catch (err) {
-        console.error('Error loading study plans:', err);
+        // Save to localStorage as backup
+        localStorage.setItem('studyPlanner_preferences', JSON.stringify(prefs));
+        showNotification('Preferences saved locally', 'success');
     }
 }
 
@@ -214,7 +231,7 @@ function saveNewSubject(btn) {
 
     const name = nameInput.value.trim();
     if (!name) {
-        alert('Please enter a subject name');
+        showNotification('Please enter a subject name', 'error');
         return;
     }
 
@@ -224,12 +241,14 @@ function saveNewSubject(btn) {
         exam_date: dateInput.value || null,
         priority: parseInt(prioritySelect.value),
         is_struggling: strugglingCheck.checked,
-        target_hours: 0,
+        target_hours: 10, // Default target hours
         completed_hours: 0
     };
 
     subjects.push(subject);
+    saveSubjectsToLocal();
     renderSubjects();
+    showNotification('Subject added successfully!', 'success');
 }
 
 function cancelNewSubject(btn) {
@@ -280,15 +299,19 @@ function updateSubject(id) {
         subject.exam_date = dateInput.value || null;
         subject.priority = parseInt(prioritySelect.value);
         subject.is_struggling = strugglingCheck.checked;
+        saveSubjectsToLocal();
     }
 
     renderSubjects();
+    showNotification('Subject updated successfully!', 'success');
 }
 
 function deleteSubject(id) {
     if (confirm('Are you sure you want to delete this subject?')) {
         subjects = subjects.filter(s => s.id !== id);
+        saveSubjectsToLocal();
         renderSubjects();
+        showNotification('Subject deleted successfully!', 'success');
     }
 }
 
@@ -311,7 +334,7 @@ function renderSubjects() {
                     ${getPriorityText(subject.priority)} Priority
                 </span>
                 ${subject.is_struggling ? '<span class="struggling-badge"><i class="fas fa-exclamation-triangle"></i> Struggling</span>' : ''}
-                <span class="subject-hours">📚 ${subject.completed_hours || 0}/${subject.target_hours || 0} hours</span>
+                <span class="subject-hours">📚 ${subject.completed_hours || 0}/${subject.target_hours || 10} hours</span>
             </div>
             <div class="subject-actions">
                 <button onclick="editSubject(${subject.id})" title="Edit">
@@ -343,9 +366,110 @@ function getPriorityText(priority) {
     }
 }
 
+function generateLocalPlan() {
+    if (subjects.length === 0) {
+        showNotification('Please add at least one subject first', 'error');
+        return null;
+    }
+
+    const preferences = JSON.parse(localStorage.getItem('studyPlanner_preferences')) || {
+        distraction_level: 3,
+        daily_chores: false,
+        support_level: 3,
+        preferred_session_length: 45,
+        break_frequency: 10,
+        cross_night_preference: false
+    };
+
+    // Generate schedule locally
+    const schedule = {
+        recommendations: [],
+        study_tips: [],
+        daily_schedule: []
+    };
+
+    // Add recommendations based on preferences
+    if (preferences.distraction_level <= 2) {
+        schedule.recommendations.push("Try the Pomodoro technique: 25 min study, 5 min break");
+        schedule.recommendations.push("Use noise-cancelling headphones or find a quiet spot");
+    }
+
+    if (preferences.daily_chores) {
+        schedule.recommendations.push("Break study into chunks around your chores");
+        schedule.recommendations.push("Use chore time as active breaks");
+    }
+
+    if (preferences.support_level <= 2) {
+        schedule.recommendations.push("Join study groups or find online study buddies");
+        schedule.study_tips.push("Use educational videos when you need extra help");
+    }
+
+    if (preferences.cross_night_preference) {
+        schedule.recommendations.push("Schedule important study sessions in the evening");
+    }
+
+    // Identify struggling subjects
+    const strugglingSubjects = subjects.filter(s => s.is_struggling);
+    if (strugglingSubjects.length > 0) {
+        schedule.recommendations.push(`Focus extra time on: ${strugglingSubjects.map(s => s.name).join(', ')}`);
+    }
+
+    // Generate daily schedule for 7 days
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+
+        // Calculate available study time
+        let availableHours = preferences.daily_chores ? 2 : 4;
+        if (date.getDay() === 0 || date.getDay() === 6) { // Weekend
+            availableHours = preferences.daily_chores ? 3 : 6;
+        }
+
+        // Distribute subjects
+        const daySubjects = [];
+        let remainingTime = availableHours * 60;
+
+        // Always include struggling subjects first
+        for (const subject of strugglingSubjects) {
+            if (remainingTime <= 0) break;
+            const subjectTime = Math.min(45, remainingTime);
+            daySubjects.push({
+                subject: subject.name,
+                duration: subjectTime,
+                time_of_day: preferences.cross_night_preference ? "Evening" : "Morning"
+            });
+            remainingTime -= subjectTime;
+        }
+
+        // Add other subjects
+        const otherSubjects = subjects.filter(s => !s.is_struggling);
+        for (const subject of otherSubjects) {
+            if (remainingTime <= 0) break;
+            const subjectTime = Math.min(30, remainingTime);
+            daySubjects.push({
+                subject: subject.name,
+                duration: subjectTime,
+                time_of_day: "Afternoon"
+            });
+            remainingTime -= subjectTime;
+        }
+
+        schedule.daily_schedule.push({
+            date: dateStr,
+            day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+            subjects: daySubjects,
+            total_minutes: availableHours * 60 - remainingTime
+        });
+    }
+
+    return schedule;
+}
+
 async function generatePlan() {
     if (subjects.length === 0) {
-        alert('Please add at least one subject first');
+        showNotification('Please add at least one subject first', 'error');
         return;
     }
 
@@ -374,63 +498,83 @@ async function generatePlan() {
 
         const result = await response.json();
         displayStudyPlan(result.schedule);
-
         showNotification('Study plan generated successfully!', 'success');
     } catch (err) {
-        console.error('Error generating plan:', err);
-        document.getElementById('studyPlan').innerHTML = '<p class="error">Failed to generate study plan. Please try again.</p>';
+        console.error('Error generating plan from server:', err);
+
+        // Fallback to local generation
+        showNotification('Using offline plan generation', 'info');
+        const localSchedule = generateLocalPlan();
+        if (localSchedule) {
+            displayStudyPlan(localSchedule);
+            showNotification('Study plan generated locally!', 'success');
+        } else {
+            document.getElementById('studyPlan').innerHTML = '<p class="error">Failed to generate study plan. Please try again.</p>';
+        }
     }
 }
 
 function displayStudyPlan(schedule) {
     const planDiv = document.getElementById('studyPlan');
 
-    if (!schedule || !schedule.daily_schedule) {
+    if (!schedule || !schedule.daily_schedule || schedule.daily_schedule.length === 0) {
         planDiv.innerHTML = '<p class="no-plan">No schedule available. Try generating a plan first.</p>';
         return;
     }
 
-    // Display recommendations
-    let html = '<div class="plan-recommendations">';
-    if (schedule.recommendations && schedule.recommendations.length > 0) {
-        html += '<h4><i class="fas fa-lightbulb"></i> Personalized Recommendations</h4>';
-        html += '<ul>' + schedule.recommendations.map(r => `<li>${r}</li>`).join('') + '</ul>';
-    }
+    let html = '';
 
-    if (schedule.study_tips && schedule.study_tips.length > 0) {
-        html += '<h4><i class="fas fa-tips"></i> Study Tips</h4>';
-        html += '<ul>' + schedule.study_tips.map(t => `<li>${t}</li>`).join('') + '</ul>';
+    // Display recommendations
+    if ((schedule.recommendations && schedule.recommendations.length > 0) ||
+        (schedule.study_tips && schedule.study_tips.length > 0)) {
+        html += '<div class="plan-recommendations">';
+
+        if (schedule.recommendations && schedule.recommendations.length > 0) {
+            html += '<h4><i class="fas fa-lightbulb"></i> Personalized Recommendations</h4>';
+            html += '<ul>' + schedule.recommendations.map(r => `<li>${r}</li>`).join('') + '</ul>';
+        }
+
+        if (schedule.study_tips && schedule.study_tips.length > 0) {
+            html += '<h4><i class="fas fa-tips"></i> Study Tips</h4>';
+            html += '<ul>' + schedule.study_tips.map(t => `<li>${t}</li>`).join('') + '</ul>';
+        }
+        html += '</div>';
     }
-    html += '</div>';
 
     // Display daily schedule
     html += '<div class="daily-schedule">';
     schedule.daily_schedule.forEach(day => {
-        html += `
-            <div class="plan-day">
-                <h3>${day.day} - ${new Date(day.date).toLocaleDateString()}</h3>
-                <div class="day-subjects">
-        `;
-
-        day.subjects.forEach(subject => {
+        if (day.subjects && day.subjects.length > 0) {
             html += `
-                <div class="plan-subject">
-                    <span><strong>${subject.subject}</strong></span>
-                    <span>${subject.duration} minutes</span>
-                    <span class="time-badge">${subject.time_of_day || 'Anytime'}</span>
-                </div>
+                <div class="plan-day">
+                    <h3>${day.day} - ${new Date(day.date).toLocaleDateString()}</h3>
+                    <div class="day-subjects">
             `;
-        });
 
-        html += `
-                    <div class="plan-total">
-                        Total: ${Math.floor(day.total_minutes / 60)}h ${day.total_minutes % 60}m
+            day.subjects.forEach(subject => {
+                html += `
+                    <div class="plan-subject">
+                        <span><strong>${escapeHTML(subject.subject)}</strong></span>
+                        <span>${subject.duration} minutes</span>
+                        <span class="time-badge">${subject.time_of_day || 'Anytime'}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                        <div class="plan-total">
+                            Total: ${Math.floor(day.total_minutes / 60)}h ${day.total_minutes % 60}m
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     });
     html += '</div>';
+
+    if (html === '<div class="daily-schedule"></div>') {
+        html = '<p class="no-plan">No schedule available for the selected preferences.</p>';
+    }
 
     planDiv.innerHTML = html;
 }
@@ -438,12 +582,25 @@ function displayStudyPlan(schedule) {
 async function loadStudySessions() {
     try {
         const response = await fetch(`${STUDY_API}/api/study/sessions?email=${encodeURIComponent(currentUser.email)}`);
+
+        if (response.status === 404) {
+            displayStudySessions([]);
+            return;
+        }
+
         if (!response.ok) throw new Error('Failed to load sessions');
 
         const sessions = await response.json();
         displayStudySessions(sessions);
     } catch (err) {
         console.error('Error loading sessions:', err);
+        // Try to load from localStorage
+        const localSessions = localStorage.getItem('studyPlanner_sessions');
+        if (localSessions) {
+            displayStudySessions(JSON.parse(localSessions));
+        } else {
+            displayStudySessions([]);
+        }
     }
 }
 
@@ -462,12 +619,12 @@ function displayStudySessions(sessions) {
         return `
             <div class="session-card">
                 <span class="session-date">${new Date(session.session_date).toLocaleDateString()}</span>
-                <span class="session-subject">${session.subject_name || 'General Study'}</span>
+                <span class="session-subject">${escapeHTML(session.subject_name || 'General Study')}</span>
                 <span class="session-duration">${Math.floor(session.duration_minutes / 60)}h ${session.duration_minutes % 60}m</span>
                 <span class="focus-indicator ${focusClass}">
                     Focus: ${session.focus_level}/5
                 </span>
-                ${session.notes ? `<span class="session-notes">📝 ${session.notes}</span>` : ''}
+                ${session.notes ? `<span class="session-notes">📝 ${escapeHTML(session.notes)}</span>` : ''}
             </div>
         `;
     }).join('');
@@ -482,11 +639,19 @@ function startTimer() {
 
     // Start a new session
     startNewSession();
+
+    // Update button states
+    document.querySelector('.timer-btn.start').disabled = true;
+    document.querySelector('.timer-btn.pause').disabled = false;
 }
 
 function pauseTimer() {
     isTimerRunning = false;
     clearInterval(timerInterval);
+
+    // Update button states
+    document.querySelector('.timer-btn.start').disabled = false;
+    document.querySelector('.timer-btn.pause').disabled = true;
 }
 
 function resetTimer() {
@@ -494,6 +659,10 @@ function resetTimer() {
     const sessionLength = parseInt(document.getElementById('sessionLength').value) || 45;
     timerSeconds = sessionLength * 60;
     updateTimerDisplay();
+
+    // Update button states
+    document.querySelector('.timer-btn.start').disabled = false;
+    document.querySelector('.timer-btn.pause').disabled = true;
 }
 
 function updateTimer() {
@@ -527,15 +696,17 @@ function updateTimerDisplay() {
 }
 
 function startNewSession() {
-    const subjectId = subjects.length > 0 ? subjects[0].id : null; // In a real app, let user select subject
+    const subjectId = subjects.length > 0 ? subjects[0].id : null;
+    const subjectName = subjects.length > 0 ? subjects[0].name : 'General Study';
 
     currentSession = {
         user_email: currentUser.email,
         subject_id: subjectId,
+        subject_name: subjectName,
         session_date: new Date().toISOString().split('T')[0],
         start_time: new Date().toTimeString().split(' ')[0],
         duration_minutes: parseInt(document.getElementById('sessionLength').value),
-        focus_level: 3, // Default, can be updated at end
+        focus_level: 3,
         completed: false
     };
 }
@@ -566,9 +737,24 @@ async function completeSession() {
 
         if (response.ok) {
             await loadStudySessions();
+            showNotification('Session saved successfully!', 'success');
+        } else {
+            // Save to localStorage as backup
+            const localSessions = JSON.parse(localStorage.getItem('studyPlanner_sessions') || '[]');
+            localSessions.unshift(currentSession);
+            localStorage.setItem('studyPlanner_sessions', JSON.stringify(localSessions.slice(0, 50)));
+            await loadStudySessions();
+            showNotification('Session saved locally', 'info');
         }
     } catch (err) {
         console.error('Error saving session:', err);
+
+        // Save to localStorage as backup
+        const localSessions = JSON.parse(localStorage.getItem('studyPlanner_sessions') || '[]');
+        localSessions.unshift(currentSession);
+        localStorage.setItem('studyPlanner_sessions', JSON.stringify(localSessions.slice(0, 50)));
+        await loadStudySessions();
+        showNotification('Session saved locally', 'info');
     }
 
     currentSession = null;
@@ -585,8 +771,16 @@ async function refreshQuote() {
         document.getElementById('quoteAuthor').textContent = `- ${quote.author || 'Unknown'}`;
     } catch (err) {
         console.error('Error loading quote:', err);
-        document.getElementById('motivationQuote').textContent = '"Keep going! You\'re doing great!"';
-        document.getElementById('quoteAuthor').textContent = '- Peer-2-Peer PRO';
+        // Fallback quotes
+        const fallbackQuotes = [
+            { quote: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+            { quote: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+            { quote: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+            { quote: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" }
+        ];
+        const randomQuote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+        document.getElementById('motivationQuote').textContent = `"${randomQuote.quote}"`;
+        document.getElementById('quoteAuthor').textContent = `- ${randomQuote.author}`;
     }
 }
 
@@ -601,6 +795,16 @@ async function refreshBreakTip() {
         tipElement.innerHTML = `<i class="fas fa-coffee"></i> <span>${tip.tip} (${tip.duration_minutes} min)</span>`;
     } catch (err) {
         console.error('Error loading break tip:', err);
+        // Fallback tips
+        const fallbackTips = [
+            { tip: "Take a 5-minute walk around the room", duration_minutes: 5 },
+            { tip: "Do some light stretching", duration_minutes: 5 },
+            { tip: "Close your eyes and take deep breaths", duration_minutes: 3 },
+            { tip: "Grab a healthy snack and water", duration_minutes: 10 }
+        ];
+        const randomTip = fallbackTips[Math.floor(Math.random() * fallbackTips.length)];
+        const tipElement = document.getElementById('breakTip');
+        tipElement.innerHTML = `<i class="fas fa-coffee"></i> <span>${randomTip.tip} (${randomTip.duration_minutes} min)</span>`;
     }
 }
 
@@ -613,6 +817,12 @@ function escapeHTML(str) {
 }
 
 function showNotification(message, type = 'info') {
+    // Remove any existing notification
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -621,27 +831,17 @@ function showNotification(message, type = 'info') {
         <span>${message}</span>
     `;
 
-    // Style it
-    notification.style.position = 'fixed';
-    notification.style.bottom = '20px';
-    notification.style.right = '20px';
-    notification.style.backgroundColor = type === 'success' ? '#4caf50' :
-        type === 'error' ? '#f44336' : '#2196f3';
-    notification.style.color = 'white';
-    notification.style.padding = '1rem';
-    notification.style.borderRadius = '8px';
-    notification.style.display = 'flex';
-    notification.style.alignItems = 'center';
-    notification.style.gap = '0.5rem';
-    notification.style.zIndex = '1000';
-    notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-
     document.body.appendChild(notification);
 
     // Remove after 3 seconds
     setTimeout(() => {
-        notification.remove();
-    }, 3000);
+        notification.classList.add('notification-removing');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 2700);
 }
 
 function playNotificationSound() {
@@ -650,10 +850,17 @@ function playNotificationSound() {
     audio.play().catch(() => { }); // Ignore errors if browser blocks autoplay
 }
 
-// Check authentication (optional)
-function checkAuth() {
-    if (!sessionStorage.getItem('p2p_email')) {
-        sessionStorage.setItem('redirectAfterLogin', window.location.href);
-        window.location.href = 'login.html';
-    }
-}
+// Make functions global for onclick handlers
+window.goBack = goBack;
+window.addSubject = addSubject;
+window.saveNewSubject = saveNewSubject;
+window.cancelNewSubject = cancelNewSubject;
+window.editSubject = editSubject;
+window.updateSubject = updateSubject;
+window.deleteSubject = deleteSubject;
+window.generatePlan = generatePlan;
+window.startTimer = startTimer;
+window.pauseTimer = pauseTimer;
+window.resetTimer = resetTimer;
+window.refreshQuote = refreshQuote;
+window.updateTimerDisplay = updateTimerDisplay;

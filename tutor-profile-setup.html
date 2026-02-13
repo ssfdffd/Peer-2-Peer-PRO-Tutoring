@@ -51,6 +51,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .back-btn:hover {
@@ -123,6 +124,9 @@
             font-weight: 600;
             color: #374151;
             font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .form-group input,
@@ -136,6 +140,12 @@
             transition: all 0.3s;
         }
 
+        .form-group input[readonly] {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            cursor: not-allowed;
+        }
+
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
@@ -144,24 +154,40 @@
             box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.1);
         }
 
+        .account-info-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
         .checkbox-group {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
             margin-bottom: 15px;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: auto;
-            margin: 0;
+            margin: 4px 0 0 0;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            font-weight: 500;
+            color: #111827;
+            line-height: 1.4;
         }
 
         .subject-grid,
-        .grade-grid,
-        .availability-grid {
+        .grade-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
             margin-top: 15px;
         }
 
@@ -173,11 +199,17 @@
             background: #f8f9fa;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            border: 2px solid transparent;
         }
 
         .checkbox-item:hover {
             background: #e9ecef;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked+span {
+            color: #32cd32;
+            font-weight: 600;
         }
 
         .checkbox-item input[type="checkbox"] {
@@ -188,34 +220,47 @@
 
         .time-slots {
             display: grid;
-            grid-template-columns: 150px repeat(7, 1fr);
-            gap: 10px;
+            grid-template-columns: 120px repeat(7, 1fr);
+            gap: 8px;
             margin-top: 15px;
         }
 
-        .time-slots label {
-            font-weight: 600;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
+        .time-slots-header {
+            font-weight: 700;
+            padding: 8px;
+            background: #f0f4ff;
+            border-radius: 6px;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
-        .time-slot-checkbox {
-            padding: 10px;
+        .time-slot {
+            padding: 8px;
             background: #f8f9fa;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
         }
 
-        .time-slot-checkbox input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            cursor: pointer;
+        .time-slot:hover {
+            background: #e0e7ff;
+        }
+
+        .time-slot input[type="checkbox"]:checked+.time-slot-label {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .time-slot-label {
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
         }
 
         .time-slots .time-label {
@@ -224,6 +269,8 @@
             align-items: center;
             justify-content: flex-end;
             padding-right: 10px;
+            font-size: 0.9rem;
+            color: #374151;
         }
 
         .btn-container {
@@ -316,6 +363,27 @@
             display: none;
         }
 
+        .account-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ef4444;
+            text-align: center;
+        }
+
+        .account-error p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .account-error .btn {
+            background: #ef4444;
+            color: white;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .time-slots {
                 grid-template-columns: 100px repeat(2, 1fr);
@@ -328,6 +396,11 @@
             .header {
                 padding: 20px;
             }
+
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -335,8 +408,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i> Back
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Back to Portal
             </button>
             <h1><i class="fas fa-user-graduate"></i> Tutor Profile Setup</h1>
             <p>Complete your profile to start receiving student bookings</p>
@@ -353,6 +426,16 @@
         </div>
 
         <div class="form-container">
+            <div id="accountError" class="account-error" style="display: none;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p><strong>Account Information Missing</strong></p>
+                <p>We couldn't find your account details. Please log in again to continue setting up your tutor profile.
+                </p>
+                <button class="btn" onclick="window.location.href='index.html'">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </button>
+            </div>
+
             <div id="successMessage" class="success-message">
                 <i class="fas fa-check-circle"></i> Profile completed successfully! You can now receive bookings.
             </div>
@@ -363,20 +446,28 @@
                     <h2 style="margin-bottom: 20px; color: #111827;">Step 1: Basic Information</h2>
 
                     <div class="form-group">
-                        <label for="fullName"><i class="fas fa-user"></i> Full Name *</label>
-                        <input type="text" id="fullName" readonly>
+                        <label for="fullName">
+                            <i class="fas fa-user"></i> Full Name *
+                            <span class="account-info-badge">From your account</span>
+                        </label>
+                        <input type="text" id="fullName" readonly placeholder="Loading your name...">
                         <div class="error-message" id="fullNameError">Please enter your full name</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email"><i class="fas fa-envelope"></i> Email Address *</label>
-                        <input type="email" id="email" readonly>
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email Address *
+                            <span class="account-info-badge">From your account</span>
+                        </label>
+                        <input type="email" id="email" readonly placeholder="Loading your email...">
                         <div class="error-message" id="emailError">Please enter a valid email</div>
                     </div>
 
                     <div class="form-group">
                         <label for="phone"><i class="fas fa-phone"></i> Phone Number *</label>
                         <input type="tel" id="phone" placeholder="+27...">
+                        <small style="color: #6b7280; display: block; margin-top: 5px;">This will be shared with
+                            students for session coordination</small>
                         <div class="error-message" id="phoneError">Please enter your phone number</div>
                     </div>
 
@@ -384,7 +475,9 @@
                         <label for="bio"><i class="fas fa-info-circle"></i> Short Bio (Tell students about yourself)
                             *</label>
                         <textarea id="bio" rows="4"
-                            placeholder="E.g., Experienced mathematics teacher with 5+ years..."></textarea>
+                            placeholder="E.g., Experienced mathematics teacher with 5+ years teaching Grade 10-12..."></textarea>
+                        <small style="color: #6b7280; display: block; margin-top: 5px;">Minimum 50 characters. Students
+                            will see this on your profile.</small>
                         <div class="error-message" id="bioError">Please write a brief bio (minimum 50 characters)</div>
                     </div>
 
@@ -393,7 +486,8 @@
                         <input type="number" id="hourlyRate" min="100" max="1000" placeholder="250">
                         <small style="color: #6b7280; display: block; margin-top: 5px;">Recommended range: R150 - R500
                             per hour</small>
-                        <div class="error-message" id="hourlyRateError">Please enter a valid hourly rate</div>
+                        <div class="error-message" id="hourlyRateError">Please enter a valid hourly rate between
+                            R100-R1000</div>
                     </div>
 
                     <div class="btn-container">
@@ -409,50 +503,14 @@
                     <div class="form-group">
                         <label><i class="fas fa-book"></i> Subjects You're Qualified to Teach *</label>
                         <div class="subject-grid">
+                            ${['Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans', 'Accounting',
+                            'Economics', 'Business Studies', 'Geography', 'History', 'Mathematical Literacy',
+                            'Information Technology', 'Life Orientation'].map(subject => `
                             <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Mathematics"> 📐 Mathematics
+                                <input type="checkbox" name="qualifiedSubjects" value="${subject}">
+                                <span>${getSubjectIcon(subject)} ${subject}</span>
                             </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Physical Science"> 🔬 Physical
-                                Science
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Life Sciences"> 🧬 Life Sciences
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="English"> 📚 English
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Afrikaans"> 🇿🇦 Afrikaans
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Accounting"> 💰 Accounting
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Economics"> 📊 Economics
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Business Studies"> 💼 Business
-                                Studies
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Geography"> 🌍 Geography
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="History"> 📜 History
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Mathematical Literacy"> 📏
-                                Mathematical Literacy
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Information Technology"> 💻
-                                Information Technology
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="Life Orientation"> 🧘 Life
-                                Orientation
-                            </label>
+                            `).join('')}
                         </div>
                         <div class="error-message" id="qualifiedSubjectsError">Please select at least one subject</div>
                     </div>
@@ -460,52 +518,17 @@
                     <div class="form-group">
                         <label><i class="fas fa-star"></i> Subjects You Have Teaching Experience In *</label>
                         <div class="subject-grid">
+                            ${['Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans', 'Accounting',
+                            'Economics', 'Business Studies', 'Geography', 'History', 'Mathematical Literacy',
+                            'Information Technology', 'Life Orientation'].map(subject => `
                             <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Mathematics"> 📐 Mathematics
+                                <input type="checkbox" name="experiencedSubjects" value="${subject}">
+                                <span>${getSubjectIcon(subject)} ${subject}</span>
                             </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Physical Science"> 🔬 Physical
-                                Science
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Life Sciences"> 🧬 Life
-                                Sciences
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="English"> 📚 English
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Afrikaans"> 🇿🇦 Afrikaans
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Accounting"> 💰 Accounting
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Economics"> 📊 Economics
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Business Studies"> 💼 Business
-                                Studies
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Geography"> 🌍 Geography
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="History"> 📜 History
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Mathematical Literacy"> 📏
-                                Mathematical Literacy
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Information Technology"> 💻
-                                Information Technology
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="Life Orientation"> 🧘 Life
-                                Orientation
-                            </label>
+                            `).join('')}
                         </div>
+                        <small style="color: #6b7280; display: block; margin-top: 10px;">Select subjects where you have
+                            actual teaching experience (not just qualifications)</small>
                         <div class="error-message" id="experiencedSubjectsError">Please select at least one subject
                         </div>
                     </div>
@@ -513,27 +536,13 @@
                     <div class="form-group">
                         <label><i class="fas fa-graduation-cap"></i> Grades You Can Teach *</label>
                         <div class="grade-grid">
+                            ${['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'University/Tertiary', 'Adult
+                            Learner'].map(grade => `
                             <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Grade 8"> Grade 8
+                                <input type="checkbox" name="teachingGrades" value="${grade}">
+                                <span>${grade}</span>
                             </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Grade 9"> Grade 9
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Grade 10"> Grade 10
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Grade 11"> Grade 11
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Grade 12"> Grade 12
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="University/Tertiary"> University
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="Adult Learner"> Adult Learner
-                            </label>
+                            `).join('')}
                         </div>
                         <div class="error-message" id="teachingGradesError">Please select at least one grade</div>
                     </div>
@@ -550,116 +559,70 @@
                 <div class="step" id="step3">
                     <h2 style="margin-bottom: 20px; color: #111827;">Step 3: Weekly Availability</h2>
                     <p style="color: #6b7280; margin-bottom: 20px;">Select time slots when you're available for tutoring
-                        sessions</p>
+                        sessions. Students can only book sessions during these times.</p>
 
                     <div class="form-group">
                         <label><i class="fas fa-clock"></i> Available Time Slots *</label>
                         <div class="time-slots">
                             <div></div>
-                            <label>Mon</label>
-                            <label>Tue</label>
-                            <label>Wed</label>
-                            <label>Thu</label>
-                            <label>Fri</label>
-                            <label>Sat</label>
-                            <label>Sun</label>
+                            <div class="time-slots-header">Mon</div>
+                            <div class="time-slots-header">Tue</div>
+                            <div class="time-slots-header">Wed</div>
+                            <div class="time-slots-header">Thu</div>
+                            <div class="time-slots-header">Fri</div>
+                            <div class="time-slots-header">Sat</div>
+                            <div class="time-slots-header">Sun</div>
 
-                            <div class="time-label">8:00 - 10:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="mon_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="tue_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="wed_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="thu_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="fri_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="sat_8_10">
-                            </div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability" value="sun_8_10">
-                            </div>
+                            <div class="time-label">08:00-10:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_8_10" style="display:none">
+                                <span class="time-slot-label">🕗-🕙</span>
+                            </label>
+                            `).join('')}
 
-                            <div class="time-label">10:00 - 12:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="mon_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="tue_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="wed_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="thu_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="fri_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sat_10_12"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sun_10_12"></div>
+                            <div class="time-label">10:00-12:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_10_12" style="display:none">
+                                <span class="time-slot-label">🕙-🕛</span>
+                            </label>
+                            `).join('')}
 
-                            <div class="time-label">12:00 - 14:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="mon_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="tue_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="wed_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="thu_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="fri_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sat_12_14"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sun_12_14"></div>
+                            <div class="time-label">12:00-14:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_12_14" style="display:none">
+                                <span class="time-slot-label">🕛-🕑</span>
+                            </label>
+                            `).join('')}
 
-                            <div class="time-label">14:00 - 16:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="mon_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="tue_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="wed_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="thu_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="fri_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sat_14_16"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sun_14_16"></div>
+                            <div class="time-label">14:00-16:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_14_16" style="display:none">
+                                <span class="time-slot-label">🕑-🕓</span>
+                            </label>
+                            `).join('')}
 
-                            <div class="time-label">16:00 - 18:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="mon_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="tue_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="wed_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="thu_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="fri_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sat_16_18"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sun_16_18"></div>
+                            <div class="time-label">16:00-18:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_16_18" style="display:none">
+                                <span class="time-slot-label">🕓-🕕</span>
+                            </label>
+                            `).join('')}
 
-                            <div class="time-label">18:00 - 20:00</div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="mon_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="tue_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="wed_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="thu_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="fri_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sat_18_20"></div>
-                            <div class="time-slot-checkbox"><input type="checkbox" name="availability"
-                                    value="sun_18_20"></div>
+                            <div class="time-label">18:00-20:00</div>
+                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+                            <label class="time-slot">
+                                <input type="checkbox" name="availability" value="${day}_18_20" style="display:none">
+                                <span class="time-slot-label">🕕-🕗</span>
+                            </label>
+                            `).join('')}
                         </div>
+                        <small style="color: #6b7280; display: block; margin-top: 10px;">💡 Tip: Select at least 8-10
+                            slots per week to maximize booking opportunities</small>
                         <div class="error-message" id="availabilityError">Please select at least one time slot</div>
                     </div>
 
@@ -684,17 +647,18 @@
                             <li>Peer-2-Peer PRO will use your data to match you with suitable students</li>
                             <li>Session details and communications will be stored securely</li>
                             <li>You must maintain professional conduct during all tutoring sessions</li>
-                            <li>Payment processing and session management will be handled through our platform</li>
+                            <li>You agree to the <a href="terms.html" target="_blank">Terms & Conditions</a>, <a
+                                    href="privacy.html" target="_blank">Privacy Policy</a>, and <a
+                                    href="safeguarding.html" target="_blank">Safeguarding Policy</a></li>
                         </ul>
-                        <p>For full details, please read our <a href="terms.html" target="_blank">Terms &
-                                Conditions</a>, <a href="privacy.html" target="_blank">Privacy Policy</a>, and <a
-                                href="safeguarding.html" target="_blank">Safeguarding Policy</a>.</p>
+                        <p><strong>Important:</strong> Students must book sessions at least 7 days in advance as per our
+                            policy.</p>
                     </div>
 
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="termsAgreement" required>
-                            <label for="termsAgreement" style="font-weight: 600; color: #111827;">
+                            <label for="termsAgreement">
                                 I have read and agree to the Terms of Service and Data Usage Policy
                             </label>
                         </div>
@@ -704,9 +668,9 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="availabilityConfirmation" required>
-                            <label for="availabilityConfirmation" style="font-weight: 600; color: #111827;">
+                            <label for="availabilityConfirmation">
                                 I confirm that my availability schedule is accurate and I will be available during these
-                                times
+                                times for student bookings
                             </label>
                         </div>
                         <div class="error-message" id="availabilityConfirmationError">Please confirm your availability
@@ -716,8 +680,9 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="dataConsent" required>
-                            <label for="dataConsent" style="font-weight: 600; color: #111827;">
+                            <label for="dataConsent">
                                 I consent to Peer-2-Peer PRO using my data to match me with students and manage bookings
+                                (in accordance with POPIA)
                             </label>
                         </div>
                         <div class="error-message" id="dataConsentError">Please provide data consent</div>
@@ -736,35 +701,125 @@
     </div>
 
     <script>
+        // Helper function for subject icons
+        function getSubjectIcon(subject) {
+            const icons = {
+                'Mathematics': '📐',
+                'Physical Science': '🔬',
+                'Life Sciences': '🧬',
+                'English': '📚',
+                'Afrikaans': '🇿🇦',
+                'Accounting': '💰',
+                'Economics': '📊',
+                'Business Studies': '💼',
+                'Geography': '🌍',
+                'History': '📜',
+                'Mathematical Literacy': '📏',
+                'Information Technology': '💻',
+                'Life Orientation': '🧘'
+            };
+            return icons[subject] || '📖';
+        }
+
         let currentStep = 1;
         const totalSteps = 4;
 
-        // Load user data from localStorage
-        document.addEventListener('DOMContentLoaded', function () {
-            loadUserData();
-            updateProgress();
-        });
-
+        // Load user data from multiple storage locations
         function loadUserData() {
-            // Try to get user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('p2p_user')) ||
-                JSON.parse(sessionStorage.getItem('p2p_user'));
+            let userData = null;
 
-            if (userData) {
-                document.getElementById('fullName').value =
-                    `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-                document.getElementById('email').value = userData.email || '';
+            // Try localStorage first
+            const localStorageData = localStorage.getItem('p2p_user');
+            if (localStorageData) {
+                try {
+                    userData = JSON.parse(localStorageData);
+                } catch (e) {
+                    console.warn('Failed to parse localStorage data:', e);
+                }
+            }
+
+            // Fallback to sessionStorage
+            if (!userData) {
+                const sessionStorageData = sessionStorage.getItem('p2p_user');
+                if (sessionStorageData) {
+                    try {
+                        userData = JSON.parse(sessionStorageData);
+                    } catch (e) {
+                        console.warn('Failed to parse sessionStorage data:', e);
+                    }
+                }
+            }
+
+            // Fallback to individual items
+            if (!userData) {
+                const email = localStorage.getItem('p2p_email') || sessionStorage.getItem('p2p_email');
+                const name = localStorage.getItem('p2p_name') || sessionStorage.getItem('p2p_name');
+
+                if (email && name) {
+                    userData = {
+                        email: email,
+                        first_name: name.split(' ')[0] || '',
+                        last_name: name.split(' ')[1] || ''
+                    };
+                }
+            }
+
+            // If we have data, populate fields
+            if (userData && userData.email) {
+                document.getElementById('email').value = userData.email;
+
+                let fullName = '';
+                if (userData.first_name || userData.last_name) {
+                    fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+                } else if (userData.name) {
+                    fullName = userData.name;
+                } else {
+                    // Extract name from email as fallback
+                    fullName = userData.email.split('@')[0].replace(/\./g, ' ').replace(/_/g, ' ');
+                }
+
+                document.getElementById('fullName').value = fullName;
 
                 // Pre-fill phone if available
                 if (userData.phone_number) {
                     document.getElementById('phone').value = userData.phone_number;
+                } else if (userData.phone) {
+                    document.getElementById('phone').value = userData.phone;
                 }
+
+                return true;
+            } else {
+                // Show error message
+                document.getElementById('accountError').style.display = 'block';
+                document.querySelector('.progress-container').style.display = 'none';
+                document.getElementById('tutorProfileForm').style.display = 'none';
+                return false;
             }
         }
 
-        function goBack() {
-            window.history.back();
-        }
+        // Back button functionality
+        document.getElementById('backBtn').addEventListener('click', function () {
+            window.location.href = 'tutor-portal.html';
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataLoaded = loadUserData();
+            if (dataLoaded) {
+                updateProgress();
+
+                // Make time slots clickable
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    slot.addEventListener('click', function (e) {
+                        if (!e.target.matches('input[type="checkbox"]')) {
+                            const checkbox = this.querySelector('input[type="checkbox"]');
+                            checkbox.checked = !checkbox.checked;
+                            this.classList.toggle('selected', checkbox.checked);
+                        }
+                    });
+                });
+            }
+        });
 
         function nextStep() {
             if (validateStep(currentStep)) {
@@ -806,6 +861,13 @@
                     const phone = document.getElementById('phone').value.trim();
                     const bio = document.getElementById('bio').value.trim();
                     const rate = document.getElementById('hourlyRate').value;
+                    const fullName = document.getElementById('fullName').value.trim();
+
+                    if (!fullName || fullName === 'Loading your name...') {
+                        document.getElementById('fullNameError').textContent = 'Account name not loaded. Please refresh or log in again.';
+                        document.getElementById('fullNameError').style.display = 'block';
+                        isValid = false;
+                    }
 
                     if (!phone) {
                         document.getElementById('phoneError').style.display = 'block';
@@ -927,8 +989,9 @@
                     document.getElementById('successMessage').style.display = 'block';
                     submitBtn.innerHTML = '<i class="fas fa-check"></i> Profile Complete!';
 
-                    // Update profile status
+                    // Update profile status in localStorage
                     localStorage.setItem('tutor_profile_complete', 'true');
+                    localStorage.setItem('tutor_id', result.tutorId);
 
                     // Redirect after 2 seconds
                     setTimeout(() => {

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner | Peer-2-Peer PRO</title>
+    <link rel="stylesheet" href="study-planner.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+</head>
+
+<body class="planner-body">
+    <nav id="navbar">
+        <a href="index.html" class="logo">
+            <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo">
+            Peer-2-Peer <span class="pro-text">PRO</span>
+        </a>
+        <div class="nav-right">
+            <a href="resources.html" class="nav-btn"><i class="fas fa-book-open"></i> Library</a>
+            <a href="forum.html" class="nav-btn"><i class="fas fa-comments"></i> Forum</a>
+            <a href="profile.html" class="nav-btn"><i class="fas fa-user"></i> Profile</a>
+        </div>
+    </nav>
+
+    <main class="planner-container">
+        <!-- Header with Quote -->
+        <div class="quote-header" id="quoteHeader">
+            <i class="fas fa-quote-left"></i>
+            <p id="motivationQuote">Loading inspiration...</p>
+            <span id="quoteAuthor"></span>
+            <button class="refresh-quote" onclick="refreshQuote()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+
+        <!-- Study Timer Section -->
+        <div class="timer-section">
+            <h2><i class="fas fa-clock"></i> Study Timer</h2>
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">45:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn start" onclick="startTimer()">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="timer-btn pause" onclick="pauseTimer()">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="timer-btn reset" onclick="resetTimer()">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                <div class="session-selector">
+                    <label for="sessionLength">Session Length (minutes):</label>
+                    <input type="number" id="sessionLength" min="5" max="120" value="45"
+                        onchange="updateTimerDisplay()">
+                </div>
+                <div class="break-tip" id="breakTip">
+                    <i class="fas fa-coffee"></i>
+                    <span>Take a break! Tip: Stretch for 5 minutes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Preferences Form -->
+        <div class="preferences-section">
+            <h2><i class="fas fa-user-cog"></i> Your Study Preferences</h2>
+            <form id="preferencesForm" class="preferences-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Study Environment:</label>
+                        <select id="studyEnvironment">
+                            <option value="quiet">Quiet (library, private room)</option>
+                            <option value="noisy">Can study with noise</option>
+                            <option value="flexible">Flexible</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Distraction Level (1-5):</label>
+                        <input type="range" id="distractionLevel" min="1" max="5" value="3">
+                        <span id="distractionValue">3 - Moderate</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Daily Chores/Responsibilities:</label>
+                        <input type="checkbox" id="dailyChores">
+                        <label for="dailyChores" class="checkbox-label">Yes, I have daily chores</label>
+                        <textarea id="choresDescription" placeholder="Describe your typical chores..."
+                            style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Support at Home (1-5):</label>
+                        <input type="range" id="supportLevel" min="1" max="5" value="3">
+                        <span id="supportValue">3 - Some support</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Session Length:</label>
+                        <input type="number" id="preferredSessionLength" min="15" max="120" value="45">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Break Frequency (minutes):</label>
+                        <input type="number" id="breakFrequency" min="5" max="60" value="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cross-Night Preference:</label>
+                        <input type="checkbox" id="crossNightPreference">
+                        <label for="crossNightPreference" class="checkbox-label">I study better at night</label>
+                    </div>
+                </div>
+                <button type="submit" class="save-preferences-btn">
+                    <i class="fas fa-save"></i> Save Preferences
+                </button>
+            </form>
+        </div>
+
+        <!-- Subjects Section -->
+        <div class="subjects-section">
+            <h2><i class="fas fa-book"></i> Your Subjects</h2>
+            <button class="add-subject-btn" onclick="addSubject()">
+                <i class="fas fa-plus"></i> Add Subject
+            </button>
+            <div id="subjectsList" class="subjects-list">
+                <!-- Subjects will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Study Plan Display -->
+        <div class="plan-section">
+            <h2><i class="fas fa-calendar-alt"></i> Your Personalized Study Plan</h2>
+            <button class="generate-plan-btn" onclick="generatePlan()">
+                <i class="fas fa-magic"></i> Generate Study Plan
+            </button>
+            <div id="studyPlan" class="study-plan">
+                <!-- Study plan will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Study Sessions Log -->
+        <div class="sessions-section">
+            <h2><i class="fas fa-history"></i> Study Sessions</h2>
+            <div id="sessionsLog" class="sessions-log">
+                <!-- Sessions will be displayed here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="study-planner.js"></script>
+</body>
+
+</html>

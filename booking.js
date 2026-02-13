@@ -1,5 +1,13 @@
 const API_URL = "https://booking-worker.buhle-1ce.workers.dev";
 
+document.addEventListener('DOMContentLoaded', () => {
+    selectTutor();
+    initializeBooking();
+    availableTutors(count)
+    results.JSON.stringify();
+    console.log(results)
+});
+
 // Global state
 let currentStep = 1;
 let selectedTutor = null;

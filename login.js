@@ -1,7 +1,9 @@
-// ✅ CORRECTED URL
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Test connection to worker
+    testWorkerConnection();
+
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
@@ -12,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', handleLogout);
     }
 
-    // Auto-logout on tab close
     window.addEventListener('beforeunload', () => {
         const email = sessionStorage.getItem('p2p_email');
         const sessionId = sessionStorage.getItem('p2p_sessionId');
@@ -25,7 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 🔑 LOGIN HANDLER - FIXED
+// Test worker connection
+async function testWorkerConnection() {
+    try {
+        const response = await fetch(`${API_BASE}/api/test`);
+        const data = await response.json();
+        console.log("Worker connection successful:", data);
+    } catch (err) {
+        console.error("Worker connection failed:", err);
+        // Show warning but don't block
+        console.warn("Make sure your worker URL is correct and CORS is properly configured");
+    }
+}
+
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -37,16 +50,38 @@ async function handleLogin(e) {
     btn.textContent = "Authenticating...";
 
     try {
+        console.log("Attempting login for:", email);
+        console.log("API URL:", `${API_BASE}/api/login`);
+
         const response = await fetch(`${API_BASE}/api/login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify({ email, password }),
-            credentials: 'include'
+            mode: 'cors', // Explicitly set CORS mode
+            credentials: 'omit' // Changed from 'include' for testing
         });
 
-        const result = await response.json();
+        console.log("Response status:", response.status);
 
-        if (response.ok && result.success) {
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            try {
+                const errorJson = JSON.parse(errorText);
+                alert(`Login Failed: ${errorJson.error || "Unknown error"}`);
+            } catch {
+                alert(`Login Failed: Server returned ${response.status}`);
+            }
+            return;
+        }
+
+        const result = await response.json();
+        console.log("Login result:", result);
+
+        if (result.success) {
             const role = result.role.toLowerCase().trim();
 
             sessionStorage.setItem('p2p_email', email);
@@ -55,26 +90,24 @@ async function handleLogin(e) {
             sessionStorage.setItem('p2p_role', role);
             sessionStorage.setItem('p2p_sessionId', result.sessionId);
 
-            // Redirect based on role
             if (role === 'tutor') {
                 window.location.replace('tutor-portal.html');
             } else {
                 window.location.replace('student-portal.html');
             }
         } else {
-            // Show specific error message from server
             alert(`Login Failed: ${result.error || "Invalid credentials"}`);
         }
     } catch (err) {
-        console.error("Login error:", err);
-        alert(`Connection Error: ${err.message}`);
+        console.error("Login error details:", err);
+        alert(`Connection Error: ${err.message}\n\nPlease check:\n1. Worker URL is correct\n2. Worker is running\n3. CORS headers are set correctly`);
     } finally {
         btn.disabled = false;
         btn.textContent = "Login";
     }
 }
 
-// 🚪 LOGOUT HANDLER
+// Rest of your functions remain the same...
 async function handleLogout() {
     const email = sessionStorage.getItem('p2p_email');
     const sessionId = sessionStorage.getItem('p2p_sessionId');
@@ -90,7 +123,7 @@ async function handleLogout() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, sessionId }),
-            credentials: 'include'
+            mode: 'cors'
         });
     } catch (err) {
         console.warn("Logout API failed:", err);
@@ -100,7 +133,6 @@ async function handleLogout() {
     }
 }
 
-// 📝 SIGNUP HANDLER
 async function handleSignup(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button');
@@ -112,8 +144,10 @@ async function handleSignup(e) {
         const response = await fetch(`${API_BASE}/api/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            mode: 'cors'
         });
+
         const result = await response.json();
 
         if (result.success) {
@@ -130,17 +164,31 @@ async function handleSignup(e) {
     }
 }
 
-// 🔑 FORGOT PASSWORD
-async function handleForgotPassword() {
+// Forgot password functions
+window.showForgotModal = function () {
+    document.getElementById('forgotModal').style.display = 'flex';
+}
+
+window.closeForgotModal = function () {
+    document.getElementById('forgotModal').style.display = 'none';
+}
+
+window.handleForgotSubmit = async function () {
     const email = document.getElementById('forgotEmail')?.value?.trim();
     if (!email) return alert("Please enter your email address");
+
+    const btn = document.getElementById('forgotBtn');
+    btn.disabled = true;
+    btn.textContent = "Sending...";
 
     try {
         const response = await fetch(`${API_BASE}/api/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+            body: JSON.stringify({ email }),
+            mode: 'cors'
         });
+
         const result = await response.json();
 
         if (result.success) {
@@ -152,5 +200,8 @@ async function handleForgotPassword() {
     } catch (err) {
         console.error("Password reset error:", err);
         alert(`Error: ${err.message}`);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Send Recovery Link";
     }
 }

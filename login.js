@@ -1,5 +1,5 @@
 // ✅ CORRECTED URL: Fixed "authentification" → "authentication" (MUST match your deployed Worker URL)
-const API_BASE = "https://damp-art-617fp2p-authentication-login.buhle-1ce.workers.dev";
+const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
     // Form handlers

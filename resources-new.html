@@ -844,209 +844,406 @@
             <i class="fas fa-graduation-cap" style="display: none;"></i>
             <span>PEER<span style="color: var(--green);">-2-</span>PEER PRO</span>
         </a>
-        <div class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i> Home</a>
-            <a href="student-portal.html"><i class="fas fa-user-graduate"></i> Dashboard</a>
-            <a href="student-view.html"><i class="fas fa-video"></i> Live</a>
-            <a href="resources.html" class="active"><i class="fas fa-book-open"></i> Resources</a>
-            <a href="forum.html"><i class="fas fa-comments"></i> Forum</a>
-            <a href="booking.html"><i class="fas fa-calendar-check"></i> Book</a>
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
         </div>
     </nav>
 
-    <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>
-                <i class="fas fa-book-open"></i>
-                Study Material Hub
-            </h1>
-            <p>Explore documents shared by your peers to help you learn and succeed!</p>
-            <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-                <span
-                    style="background: var(--navy-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-file-pdf" style="color: #e74c3c;"></i> <span id="totalDocuments">124</span>
-                    Documents
-                </span>
-                <span
-                    style="background: var(--green-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-users"></i> <span id="totalContributors">48</span> Contributors
-                </span>
+    <!-- Add this right after your navbar closes -->
+    <div class="whatsapp-banner-container">
+        <div class="whatsapp-card">
+            <div class="animated-text-wrapper">
+                <span id="animated-text"></span>
             </div>
+            <a href="https://wa.me/27732792426" target="_blank" class="whatsapp-click-area">
+                <i class="fab fa-whatsapp"></i> Book Now on WhatsApp
+            </a>
         </div>
+    </div>
 
-        <!-- FILTERS SECTION -->
-        <section class="filters-section">
-            <h2><i class="fas fa-filter"></i> Filter Resources</h2>
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label for="searchInput"><i class="fas fa-search"></i> Search</label>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
-                </div>
+    <style>
+        .whatsapp-banner-container {
+            max-width: 1400px;
+            margin: 20px auto 10px;
+            padding: 0 24px;
+        }
 
-                <div class="filter-group">
-                    <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
-                    <select id="subjectFilter" class="form-control">
-                        <option value="all">All Subjects</option>
-                        <option value="accounting">Accounting</option>
-                        <option value="afrikaans">Afrikaans</option>
-                        <option value="agricultural management practices">Agricultural Management Practices</option>
-                        <option value="agricultural science">Agricultural Science</option>
-                        <option value="agricultural technology">Agricultural Technology</option>
-                        <option value="business">Business Studies</option>
-                        <option value="cat">CAT</option>
-                        <option value="civil technology">Civil Technology</option>
-                        <option value="computer applications technology">Computer Applications Technology</option>
-                        <option value="consumer studies">Consumer Studies</option>
-                        <option value="dance studies">Dance Studies</option>
-                        <option value="design">Design</option>
-                        <option value="development studies">Development Studies</option>
-                        <option value="dramatic arts">Dramatic Arts</option>
-                        <option value="economic and management sciences">Economic and Management Sciences</option>
-                        <option value="economics">Economics</option>
-                        <option value="electrical technology">Electrical Technology</option>
-                        <option value="engineering graphics and design">Engineering Graphics and Design</option>
-                        <option value="english">English</option>
-                        <option value="equine studies">Equine Studies</option>
-                        <option value="geography">Geography</option>
-                        <option value="history">History</option>
-                        <option value="hospitality studies">Hospitality Studies</option>
-                        <option value="isindebele">IsiNdebele</option>
-                        <option value="isixhosa">IsiXhosa</option>
-                        <option value="isizulu">IsiZulu</option>
-                        <option value="it">IT</option>
-                        <option value="life orientation">Life Orientation</option>
-                        <option value="life_science">Life Science</option>
-                        <option value="marine sciences">Marine Sciences</option>
-                        <option value="maritime economics">Maritime Economics</option>
-                        <option value="mathematics">Mathematics</option>
-                        <option value="math_lit">Math Lit</option>
-                        <option value="mechanical technology">Mechanical Technology</option>
-                        <option value="music">Music</option>
-                        <option value="nautical science">Nautical Science</option>
-                        <option value="physics">Physics</option>
-                        <option value="religion studies">Religion Studies</option>
-                        <option value="sepedi">Sepedi</option>
-                        <option value="sesotho">Sesotho</option>
-                        <option value="setswana">Setswana</option>
-                        <option value="siswati">Siswati</option>
-                        <option value="sport and exercise science">Sport and Exercise Science</option>
-                        <option value="technical maths">Technical Maths</option>
-                        <option value="technical sciences">Technical Sciences</option>
-                        <option value="tourism">Tourism</option>
-                        <option value="tshivenda">Tshivenda</option>
-                        <option value="visual arts">Visual Arts</option>
-                        <option value="xitsonga">Xitsonga</option>
-                    </select>
-                </div>
+        .whatsapp-card {
+            background: linear-gradient(145deg, var(--navy, #000033), var(--navy-light, #1a1a4d));
+            border-radius: 24px;
+            padding: 30px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 51, 0.3);
+            border: 2px solid var(--green, #32cd32);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 25px;
+            position: relative;
+            overflow: hidden;
+        }
 
-                <div class="filter-group">
-                    <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
-                    <select id="gradeFilter" class="form-control">
-                        <option value="all">All Grades</option>
-                        <option value="1">Grade 1</option>
-                        <option value="2">Grade 2</option>
-                        <option value="3">Grade 3</option>
-                        <option value="4">Grade 4</option>
-                        <option value="5">Grade 5</option>
-                        <option value="6">Grade 6</option>
-                        <option value="7">Grade 7</option>
-                        <option value="8">Grade 8</option>
-                        <option value="9">Grade 9</option>
-                        <option value="10">Grade 10</option>
-                        <option value="11">Grade 11</option>
-                        <option value="12">Grade 12</option>
-                    </select>
-                </div>
+        .whatsapp-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(50, 205, 50, 0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite;
+            pointer-events: none;
+        }
 
-                <div class="filter-group">
-                    <label for="docTypeFilter"><i class="fas fa-file-alt"></i> Document Type</label>
-                    <select id="docTypeFilter" class="form-control">
-                        <option value="all">All Types</option>
-                        <option value="notes">Notes</option>
-                        <option value="worksheet">Worksheet</option>
-                        <option value="past_paper">Past Paper</option>
-                        <option value="memo">Solutions</option>
-                        <option value="study_guide">Study Guide</option>
-                        <option value="presentation">Presentation</option>
-                    </select>
-                </div>
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
 
-                <div class="filter-group">
-                    <label for="uploaderRoleFilter"><i class="fas fa-user-tag"></i> Uploaded By</label>
-                    <select id="uploaderRoleFilter" class="form-control">
-                        <option value="all">All Roles</option>
-                        <option value="teacher">Teachers</option>
-                        <option value="student">Students</option>
-                        <option value="tutor">Tutors</option>
-                    </select>
-                </div>
+            50% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
 
-                <button type="button" class="reset-filters" onclick="resetFilters()">
-                    <i class="fas fa-sync-alt"></i> Reset Filters
-                </button>
+            100% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
+        }
+
+        .animated-text-wrapper {
+            flex: 2;
+            min-width: 280px;
+        }
+
+        #animated-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        .whatsapp-click-area {
+            flex: 0 0 auto;
+            background: var(--green, #32cd32);
+            color: var(--navy, #000033);
+            padding: 18px 35px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .whatsapp-click-area i {
+            font-size: 2rem;
+        }
+
+        .whatsapp-click-area:hover {
+            background: white;
+            color: var(--navy, #000033);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(50, 205, 50, 0.4);
+        }
+
+        /* Typing animation effect */
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 4px;
+            height: 2.2rem;
+            background: var(--green, #32cd32);
+            margin-left: 8px;
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .whatsapp-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            #animated-text {
+                font-size: 1.4rem;
+            }
+
+            .whatsapp-click-area {
+                width: 100%;
+                justify-content: center;
+                padding: 15px 25px;
+                font-size: 1.1rem;
+            }
+
+            .typing-cursor {
+                height: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .whatsapp-banner-container {
+                padding: 0 16px;
+            }
+
+            #animated-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Text animation without external library
+        document.addEventListener('DOMContentLoaded', function () {
+            const textElement = document.getElementById('animated-text');
+            const fullText = "Book your next Professional Online, one-on-one or group classes";
+
+            // Create cursor element
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+
+            // Animation states
+            let charIndex = 0;
+            let isDeleting = false;
+            let isPaused = false;
+
+            function animateText() {
+                if (!textElement) return;
+
+                // Current visible text
+                const currentText = fullText.substring(0, charIndex);
+                textElement.textContent = currentText;
+
+                // Append cursor after text
+                if (!textElement.nextElementSibling || !textElement.nextElementSibling.classList.contains('typing-cursor')) {
+                    if (textElement.parentNode) {
+                        textElement.parentNode.appendChild(cursor);
+                    }
+                }
+
+                // Typing logic
+                if (!isDeleting && charIndex < fullText.length) {
+                    // Typing forward
+                    charIndex++;
+                    setTimeout(animateText, 100);
+                } else if (isDeleting && charIndex > 0) {
+                    // Deleting backward
+                    charIndex--;
+                    setTimeout(animateText, 50);
+                } else {
+                    // Change direction
+                    if (!isPaused) {
+                        isPaused = true;
+                        setTimeout(() => {
+                            isDeleting = !isDeleting;
+                            isPaused = false;
+                            animateText();
+                        }, 2000); // Pause at full text
+                    } else {
+                        setTimeout(animateText, 100);
+                    }
+                }
+            }
+
+            // Start animation after a short delay
+            setTimeout(animateText, 500);
+        });
+    </script>
+    <!-- FILTERS SECTION -->
+    <section class="filters-section">
+        <h2><i class="fas fa-filter"></i> Filter Resources</h2>
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label for="searchInput"><i class="fas fa-search"></i> Search</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
             </div>
-        </section>
 
-        <!-- DOCUMENTS GRID -->
-        <div id="fileGrid" class="documents-grid">
-            <!-- Loading State -->
-            <div class="loading-container">
-                <div class="spinner"></div>
-                <p style="color: var(--text-muted);">Loading library resources...</p>
+            <div class="filter-group">
+                <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
+                <select id="subjectFilter" class="form-control">
+                    <option value="all">All Subjects</option>
+                    <option value="accounting">Accounting</option>
+                    <option value="afrikaans">Afrikaans</option>
+                    <option value="agricultural management practices">Agricultural Management Practices</option>
+                    <option value="agricultural science">Agricultural Science</option>
+                    <option value="agricultural technology">Agricultural Technology</option>
+                    <option value="business">Business Studies</option>
+                    <option value="cat">CAT</option>
+                    <option value="civil technology">Civil Technology</option>
+                    <option value="computer applications technology">Computer Applications Technology</option>
+                    <option value="consumer studies">Consumer Studies</option>
+                    <option value="dance studies">Dance Studies</option>
+                    <option value="design">Design</option>
+                    <option value="development studies">Development Studies</option>
+                    <option value="dramatic arts">Dramatic Arts</option>
+                    <option value="economic and management sciences">Economic and Management Sciences</option>
+                    <option value="economics">Economics</option>
+                    <option value="electrical technology">Electrical Technology</option>
+                    <option value="engineering graphics and design">Engineering Graphics and Design</option>
+                    <option value="english">English</option>
+                    <option value="equine studies">Equine Studies</option>
+                    <option value="geography">Geography</option>
+                    <option value="history">History</option>
+                    <option value="hospitality studies">Hospitality Studies</option>
+                    <option value="isindebele">IsiNdebele</option>
+                    <option value="isixhosa">IsiXhosa</option>
+                    <option value="isizulu">IsiZulu</option>
+                    <option value="it">IT</option>
+                    <option value="life orientation">Life Orientation</option>
+                    <option value="life_science">Life Science</option>
+                    <option value="marine sciences">Marine Sciences</option>
+                    <option value="maritime economics">Maritime Economics</option>
+                    <option value="mathematics">Mathematics</option>
+                    <option value="math_lit">Math Lit</option>
+                    <option value="mechanical technology">Mechanical Technology</option>
+                    <option value="music">Music</option>
+                    <option value="nautical science">Nautical Science</option>
+                    <option value="physics">Physics</option>
+                    <option value="religion studies">Religion Studies</option>
+                    <option value="sepedi">Sepedi</option>
+                    <option value="sesotho">Sesotho</option>
+                    <option value="setswana">Setswana</option>
+                    <option value="siswati">Siswati</option>
+                    <option value="sport and exercise science">Sport and Exercise Science</option>
+                    <option value="technical maths">Technical Maths</option>
+                    <option value="technical sciences">Technical Sciences</option>
+                    <option value="tourism">Tourism</option>
+                    <option value="tshivenda">Tshivenda</option>
+                    <option value="visual arts">Visual Arts</option>
+                    <option value="xitsonga">Xitsonga</option>
+                </select>
             </div>
-        </div>
 
-        <!-- PAGINATION -->
-        <div class="pagination">
-            <button id="prevPage" class="page-btn" disabled>
-                <i class="fas fa-chevron-left"></i>
+            <div class="filter-group">
+                <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
+                <select id="gradeFilter" class="form-control">
+                    <option value="all">All Grades</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="docTypeFilter"><i class="fas fa-file-alt"></i> Document Type</label>
+                <select id="docTypeFilter" class="form-control">
+                    <option value="all">All Types</option>
+                    <option value="notes">Notes</option>
+                    <option value="worksheet">Worksheet</option>
+                    <option value="past_paper">Past Paper</option>
+                    <option value="memo">Solutions</option>
+                    <option value="study_guide">Study Guide</option>
+                    <option value="presentation">Presentation</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="uploaderRoleFilter"><i class="fas fa-user-tag"></i> Uploaded By</label>
+                <select id="uploaderRoleFilter" class="form-control">
+                    <option value="all">All Roles</option>
+                    <option value="teacher">Teachers</option>
+                    <option value="student">Students</option>
+                    <option value="tutor">Tutors</option>
+                </select>
+            </div>
+
+            <button type="button" class="reset-filters" onclick="resetFilters()">
+                <i class="fas fa-sync-alt"></i> Reset Filters
             </button>
-            <div class="page-info" id="pageInfo">Page 1 of 1</div>
-            <button id="nextPage" class="page-btn">
-                <i class="fas fa-chevron-right"></i>
-            </button>
         </div>
+    </section>
 
-        <!-- DOCUMENT VIEWER MODAL -->
-        <div id="docModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-file-alt" style="color: var(--green);"></i> <span id="modalTitle">Document
-                            Viewer</span></h3>
-                    <button class="close-modal" onclick="closeModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <iframe id="docViewer" frameborder="0" title="Document Viewer"></iframe>
-                </div>
+    <!-- DOCUMENTS GRID -->
+    <div id="fileGrid" class="documents-grid">
+        <!-- Loading State -->
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted);">Loading library resources...</p>
+        </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+        <button id="prevPage" class="page-btn" disabled>
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="page-info" id="pageInfo">Page 1 of 1</div>
+        <button id="nextPage" class="page-btn">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- DOCUMENT VIEWER MODAL -->
+    <div id="docModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt" style="color: var(--green);"></i> <span id="modalTitle">Document
+                        Viewer</span></h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="docViewer" frameborder="0" title="Document Viewer"></iframe>
             </div>
         </div>
+    </div>
 
-        <!-- FOOTER -->
-        <footer class="footer">
-            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
-                <div>
-                    <strong style="color: var(--navy);">📚 Resources:</strong>
-                    <a href="#">Past Papers</a> |
-                    <a href="#">Study Guides</a> |
-                    <a href="#">Video Tutorials</a>
-                </div>
-                <div>
-                    <strong style="color: var(--navy);">📞 Help:</strong>
-                    <a href="mailto:admin@peer-2-peer.co.za"><i class="fas fa-envelope"></i> Email</a> |
-                    <a href="https://wa.me/27732792426" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                </div>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div>
+                <strong style="color: var(--navy);">📚 Resources:</strong>
+                <a href="#">Past Papers</a> |
+                <a href="#">Study Guides</a> |
+                <a href="#">Video Tutorials</a>
             </div>
-            <p>
-                <a href="index.html">Home</a> |
-                <a href="resources.html">Resources</a> |
-                <a href="faq.html">FAQ</a> |
-                <a href="privacy.html">Privacy</a> |
-                <a href="terms.html">Terms</a>
-            </p>
-            <p style="margin-top: 16px;">&copy; <span id="currentYear"></span> Peer-2-Peer PRO. Quality Education for
-                All</p>
-        </footer>
+            <div>
+                <strong style="color: var(--navy);">📞 Help:</strong>
+                <a href="mailto:admin@peer-2-peer.co.za"><i class="fas fa-envelope"></i> Email</a> |
+                <a href="https://wa.me/27732792426" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            </div>
+        </div>
+        <p>
+            <a href="index.html">Home</a> |
+            <a href="resources.html">Resources</a> |
+            <a href="faq.html">FAQ</a> |
+            <a href="privacy.html">Privacy</a> |
+            <a href="terms.html">Terms</a>
+        </p>
+        <p style="margin-top: 16px;">&copy; <span id="currentYear"></span> Peer-2-Peer PRO. Quality Education for
+            All</p>
+    </footer>
     </div>
 
     <script>
@@ -1224,6 +1421,227 @@
                     document.getElementById('totalContributors').textContent = '48';
                 }
             }, 800);
+        });
+    </script>
+    <!-- Add this right after your navbar closes -->
+    <div class="whatsapp-banner-container">
+        <div class="whatsapp-card">
+            <div class="animated-text-wrapper">
+                <span id="animated-text"></span>
+            </div>
+            <a href="https://wa.me/27732792426" target="_blank" class="whatsapp-click-area">
+                <i class="fab fa-whatsapp"></i> Book Now on WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <style>
+        .whatsapp-banner-container {
+            max-width: 1400px;
+            margin: 20px auto 10px;
+            padding: 0 24px;
+        }
+
+        .whatsapp-card {
+            background: linear-gradient(145deg, var(--navy, #000033), var(--navy-light, #1a1a4d));
+            border-radius: 24px;
+            padding: 30px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 51, 0.3);
+            border: 2px solid var(--green, #32cd32);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whatsapp-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(50, 205, 50, 0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
+        }
+
+        .animated-text-wrapper {
+            flex: 2;
+            min-width: 280px;
+        }
+
+        #animated-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+            display: inline-block;
+        }
+
+        .whatsapp-click-area {
+            flex: 0 0 auto;
+            background: var(--green, #32cd32);
+            color: var(--navy, #000033);
+            padding: 18px 35px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .whatsapp-click-area i {
+            font-size: 2rem;
+        }
+
+        .whatsapp-click-area:hover {
+            background: white;
+            color: var(--navy, #000033);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(50, 205, 50, 0.4);
+        }
+
+        /* Typing animation effect */
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 4px;
+            height: 2.2rem;
+            background: var(--green, #32cd32);
+            margin-left: 8px;
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .whatsapp-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            #animated-text {
+                font-size: 1.4rem;
+            }
+
+            .whatsapp-click-area {
+                width: 100%;
+                justify-content: center;
+                padding: 15px 25px;
+                font-size: 1.1rem;
+            }
+
+            .typing-cursor {
+                height: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .whatsapp-banner-container {
+                padding: 0 16px;
+            }
+
+            #animated-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Text animation without external library
+        document.addEventListener('DOMContentLoaded', function () {
+            const textElement = document.getElementById('animated-text');
+            const fullText = "Book your next Professional Online, one-on-one or group classes";
+
+            // Create cursor element
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+
+            // Animation states
+            let charIndex = 0;
+            let isDeleting = false;
+            let isPaused = false;
+
+            function animateText() {
+                if (!textElement) return;
+
+                // Current visible text
+                const currentText = fullText.substring(0, charIndex);
+                textElement.textContent = currentText;
+
+                // Append cursor after text
+                if (!textElement.nextElementSibling || !textElement.nextElementSibling.classList.contains('typing-cursor')) {
+                    if (textElement.parentNode) {
+                        textElement.parentNode.appendChild(cursor);
+                    }
+                }
+
+                // Typing logic
+                if (!isDeleting && charIndex < fullText.length) {
+                    // Typing forward
+                    charIndex++;
+                    setTimeout(animateText, 100);
+                } else if (isDeleting && charIndex > 0) {
+                    // Deleting backward
+                    charIndex--;
+                    setTimeout(animateText, 50);
+                } else {
+                    // Change direction
+                    if (!isPaused) {
+                        isPaused = true;
+                        setTimeout(() => {
+                            isDeleting = !isDeleting;
+                            isPaused = false;
+                            animateText();
+                        }, 2000); // Pause at full text
+                    } else {
+                        setTimeout(animateText, 100);
+                    }
+                }
+            }
+
+            // Start animation after a short delay
+            setTimeout(animateText, 500);
         });
     </script>
     <script src="resources-final.js"></script>

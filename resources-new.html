@@ -200,167 +200,6 @@
         }
 
         /* ============================================
-           UPLOAD SECTION - LIGHT MODE
-        ============================================ */
-        .upload-section {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .upload-section h2 {
-            font-size: 1.6rem;
-            margin-bottom: 24px;
-            color: var(--navy);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 2px solid var(--green-soft);
-            padding-bottom: 16px;
-        }
-
-        .upload-section h2 i {
-            color: var(--green);
-        }
-
-        .upload-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: var(--navy);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .form-group label i {
-            color: var(--green);
-            width: 18px;
-        }
-
-        .form-control {
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--border);
-            background: var(--bg-body);
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            width: 100%;
-            transition: var(--transition);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--green);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(50, 205, 50, 0.1);
-        }
-
-        select.form-control {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2332cd32' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            appearance: none;
-            padding-right: 45px;
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .file-upload-container {
-            grid-column: 1 / -1;
-            border: 2.5px dashed rgba(50, 205, 50, 0.4);
-            border-radius: var(--radius);
-            padding: 40px 20px;
-            text-align: center;
-            background: var(--bg-body);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .file-upload-container:hover {
-            border-color: var(--green);
-            background: var(--green-soft);
-        }
-
-        .file-upload-container i {
-            font-size: 3rem;
-            color: var(--green);
-            margin-bottom: 16px;
-        }
-
-        .file-upload-container p {
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        .file-upload-container small {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        #selectedFileName {
-            margin-top: 16px;
-            font-weight: 600;
-            color: var(--navy);
-            padding: 8px 16px;
-            background: rgba(50, 205, 50, 0.1);
-            border-radius: 30px;
-            display: inline-block;
-        }
-
-        .btn-upload {
-            grid-column: 1 / -1;
-            background: var(--navy);
-            color: white;
-            border: none;
-            padding: 16px 30px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            border: 1px solid var(--navy);
-            margin-top: 8px;
-        }
-
-        .btn-upload:hover {
-            background: var(--green);
-            border-color: var(--green);
-            color: var(--navy);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
-        }
-
-        .btn-upload i {
-            font-size: 1.1rem;
-        }
-
-        /* ============================================
            FILTERS SECTION - LIGHT MODE
         ============================================ */
         .filters-section {
@@ -410,6 +249,34 @@
 
         .filter-group label i {
             color: var(--green);
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            width: 100%;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(50, 205, 50, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2332cd32' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            appearance: none;
+            padding-right: 45px;
         }
 
         .reset-filters {
@@ -872,12 +739,10 @@
                 font-size: 2rem;
             }
 
-            .upload-form,
             .filters-grid {
                 grid-template-columns: 1fr;
             }
 
-            .upload-section,
             .filters-section {
                 padding: 24px 20px;
             }
@@ -922,7 +787,6 @@
                 font-size: 0.95rem;
             }
 
-            .upload-section h2,
             .filters-section h2 {
                 font-size: 1.3rem;
             }
@@ -997,106 +861,19 @@
                 <i class="fas fa-book-open"></i>
                 Study Material Hub
             </h1>
-            <p>Explore documents shared by your peers. Upload your own materials to help others learn!</p>
+            <p>Explore documents shared by your peers to help you learn and succeed!</p>
             <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
                 <span
                     style="background: var(--navy-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-file-pdf" style="color: #e74c3c;"></i> 124 Documents
+                    <i class="fas fa-file-pdf" style="color: #e74c3c;"></i> <span id="totalDocuments">124</span>
+                    Documents
                 </span>
                 <span
                     style="background: var(--green-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-users"></i> 48 Contributors
+                    <i class="fas fa-users"></i> <span id="totalContributors">48</span> Contributors
                 </span>
             </div>
         </div>
-
-        <!-- UPLOAD SECTION -->
-        <section class="upload-section">
-            <h2><i class="fas fa-cloud-upload-alt"></i> Share Study Materials</h2>
-            <form id="uploadForm" class="upload-form">
-                <div class="form-group">
-                    <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
-                    <input type="text" id="fileName" class="form-control" placeholder="e.g., Quadratic Equations Notes"
-                        required>
-                </div>
-
-                <div class="form-group">
-                    <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
-                    <select id="fileSubject" class="form-control" required>
-                        <option value="">-- Select Subject --</option>
-                        <option value="Mathematics">📐 Mathematics</option>
-                        <option value="Physical Science">🔬 Physical Science</option>
-                        <option value="Life Sciences">🧬 Life Sciences</option>
-                        <option value="English">📚 English</option>
-                        <option value="Afrikaans">🇿🇦 Afrikaans</option>
-                        <option value="Accounting">💰 Accounting</option>
-                        <option value="Economics">📊 Economics</option>
-                        <option value="Geography">🌍 Geography</option>
-                        <option value="History">📜 History</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
-                    <select id="fileGrade" class="form-control" required>
-                        <option value="">-- Select Grade --</option>
-                        <option value="Grade 8">Grade 8</option>
-                        <option value="Grade 9">Grade 9</option>
-                        <option value="Grade 10">Grade 10</option>
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
-                        <option value="University">University</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="uploaderRole"><i class="fas fa-user-tag"></i> Your Role</label>
-                    <select id="uploaderRole" class="form-control" required>
-                        <option value="">-- Select Role --</option>
-                        <option value="teacher">👨‍🏫 Teacher</option>
-                        <option value="student">👩‍🎓 Student</option>
-                        <option value="tutor">🧑‍🏫 Tutor</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="docType"><i class="fas fa-file-alt"></i> Document Type</label>
-                    <select id="docType" class="form-control" required>
-                        <option value="">-- Select Type --</option>
-                        <option value="notes">📝 Notes</option>
-                        <option value="worksheet">📄 Worksheet</option>
-                        <option value="past_paper">📋 Past Paper</option>
-                        <option value="memo">✅ Memo/Solutions</option>
-                        <option value="study_guide">📘 Study Guide</option>
-                        <option value="presentation">📊 Presentation</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="docDate"><i class="fas fa-calendar"></i> Document Date</label>
-                    <input type="date" id="docDate" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="docDescription"><i class="fas fa-sticky-note"></i> Description</label>
-                    <textarea id="docDescription" class="form-control" rows="3"
-                        placeholder="Brief description of the document..."></textarea>
-                </div>
-
-                <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p><strong>Click to browse</strong> or drag & drop</p>
-                    <small>PDF, DOC, PPT, Images (Max 50MB)</small>
-                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
-                        style="display: none;" required>
-                    <div id="selectedFileName"></div>
-                </div>
-
-                <button type="button" id="uploadBtn" class="btn-upload" onclick="uploadDocument()">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload to Library
-                </button>
-            </form>
-        </section>
 
         <!-- FILTERS SECTION -->
         <section class="filters-section">
@@ -1111,11 +888,55 @@
                     <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
                     <select id="subjectFilter" class="form-control">
                         <option value="all">All Subjects</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Physical Science">Physical Science</option>
-                        <option value="Life Sciences">Life Sciences</option>
-                        <option value="English">English</option>
-                        <option value="Accounting">Accounting</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="afrikaans">Afrikaans</option>
+                        <option value="agricultural management practices">Agricultural Management Practices</option>
+                        <option value="agricultural science">Agricultural Science</option>
+                        <option value="agricultural technology">Agricultural Technology</option>
+                        <option value="business">Business Studies</option>
+                        <option value="cat">CAT</option>
+                        <option value="civil technology">Civil Technology</option>
+                        <option value="computer applications technology">Computer Applications Technology</option>
+                        <option value="consumer studies">Consumer Studies</option>
+                        <option value="dance studies">Dance Studies</option>
+                        <option value="design">Design</option>
+                        <option value="development studies">Development Studies</option>
+                        <option value="dramatic arts">Dramatic Arts</option>
+                        <option value="economic and management sciences">Economic and Management Sciences</option>
+                        <option value="economics">Economics</option>
+                        <option value="electrical technology">Electrical Technology</option>
+                        <option value="engineering graphics and design">Engineering Graphics and Design</option>
+                        <option value="english">English</option>
+                        <option value="equine studies">Equine Studies</option>
+                        <option value="geography">Geography</option>
+                        <option value="history">History</option>
+                        <option value="hospitality studies">Hospitality Studies</option>
+                        <option value="isindebele">IsiNdebele</option>
+                        <option value="isixhosa">IsiXhosa</option>
+                        <option value="isizulu">IsiZulu</option>
+                        <option value="it">IT</option>
+                        <option value="life orientation">Life Orientation</option>
+                        <option value="life_science">Life Science</option>
+                        <option value="marine sciences">Marine Sciences</option>
+                        <option value="maritime economics">Maritime Economics</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="math_lit">Math Lit</option>
+                        <option value="mechanical technology">Mechanical Technology</option>
+                        <option value="music">Music</option>
+                        <option value="nautical science">Nautical Science</option>
+                        <option value="physics">Physics</option>
+                        <option value="religion studies">Religion Studies</option>
+                        <option value="sepedi">Sepedi</option>
+                        <option value="sesotho">Sesotho</option>
+                        <option value="setswana">Setswana</option>
+                        <option value="siswati">Siswati</option>
+                        <option value="sport and exercise science">Sport and Exercise Science</option>
+                        <option value="technical maths">Technical Maths</option>
+                        <option value="technical sciences">Technical Sciences</option>
+                        <option value="tourism">Tourism</option>
+                        <option value="tshivenda">Tshivenda</option>
+                        <option value="visual arts">Visual Arts</option>
+                        <option value="xitsonga">Xitsonga</option>
                     </select>
                 </div>
 
@@ -1123,11 +944,18 @@
                     <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
                     <select id="gradeFilter" class="form-control">
                         <option value="all">All Grades</option>
-                        <option value="Grade 8">Grade 8</option>
-                        <option value="Grade 9">Grade 9</option>
-                        <option value="Grade 10">Grade 10</option>
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
                     </select>
                 </div>
 
@@ -1139,6 +967,18 @@
                         <option value="worksheet">Worksheet</option>
                         <option value="past_paper">Past Paper</option>
                         <option value="memo">Solutions</option>
+                        <option value="study_guide">Study Guide</option>
+                        <option value="presentation">Presentation</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="uploaderRoleFilter"><i class="fas fa-user-tag"></i> Uploaded By</label>
+                    <select id="uploaderRoleFilter" class="form-control">
+                        <option value="all">All Roles</option>
+                        <option value="teacher">Teachers</option>
+                        <option value="student">Students</option>
+                        <option value="tutor">Tutors</option>
                     </select>
                 </div>
 
@@ -1155,17 +995,15 @@
                 <div class="spinner"></div>
                 <p style="color: var(--text-muted);">Loading library resources...</p>
             </div>
-
-            <!-- Sample documents will be loaded via JavaScript -->
         </div>
 
         <!-- PAGINATION -->
         <div class="pagination">
-            <button id="prevPage" class="page-btn" onclick="changePage(-1)" disabled>
+            <button id="prevPage" class="page-btn" disabled>
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <div class="page-info" id="pageInfo">Page 1 of 3</div>
-            <button id="nextPage" class="page-btn" onclick="changePage(1)">
+            <div class="page-info" id="pageInfo">Page 1 of 1</div>
+            <button id="nextPage" class="page-btn">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -1219,27 +1057,6 @@
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // Initialize today's date for document date
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        const docDate = document.getElementById('docDate');
-        if (docDate) docDate.value = `${yyyy}-${mm}-${dd}`;
-
-        // File input change handler
-        const fileInput = document.getElementById('fileInput');
-        if (fileInput) {
-            fileInput.addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                    document.getElementById('selectedFileName').innerHTML =
-                        `<i class="fas fa-check-circle" style="color: var(--green);"></i> ${file.name} (${sizeInMB} MB)`;
-                }
-            });
-        }
-
         // Close modal on ESC key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
@@ -1256,11 +1073,24 @@
             document.body.style.overflow = 'auto';
         }
 
-        function openDocument(title, url) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('docViewer').src = url;
-            document.getElementById('docModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+        function openDocument(url, title) {
+            const modal = document.getElementById('docModal');
+            const viewer = document.getElementById('docViewer');
+            const modalTitle = document.getElementById('modalTitle');
+
+            if (modal && viewer) {
+                modalTitle.textContent = title || "Document Viewer";
+
+                // For PDFs, use Google Docs viewer for better compatibility
+                if (url.toLowerCase().endsWith('.pdf')) {
+                    viewer.src = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+                } else {
+                    viewer.src = url;
+                }
+
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         // Reset filters function
@@ -1269,37 +1099,11 @@
             document.getElementById('subjectFilter').value = 'all';
             document.getElementById('gradeFilter').value = 'all';
             document.getElementById('docTypeFilter').value = 'all';
+            document.getElementById('uploaderRoleFilter').value = 'all';
             // Trigger filter function if exists
             if (typeof filterDocuments === 'function') {
                 filterDocuments();
             }
-        };
-
-        // Change page function
-        window.changePage = function (direction) {
-            if (typeof changePageLogic === 'function') {
-                changePageLogic(direction);
-            }
-        };
-
-        // Sample upload function
-        window.uploadDocument = function () {
-            const title = document.getElementById('fileName').value;
-            const subject = document.getElementById('fileSubject').value;
-            const grade = document.getElementById('fileGrade').value;
-            const file = fileInput?.files[0];
-
-            if (!title || !subject || !grade || !file) {
-                alert('Please complete all required fields and select a file');
-                return;
-            }
-
-            alert('📚 Document uploaded successfully! It will appear in the library after review.');
-
-            // Reset form
-            document.getElementById('uploadForm').reset();
-            docDate.value = `${yyyy}-${mm}-${dd}`;
-            document.getElementById('selectedFileName').innerHTML = '';
         };
 
         // Load sample documents
@@ -1335,12 +1139,12 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="view-link" onclick="openDocument('Mathematics Grade 12 - Calculus Notes', 'https://docs.google.com/viewer?url=example.com/sample.pdf')">
+                                <button class="view-link" onclick="openDocument('https://docs.google.com/viewer?url=example.com/sample.pdf', 'Mathematics Grade 12 - Calculus Notes')">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <button class="down-link">
+                                <a href="#" class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="file-card">
@@ -1373,9 +1177,9 @@
                                 <button class="view-link">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <button class="down-link">
+                                <a href="#" class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="file-card">
@@ -1408,17 +1212,21 @@
                                 <button class="view-link">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <button class="down-link">
+                                <a href="#" class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </button>
+                                </a>
                             </div>
                         </div>
                     `;
+
+                    // Update stats
+                    document.getElementById('totalDocuments').textContent = '124';
+                    document.getElementById('totalContributors').textContent = '48';
                 }
             }, 800);
         });
     </script>
-    <script src="resources.js"></script>
+    <script src="resources-final.js"></script>
 </body>
 
 </html>

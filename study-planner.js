@@ -7,10 +7,14 @@ let currentUser = {
 };
 
 let subjects = [];
+let tasks = [];
+let studySessions = [];
 let timerInterval = null;
 let timerSeconds = 2700; // 45 minutes default
 let isTimerRunning = false;
 let currentSession = null;
+let currentStreak = 0;
+let lastStudyDate = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initializePlanner();
@@ -26,11 +30,17 @@ async function initializePlanner() {
         // Load user preferences
         await loadUserPreferences();
 
-        // Load existing subjects from localStorage as backup
-        loadLocalSubjects();
+        // Load subjects
+        await loadSubjects();
+
+        // Load tasks
+        await loadTasks();
 
         // Load study sessions
         await loadStudySessions();
+
+        // Calculate streak
+        await calculateStreak();
 
         // Get random quote
         await refreshQuote();
@@ -43,22 +53,23 @@ async function initializePlanner() {
 
         // Update timer display
         updateTimerDisplay();
+
+        // Update all progress displays
+        updateAllProgress();
+
+        // Populate subject dropdown for tasks
+        populateSubjectDropdown();
+
+        // Check for upcoming exams
+        checkExamCountdowns();
+
+        // Set up auto-save
+        setInterval(autoSave, 30000); // Auto-save every 30 seconds
+
     } catch (error) {
         console.error('Error initializing planner:', error);
         showNotification('Error loading planner data', 'error');
     }
-}
-
-function loadLocalSubjects() {
-    const savedSubjects = localStorage.getItem('studyPlanner_subjects');
-    if (savedSubjects) {
-        subjects = JSON.parse(savedSubjects);
-        renderSubjects();
-    }
-}
-
-function saveSubjectsToLocal() {
-    localStorage.setItem('studyPlanner_subjects', JSON.stringify(subjects));
 }
 
 function setupEventListeners() {
@@ -101,95 +112,79 @@ function setupEventListeners() {
             updateTimerDisplay();
         }
     });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + S to save preferences
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            saveUserPreferences();
+        }
+        // Space to pause/play timer
+        if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            if (isTimerRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+    });
 }
 
-async function loadUserPreferences() {
+// ==================== SUBJECT FUNCTIONS ====================
+
+async function loadSubjects() {
     try {
-        const response = await fetch(`${STUDY_API}/api/study/preferences?email=${encodeURIComponent(currentUser.email)}`);
+        const response = await fetch(`${STUDY_API}/api/study/subjects?email=${encodeURIComponent(currentUser.email)}`);
 
         if (response.status === 404) {
-            // No preferences found, use defaults
+            // No subjects found, try localStorage
+            loadLocalSubjects();
             return;
         }
 
-        if (!response.ok) throw new Error('Failed to load preferences');
+        if (!response.ok) throw new Error('Failed to load subjects');
 
-        const prefs = await response.json();
-
-        if (prefs) {
-            document.getElementById('studyEnvironment').value = prefs.study_environment || 'quiet';
-            document.getElementById('distractionLevel').value = prefs.distraction_level || 3;
-            document.getElementById('dailyChores').checked = prefs.daily_chores === 1;
-            document.getElementById('supportLevel').value = prefs.support_level || 3;
-            document.getElementById('preferredSessionLength').value = prefs.preferred_session_length || 45;
-            document.getElementById('breakFrequency').value = prefs.break_frequency || 10;
-            document.getElementById('crossNightPreference').checked = prefs.cross_night_preference === 1;
-
-            if (prefs.chores_description) {
-                document.getElementById('choresDescription').value = prefs.chores_description;
-                document.getElementById('choresDescription').style.display = 'block';
-            }
-
-            // Update range displays
-            document.getElementById('distractionValue').textContent =
-                prefs.distraction_level + ' - ' + getDistractionText(prefs.distraction_level);
-            document.getElementById('supportValue').textContent =
-                prefs.support_level + ' - ' + getSupportText(prefs.support_level);
-
-            // Update timer if not running
-            if (!isTimerRunning) {
-                timerSeconds = (prefs.preferred_session_length || 45) * 60;
-                document.getElementById('sessionLength').value = prefs.preferred_session_length || 45;
-                updateTimerDisplay();
-            }
-        }
+        subjects = await response.json();
+        saveSubjectsToLocal();
+        renderSubjects();
+        populateSubjectDropdown();
+        updateSubjectProgress();
     } catch (err) {
-        console.error('Error loading preferences:', err);
+        console.error('Error loading subjects:', err);
+        loadLocalSubjects();
     }
 }
 
-function getDistractionText(level) {
-    if (level <= 2) return 'Easily distracted';
-    if (level <= 3) return 'Moderate';
-    return 'Very focused';
+function loadLocalSubjects() {
+    const savedSubjects = localStorage.getItem('studyPlanner_subjects');
+    if (savedSubjects) {
+        subjects = JSON.parse(savedSubjects);
+        renderSubjects();
+        populateSubjectDropdown();
+        updateSubjectProgress();
+    }
 }
 
-function getSupportText(level) {
-    if (level <= 2) return 'Little support';
-    if (level <= 3) return 'Some support';
-    return 'High support';
+function saveSubjectsToLocal() {
+    localStorage.setItem('studyPlanner_subjects', JSON.stringify(subjects));
 }
 
-async function saveUserPreferences() {
-    const prefs = {
-        user_email: currentUser.email,
-        study_environment: document.getElementById('studyEnvironment').value,
-        distraction_level: parseInt(document.getElementById('distractionLevel').value),
-        daily_chores: document.getElementById('dailyChores').checked,
-        chores_description: document.getElementById('choresDescription').value,
-        support_level: parseInt(document.getElementById('supportLevel').value),
-        preferred_session_length: parseInt(document.getElementById('preferredSessionLength').value),
-        break_frequency: parseInt(document.getElementById('breakFrequency').value),
-        cross_night_preference: document.getElementById('crossNightPreference').checked
-    };
-
+async function saveSubjectsToServer() {
     try {
-        const response = await fetch(`${STUDY_API}/api/study/preferences`, {
+        const response = await fetch(`${STUDY_API}/api/study/subjects`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(prefs)
+            body: JSON.stringify({
+                user_email: currentUser.email,
+                subjects: subjects
+            })
         });
 
-        if (!response.ok) throw new Error('Failed to save preferences');
-
-        showNotification('Preferences saved successfully!', 'success');
+        if (!response.ok) throw new Error('Failed to save subjects');
     } catch (err) {
-        console.error('Error saving preferences:', err);
-        showNotification('Failed to save preferences. Using local storage.', 'info');
-
-        // Save to localStorage as backup
-        localStorage.setItem('studyPlanner_preferences', JSON.stringify(prefs));
-        showNotification('Preferences saved locally', 'success');
+        console.error('Error saving subjects to server:', err);
     }
 }
 
@@ -236,19 +231,33 @@ function saveNewSubject(btn) {
     }
 
     const subject = {
-        id: Date.now(), // temporary ID
+        id: Date.now(),
         name: name,
         exam_date: dateInput.value || null,
         priority: parseInt(prioritySelect.value),
         is_struggling: strugglingCheck.checked,
-        target_hours: 10, // Default target hours
-        completed_hours: 0
+        target_hours: calculateTargetHours(prioritySelect.value),
+        completed_hours: 0,
+        created_at: new Date().toISOString()
     };
 
     subjects.push(subject);
     saveSubjectsToLocal();
+    saveSubjectsToServer();
     renderSubjects();
+    populateSubjectDropdown();
+    updateSubjectProgress();
+    checkExamCountdowns();
     showNotification('Subject added successfully!', 'success');
+}
+
+function calculateTargetHours(priority) {
+    switch (parseInt(priority)) {
+        case 3: return 20; // High priority
+        case 2: return 15; // Medium priority
+        case 1: return 10; // Low priority
+        default: return 15;
+    }
 }
 
 function cancelNewSubject(btn) {
@@ -299,10 +308,16 @@ function updateSubject(id) {
         subject.exam_date = dateInput.value || null;
         subject.priority = parseInt(prioritySelect.value);
         subject.is_struggling = strugglingCheck.checked;
+        subject.target_hours = calculateTargetHours(prioritySelect.value);
+
         saveSubjectsToLocal();
+        saveSubjectsToServer();
     }
 
     renderSubjects();
+    populateSubjectDropdown();
+    updateSubjectProgress();
+    checkExamCountdowns();
     showNotification('Subject updated successfully!', 'success');
 }
 
@@ -310,7 +325,11 @@ function deleteSubject(id) {
     if (confirm('Are you sure you want to delete this subject?')) {
         subjects = subjects.filter(s => s.id !== id);
         saveSubjectsToLocal();
+        saveSubjectsToServer();
         renderSubjects();
+        populateSubjectDropdown();
+        updateSubjectProgress();
+        checkExamCountdowns();
         showNotification('Subject deleted successfully!', 'success');
     }
 }
@@ -323,7 +342,12 @@ function renderSubjects() {
         return;
     }
 
-    container.innerHTML = subjects.map(subject => `
+    container.innerHTML = subjects.map(subject => {
+        const progress = subject.target_hours > 0
+            ? Math.min(100, Math.round((subject.completed_hours / subject.target_hours) * 100))
+            : 0;
+
+        return `
         <div class="subject-card" id="subject-${subject.id}">
             <div class="subject-info">
                 <span class="subject-name">${escapeHTML(subject.name)}</span>
@@ -334,7 +358,7 @@ function renderSubjects() {
                     ${getPriorityText(subject.priority)} Priority
                 </span>
                 ${subject.is_struggling ? '<span class="struggling-badge"><i class="fas fa-exclamation-triangle"></i> Struggling</span>' : ''}
-                <span class="subject-hours">📚 ${subject.completed_hours || 0}/${subject.target_hours || 10} hours</span>
+                <span class="subject-hours">📚 ${subject.completed_hours || 0}/${subject.target_hours || 10} hours (${progress}%)</span>
             </div>
             <div class="subject-actions">
                 <button onclick="editSubject(${subject.id})" title="Edit">
@@ -345,127 +369,477 @@ function renderSubjects() {
                 </button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
-function getPriorityClass(priority) {
-    switch (priority) {
-        case 1: return 'low';
-        case 2: return 'medium';
-        case 3: return 'high';
-        default: return 'medium';
+// ==================== TASK FUNCTIONS ====================
+
+async function loadTasks() {
+    try {
+        const savedTasks = localStorage.getItem('studyPlanner_tasks');
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+            renderTasks();
+        }
+
+        // Try to load from server
+        const response = await fetch(`${STUDY_API}/api/study/tasks?email=${encodeURIComponent(currentUser.email)}`);
+        if (response.ok) {
+            const serverTasks = await response.json();
+            tasks = mergeTasks(tasks, serverTasks);
+            renderTasks();
+            saveTasksToLocal();
+        }
+    } catch (err) {
+        console.error('Error loading tasks:', err);
+        renderTasks();
     }
 }
 
-function getPriorityText(priority) {
-    switch (priority) {
-        case 1: return 'Low';
-        case 2: return 'Medium';
-        case 3: return 'High';
-        default: return 'Medium';
+function mergeTasks(localTasks, serverTasks) {
+    const merged = [...serverTasks];
+    const serverIds = new Set(serverTasks.map(t => t.id));
+
+    // Add local tasks that don't exist on server
+    for (const localTask of localTasks) {
+        if (!serverIds.has(localTask.id)) {
+            merged.push(localTask);
+        }
     }
+
+    return merged;
 }
 
-function generateLocalPlan() {
-    if (subjects.length === 0) {
-        showNotification('Please add at least one subject first', 'error');
-        return null;
-    }
+function saveTasksToLocal() {
+    localStorage.setItem('studyPlanner_tasks', JSON.stringify(tasks));
+}
 
-    const preferences = JSON.parse(localStorage.getItem('studyPlanner_preferences')) || {
-        distraction_level: 3,
-        daily_chores: false,
-        support_level: 3,
-        preferred_session_length: 45,
-        break_frequency: 10,
-        cross_night_preference: false
-    };
-
-    // Generate schedule locally
-    const schedule = {
-        recommendations: [],
-        study_tips: [],
-        daily_schedule: []
-    };
-
-    // Add recommendations based on preferences
-    if (preferences.distraction_level <= 2) {
-        schedule.recommendations.push("Try the Pomodoro technique: 25 min study, 5 min break");
-        schedule.recommendations.push("Use noise-cancelling headphones or find a quiet spot");
-    }
-
-    if (preferences.daily_chores) {
-        schedule.recommendations.push("Break study into chunks around your chores");
-        schedule.recommendations.push("Use chore time as active breaks");
-    }
-
-    if (preferences.support_level <= 2) {
-        schedule.recommendations.push("Join study groups or find online study buddies");
-        schedule.study_tips.push("Use educational videos when you need extra help");
-    }
-
-    if (preferences.cross_night_preference) {
-        schedule.recommendations.push("Schedule important study sessions in the evening");
-    }
-
-    // Identify struggling subjects
-    const strugglingSubjects = subjects.filter(s => s.is_struggling);
-    if (strugglingSubjects.length > 0) {
-        schedule.recommendations.push(`Focus extra time on: ${strugglingSubjects.map(s => s.name).join(', ')}`);
-    }
-
-    // Generate daily schedule for 7 days
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() + i);
-        const dateStr = date.toISOString().split('T')[0];
-
-        // Calculate available study time
-        let availableHours = preferences.daily_chores ? 2 : 4;
-        if (date.getDay() === 0 || date.getDay() === 6) { // Weekend
-            availableHours = preferences.daily_chores ? 3 : 6;
-        }
-
-        // Distribute subjects
-        const daySubjects = [];
-        let remainingTime = availableHours * 60;
-
-        // Always include struggling subjects first
-        for (const subject of strugglingSubjects) {
-            if (remainingTime <= 0) break;
-            const subjectTime = Math.min(45, remainingTime);
-            daySubjects.push({
-                subject: subject.name,
-                duration: subjectTime,
-                time_of_day: preferences.cross_night_preference ? "Evening" : "Morning"
-            });
-            remainingTime -= subjectTime;
-        }
-
-        // Add other subjects
-        const otherSubjects = subjects.filter(s => !s.is_struggling);
-        for (const subject of otherSubjects) {
-            if (remainingTime <= 0) break;
-            const subjectTime = Math.min(30, remainingTime);
-            daySubjects.push({
-                subject: subject.name,
-                duration: subjectTime,
-                time_of_day: "Afternoon"
-            });
-            remainingTime -= subjectTime;
-        }
-
-        schedule.daily_schedule.push({
-            date: dateStr,
-            day: date.toLocaleDateString('en-US', { weekday: 'long' }),
-            subjects: daySubjects,
-            total_minutes: availableHours * 60 - remainingTime
+async function saveTasksToServer() {
+    try {
+        const response = await fetch(`${STUDY_API}/api/study/tasks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_email: currentUser.email,
+                tasks: tasks
+            })
         });
+    } catch (err) {
+        console.error('Error saving tasks to server:', err);
+    }
+}
+
+function populateSubjectDropdown() {
+    const subjectSelect = document.getElementById('taskSubject');
+    if (!subjectSelect) return;
+
+    subjectSelect.innerHTML = '<option value="">Select Subject (optional)</option>';
+
+    subjects.forEach(subject => {
+        const option = document.createElement('option');
+        option.value = subject.id;
+        option.textContent = subject.name;
+        subjectSelect.appendChild(option);
+    });
+}
+
+function addTask() {
+    const input = document.getElementById('taskInput');
+    const subjectSelect = document.getElementById('taskSubject');
+    const prioritySelect = document.getElementById('taskPriority');
+    const dueDateInput = document.getElementById('taskDueDate');
+
+    const title = input.value.trim();
+    if (!title) {
+        showNotification('Please enter a task', 'error');
+        return;
     }
 
-    return schedule;
+    const task = {
+        id: Date.now(),
+        title: title,
+        subject_id: subjectSelect.value || null,
+        subject_name: subjectSelect.value ? subjects.find(s => s.id == subjectSelect.value)?.name : null,
+        priority: prioritySelect.value,
+        due_date: dueDateInput.value || null,
+        completed: false,
+        created_at: new Date().toISOString(),
+        completed_at: null
+    };
+
+    tasks.push(task);
+    saveTasksToLocal();
+    saveTasksToServer();
+    renderTasks();
+    updateWeeklyStats();
+
+    // Clear form
+    input.value = '';
+    dueDateInput.value = '';
+
+    showNotification('Task added successfully!', 'success');
 }
+
+function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        task.completed_at = task.completed ? new Date().toISOString() : null;
+
+        if (task.completed && task.subject_id) {
+            // Add 30 minutes of study time to subject
+            const subject = subjects.find(s => s.id == task.subject_id);
+            if (subject) {
+                subject.completed_hours = (subject.completed_hours || 0) + 0.5;
+            }
+        }
+
+        saveTasksToLocal();
+        saveTasksToServer();
+        renderTasks();
+        updateWeeklyStats();
+        updateSubjectProgress();
+        updateOverallProgress();
+
+        if (task.completed) {
+            showNotification('Task completed! 🎉', 'success');
+            checkAchievements();
+        }
+    }
+}
+
+function deleteTask(id) {
+    if (confirm('Are you sure you want to delete this task?')) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasksToLocal();
+        saveTasksToServer();
+        renderTasks();
+        updateWeeklyStats();
+        showNotification('Task deleted', 'info');
+    }
+}
+
+function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const taskElement = document.getElementById(`task-${id}`);
+    const content = taskElement.querySelector('.task-content');
+
+    content.innerHTML = `
+        <input type="text" id="edit-title-${id}" class="task-name-input" value="${escapeHTML(task.title)}">
+        <select id="edit-subject-${id}" class="task-subject-select">
+            <option value="">No Subject</option>
+            ${subjects.map(s => `<option value="${s.id}" ${s.id == task.subject_id ? 'selected' : ''}>${escapeHTML(s.name)}</option>`).join('')}
+        </select>
+        <select id="edit-priority-${id}" class="task-priority-select">
+            <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High Priority</option>
+            <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium Priority</option>
+            <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low Priority</option>
+        </select>
+        <input type="date" id="edit-date-${id}" class="task-date-input" value="${task.due_date || ''}">
+    `;
+
+    const actions = taskElement.querySelector('.task-actions');
+    actions.innerHTML = `
+        <button onclick="saveTaskEdit(${id})" title="Save">
+            <i class="fas fa-check"></i>
+        </button>
+        <button onclick="loadTasks()" title="Cancel">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+}
+
+function saveTaskEdit(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const newTitle = document.getElementById(`edit-title-${id}`).value.trim();
+    if (!newTitle) {
+        showNotification('Task title cannot be empty', 'error');
+        return;
+    }
+
+    task.title = newTitle;
+    task.subject_id = document.getElementById(`edit-subject-${id}`).value || null;
+    task.subject_name = task.subject_id ? subjects.find(s => s.id == task.subject_id)?.name : null;
+    task.priority = document.getElementById(`edit-priority-${id}`).value;
+    task.due_date = document.getElementById(`edit-date-${id}`).value || null;
+
+    saveTasksToLocal();
+    saveTasksToServer();
+    renderTasks();
+    showNotification('Task updated successfully!', 'success');
+}
+
+function renderTasks() {
+    const container = document.getElementById('tasksList');
+    if (!container) return;
+
+    if (tasks.length === 0) {
+        container.innerHTML = '<p class="no-subjects">No tasks yet. Add your first task above!</p>';
+        return;
+    }
+
+    // Sort tasks: incomplete first, then by priority, then by due date
+    const sortedTasks = [...tasks].sort((a, b) => {
+        if (a.completed !== b.completed) {
+            return a.completed ? 1 : -1;
+        }
+        if (a.completed) return 0;
+
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        if (a.priority !== b.priority) {
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
+
+        if (a.due_date && b.due_date) {
+            return new Date(a.due_date) - new Date(b.due_date);
+        }
+        return a.due_date ? -1 : b.due_date ? 1 : 0;
+    });
+
+    container.innerHTML = sortedTasks.map(task => {
+        const isOverdue = task.due_date && !task.completed && new Date(task.due_date) < new Date();
+        const dueDateClass = isOverdue ? 'overdue' : '';
+
+        return `
+        <div class="task-item ${task.completed ? 'completed' : ''}" id="task-${task.id}">
+            <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})">
+                ${task.completed ? '<i class="fas fa-check"></i>' : ''}
+            </div>
+            <div class="task-content">
+                <div class="task-title ${task.completed ? 'completed-text' : ''}">${escapeHTML(task.title)}</div>
+                <div class="task-details">
+                    <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                    ${task.subject_name ? `<span class="task-subject">📚 ${escapeHTML(task.subject_name)}</span>` : ''}
+                    ${task.due_date ? `
+                        <span class="task-due-date ${dueDateClass}">
+                            <i class="far fa-calendar"></i> Due: ${new Date(task.due_date).toLocaleDateString()}
+                            ${isOverdue ? ' (Overdue!)' : ''}
+                        </span>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="task-actions">
+                <button onclick="editTask(${task.id})" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteTask(${task.id})" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `}).join('');
+}
+
+// ==================== PROGRESS FUNCTIONS ====================
+
+function updateAllProgress() {
+    updateOverallProgress();
+    updateSubjectProgress();
+    updateWeeklyStats();
+}
+
+function updateOverallProgress() {
+    const totalTarget = subjects.reduce((sum, s) => sum + (s.target_hours || 10), 0);
+    const totalCompleted = subjects.reduce((sum, s) => sum + (s.completed_hours || 0), 0);
+
+    const progress = totalTarget > 0 ? Math.min(100, Math.round((totalCompleted / totalTarget) * 100)) : 0;
+
+    const progressCircle = document.querySelector('.circular-progress');
+    const progressValue = document.querySelector('.progress-value');
+
+    if (progressCircle && progressValue) {
+        const degrees = (progress / 100) * 360;
+        progressCircle.style.background = `conic-gradient(var(--pro-green) ${degrees}deg, var(--border-color) ${degrees}deg)`;
+        progressValue.textContent = `${progress}%`;
+    }
+}
+
+function updateSubjectProgress() {
+    const container = document.getElementById('subjectProgressList');
+    if (!container) return;
+
+    if (subjects.length === 0) {
+        container.innerHTML = '<p class="no-subjects">No subjects added yet.</p>';
+        return;
+    }
+
+    container.innerHTML = subjects.map(subject => {
+        const progress = subject.target_hours > 0
+            ? Math.min(100, Math.round((subject.completed_hours / subject.target_hours) * 100))
+            : 0;
+
+        return `
+        <div class="subject-progress-item">
+            <div class="subject-progress-header">
+                <div class="subject-progress-name">
+                    ${escapeHTML(subject.name)}
+                    ${subject.is_struggling ? '<span class="subject-progress-struggling"><i class="fas fa-exclamation-triangle"></i> Struggling</span>' : ''}
+                </div>
+                <div class="subject-progress-stats">
+                    ${subject.completed_hours || 0}/${subject.target_hours || 10} hours
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: ${progress}%"></div>
+            </div>
+        </div>
+    `}).join('');
+}
+
+function updateWeeklyStats() {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    // Calculate weekly study time
+    const weeklySessions = studySessions.filter(s => new Date(s.session_date) >= oneWeekAgo);
+    const weeklyMinutes = weeklySessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
+    const weeklyHours = Math.round(weeklyMinutes / 60 * 10) / 10;
+
+    // Calculate weekly tasks completed
+    const weeklyTasksCompleted = tasks.filter(t =>
+        t.completed && t.completed_at && new Date(t.completed_at) >= oneWeekAgo
+    ).length;
+
+    // Calculate average focus
+    const weeklyFocus = weeklySessions.reduce((sum, s) => sum + (s.focus_level || 0), 0);
+    const avgFocus = weeklySessions.length > 0
+        ? Math.round((weeklyFocus / weeklySessions.length) * 10) / 10
+        : 0;
+
+    document.getElementById('weeklyStudyTime').textContent = `${weeklyHours}h`;
+    document.getElementById('weeklyTasks').textContent = weeklyTasksCompleted;
+    document.getElementById('avgFocus').textContent = `${avgFocus}/5`;
+}
+
+async function calculateStreak() {
+    try {
+        const response = await fetch(`${STUDY_API}/api/study/streak?email=${encodeURIComponent(currentUser.email)}`);
+        if (response.ok) {
+            const data = await response.json();
+            currentStreak = data.streak || 0;
+            lastStudyDate = data.last_study_date ? new Date(data.last_study_date) : null;
+        } else {
+            calculateLocalStreak();
+        }
+    } catch (err) {
+        calculateLocalStreak();
+    }
+
+    updateStreakDisplay();
+}
+
+function calculateLocalStreak() {
+    const today = new Date().toDateString();
+    let streak = 0;
+    let currentDate = new Date();
+
+    // Check if studied today
+    const studiedToday = studySessions.some(s =>
+        new Date(s.session_date).toDateString() === today
+    );
+
+    if (studiedToday) {
+        streak = 1;
+        // Check previous days
+        for (let i = 1; i <= 30; i++) {
+            const checkDate = new Date();
+            checkDate.setDate(checkDate.getDate() - i);
+
+            const studied = studySessions.some(s =>
+                new Date(s.session_date).toDateString() === checkDate.toDateString()
+            );
+
+            if (studied) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    currentStreak = streak;
+    updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+    const streakElement = document.getElementById('streakCount');
+    const streakMessage = document.getElementById('streakMessage');
+
+    if (streakElement) {
+        streakElement.textContent = currentStreak;
+    }
+
+    if (streakMessage) {
+        if (currentStreak === 0) {
+            streakMessage.textContent = 'Start studying today to begin your streak!';
+        } else if (currentStreak === 1) {
+            streakMessage.textContent = 'Great start! Keep it going tomorrow!';
+        } else if (currentStreak < 7) {
+            streakMessage.textContent = `${currentStreak} day streak! You're building momentum!`;
+        } else if (currentStreak < 30) {
+            streakMessage.textContent = `Amazing! ${currentStreak} day streak! 🔥`;
+        } else {
+            streakMessage.textContent = `Incredible! ${currentStreak} day streak! You're a legend! 🏆`;
+        }
+    }
+}
+
+// ==================== EXAM COUNTDOWN FUNCTIONS ====================
+
+function checkExamCountdowns() {
+    const container = document.getElementById('examCountdowns');
+    if (!container) return;
+
+    const subjectsWithExams = subjects.filter(s => s.exam_date);
+
+    if (subjectsWithExams.length === 0) {
+        container.innerHTML = '<p class="no-subjects">No upcoming exams set. Add exam dates to your subjects!</p>';
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const examItems = subjectsWithExams.map(subject => {
+        const examDate = new Date(subject.exam_date);
+        examDate.setHours(0, 0, 0, 0);
+
+        const daysUntil = Math.round((examDate - today) / (1000 * 60 * 60 * 24));
+
+        let urgencyClass = '';
+        let countdownClass = 'countdown-days';
+
+        if (daysUntil < 0) {
+            urgencyClass = 'urgent';
+            countdownClass = 'countdown-urgent';
+        } else if (daysUntil <= 7) {
+            urgencyClass = 'urgent';
+            countdownClass = 'countdown-urgent';
+        } else if (daysUntil <= 30) {
+            urgencyClass = 'warning';
+            countdownClass = 'countdown-warning';
+        }
+
+        return `
+        <div class="exam-countdown-item ${urgencyClass}">
+            <div class="exam-info">
+                <h4>${escapeHTML(subject.name)}</h4>
+                <div class="exam-date">${examDate.toLocaleDateString()}</div>
+            </div>
+            <div class="exam-countdown ${countdownClass}">
+                ${daysUntil < 0 ? `${Math.abs(daysUntil)} days ago` : `${daysUntil} days left`}
+            </div>
+        </div>
+    `}).join('');
+
+    container.innerHTML = examItems;
+}
+
+// ==================== STUDY PLAN FUNCTIONS ====================
 
 async function generatePlan() {
     if (subjects.length === 0) {
@@ -477,11 +851,13 @@ async function generatePlan() {
         user_email: currentUser.email,
         plan_name: 'My Study Plan - ' + new Date().toLocaleDateString(),
         subjects: subjects.map(s => ({
+            id: s.id,
             name: s.name,
             exam_date: s.exam_date,
             priority: s.priority,
             is_struggling: s.is_struggling,
-            target_hours: s.target_hours || 10
+            target_hours: s.target_hours || 10,
+            completed_hours: s.completed_hours || 0
         }))
     };
 
@@ -514,6 +890,116 @@ async function generatePlan() {
     }
 }
 
+function generateLocalPlan() {
+    if (subjects.length === 0) return null;
+
+    const preferences = JSON.parse(localStorage.getItem('studyPlanner_preferences')) || {
+        distraction_level: 3,
+        daily_chores: false,
+        support_level: 3,
+        preferred_session_length: 45,
+        break_frequency: 10,
+        cross_night_preference: false
+    };
+
+    const schedule = {
+        recommendations: [],
+        study_tips: [],
+        daily_schedule: []
+    };
+
+    // Generate recommendations based on preferences and progress
+    if (preferences.distraction_level <= 2) {
+        schedule.recommendations.push("Try the Pomodoro technique: 25 min study, 5 min break");
+        schedule.recommendations.push("Use noise-cancelling headphones or find a quiet spot");
+    }
+
+    if (preferences.daily_chores) {
+        schedule.recommendations.push("Break study into chunks around your chores");
+        schedule.recommendations.push("Use chore time as active breaks");
+    }
+
+    if (preferences.support_level <= 2) {
+        schedule.recommendations.push("Join study groups or find online study buddies");
+        schedule.study_tips.push("Use educational videos when you need extra help");
+    }
+
+    if (preferences.cross_night_preference) {
+        schedule.recommendations.push("Schedule important study sessions in the evening");
+    }
+
+    // Add progress-based recommendations
+    const strugglingSubjects = subjects.filter(s => s.is_struggling);
+    if (strugglingSubjects.length > 0) {
+        schedule.recommendations.push(`Focus extra time on: ${strugglingSubjects.map(s => s.name).join(', ')}`);
+    }
+
+    const lowProgressSubjects = subjects.filter(s => {
+        const progress = s.target_hours > 0 ? (s.completed_hours / s.target_hours) * 100 : 0;
+        return progress < 30;
+    });
+
+    if (lowProgressSubjects.length > 0) {
+        schedule.recommendations.push(`Catch up on: ${lowProgressSubjects.map(s => s.name).join(', ')}`);
+    }
+
+    // Generate daily schedule for 7 days
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+
+        let availableHours = preferences.daily_chores ? 2 : 4;
+        if (date.getDay() === 0 || date.getDay() === 6) {
+            availableHours = preferences.daily_chores ? 3 : 6;
+        }
+
+        const daySubjects = [];
+        let remainingTime = availableHours * 60;
+
+        // Prioritize struggling and low progress subjects
+        const prioritySubjects = [...strugglingSubjects, ...lowProgressSubjects];
+        const uniquePriority = [...new Map(prioritySubjects.map(s => [s.id, s])).values()];
+
+        for (const subject of uniquePriority) {
+            if (remainingTime <= 0) break;
+            const subjectTime = Math.min(45, remainingTime);
+            daySubjects.push({
+                subject: subject.name,
+                duration: subjectTime,
+                time_of_day: preferences.cross_night_preference ? "Evening" : "Morning"
+            });
+            remainingTime -= subjectTime;
+        }
+
+        // Add other subjects
+        const otherSubjects = subjects.filter(s =>
+            !uniquePriority.find(ps => ps.id === s.id)
+        );
+
+        for (const subject of otherSubjects) {
+            if (remainingTime <= 0) break;
+            const subjectTime = Math.min(30, remainingTime);
+            daySubjects.push({
+                subject: subject.name,
+                duration: subjectTime,
+                time_of_day: "Afternoon"
+            });
+            remainingTime -= subjectTime;
+        }
+
+        schedule.daily_schedule.push({
+            date: dateStr,
+            day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+            subjects: daySubjects,
+            total_minutes: availableHours * 60 - remainingTime
+        });
+    }
+
+    return schedule;
+}
+
 function displayStudyPlan(schedule) {
     const planDiv = document.getElementById('studyPlan');
 
@@ -541,7 +1027,7 @@ function displayStudyPlan(schedule) {
         html += '</div>';
     }
 
-    // Display daily schedule
+    // Display daily schedule with checkboxes
     html += '<div class="daily-schedule">';
     schedule.daily_schedule.forEach(day => {
         if (day.subjects && day.subjects.length > 0) {
@@ -552,9 +1038,15 @@ function displayStudyPlan(schedule) {
             `;
 
             day.subjects.forEach(subject => {
+                const taskId = `plan-${day.date}-${subject.subject.replace(/\s+/g, '-')}`;
                 html += `
-                    <div class="plan-subject">
-                        <span><strong>${escapeHTML(subject.subject)}</strong></span>
+                    <div class="plan-subject" onclick="togglePlanTask('${taskId}')">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="task-checkbox" id="${taskId}-checkbox">
+                                <i class="fas fa-check" style="opacity: 0;"></i>
+                            </div>
+                            <span><strong>${escapeHTML(subject.subject)}</strong></span>
+                        </div>
                         <span>${subject.duration} minutes</span>
                         <span class="time-badge">${subject.time_of_day || 'Anytime'}</span>
                     </div>
@@ -579,70 +1071,100 @@ function displayStudyPlan(schedule) {
     planDiv.innerHTML = html;
 }
 
+function togglePlanTask(taskId) {
+    const checkbox = document.getElementById(`${taskId}-checkbox`);
+    if (checkbox) {
+        checkbox.classList.toggle('checked');
+        const icon = checkbox.querySelector('i');
+        if (icon) {
+            icon.style.opacity = checkbox.classList.contains('checked') ? '1' : '0';
+        }
+
+        // Add to tasks if checked
+        if (checkbox.classList.contains('checked')) {
+            const taskTitle = taskId.replace('plan-', '').replace(/-/g, ' ');
+            addTaskFromPlan(taskTitle);
+        }
+    }
+}
+
+function addTaskFromPlan(title) {
+    const task = {
+        id: Date.now(),
+        title: title,
+        subject_id: null,
+        priority: 'medium',
+        due_date: null,
+        completed: false,
+        created_at: new Date().toISOString(),
+        completed_at: null
+    };
+
+    tasks.push(task);
+    saveTasksToLocal();
+    saveTasksToServer();
+    renderTasks();
+    showNotification('Task added to your list!', 'success');
+}
+
+// ==================== STUDY SESSION FUNCTIONS ====================
+
 async function loadStudySessions() {
     try {
         const response = await fetch(`${STUDY_API}/api/study/sessions?email=${encodeURIComponent(currentUser.email)}`);
 
         if (response.status === 404) {
-            displayStudySessions([]);
+            loadLocalSessions();
             return;
         }
 
         if (!response.ok) throw new Error('Failed to load sessions');
 
-        const sessions = await response.json();
-        displayStudySessions(sessions);
+        studySessions = await response.json();
+        saveSessionsToLocal();
+        displayStudySessions(studySessions);
+        updateWeeklyStats();
+        calculateStreak();
     } catch (err) {
         console.error('Error loading sessions:', err);
-        // Try to load from localStorage
-        const localSessions = localStorage.getItem('studyPlanner_sessions');
-        if (localSessions) {
-            displayStudySessions(JSON.parse(localSessions));
-        } else {
-            displayStudySessions([]);
-        }
+        loadLocalSessions();
     }
 }
 
-function displayStudySessions(sessions) {
-    const container = document.getElementById('sessionsLog');
-
-    if (!sessions || sessions.length === 0) {
-        container.innerHTML = '<p class="no-sessions">No study sessions recorded yet. Start your first session!</p>';
-        return;
+function loadLocalSessions() {
+    const localSessions = localStorage.getItem('studyPlanner_sessions');
+    if (localSessions) {
+        studySessions = JSON.parse(localSessions);
+        displayStudySessions(studySessions);
+        updateWeeklyStats();
+        calculateStreak();
+    } else {
+        displayStudySessions([]);
     }
-
-    container.innerHTML = sessions.slice(0, 10).map(session => {
-        const focusClass = session.focus_level >= 4 ? 'focus-high' :
-            session.focus_level >= 3 ? 'focus-medium' : 'focus-low';
-
-        return `
-            <div class="session-card">
-                <span class="session-date">${new Date(session.session_date).toLocaleDateString()}</span>
-                <span class="session-subject">${escapeHTML(session.subject_name || 'General Study')}</span>
-                <span class="session-duration">${Math.floor(session.duration_minutes / 60)}h ${session.duration_minutes % 60}m</span>
-                <span class="focus-indicator ${focusClass}">
-                    Focus: ${session.focus_level}/5
-                </span>
-                ${session.notes ? `<span class="session-notes">📝 ${escapeHTML(session.notes)}</span>` : ''}
-            </div>
-        `;
-    }).join('');
 }
 
-// Timer Functions
+function saveSessionsToLocal() {
+    localStorage.setItem('studyPlanner_sessions', JSON.stringify(studySessions.slice(0, 100)));
+}
+
+// ==================== TIMER FUNCTIONS ====================
+
 function startTimer() {
     if (isTimerRunning) return;
 
     isTimerRunning = true;
     timerInterval = setInterval(updateTimer, 1000);
 
-    // Start a new session
-    startNewSession();
+    // Start a new session if not already started
+    if (!currentSession) {
+        startNewSession();
+    }
 
     // Update button states
     document.querySelector('.timer-btn.start').disabled = true;
     document.querySelector('.timer-btn.pause').disabled = false;
+
+    showNotification('Timer started! Focus mode activated 🎯', 'info');
 }
 
 function pauseTimer() {
@@ -652,6 +1174,8 @@ function pauseTimer() {
     // Update button states
     document.querySelector('.timer-btn.start').disabled = false;
     document.querySelector('.timer-btn.pause').disabled = true;
+
+    showNotification('Timer paused. Take a deep breath!', 'info');
 }
 
 function resetTimer() {
@@ -676,7 +1200,7 @@ function updateTimer() {
 
         if (elapsed > 0 && elapsed % (breakFrequency * 60) === 0) {
             refreshBreakTip();
-            showNotification('Time for a short break!', 'info');
+            showNotification('Time for a short break! 🧘', 'info');
         }
     } else {
         // Timer finished
@@ -696,17 +1220,14 @@ function updateTimerDisplay() {
 }
 
 function startNewSession() {
-    const subjectId = subjects.length > 0 ? subjects[0].id : null;
-    const subjectName = subjects.length > 0 ? subjects[0].name : 'General Study';
+    const sessionLength = parseInt(document.getElementById('sessionLength').value) || 45;
 
     currentSession = {
         user_email: currentUser.email,
-        subject_id: subjectId,
-        subject_name: subjectName,
         session_date: new Date().toISOString().split('T')[0],
         start_time: new Date().toTimeString().split(' ')[0],
-        duration_minutes: parseInt(document.getElementById('sessionLength').value),
-        focus_level: 3,
+        duration_minutes: sessionLength,
+        focus_level: 3, // Default
         completed: false
     };
 }
@@ -717,50 +1238,368 @@ async function completeSession() {
     currentSession.end_time = new Date().toTimeString().split(' ')[0];
     currentSession.completed = true;
 
-    // Ask for focus level
-    const focusLevel = prompt('How focused were you? (1-5, 5 being highest):', '3');
-    if (focusLevel && focusLevel >= 1 && focusLevel <= 5) {
-        currentSession.focus_level = parseInt(focusLevel);
-    }
+    // Show focus level selector
+    showFocusSelector(async (focusLevel) => {
+        currentSession.focus_level = focusLevel;
 
-    const notes = prompt('Any notes about this session? (optional):');
-    if (notes) {
-        currentSession.notes = notes;
-    }
+        const notes = prompt('Any notes about this session? (optional):');
+        if (notes) {
+            currentSession.notes = notes;
+        }
 
-    try {
-        const response = await fetch(`${STUDY_API}/api/study/sessions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(currentSession)
-        });
+        // Ask which subject was studied
+        if (subjects.length > 0) {
+            const subjectOptions = subjects.map(s => `${s.id}: ${s.name}`).join('\n');
+            const subjectChoice = prompt(`Which subject did you study?\n${subjectOptions}\n\nEnter subject ID (or leave blank for general study):`);
 
-        if (response.ok) {
+            if (subjectChoice) {
+                const subject = subjects.find(s => s.id == subjectChoice);
+                if (subject) {
+                    currentSession.subject_id = subject.id;
+                    subject.completed_hours = (subject.completed_hours || 0) + (currentSession.duration_minutes / 60);
+                }
+            }
+        }
+
+        try {
+            const response = await fetch(`${STUDY_API}/api/study/sessions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(currentSession)
+            });
+
+            if (response.ok) {
+                studySessions.unshift(currentSession);
+                saveSessionsToLocal();
+                await loadStudySessions();
+                updateSubjectProgress();
+                updateAllProgress();
+                calculateStreak();
+                checkAchievements();
+                showNotification('Session saved successfully!', 'success');
+            } else {
+                // Save to localStorage as backup
+                studySessions.unshift(currentSession);
+                saveSessionsToLocal();
+                await loadStudySessions();
+                updateSubjectProgress();
+                updateAllProgress();
+                calculateStreak();
+                showNotification('Session saved locally', 'info');
+            }
+        } catch (err) {
+            console.error('Error saving session:', err);
+            studySessions.unshift(currentSession);
+            saveSessionsToLocal();
             await loadStudySessions();
-            showNotification('Session saved successfully!', 'success');
-        } else {
-            // Save to localStorage as backup
-            const localSessions = JSON.parse(localStorage.getItem('studyPlanner_sessions') || '[]');
-            localSessions.unshift(currentSession);
-            localStorage.setItem('studyPlanner_sessions', JSON.stringify(localSessions.slice(0, 50)));
-            await loadStudySessions();
+            updateSubjectProgress();
+            updateAllProgress();
+            calculateStreak();
             showNotification('Session saved locally', 'info');
         }
-    } catch (err) {
-        console.error('Error saving session:', err);
 
-        // Save to localStorage as backup
-        const localSessions = JSON.parse(localStorage.getItem('studyPlanner_sessions') || '[]');
-        localSessions.unshift(currentSession);
-        localStorage.setItem('studyPlanner_sessions', JSON.stringify(localSessions.slice(0, 50)));
-        await loadStudySessions();
-        showNotification('Session saved locally', 'info');
-    }
-
-    currentSession = null;
+        currentSession = null;
+    });
 }
 
-// Quote Functions
+function showFocusSelector(callback) {
+    // Create focus selector modal
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>How focused were you?</h3>
+                <button class="close-modal" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="focus-selector">
+                    <div class="focus-buttons">
+                        <button class="focus-btn" data-focus="1">1 - Very distracted</button>
+                        <button class="focus-btn" data-focus="2">2 - Somewhat distracted</button>
+                        <button class="focus-btn" data-focus="3" class="selected">3 - Moderately focused</button>
+                        <button class="focus-btn" data-focus="4">4 - Focused</button>
+                        <button class="focus-btn" data-focus="5">5 - Very focused</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Add click handlers
+    modal.querySelectorAll('.focus-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const focusLevel = parseInt(btn.dataset.focus);
+            modal.remove();
+            callback(focusLevel);
+        });
+    });
+}
+
+function displayStudySessions(sessions) {
+    const container = document.getElementById('sessionsLog');
+
+    if (!sessions || sessions.length === 0) {
+        container.innerHTML = '<p class="no-sessions">No study sessions recorded yet. Start your first session!</p>';
+        return;
+    }
+
+    container.innerHTML = sessions.slice(0, 10).map(session => {
+        const focusClass = session.focus_level >= 4 ? 'focus-high' :
+            session.focus_level >= 3 ? 'focus-medium' : 'focus-low';
+
+        const subjectName = session.subject_name ||
+            (session.subject_id ? subjects.find(s => s.id == session.subject_id)?.name : 'General Study');
+
+        return `
+            <div class="session-card">
+                <span class="session-date">${new Date(session.session_date).toLocaleDateString()}</span>
+                <span class="session-subject">${escapeHTML(subjectName || 'General Study')}</span>
+                <span class="session-duration">${Math.floor(session.duration_minutes / 60)}h ${session.duration_minutes % 60}m</span>
+                <span class="focus-indicator ${focusClass}">
+                    Focus: ${session.focus_level}/5
+                </span>
+                ${session.notes ? `<span class="session-notes">📝 ${escapeHTML(session.notes)}</span>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== ACHIEVEMENT FUNCTIONS ====================
+
+function checkAchievements() {
+    const achievements = [];
+
+    // First session
+    if (studySessions.length === 1) {
+        achievements.push("First Study Session! 🎯");
+    }
+
+    // 10 sessions
+    if (studySessions.length === 10) {
+        achievements.push("Getting Serious - 10 sessions! 📚");
+    }
+
+    // 50 sessions
+    if (studySessions.length === 50) {
+        achievements.push("Study Master - 50 sessions! 🏆");
+    }
+
+    // 7-day streak
+    if (currentStreak >= 7) {
+        achievements.push("Week Warrior - 7 day streak! 🔥");
+    }
+
+    // 30-day streak
+    if (currentStreak >= 30) {
+        achievements.push("Month Master - 30 day streak! 👑");
+    }
+
+    // First task completed
+    const completedTasks = tasks.filter(t => t.completed).length;
+    if (completedTasks === 1) {
+        achievements.push("First Task Complete! ✓");
+    }
+
+    // 10 tasks completed
+    if (completedTasks === 10) {
+        achievements.push("Task Master - 10 tasks! ✓✓✓");
+    }
+
+    // 5 hours studied
+    const totalMinutes = studySessions.reduce((sum, s) => sum + s.duration_minutes, 0);
+    const totalHours = totalMinutes / 60;
+
+    if (totalHours >= 5 && totalHours < 6) {
+        achievements.push("5 Hour Club! ⏱️");
+    }
+
+    if (totalHours >= 20 && totalHours < 21) {
+        achievements.push("20 Hour Club! ⭐");
+    }
+
+    // Display new achievements
+    achievements.forEach(achievement => {
+        showAchievement(achievement);
+    });
+}
+
+function showAchievement(title) {
+    const achievement = document.createElement('div');
+    achievement.className = 'achievement-badge';
+    achievement.innerHTML = `
+        <i class="fas fa-trophy"></i>
+        <div>
+            <strong>Achievement Unlocked!</strong><br>
+            <span>${title}</span>
+        </div>
+    `;
+
+    document.body.appendChild(achievement);
+
+    setTimeout(() => {
+        achievement.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => achievement.remove(), 300);
+    }, 3000);
+}
+
+// ==================== AUTO-SAVE FUNCTION ====================
+
+function autoSave() {
+    saveSubjectsToLocal();
+    saveTasksToLocal();
+    saveSessionsToLocal();
+    console.log('Auto-saved at', new Date().toLocaleTimeString());
+}
+
+// ==================== PREFERENCE FUNCTIONS ====================
+
+async function loadUserPreferences() {
+    try {
+        const response = await fetch(`${STUDY_API}/api/study/preferences?email=${encodeURIComponent(currentUser.email)}`);
+
+        if (response.status === 404) {
+            loadLocalPreferences();
+            return;
+        }
+
+        if (!response.ok) throw new Error('Failed to load preferences');
+
+        const prefs = await response.json();
+
+        if (prefs) {
+            document.getElementById('studyEnvironment').value = prefs.study_environment || 'quiet';
+            document.getElementById('distractionLevel').value = prefs.distraction_level || 3;
+            document.getElementById('dailyChores').checked = prefs.daily_chores === 1;
+            document.getElementById('supportLevel').value = prefs.support_level || 3;
+            document.getElementById('preferredSessionLength').value = prefs.preferred_session_length || 45;
+            document.getElementById('breakFrequency').value = prefs.break_frequency || 10;
+            document.getElementById('crossNightPreference').checked = prefs.cross_night_preference === 1;
+
+            if (prefs.chores_description) {
+                document.getElementById('choresDescription').value = prefs.chores_description;
+                document.getElementById('choresDescription').style.display = 'block';
+            }
+
+            // Update range displays
+            document.getElementById('distractionValue').textContent =
+                prefs.distraction_level + ' - ' + getDistractionText(prefs.distraction_level);
+            document.getElementById('supportValue').textContent =
+                prefs.support_level + ' - ' + getSupportText(prefs.support_level);
+
+            // Update timer if not running
+            if (!isTimerRunning) {
+                timerSeconds = (prefs.preferred_session_length || 45) * 60;
+                document.getElementById('sessionLength').value = prefs.preferred_session_length || 45;
+                updateTimerDisplay();
+            }
+
+            // Save to localStorage
+            localStorage.setItem('studyPlanner_preferences', JSON.stringify(prefs));
+        }
+    } catch (err) {
+        console.error('Error loading preferences:', err);
+        loadLocalPreferences();
+    }
+}
+
+function loadLocalPreferences() {
+    const savedPrefs = localStorage.getItem('studyPlanner_preferences');
+    if (savedPrefs) {
+        const prefs = JSON.parse(savedPrefs);
+
+        document.getElementById('studyEnvironment').value = prefs.study_environment || 'quiet';
+        document.getElementById('distractionLevel').value = prefs.distraction_level || 3;
+        document.getElementById('dailyChores').checked = prefs.daily_chores || false;
+        document.getElementById('supportLevel').value = prefs.support_level || 3;
+        document.getElementById('preferredSessionLength').value = prefs.preferred_session_length || 45;
+        document.getElementById('breakFrequency').value = prefs.break_frequency || 10;
+        document.getElementById('crossNightPreference').checked = prefs.cross_night_preference || false;
+
+        if (prefs.chores_description) {
+            document.getElementById('choresDescription').value = prefs.chores_description;
+            document.getElementById('choresDescription').style.display = 'block';
+        }
+
+        document.getElementById('distractionValue').textContent =
+            prefs.distraction_level + ' - ' + getDistractionText(prefs.distraction_level);
+        document.getElementById('supportValue').textContent =
+            prefs.support_level + ' - ' + getSupportText(prefs.support_level);
+
+        if (!isTimerRunning) {
+            timerSeconds = (prefs.preferred_session_length || 45) * 60;
+            document.getElementById('sessionLength').value = prefs.preferred_session_length || 45;
+            updateTimerDisplay();
+        }
+    }
+}
+
+async function saveUserPreferences() {
+    const prefs = {
+        user_email: currentUser.email,
+        study_environment: document.getElementById('studyEnvironment').value,
+        distraction_level: parseInt(document.getElementById('distractionLevel').value),
+        daily_chores: document.getElementById('dailyChores').checked,
+        chores_description: document.getElementById('choresDescription').value,
+        support_level: parseInt(document.getElementById('supportLevel').value),
+        preferred_session_length: parseInt(document.getElementById('preferredSessionLength').value),
+        break_frequency: parseInt(document.getElementById('breakFrequency').value),
+        cross_night_preference: document.getElementById('crossNightPreference').checked
+    };
+
+    try {
+        const response = await fetch(`${STUDY_API}/api/study/preferences`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(prefs)
+        });
+
+        if (!response.ok) throw new Error('Failed to save preferences');
+
+        localStorage.setItem('studyPlanner_preferences', JSON.stringify(prefs));
+        showNotification('Preferences saved successfully!', 'success');
+    } catch (err) {
+        console.error('Error saving preferences:', err);
+        localStorage.setItem('studyPlanner_preferences', JSON.stringify(prefs));
+        showNotification('Preferences saved locally', 'info');
+    }
+}
+
+function getDistractionText(level) {
+    if (level <= 2) return 'Easily distracted';
+    if (level <= 3) return 'Moderate';
+    return 'Very focused';
+}
+
+function getSupportText(level) {
+    if (level <= 2) return 'Little support';
+    if (level <= 3) return 'Some support';
+    return 'High support';
+}
+
+function getPriorityClass(priority) {
+    switch (priority) {
+        case 1: return 'low';
+        case 2: return 'medium';
+        case 3: return 'high';
+        default: return 'medium';
+    }
+}
+
+function getPriorityText(priority) {
+    switch (priority) {
+        case 1: return 'Low';
+        case 2: return 'Medium';
+        case 3: return 'High';
+        default: return 'Medium';
+    }
+}
+
+// ==================== QUOTE FUNCTIONS ====================
+
 async function refreshQuote() {
     try {
         const response = await fetch(`${STUDY_API}/api/study/quote`);
@@ -784,7 +1623,8 @@ async function refreshQuote() {
     }
 }
 
-// Break Tip Functions
+// ==================== BREAK TIP FUNCTIONS ====================
+
 async function refreshBreakTip() {
     try {
         const response = await fetch(`${STUDY_API}/api/study/break-tip`);
@@ -800,7 +1640,9 @@ async function refreshBreakTip() {
             { tip: "Take a 5-minute walk around the room", duration_minutes: 5 },
             { tip: "Do some light stretching", duration_minutes: 5 },
             { tip: "Close your eyes and take deep breaths", duration_minutes: 3 },
-            { tip: "Grab a healthy snack and water", duration_minutes: 10 }
+            { tip: "Grab a healthy snack and water", duration_minutes: 10 },
+            { tip: "Step outside for fresh air", duration_minutes: 5 },
+            { tip: "Listen to one song you love", duration_minutes: 4 }
         ];
         const randomTip = fallbackTips[Math.floor(Math.random() * fallbackTips.length)];
         const tipElement = document.getElementById('breakTip');
@@ -808,7 +1650,8 @@ async function refreshBreakTip() {
     }
 }
 
-// Utility Functions
+// ==================== UTILITY FUNCTIONS ====================
+
 function escapeHTML(str) {
     if (!str) return '';
     const div = document.createElement('div');
@@ -817,13 +1660,11 @@ function escapeHTML(str) {
 }
 
 function showNotification(message, type = 'info') {
-    // Remove any existing notification
     const existingNotification = document.querySelector('.notification');
     if (existingNotification) {
         existingNotification.remove();
     }
 
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -833,7 +1674,6 @@ function showNotification(message, type = 'info') {
 
     document.body.appendChild(notification);
 
-    // Remove after 3 seconds
     setTimeout(() => {
         notification.classList.add('notification-removing');
         setTimeout(() => {
@@ -845,9 +1685,8 @@ function showNotification(message, type = 'info') {
 }
 
 function playNotificationSound() {
-    // Simple beep sound (can be replaced with actual sound)
     const audio = new Audio('data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCB//6mpqampqampqampqampqampqampqampq6AgICAgICAgICAA=');
-    audio.play().catch(() => { }); // Ignore errors if browser blocks autoplay
+    audio.play().catch(() => { });
 }
 
 // Make functions global for onclick handlers
@@ -858,6 +1697,12 @@ window.cancelNewSubject = cancelNewSubject;
 window.editSubject = editSubject;
 window.updateSubject = updateSubject;
 window.deleteSubject = deleteSubject;
+window.addTask = addTask;
+window.toggleTask = toggleTask;
+window.deleteTask = deleteTask;
+window.editTask = editTask;
+window.saveTaskEdit = saveTaskEdit;
+window.togglePlanTask = togglePlanTask;
 window.generatePlan = generatePlan;
 window.startTimer = startTimer;
 window.pauseTimer = pauseTimer;

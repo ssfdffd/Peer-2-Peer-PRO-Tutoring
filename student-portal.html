@@ -9,13 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
     <style>
         /* ============================================
            PEER-2-PEER PRO | ENHANCED VIBRANT DESIGN
            Navy (#000033) · Green (#32cd32) · White (#ffffff)
         ============================================ */
-
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +21,6 @@
         }
 
         :root {
-            /* Logo Colors - Primary */
             --navy: #000033;
             --navy-light: #1a1a4d;
             --navy-soft: #e6e6f0;
@@ -31,32 +28,23 @@
             --green-light: #7fff7f;
             --green-dark: #28a428;
             --green-soft: #e8fce8;
-
-            /* Light Mode Backgrounds */
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --bg-nav: #ffffff;
             --bg-sidebar: #f1f5f9;
-
-            /* Text Colors */
             --text-primary: #0f172a;
             --text-secondary: #334155;
             --text-muted: #64748b;
             --text-light: #ffffff;
-
-            /* Borders & Shadows */
             --border: #e2e8f0;
             --border-focus: #32cd32;
             --shadow-sm: 0 1px 3px rgba(0, 0, 51, 0.05);
             --shadow-md: 0 4px 12px rgba(0, 0, 51, 0.08);
             --shadow-lg: 0 10px 25px rgba(0, 0, 51, 0.1);
-
-            /* Status Colors */
             --success: #32cd32;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
-
             --radius: 16px;
             --radius-sm: 12px;
             --radius-lg: 24px;
@@ -71,9 +59,7 @@
             min-height: 100vh;
         }
 
-        /* ============================================
-           NAVIGATION - ENHANCED
-        ============================================ */
+        /* ===== NAVIGATION ===== */
         .glass-nav {
             background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid var(--border);
@@ -114,7 +100,6 @@
 
         .logo-glow .premium {
             color: var(--green);
-            position: relative;
         }
 
         .nav-right {
@@ -201,7 +186,6 @@
             cursor: not-allowed;
         }
 
-        /* Mobile Menu Toggle */
         .mobile-menu-toggle {
             display: none;
             font-size: 1.5rem;
@@ -216,7 +200,6 @@
             background: var(--bg-sidebar);
         }
 
-        /* Mobile Menu */
         .mobile-menu {
             display: none;
             position: fixed;
@@ -317,9 +300,7 @@
             background: var(--bg-sidebar);
         }
 
-        /* ============================================
-           HERO SECTION - VIBRANT & DYNAMIC
-        ============================================ */
+        /* ===== HERO SECTION ===== */
         .hero-section {
             background: linear-gradient(135deg, #000033 0%, #0d0d3d 25%, #1a1a4d 50%, #0d0d3d 75%, #000033 100%);
             position: relative;
@@ -327,7 +308,6 @@
             padding: 70px 32px 80px;
         }
 
-        /* Animated gradient overlay */
         .hero-section::before {
             content: '';
             position: absolute;
@@ -354,7 +334,6 @@
             }
         }
 
-        /* Floating particles effect */
         .hero-section::after {
             content: '';
             position: absolute;
@@ -424,17 +403,11 @@
 
             0%,
             100% {
-                text-shadow:
-                    0 0 20px rgba(50, 205, 50, 0.6),
-                    0 0 40px rgba(50, 205, 50, 0.4),
-                    0 4px 20px rgba(0, 0, 0, 0.4);
+                text-shadow: 0 0 20px rgba(50, 205, 50, 0.6), 0 0 40px rgba(50, 205, 50, 0.4), 0 4px 20px rgba(0, 0, 0, 0.4);
             }
 
             50% {
-                text-shadow:
-                    0 0 30px rgba(50, 205, 50, 0.9),
-                    0 0 60px rgba(50, 205, 50, 0.6),
-                    0 4px 20px rgba(0, 0, 0, 0.4);
+                text-shadow: 0 0 30px rgba(50, 205, 50, 0.9), 0 0 60px rgba(50, 205, 50, 0.6), 0 4px 20px rgba(0, 0, 0, 0.4);
             }
         }
 
@@ -445,10 +418,7 @@
             left: 0;
             width: 100%;
             height: 14px;
-            background: linear-gradient(90deg,
-                    rgba(50, 205, 50, 0.5) 0%,
-                    rgba(127, 255, 127, 0.7) 50%,
-                    rgba(50, 205, 50, 0.5) 100%);
+            background: linear-gradient(90deg, rgba(50, 205, 50, 0.5) 0%, rgba(127, 255, 127, 0.7) 50%, rgba(50, 205, 50, 0.5) 100%);
             z-index: -1;
             border-radius: 7px;
             animation: underlinePulse 2.5s ease-in-out infinite;
@@ -478,6 +448,7 @@
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
+        /* stats grid — values removed, only labels remain */
         .hero-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -519,20 +490,25 @@
             background: rgba(50, 205, 50, 0.2);
             border-color: rgba(50, 205, 50, 0.5);
             transform: translateY(-6px) scale(1.02);
-            box-shadow:
-                0 12px 35px rgba(50, 205, 50, 0.25),
-                0 0 0 1px rgba(50, 205, 50, 0.1);
+            box-shadow: 0 12px 35px rgba(50, 205, 50, 0.25), 0 0 0 1px rgba(50, 205, 50, 0.1);
         }
 
         .hero-stat-value {
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--green-light);
-            text-shadow:
-                0 2px 20px rgba(50, 205, 50, 0.5),
-                0 0 40px rgba(50, 205, 50, 0.3);
+            text-shadow: 0 2px 20px rgba(50, 205, 50, 0.5), 0 0 40px rgba(50, 205, 50, 0.3);
             line-height: 1;
             margin-bottom: 10px;
+            /* ensure numeric values are blank — using non-breaking space to preserve height */
+            visibility: hidden;
+            position: relative;
+        }
+
+        .hero-stat-value::before {
+            content: "\00A0\00A0";
+            /* two non-breaking spaces to keep height */
+            visibility: visible;
         }
 
         .hero-stat-label {
@@ -559,9 +535,7 @@
             position: absolute;
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg,
-                    rgba(255, 255, 255, 0.18),
-                    rgba(255, 255, 255, 0.08));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
             backdrop-filter: blur(12px);
             border-radius: 26px;
             display: flex;
@@ -569,9 +543,7 @@
             justify-content: center;
             font-size: 2.5rem;
             border: 2px solid rgba(255, 255, 255, 0.25);
-            box-shadow:
-                0 10px 40px rgba(0, 0, 0, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
             animation: float 7s ease-in-out infinite;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
@@ -579,13 +551,9 @@
 
         .floating-element:hover {
             transform: scale(1.15) translateY(-15px) rotate(5deg);
-            background: linear-gradient(135deg,
-                    rgba(50, 205, 50, 0.35),
-                    rgba(50, 205, 50, 0.15));
+            background: linear-gradient(135deg, rgba(50, 205, 50, 0.35), rgba(50, 205, 50, 0.15));
             border-color: rgba(50, 205, 50, 0.6);
-            box-shadow:
-                0 15px 50px rgba(50, 205, 50, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 50px rgba(50, 205, 50, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         .element-1 {
@@ -652,9 +620,7 @@
             }
         }
 
-        /* ============================================
-           MAIN CONTENT - ENHANCED
-        ============================================ */
+        /* ===== MAIN PANELS ===== */
         .main-panel {
             max-width: 1400px;
             margin: 0 auto;
@@ -754,9 +720,7 @@
         .feature-card:hover {
             transform: translateY(-6px);
             border-color: var(--green);
-            box-shadow:
-                0 12px 30px rgba(50, 205, 50, 0.15),
-                0 0 0 1px rgba(50, 205, 50, 0.1);
+            box-shadow: 0 12px 30px rgba(50, 205, 50, 0.15), 0 0 0 1px rgba(50, 205, 50, 0.1);
         }
 
         .feature-icon-wrapper {
@@ -830,6 +794,17 @@
             font-weight: 600;
         }
 
+        /* hide numeric progress but keep structure */
+        .progress-info span:last-child {
+            visibility: hidden;
+            position: relative;
+        }
+
+        .progress-info span:last-child::before {
+            content: "\00A0\00A0";
+            visibility: visible;
+        }
+
         .progress-bar {
             height: 10px;
             background: var(--bg-sidebar);
@@ -844,6 +819,8 @@
             border-radius: 5px;
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
+            width: 0% !important;
+            /* remove any default percentage */
         }
 
         .feature-cta {
@@ -869,9 +846,7 @@
             transform: translateX(6px);
         }
 
-        /* ============================================
-           ACTIVITY SECTION - ENHANCED
-        ============================================ */
+        /* ===== ACTIVITY SECTION (empty items) ===== */
         .activity-section {
             max-width: 1400px;
             margin: 0 auto;
@@ -948,16 +923,29 @@
             color: var(--navy);
             margin-bottom: 6px;
             font-size: 0.95rem;
+            /* remove fake titles: make them empty */
+            visibility: hidden;
+            position: relative;
+        }
+
+        .activity-title::before {
+            content: "\00A0";
+            /* one non-breaking space keeps height */
+            visibility: visible;
         }
 
         .activity-time {
             font-size: 0.85rem;
             color: var(--text-muted);
+            visibility: hidden;
+            position: relative;
         }
 
-        /* ============================================
-           BUTTONS & UTILITIES
-        ============================================ */
+        .activity-time::before {
+            content: "\00A0";
+            visibility: visible;
+        }
+
         .btn-primary {
             background: var(--navy);
             color: white;
@@ -1040,9 +1028,6 @@
             }
         }
 
-        /* ============================================
-           LOADING STATES
-        ============================================ */
         .loading-container {
             text-align: center;
             padding: 60px 20px;
@@ -1069,171 +1054,14 @@
             font-size: 1rem;
         }
 
-        /* ============================================
-           RESPONSIVE DESIGN - ENHANCED FOR ALL SCREENS
-        ============================================ */
-
-        /* Extra Large Desktop - 1600px+ */
-        @media (min-width: 1600px) {
-            .hero-container {
-                grid-template-columns: 1fr 500px;
-                gap: 100px;
-            }
-
-            .floating-elements {
-                width: 500px;
-                height: 500px;
-            }
-
-            .floating-element {
-                width: 110px;
-                height: 110px;
-                font-size: 2.8rem;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* Large Desktop - 1200px to 1599px */
-        @media (min-width: 1200px) and (max-width: 1599px) {
-            .hero-container {
-                grid-template-columns: 1fr 400px;
-                gap: 70px;
-            }
-
-            .hero-title {
-                font-size: 3.2rem;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* Medium Desktop - 1024px to 1199px */
-        @media (min-width: 1024px) and (max-width: 1199px) {
-            .nav-container {
-                padding: 14px 24px;
-            }
-
-            .hero-section {
-                padding: 60px 24px 70px;
-            }
-
-            .hero-container {
-                grid-template-columns: 1fr 380px;
-                gap: 50px;
-            }
-
-            .hero-title {
-                font-size: 3rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.15rem;
-            }
-
-            .floating-elements {
-                width: 380px;
-                height: 380px;
-            }
-
-            .floating-element {
-                width: 85px;
-                height: 85px;
-                font-size: 2.2rem;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .main-panel {
-                padding: 40px 24px;
-            }
-        }
-
-        /* Tablet Landscape - 768px to 1023px */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .nav-container {
-                padding: 12px 20px;
-            }
-
-            .hero-section {
-                padding: 50px 20px;
-            }
-
+        /* responsive (minimal copy) */
+        @media (max-width: 1023px) {
             .hero-container {
                 grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-
-            .hero-content {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .hero-title {
-                font-size: 2.8rem;
-            }
-
-            .hero-subtitle {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero-stats {
-                grid-template-columns: repeat(3, 1fr);
-                max-width: 100%;
-                justify-content: center;
-            }
-
-            .hero-visual {
-                justify-content: center;
-            }
-
-            .floating-elements {
-                width: 350px;
-                height: 350px;
-            }
-
-            .floating-element {
-                width: 80px;
-                height: 80px;
-                font-size: 2rem;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .main-panel {
-                padding: 40px 20px;
-            }
-
-            .features-section {
-                padding: 32px 24px;
-            }
-
-            .activity-section {
-                padding: 0 20px 40px;
             }
         }
 
-        /* Mobile - Max 767px */
         @media (max-width: 767px) {
-            .nav-container {
-                padding: 12px 16px;
-            }
-
-            .logo-glow {
-                font-size: 1.3rem;
-            }
-
             .nav-right {
                 display: none;
             }
@@ -1241,277 +1069,78 @@
             .mobile-menu-toggle {
                 display: block;
             }
-
-            .hero-section {
-                padding: 40px 20px 50px;
-            }
-
-            .hero-container {
-                grid-template-columns: 1fr;
-                gap: 30px;
-                text-align: center;
-            }
-
-            .hero-content {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .hero-title {
-                font-size: 2.2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.05rem;
-                margin-bottom: 28px;
-            }
-
-            .hero-stats {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-                max-width: 100%;
-            }
-
-            .hero-stat-item {
-                padding: 16px 12px;
-            }
-
-            .hero-stat-value {
-                font-size: 2rem;
-            }
-
-            .hero-stat-label {
-                font-size: 0.75rem;
-            }
-
-            .hero-visual {
-                justify-content: center;
-            }
-
-            .floating-elements {
-                width: 300px;
-                height: 300px;
-            }
-
-            .floating-element {
-                width: 70px;
-                height: 70px;
-                font-size: 1.8rem;
-            }
-
-            .main-panel {
-                padding: 30px 16px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .features-section {
-                padding: 24px 20px;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            .section-title h2 {
-                font-size: 1.5rem;
-            }
-
-            .feature-card {
-                padding: 24px;
-            }
-
-            .activity-section {
-                padding: 0 16px 30px;
-            }
-
-            .activity-container {
-                padding: 28px 20px;
-            }
-
-            .activity-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Small Mobile - Max 480px */
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 1.85rem;
-            }
-
-            .hero-subtitle {
-                font-size: 0.95rem;
-            }
-
-            .hero-stats {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .hero-stat-item {
-                padding: 18px;
-            }
-
-            .floating-elements {
-                width: 260px;
-                height: 260px;
-            }
-
-            .floating-element {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-
-            .feature-card {
-                padding: 20px;
-            }
-
-            .feature-content h3 {
-                font-size: 1.25rem;
-            }
-
-            .activity-item {
-                padding: 16px;
-            }
-
-            .activity-icon {
-                width: 46px;
-                height: 46px;
-                font-size: 1.3rem;
-            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Main Navigation -->
     <nav class="glass-nav">
         <div class="nav-container">
             <div class="logo-container">
                 <img src="favicon.ico" alt="Logo">
                 <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></div>
             </div>
-
-            <!-- Mobile Menu Toggle Button -->
-            <div class="mobile-menu-toggle" id="mobileMenuToggle">
-                <i class="fas fa-bars"></i>
-            </div>
-
+            <div class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></div>
             <div class="nav-right">
                 <div class="user-profile">
-                    <div class="avatar-small" id="userAvatar">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <div class="user-info">
-                        <span id="studentNameDisplay">Loading...</span>
-                        <span class="user-role">Learner</span>
-                    </div>
+                    <div class="avatar-small" id="userAvatar"><i class="fas fa-user-graduate"></i></div>
+                    <div class="user-info"><span id="studentNameDisplay">Loading...</span><span
+                            class="user-role">Learner</span></div>
                 </div>
-                <button class="logout-minimal" onclick="logout()" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <button class="logout-minimal" onclick="logout()" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
+                    Logout</button>
             </div>
         </div>
-
-        <!-- Mobile Menu -->
         <div class="mobile-menu" id="mobileMenu">
             <div class="mobile-user">
-                <div class="mobile-avatar" id="mobileAvatar">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <div class="mobile-user-info">
-                    <span class="mobile-user-name" id="mobileUserName">Loading...</span>
-                    <span class="mobile-user-role">Learner</span>
-                </div>
+                <div class="mobile-avatar" id="mobileAvatar"><i class="fas fa-user-graduate"></i></div>
+                <div class="mobile-user-info"><span class="mobile-user-name" id="mobileUserName">Loading...</span><span
+                        class="mobile-user-role">Learner</span></div>
             </div>
-
-            <a href="student-portal.html" class="nav-link active">
-                <i class="fas fa-home"></i> Dashboard
-            </a>
-            <a href="student-view.html" class="nav-link">
-                <i class="fas fa-video"></i> Live Classes
-            </a>
-            <a href="resources.html" class="nav-link">
-                <i class="fas fa-book-open"></i> Resources Library
-            </a>
-            <a href="forum.html" class="nav-link">
-                <i class="fas fa-users"></i> Student Forum
-            </a>
-            <a href="booking.html" class="nav-link">
-                <i class="fas fa-calendar-check"></i> Book Tutoring
-            </a>
-            <a href="progress-tracker.html" class="nav-link">
-                <i class="fas fa-chart-line"></i> My Progress
-            </a>
-            <a href="#" onclick="logout(); return false;" class="nav-link" style="color: #ef4444; margin-top: 20px;">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
+            <a href="student-portal.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="student-view.html" class="nav-link"><i class="fas fa-video"></i> Live Classes</a>
+            <a href="resources.html" class="nav-link"><i class="fas fa-book-open"></i> Resources Library</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-users"></i> Student Forum</a>
+            <a href="booking.html" class="nav-link"><i class="fas fa-calendar-check"></i> Book Tutoring</a>
+            <a href="progress-tracker.html" class="nav-link"><i class="fas fa-chart-line"></i> My Progress</a>
+            <a href="#" onclick="logout(); return false;" class="nav-link" style="color:#ef4444; margin-top:20px;"><i
+                    class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </nav>
 
-    <!-- Hero Section - Vibrant & Dynamic -->
     <section class="hero-section">
         <div class="hero-container">
             <div class="hero-content">
-                <h1 class="hero-title">
-                    Welcome back, <span class="hero-highlight" id="studentNameHero">Student</span>!
+                <h1 class="hero-title">Welcome back, <span class="hero-highlight" id="studentNameHero">Student</span>!
                 </h1>
-                <p class="hero-subtitle">
-                    Your personalized learning hub. Continue your journey with live sessions,
-                    study resources, and peer collaboration.
-                </p>
+                <p class="hero-subtitle">Your personalized learning hub. Continue your journey with live sessions, study
+                    resources, and peer collaboration.</p>
                 <div class="hero-stats">
-                    <div class="hero-stat-item">
-                        <span class="hero-stat-value">5</span>
-                        <span class="hero-stat-label">Live Classes</span>
-                    </div>
-                    <div class="hero-stat-item">
-                        <span class="hero-stat-value">12</span>
-                        <span class="hero-stat-label">Resources</span>
-                    </div>
-                    <div class="hero-stat-item">
-                        <span class="hero-stat-value">3</span>
-                        <span class="hero-stat-label">Forum Posts</span>
-                    </div>
+                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span class="hero-stat-label">Live
+                            Classes</span></div>
+                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span
+                            class="hero-stat-label">Resources</span></div>
+                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span class="hero-stat-label">Forum
+                            Posts</span></div>
                 </div>
             </div>
             <div class="hero-visual">
                 <div class="floating-elements">
-                    <div class="floating-element element-1">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="floating-element element-2">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="floating-element element-3">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <div class="floating-element element-4">
-                        <i class="fas fa-users"></i>
-                    </div>
+                    <div class="floating-element element-1"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="floating-element element-2"><i class="fas fa-book-open"></i></div>
+                    <div class="floating-element element-3"><i class="fas fa-video"></i></div>
+                    <div class="floating-element element-4"><i class="fas fa-users"></i></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Features Grid -->
     <main class="main-panel">
         <div class="features-container">
-            <!-- Row 1: Learning Core -->
             <section class="features-section">
                 <div class="section-header">
                     <div class="section-title">
-                        <div class="section-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
+                        <div class="section-icon"><i class="fas fa-graduation-cap"></i></div>
                         <h2>Learning Core</h2>
                     </div>
                     <p class="section-description">Your next live session and study materials</p>
@@ -1520,88 +1149,64 @@
                     <!-- Live Interactive Classes Card -->
                     <div class="feature-card" onclick="window.location.href='student-view.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon pulse-animation">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div class="feature-badge live">
-                                <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Live Now
-                            </div>
+                            <div class="feature-icon pulse-animation"><i class="fas fa-video"></i></div>
+                            <div class="feature-badge live"><i class="fas fa-circle"
+                                    style="font-size:0.5rem; margin-right:4px;"></i> Live Now</div>
                         </div>
                         <div class="feature-content">
                             <h3>Live Interactive Classes</h3>
                             <p>Join real-time sessions with expert tutors and peers. Participate in discussions and get
                                 instant feedback.</p>
-                            <div style="margin-bottom: 12px;">
-                                <span class="badge badge-live" style="margin-right: 8px;">Mathematics Gr12</span>
-                                <span class="badge badge-upcoming">10:30 AM</span>
-                            </div>
+                            <div style="margin-bottom:12px;"><span class="badge badge-live"
+                                    style="margin-right:8px;">Mathematics Gr12</span><span
+                                    class="badge badge-upcoming">10:30 AM</span></div>
                         </div>
-                        <div class="feature-cta">
-                            <span>Join Classroom</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>Join Classroom</span><i class="fas fa-arrow-right"></i></div>
                     </div>
-
                     <!-- Study Materials Library Card -->
                     <div class="feature-card" onclick="window.location.href='resources.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="feature-badge new">
-                                <i class="fas fa-star" style="font-size: 0.7rem; margin-right: 4px;"></i> 15 New
-                            </div>
+                            <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                            <div class="feature-badge new"><i class="fas fa-star"
+                                    style="font-size:0.7rem; margin-right:4px;"></i> New</div>
                         </div>
                         <div class="feature-content">
                             <h3>Study Materials Library</h3>
                             <p>Access comprehensive notes, past papers, worksheets, and video tutorials. Curated by
                                 subject experts.</p>
-                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <div style="display:flex; gap:8px; margin-top:12px;">
                                 <span
-                                    style="background: #e6e6f0; color: #000033; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Past
+                                    style="background:#e6e6f0; color:#000033; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600;">Past
                                     Papers</span>
                                 <span
-                                    style="background: #e8fce8; color: #32cd32; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Videos</span>
+                                    style="background:#e8fce8; color:#32cd32; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600;">Videos</span>
                             </div>
                         </div>
-                        <div class="feature-cta">
-                            <span>Browse Library</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>Browse Library</span><i class="fas fa-arrow-right"></i></div>
                     </div>
-
                     <!-- Student Forum Card -->
                     <div class="feature-card" onclick="window.location.href='forum.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
+                            <div class="feature-icon"><i class="fas fa-users"></i></div>
                         </div>
                         <div class="feature-content">
                             <h3>Student Forum</h3>
                             <p>Connect with peers, ask questions, and share knowledge in grade-specific discussion
                                 forums.</p>
-                            <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px;">
-                                <i class="fas fa-comments" style="color: #32cd32;"></i>
-                                <span style="margin-left: 8px; font-size: 0.85rem; color: #64748b;">42 active
-                                    discussions</span>
+                            <div style="margin-top:12px; padding:10px; background:#f8fafc; border-radius:8px;"><i
+                                    class="fas fa-comments" style="color:#32cd32;"></i> <span
+                                    style="margin-left:8px; font-size:0.85rem; color:#64748b;">active discussions</span>
                             </div>
                         </div>
-                        <div class="feature-cta">
-                            <span>Join Forum</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>Join Forum</span><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
             </section>
 
-            <!-- Row 2: Tools & Progress -->
             <section class="features-section">
                 <div class="section-header">
                     <div class="section-title">
-                        <div class="section-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
+                        <div class="section-icon"><i class="fas fa-tools"></i></div>
                         <h2>Tools & Progress</h2>
                     </div>
                     <p class="section-description">Track your learning journey</p>
@@ -1610,116 +1215,84 @@
                     <!-- Book Tutoring Card -->
                     <div class="feature-card" onclick="window.location.href='booking.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
+                            <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
                         </div>
                         <div class="feature-content">
                             <h3>Book Tutoring Sessions</h3>
                             <p>Schedule one-on-one sessions with qualified tutors. Get personalized help when you need
                                 it most.</p>
-                            <div style="margin-top: 12px;">
-                                <span class="badge badge-upcoming">Next: Tomorrow 3 PM</span>
-                            </div>
+                            <div style="margin-top:12px;"><span class="badge badge-upcoming">Next: —</span></div>
                         </div>
-                        <div class="feature-cta">
-                            <span>Book Session</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>Book Session</span><i class="fas fa-arrow-right"></i></div>
                     </div>
-
                     <!-- Progress Tracker Card -->
                     <div class="feature-card" onclick="window.location.href='progress-tracker.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
+                            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                         </div>
                         <div class="feature-content">
                             <h3>Progress Analytics</h3>
                             <p>Monitor your performance, track completed sessions, and identify areas for improvement.
                             </p>
                             <div class="feature-progress">
-                                <div class="progress-info">
-                                    <span>Overall Progress</span>
-                                    <span>65%</span>
-                                </div>
+                                <div class="progress-info"><span>Overall Progress</span><span></span></div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
+                                    <div class="progress-fill" style="width:0%"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="feature-cta">
-                            <span>View Dashboard</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>View Dashboard</span><i class="fas fa-arrow-right"></i></div>
                     </div>
-
                     <!-- Study Planner Card -->
                     <div class="feature-card" onclick="window.location.href='study-planner.html'">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
+                            <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
                         </div>
                         <div class="feature-content">
                             <h3>Study Planner</h3>
                             <p>Organize your study schedule, set reminders, and track assignment deadlines.</p>
                             <div
-                                style="margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; font-size: 0.85rem;">
-                                <i class="fas fa-clock" style="color: #32cd32;"></i> Next deadline: Math Assignment (2
-                                days)
+                                style="margin-top:12px; padding:10px; background:#f8fafc; border-radius:8px; font-size:0.85rem;">
+                                <i class="fas fa-clock" style="color:#32cd32;"></i> Next deadline: —
                             </div>
                         </div>
-                        <div class="feature-cta">
-                            <span>Open Planner</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <div class="feature-cta"><span>Open Planner</span><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
             </section>
         </div>
     </main>
 
-    <!-- Recent Activity Section -->
     <section class="activity-section">
         <div class="activity-container">
             <h3><i class="fas fa-history"></i> Recent Activity</h3>
             <div class="activity-grid">
                 <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-file-upload"></i>
-                    </div>
+                    <div class="activity-icon"><i class="fas fa-file-upload"></i></div>
                     <div class="activity-content">
-                        <div class="activity-title">You uploaded "Quadratic Equations Notes"</div>
-                        <div class="activity-time">2 hours ago</div>
+                        <div class="activity-title"></div>
+                        <div class="activity-time"></div>
                     </div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-comment"></i>
-                    </div>
+                    <div class="activity-icon"><i class="fas fa-comment"></i></div>
                     <div class="activity-content">
-                        <div class="activity-title">You replied in Grade 12 Mathematics forum</div>
-                        <div class="activity-time">Yesterday</div>
+                        <div class="activity-title"></div>
+                        <div class="activity-time"></div>
                     </div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-video"></i>
-                    </div>
+                    <div class="activity-icon"><i class="fas fa-video"></i></div>
                     <div class="activity-content">
-                        <div class="activity-title">Attended "Physical Science: Electric Circuits"</div>
-                        <div class="activity-time">2 days ago</div>
+                        <div class="activity-title"></div>
+                        <div class="activity-time"></div>
                     </div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
+                    <div class="activity-icon"><i class="fas fa-trophy"></i></div>
                     <div class="activity-content">
-                        <div class="activity-title">Earned "Quick Learner" badge</div>
-                        <div class="activity-time">3 days ago</div>
+                        <div class="activity-title"></div>
+                        <div class="activity-time"></div>
                     </div>
                 </div>
             </div>
@@ -1727,17 +1300,8 @@
     </section>
 
     <script>
-        // ============================================
-        // STUDENT PORTAL - ENHANCED SCRIPT
-        // ============================================
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Get student info from sessionStorage
             const studentName = sessionStorage.getItem('p2p_name') || 'Student';
-            const studentEmail = sessionStorage.getItem('p2p_email') || '';
-            const studentGrade = sessionStorage.getItem('p2p_grade') || '';
-
-            // Update all instances of student name
             const nameDisplay = document.getElementById('studentNameDisplay');
             const heroName = document.getElementById('studentNameHero');
             const mobileUserName = document.getElementById('mobileUserName');
@@ -1748,33 +1312,17 @@
             if (heroName) heroName.textContent = studentName;
             if (mobileUserName) mobileUserName.textContent = studentName;
 
-            // Set avatar initials
             const initials = studentName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            if (userAvatar) {
-                userAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
-            }
-            if (mobileAvatar) {
-                mobileAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
-            }
+            if (userAvatar) userAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
+            if (mobileAvatar) mobileAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
 
-            // Check if user is logged in (uncomment to enforce)
-            // if (!studentEmail) {
-            //     window.location.href = 'login.html';
-            // }
-        });
-
-        // ============================================
-        // MOBILE MENU TOGGLE
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function () {
+            // mobile menu toggle
             const menuToggle = document.getElementById('mobileMenuToggle');
             const mobileMenu = document.getElementById('mobileMenu');
-
             if (menuToggle && mobileMenu) {
                 menuToggle.addEventListener('click', function (e) {
                     e.stopPropagation();
                     mobileMenu.classList.toggle('active');
-
                     const icon = this.querySelector('i');
                     if (mobileMenu.classList.contains('active')) {
                         icon.classList.remove('fa-bars');
@@ -1784,110 +1332,25 @@
                         icon.classList.add('fa-bars');
                     }
                 });
-
-                // Close menu when clicking on links
-                mobileMenu.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', function () {
-                        if (!this.getAttribute('onclick')?.includes('logout')) {
-                            mobileMenu.classList.remove('active');
-                            const icon = menuToggle.querySelector('i');
-                            if (icon) {
-                                icon.classList.remove('fa-times');
-                                icon.classList.add('fa-bars');
-                            }
-                        }
-                    });
-                });
-
-                // Close menu when clicking outside
                 document.addEventListener('click', function (event) {
                     if (!mobileMenu.contains(event.target) && !menuToggle.contains(event.target)) {
                         mobileMenu.classList.remove('active');
                         const icon = menuToggle.querySelector('i');
-                        if (icon) {
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
+                        if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
                     }
                 });
             }
-
-            // Close mobile menu on window resize
-            window.addEventListener('resize', function () {
-                if (window.innerWidth > 767) {
-                    const mobileMenu = document.getElementById('mobileMenu');
-                    const menuToggle = document.getElementById('mobileMenuToggle');
-
-                    if (mobileMenu && mobileMenu.classList.contains('active')) {
-                        mobileMenu.classList.remove('active');
-                        const icon = menuToggle?.querySelector('i');
-                        if (icon) {
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
-                }
-            });
         });
 
-        // ============================================
-        // LOGOUT FUNCTION - FULLY WORKING!
-        // ============================================
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                // Show loading state on logout button
                 const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    const originalHTML = logoutBtn.innerHTML;
-                    logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
-                    logoutBtn.disabled = true;
-                }
-
-                // Clear all session storage
+                if (logoutBtn) { logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...'; logoutBtn.disabled = true; }
                 sessionStorage.clear();
-
-                // Clear any local storage if used
                 localStorage.clear();
-
-                // Redirect to login page after a brief delay
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 800);
+                setTimeout(() => { window.location.href = 'login.html'; }, 800);
             }
         }
-
-        // ============================================
-        // ADDITIONAL FUNCTIONS
-        // ============================================
-        function openTutoringRequests() {
-            window.location.href = 'booking.html';
-        }
-
-        // Animate progress bars on scroll
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const progressFills = entry.target.querySelectorAll('.progress-fill');
-                    progressFills.forEach(fill => {
-                        const width = fill.style.width;
-                        fill.style.width = '0';
-                        setTimeout(() => {
-                            fill.style.width = width;
-                        }, 100);
-                    });
-                }
-            });
-        }, observerOptions);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const progressSections = document.querySelectorAll('.feature-progress');
-            progressSections.forEach(section => observer.observe(section));
-        });
     </script>
 </body>
 

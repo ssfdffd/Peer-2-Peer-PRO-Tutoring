@@ -2,1011 +2,854 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tutor Profile Setup | Peer-2-Peer Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .step-active {
+            border-color: #2563eb;
+            background: #eff6ff;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-            min-height: 100vh;
-            padding: 20px;
+        .step-complete {
+            border-color: #10b981;
+            background: #ecfdf5;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+        .checkbox-card:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
         }
 
-        .header {
-            background: linear-gradient(145deg, #000033, #1a1a4d);
+        .checkbox-card.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .time-slot:checked+label {
+            background: #2563eb;
             color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .back-btn {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .progress-container {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #32cd32, #28a745);
-            width: 25%;
-            transition: width 0.5s;
-        }
-
-        .form-container {
-            padding: 30px;
-        }
-
-        .step {
-            display: none;
-        }
-
-        .step.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input[readonly] {
-            background-color: #f3f4f6;
-            color: #4b5563;
-            cursor: not-allowed;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #32cd32;
-            box-shadow: 0 0 0 3px rgba(50, 205, 50, 0.1);
-        }
-
-        .account-info-badge {
-            background: #dbeafe;
-            color: #1e40af;
-            font-size: 0.8rem;
-            padding: 4px 10px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-left: 8px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            margin: 4px 0 0 0;
-            flex-shrink: 0;
-        }
-
-        .checkbox-group label {
-            font-weight: 500;
-            color: #111827;
-            line-height: 1.4;
-        }
-
-        .subject-grid,
-        .grade-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .checkbox-item:hover {
-            background: #e9ecef;
-        }
-
-        .checkbox-item input[type="checkbox"]:checked+span {
-            color: #32cd32;
-            font-weight: 600;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .time-slots {
-            display: grid;
-            grid-template-columns: 120px repeat(7, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .time-slots-header {
-            font-weight: 700;
-            padding: 8px;
-            background: #f0f4ff;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        .time-slot {
-            padding: 8px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .time-slot:hover {
-            background: #e0e7ff;
-        }
-
-        .time-slot input[type="checkbox"]:checked+.time-slot-label {
-            background: #dbeafe;
-            border-color: #3b82f6;
-            color: #1e40af;
-            font-weight: 600;
-        }
-
-        .time-slot-label {
-            width: 100%;
-            text-align: center;
-            font-size: 0.85rem;
-        }
-
-        .time-slots .time-label {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            font-size: 0.9rem;
-            color: #374151;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-back {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .btn-back:hover {
-            background: #d1d5db;
-        }
-
-        .btn-next,
-        .btn-submit {
-            background: linear-gradient(145deg, #000033, #1a1a4d);
-            color: white;
-        }
-
-        .btn-next:hover,
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 51, 0.3);
-        }
-
-        .btn-submit {
-            background: linear-gradient(145deg, #32cd32, #28a745);
-        }
-
-        .btn-submit:hover {
-            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
-        }
-
-        .terms-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border-left: 4px solid #32cd32;
-        }
-
-        .terms-section h3 {
-            margin-bottom: 15px;
-            color: #111827;
-        }
-
-        .terms-section p {
-            line-height: 1.6;
-            color: #4b5563;
-            margin-bottom: 15px;
-        }
-
-        .terms-section a {
-            color: #32cd32;
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            display: none;
-        }
-
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #c3e6cb;
-            display: none;
-        }
-
-        .account-error {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border-left: 4px solid #ef4444;
-            text-align: center;
-        }
-
-        .account-error p {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .account-error .btn {
-            background: #ef4444;
-            color: white;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .time-slots {
-                grid-template-columns: 100px repeat(2, 1fr);
-            }
-
-            .form-container {
-                padding: 20px;
-            }
-
-            .header {
-                padding: 20px;
-            }
-
-            .back-btn {
-                padding: 6px 12px;
-                font-size: 0.9rem;
-            }
+            border-color: #2563eb;
         }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <button class="back-btn" id="backBtn">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+
+    <div class="container mx-auto px-4 py-6 max-w-5xl">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <a href="tutor-portal.html" class="flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium">
                 <i class="fas fa-arrow-left"></i> Back to Portal
-            </button>
-            <h1><i class="fas fa-user-graduate"></i> Tutor Profile Setup</h1>
-            <p>Complete your profile to start receiving student bookings</p>
-        </div>
-
-        <div class="progress-container">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span>Step <span id="currentStep">1</span> of 4</span>
-                <span><span id="progressPercent">25</span>% Complete</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+            </a>
+            <div class="text-right">
+                <p class="text-sm text-gray-600">Welcome,</p>
+                <p id="headerName" class="font-semibold text-gray-800">Loading...</p>
             </div>
         </div>
 
-        <div class="form-container">
-            <div id="accountError" class="account-error" style="display: none;">
-                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                <p><strong>Account Information Missing</strong></p>
-                <p>We couldn't find your account details. Please log in again to continue setting up your tutor profile.
-                </p>
-                <button class="btn" onclick="window.location.href='index.html'">
-                    <i class="fas fa-sign-in-alt"></i> Go to Login
+        <!-- ✅ PROFILE SUMMARY VIEW (shown after successful setup) -->
+        <div id="profileSummary" class="hidden bg-white rounded-2xl shadow-xl p-8 mb-6 border-t-4 border-green-500">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div id="summaryAvatar"
+                        class="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                        JD
+                    </div>
+                    <div>
+                        <h2 id="summaryFullName" class="text-xl font-bold text-gray-800">John Doe</h2>
+                        <p id="summaryEmail" class="text-gray-600">john@example.com</p>
+                        <span
+                            class="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                            <i class="fas fa-clock"></i> Pending Admin Approval
+                        </span>
+                    </div>
+                </div>
+                <button onclick="editProfile()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <i class="fas fa-edit mr-1"></i> Edit
                 </button>
             </div>
 
-            <div id="successMessage" class="success-message">
-                <i class="fas fa-check-circle"></i> Profile completed successfully! You can now receive bookings.
+            <!-- Profile Details Grid -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Subjects & Grades -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-book-open text-blue-600"></i> Subjects & Grades
+                    </h3>
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-2">Qualified Subjects</p>
+                        <div id="summaryQualifiedSubjects" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Grades</p>
+                        <div id="summaryGrades" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+
+                <!-- Availability & Rate -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-calendar-check text-green-600"></i> Availability & Rate
+                    </h3>
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">Hourly Rate (Admin-Set)</p>
+                        <p id="summaryRate" class="text-2xl font-bold text-blue-700">R120.00 <span
+                                class="text-sm font-normal text-gray-500">/hour</span></p>
+                        <p class="text-xs text-gray-500 mt-1">Set by admin • Updated after approval</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Available Slots</p>
+                        <div id="summaryAvailability" class="text-sm text-gray-700 space-y-1 max-h-32 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <form id="tutorProfileForm">
-                <!-- Step 1: Basic Information -->
-                <div class="step active" id="step1">
-                    <h2 style="margin-bottom: 20px; color: #111827;">Step 1: Basic Information</h2>
+            <!-- Bio -->
+            <div class="bg-blue-50 rounded-xl p-4 mb-4">
+                <h3 class="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-user-graduate text-purple-600"></i> About Me
+                </h3>
+                <p id="summaryBio" class="text-gray-700 text-sm leading-relaxed"></p>
+            </div>
 
-                    <div class="form-group">
-                        <label for="fullName">
-                            <i class="fas fa-user"></i> Full Name *
-                            <span class="account-info-badge">From your account</span>
-                        </label>
-                        <input type="text" id="fullName" readonly placeholder="Loading your name...">
-                        <div class="error-message" id="fullNameError">Please enter your full name</div>
+            <!-- Next Steps -->
+            <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                <h4 class="font-semibold text-green-800 mb-2"><i class="fas fa-info-circle mr-1"></i> What Happens Next?
+                </h4>
+                <ol class="text-sm text-green-700 space-y-1 list-decimal list-inside">
+                    <li>Admin reviews your profile and qualifications</li>
+                    <li>Your hourly rate is set (standard: R120/hour for one-on-one sessions)</li>
+                    <li>You receive an email notification once approved</li>
+                    <li>Students can then book sessions with you</li>
+                </ol>
+                <p class="text-xs text-green-600 mt-3 italic">💡 Tip: Keep your availability updated to maximize booking
+                    opportunities!</p>
+            </div>
+        </div>
+
+        <!-- ✅ PROFILE SETUP FORM (shown if profile not complete) -->
+        <div id="profileForm" class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+            <!-- Progress Header -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-3">
+                    <h1 class="text-2xl font-bold text-gray-800">Tutor Profile Setup</h1>
+                    <span class="text-sm font-medium text-blue-600" id="progressLabel">Step 1 of 4</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                        style="width: 25%"></div>
+                </div>
+                <!-- Step Indicators -->
+                <div class="flex justify-between mt-4 text-xs text-gray-500">
+                    <span id="step1Indicator" class="step-active px-2 py-1 rounded">1. Basics</span>
+                    <span id="step2Indicator">2. Subjects</span>
+                    <span id="step3Indicator">3. Availability</span>
+                    <span id="step4Indicator">4. Finalize</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Basic Information (Pre-filled from users table) -->
+            <div id="step1" class="space-y-5">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Step 1: Basic Information</h3>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                        <input type="text" id="fullName"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                            readonly>
+                        <p class="text-xs text-gray-500 mt-1"><i class="fas fa-lock mr-1"></i> From your account
+                            settings</p>
                     </div>
-
-                    <div class="form-group">
-                        <label for="email">
-                            <i class="fas fa-envelope"></i> Email Address *
-                            <span class="account-info-badge">From your account</span>
-                        </label>
-                        <input type="email" id="email" readonly placeholder="Loading your email...">
-                        <div class="error-message" id="emailError">Please enter a valid email</div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                        <input type="email" id="email"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                            readonly>
                     </div>
-
-                    <div class="form-group">
-                        <label for="phone"><i class="fas fa-phone"></i> Phone Number *</label>
-                        <input type="tel" id="phone" placeholder="+27...">
-                        <small style="color: #6b7280; display: block; margin-top: 5px;">This will be shared with
-                            students for session coordination</small>
-                        <div class="error-message" id="phoneError">Please enter your phone number</div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                        <input type="tel" id="phone"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="+27..." required pattern="^\+?27\d{9}$|^\d{10}$">
+                        <p class="text-xs text-gray-500 mt-1">Shared with students for session coordination</p>
                     </div>
-
-                    <div class="form-group">
-                        <label for="bio"><i class="fas fa-info-circle"></i> Short Bio (Tell students about yourself)
-                            *</label>
-                        <textarea id="bio" rows="4"
-                            placeholder="E.g., Experienced mathematics teacher with 5+ years teaching Grade 10-12..."></textarea>
-                        <small style="color: #6b7280; display: block; margin-top: 5px;">Minimum 50 characters. Students
-                            will see this on your profile.</small>
-                        <div class="error-message" id="bioError">Please write a brief bio (minimum 50 characters)</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hourlyRate"><i class="fas fa-money-bill-wave"></i> Hourly Rate (ZAR) *</label>
-                        <input type="number" id="hourlyRate" min="100" max="1000" placeholder="250">
-                        <small style="color: #6b7280; display: block; margin-top: 5px;">Recommended range: R150 - R500
-                            per hour</small>
-                        <div class="error-message" id="hourlyRateError">Please enter a valid hourly rate between
-                            R100-R1000</div>
-                    </div>
-
-                    <div class="btn-container">
-                        <button type="button" class="btn btn-next" onclick="nextStep()">Next <i
-                                class="fas fa-arrow-right"></i></button>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Backup Phone</label>
+                        <input type="tel" id="backupPhone"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="+27...">
                     </div>
                 </div>
 
-                <!-- Step 2: Subjects & Grades -->
-                <div class="step" id="step2">
-                    <h2 style="margin-bottom: 20px; color: #111827;">Step 2: Subjects & Grades</h2>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Short Bio *</label>
+                    <textarea id="bio" rows="4"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Tell students about your teaching experience, style, and qualifications... (min 50 characters)"
+                        required minlength="50"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Students will see this on your profile. Be professional and
+                        welcoming!</p>
+                </div>
 
-                    <div class="form-group">
-                        <label><i class="fas fa-book"></i> Subjects You're Qualified to Teach *</label>
-                        <div class="subject-grid">
-                            ${['Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans', 'Accounting',
-                            'Economics', 'Business Studies', 'Geography', 'History', 'Mathematical Literacy',
-                            'Information Technology', 'Life Orientation'].map(subject => `
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="qualifiedSubjects" value="${subject}">
-                                <span>${getSubjectIcon(subject)} ${subject}</span>
-                            </label>
-                            `).join('')}
+                <!-- ❌ REMOVED: Hourly Rate Input (Admin sets manually) -->
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-lock text-amber-600 mt-0.5"></i>
+                        <div>
+                            <p class="text-amber-800 font-medium text-sm">Hourly Rate: Admin-Set Only</p>
+                            <p class="text-amber-700 text-xs mt-1">
+                                Your tutoring rate is set by our admin team after profile approval.
+                                Standard rate for one-on-one sessions is <strong>R120/hour</strong>.
+                                This ensures fair pricing and quality control across our platform.
+                            </p>
                         </div>
-                        <div class="error-message" id="qualifiedSubjectsError">Please select at least one subject</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-star"></i> Subjects You Have Teaching Experience In *</label>
-                        <div class="subject-grid">
-                            ${['Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans', 'Accounting',
-                            'Economics', 'Business Studies', 'Geography', 'History', 'Mathematical Literacy',
-                            'Information Technology', 'Life Orientation'].map(subject => `
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="experiencedSubjects" value="${subject}">
-                                <span>${getSubjectIcon(subject)} ${subject}</span>
-                            </label>
-                            `).join('')}
-                        </div>
-                        <small style="color: #6b7280; display: block; margin-top: 10px;">Select subjects where you have
-                            actual teaching experience (not just qualifications)</small>
-                        <div class="error-message" id="experiencedSubjectsError">Please select at least one subject
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-graduation-cap"></i> Grades You Can Teach *</label>
-                        <div class="grade-grid">
-                            ${['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'University/Tertiary', 'Adult
-                            Learner'].map(grade => `
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="teachingGrades" value="${grade}">
-                                <span>${grade}</span>
-                            </label>
-                            `).join('')}
-                        </div>
-                        <div class="error-message" id="teachingGradesError">Please select at least one grade</div>
-                    </div>
-
-                    <div class="btn-container">
-                        <button type="button" class="btn btn-back" onclick="prevStep()"><i
-                                class="fas fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn btn-next" onclick="nextStep()">Next <i
-                                class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
 
-                <!-- Step 3: Availability -->
-                <div class="step" id="step3">
-                    <h2 style="margin-bottom: 20px; color: #111827;">Step 3: Weekly Availability</h2>
-                    <p style="color: #6b7280; margin-bottom: 20px;">Select time slots when you're available for tutoring
-                        sessions. Students can only book sessions during these times.</p>
+                <div class="flex justify-end pt-4">
+                    <button type="button" onclick="nextStep(1)"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors flex items-center gap-2 shadow-md">
+                        Next: Subjects & Grades <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
 
-                    <div class="form-group">
-                        <label><i class="fas fa-clock"></i> Available Time Slots *</label>
-                        <div class="time-slots">
-                            <div></div>
-                            <div class="time-slots-header">Mon</div>
-                            <div class="time-slots-header">Tue</div>
-                            <div class="time-slots-header">Wed</div>
-                            <div class="time-slots-header">Thu</div>
-                            <div class="time-slots-header">Fri</div>
-                            <div class="time-slots-header">Sat</div>
-                            <div class="time-slots-header">Sun</div>
+            <!-- Step 2: Subjects & Grades -->
+            <div id="step2" class="hidden space-y-5">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Step 2: Subjects & Grades</h3>
 
-                            <div class="time-label">08:00-10:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_8_10" style="display:none">
-                                <span class="time-slot-label">🕗-🕙</span>
-                            </label>
-                            `).join('')}
-
-                            <div class="time-label">10:00-12:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_10_12" style="display:none">
-                                <span class="time-slot-label">🕙-🕛</span>
-                            </label>
-                            `).join('')}
-
-                            <div class="time-label">12:00-14:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_12_14" style="display:none">
-                                <span class="time-slot-label">🕛-🕑</span>
-                            </label>
-                            `).join('')}
-
-                            <div class="time-label">14:00-16:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_14_16" style="display:none">
-                                <span class="time-slot-label">🕑-🕓</span>
-                            </label>
-                            `).join('')}
-
-                            <div class="time-label">16:00-18:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_16_18" style="display:none">
-                                <span class="time-slot-label">🕓-🕕</span>
-                            </label>
-                            `).join('')}
-
-                            <div class="time-label">18:00-20:00</div>
-                            ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
-                            <label class="time-slot">
-                                <input type="checkbox" name="availability" value="${day}_18_20" style="display:none">
-                                <span class="time-slot-label">🕕-🕗</span>
-                            </label>
-                            `).join('')}
-                        </div>
-                        <small style="color: #6b7280; display: block; margin-top: 10px;">💡 Tip: Select at least 8-10
-                            slots per week to maximize booking opportunities</small>
-                        <div class="error-message" id="availabilityError">Please select at least one time slot</div>
+                <!-- Qualified Subjects -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subjects You're Qualified to Teach
+                        *</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="qualifiedSubjectsContainer">
+                        <!-- Injected by JS -->
                     </div>
+                    <p class="text-xs text-gray-500 mt-2">Select subjects where you hold formal
+                        qualifications/certifications</p>
+                    <p id="qualifiedError" class="text-red-500 text-xs mt-1 hidden">Please select at least one qualified
+                        subject</p>
+                </div>
 
-                    <div class="btn-container">
-                        <button type="button" class="btn btn-back" onclick="prevStep()"><i
-                                class="fas fa-arrow-left"></i> Back</button>
-                        <button type="button" class="btn btn-next" onclick="nextStep()">Next <i
-                                class="fas fa-arrow-right"></i></button>
+                <!-- Experienced Subjects -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subjects You Have Teaching Experience
+                        In</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="experiencedSubjectsContainer">
+                        <!-- Same subjects, separate selection -->
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Select subjects where you have actual classroom/tutoring
+                        experience</p>
+                </div>
+
+                <!-- Grades -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Grades You Can Teach *</label>
+                    <div class="flex flex-wrap gap-2" id="gradesContainer">
+                        <!-- Injected by JS -->
+                    </div>
+                    <p id="gradesError" class="text-red-500 text-xs mt-1 hidden">Please select at least one grade</p>
+                </div>
+
+                <div class="flex justify-between pt-4">
+                    <button type="button" onclick="prevStep(2)"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" onclick="nextStep(2)"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors flex items-center gap-2 shadow-md">
+                        Next: Availability <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Weekly Availability -->
+            <div id="step3" class="hidden space-y-5">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Step 3: Weekly Availability</h3>
+                <p class="text-sm text-gray-600">Select time slots when you're available for tutoring sessions. Students
+                    can only book during these times.</p>
+
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700">Time</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Mon</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Tue</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Wed</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Thu</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Fri</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Sat</th>
+                                <th class="text-center py-3 px-2 font-medium text-gray-700">Sun</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availabilityGrid" class="divide-y divide-gray-100">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-500 italic">💡 Tip: Select at least 8-10 slots per week to maximize your
+                    booking opportunities</p>
+                <p id="availabilityError" class="text-red-500 text-xs hidden">Please select at least one available time
+                    slot</p>
+
+                <div class="flex justify-between pt-4">
+                    <button type="button" onclick="prevStep(3)"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" onclick="nextStep(3)"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors flex items-center gap-2 shadow-md">
+                        Next: Finalize <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Terms & Finalize -->
+            <div id="step4" class="hidden space-y-5">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Step 4: Review & Submit</h3>
+
+                <div class="bg-blue-50 rounded-xl p-4">
+                    <h4 class="font-semibold text-blue-800 mb-3">Profile Summary</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-500">Name</p>
+                            <p id="reviewName" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Email</p>
+                            <p id="reviewEmail" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Phone</p>
+                            <p id="reviewPhone" class="font-medium text-gray-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Qualified Subjects</p>
+                            <p id="reviewSubjects" class="font-medium text-gray-800">-</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Step 4: Terms & Submit -->
-                <div class="step" id="step4">
-                    <h2 style="margin-bottom: 20px; color: #111827;">Step 4: Terms & Finalize</h2>
+                <div class="space-y-3">
+                    <label
+                        class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 checkbox-card">
+                        <input type="checkbox" id="termsCheck"
+                            class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500" required>
+                        <span class="text-sm text-gray-700">
+                            I have read and agree to the <a href="terms.html"
+                                class="text-blue-600 hover:underline">Terms of Service</a>,
+                            <a href="privacy.html" class="text-blue-600 hover:underline">Privacy Policy</a>, and
+                            <a href="safeguarding.html" class="text-blue-600 hover:underline">Safeguarding Policy</a>
+                        </span>
+                    </label>
 
-                    <div class="terms-section">
-                        <h3><i class="fas fa-file-contract"></i> Terms of Service & Data Usage</h3>
-                        <p>By completing this profile, you agree to the following:</p>
-                        <ul style="margin-left: 20px; margin-bottom: 15px;">
-                            <li>Your profile information will be visible to students seeking tutors</li>
-                            <li>Students can book sessions with you based on your availability</li>
-                            <li>Peer-2-Peer PRO will use your data to match you with suitable students</li>
-                            <li>Session details and communications will be stored securely</li>
-                            <li>You must maintain professional conduct during all tutoring sessions</li>
-                            <li>You agree to the <a href="terms.html" target="_blank">Terms & Conditions</a>, <a
-                                    href="privacy.html" target="_blank">Privacy Policy</a>, and <a
-                                    href="safeguarding.html" target="_blank">Safeguarding Policy</a></li>
-                        </ul>
-                        <p><strong>Important:</strong> Students must book sessions at least 7 days in advance as per our
-                            policy.</p>
-                    </div>
+                    <label
+                        class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 checkbox-card">
+                        <input type="checkbox" id="availabilityCheck"
+                            class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500" required>
+                        <span class="text-sm text-gray-700">
+                            I confirm my availability schedule is accurate and I will be available during selected times
+                            for student bookings
+                        </span>
+                    </label>
 
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="termsAgreement" required>
-                            <label for="termsAgreement">
-                                I have read and agree to the Terms of Service and Data Usage Policy
-                            </label>
-                        </div>
-                        <div class="error-message" id="termsError">You must agree to the terms to continue</div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="availabilityConfirmation" required>
-                            <label for="availabilityConfirmation">
-                                I confirm that my availability schedule is accurate and I will be available during these
-                                times for student bookings
-                            </label>
-                        </div>
-                        <div class="error-message" id="availabilityConfirmationError">Please confirm your availability
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="dataConsent" required>
-                            <label for="dataConsent">
-                                I consent to Peer-2-Peer PRO using my data to match me with students and manage bookings
-                                (in accordance with POPIA)
-                            </label>
-                        </div>
-                        <div class="error-message" id="dataConsentError">Please provide data consent</div>
-                    </div>
-
-                    <div class="btn-container">
-                        <button type="button" class="btn btn-back" onclick="prevStep()"><i
-                                class="fas fa-arrow-left"></i> Back</button>
-                        <button type="submit" class="btn btn-submit" id="submitBtn">
-                            <i class="fas fa-check-circle"></i> Complete Profile
-                        </button>
-                    </div>
+                    <label
+                        class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 checkbox-card">
+                        <input type="checkbox" id="consentCheck"
+                            class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500" required>
+                        <span class="text-sm text-gray-700">
+                            I consent to Peer-2-Peer PRO using my profile data to match me with students and manage
+                            bookings (in accordance with POPIA)
+                        </span>
+                    </label>
                 </div>
-            </form>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p class="text-amber-800 text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Important:</strong> Students must book sessions at least 7 days in advance.
+                        Your profile will be reviewed by an admin before you can receive bookings.
+                    </p>
+                </div>
+
+                <div class="flex justify-between pt-4">
+                    <button type="button" onclick="prevStep(4)"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" onclick="submitProfile()" id="submitBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors flex items-center gap-2 shadow-md">
+                        <i class="fas fa-check-circle"></i> Complete Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-sm text-gray-500 mt-8 pb-4">
+            <p>© 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
+            <p class="mt-1">
+                <a href="terms.html" class="hover:underline text-blue-600">Terms</a> •
+                <a href="privacy.html" class="hover:underline text-blue-600">Privacy</a> •
+                <a href="safeguarding.html" class="hover:underline text-blue-600">Safeguarding</a>
+            </p>
         </div>
     </div>
 
     <script>
-        // Helper function for subject icons
+        // ==================== CONFIG ====================
+        const API_BASE = "https://damp-art-617fp2p-authentication-login.buhle-1ce.workers.dev";
+        const SUBJECTS = [
+            'Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans',
+            'Accounting', 'Economics', 'Business Studies', 'Geography', 'History',
+            'Mathematical Literacy', 'Information Technology', 'Life Orientation'
+        ];
+        const GRADES = ['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'University/Tertiary', 'Adult Learner'];
+        const TIME_SLOTS = ['08:00-10:00', '10:00-12:00', '12:00-14:00', '14:00-16:00', '16:00-18:00', '18:00-20:00'];
+        const DAYS = [
+            { code: 'mon', label: 'Mon' }, { code: 'tue', label: 'Tue' }, { code: 'wed', label: 'Wed' },
+            { code: 'thu', label: 'Thu' }, { code: 'fri', label: 'Fri' }, { code: 'sat', label: 'Sat' }, { code: 'sun', label: 'Sun' }
+        ];
+
+        let currentStep = 1;
+        let userData = {};
+        let selectedAvailability = [];
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            const email = sessionStorage.getItem('p2p_email');
+            if (!email) {
+                showAccountError();
+                return;
+            }
+
+            // Fetch user data from workers (users table)
+            await loadUserData(email);
+
+            // Render form elements
+            renderSubjectCheckboxes();
+            renderGradeCheckboxes();
+            renderAvailabilityGrid();
+
+            // Pre-fill review section
+            updateReviewSection();
+
+            // Check if profile already exists
+            await checkProfileStatus(email);
+        });
+
+        // ==================== DATA LOADING ====================
+        async function loadUserData(email) {
+            try {
+                const response = await fetch(`${API_BASE}/api/user/profile?email=${encodeURIComponent(email)}`);
+                if (response.ok) {
+                    userData = await response.json();
+                    prefillForm();
+                    document.getElementById('headerName').textContent = userData.first_name || 'Tutor';
+                    document.getElementById('summaryEmail').textContent = email;
+                }
+            } catch (err) {
+                console.warn('Could not fetch user profile:', err);
+                // Fallback to session storage
+                userData = {
+                    first_name: sessionStorage.getItem('p2p_name')?.split(' ')[0] || '',
+                    last_name: sessionStorage.getItem('p2p_name')?.split(' ')[1] || '',
+                    email: email,
+                    phone_number: '',
+                    backup_phone: '',
+                    hourly_rate: 120.00
+                };
+                prefillForm();
+            }
+        }
+
+        function prefillForm() {
+            const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+            document.getElementById('fullName').value = fullName || 'Please enter your full name';
+            document.getElementById('email').value = userData.email || '';
+            document.getElementById('phone').value = userData.phone_number || '';
+            document.getElementById('backupPhone').value = userData.backup_phone || '';
+
+            // Update review section
+            document.getElementById('reviewName').textContent = fullName || '-';
+            document.getElementById('reviewEmail').textContent = userData.email || '-';
+            document.getElementById('reviewPhone').textContent = userData.phone_number || '-';
+
+            // Set summary avatar initials
+            const initials = fullName.split(' ').map(n => n[0]).filter(Boolean).join('').substring(0, 2).toUpperCase() || 'TU';
+            document.getElementById('summaryAvatar').textContent = initials;
+            document.getElementById('summaryFullName').textContent = fullName || 'Tutor Name';
+        }
+
+        async function checkProfileStatus(email) {
+            try {
+                const response = await fetch(`${API_BASE}/api/tutor/profile/status?email=${encodeURIComponent(email)}`);
+                if (response.ok) {
+                    const status = await response.json();
+                    if (status.exists && status.complete) {
+                        // Profile already set up - show summary directly
+                        showProfileSummary({
+                            ...status,
+                            hourly_rate: status.hourly_rate || userData.hourly_rate || 120.00
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not check profile status:', err);
+            }
+        }
+
+        function showAccountError() {
+            document.getElementById('profileForm').innerHTML = `
+    <div class="text-center py-12">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Account Information Missing</h3>
+      <p class="text-gray-600 mb-6">We couldn't find your account details. Please log in again to continue setting up your tutor profile.</p>
+      <a href="login.html" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+        <i class="fas fa-sign-in-alt"></i> Go to Login
+      </a>
+    </div>
+  `;
+        }
+
+        // ==================== FORM RENDERING ====================
+        function renderSubjectCheckboxes() {
+            const qualifiedContainer = document.getElementById('qualifiedSubjectsContainer');
+            const experiencedContainer = document.getElementById('experiencedSubjectsContainer');
+
+            SUBJECTS.forEach(subject => {
+                const icon = getSubjectIcon(subject);
+                const id = `qualified-${subject.replace(/\s+/g, '-').toLowerCase()}`;
+                const expId = `experienced-${subject.replace(/\s+/g, '-').toLowerCase()}`;
+
+                qualifiedContainer.innerHTML += `
+      <label class="checkbox-card flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all">
+        <input type="checkbox" name="qualified" value="${subject}" id="${id}" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+        <span class="text-sm">${icon} ${subject}</span>
+      </label>`;
+
+                experiencedContainer.innerHTML += `
+      <label class="checkbox-card flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all">
+        <input type="checkbox" name="experienced" value="${subject}" id="${expId}" class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
+        <span class="text-sm">${icon} ${subject}</span>
+      </label>`;
+            });
+        }
+
+        function renderGradeCheckboxes() {
+            const container = document.getElementById('gradesContainer');
+            GRADES.forEach(grade => {
+                const id = `grade-${grade.replace(/\s+/g, '-').toLowerCase()}`;
+                container.innerHTML += `
+      <label class="checkbox-card flex items-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all">
+        <input type="checkbox" name="grade" value="${grade}" id="${id}" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+        <span class="text-sm">${grade}</span>
+      </label>`;
+            });
+        }
+
+        function renderAvailabilityGrid() {
+            const tbody = document.getElementById('availabilityGrid');
+            TIME_SLOTS.forEach(time => {
+                let row = `<tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium text-gray-700">${time}</td>`;
+                DAYS.forEach(day => {
+                    const slotId = `${day.code}_${time.replace(':', '-')}`;
+                    const checkboxId = `avail-${slotId}`;
+                    row += `
+        <td class="text-center py-3 px-2">
+          <input type="checkbox" id="${checkboxId}" class="time-slot hidden" value="${slotId}" onchange="toggleAvailability(this)">
+          <label for="${checkboxId}" class="inline-flex items-center justify-center w-8 h-8 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-xs">
+            ✓
+          </label>
+        </td>`;
+                });
+                row += '</tr>';
+                tbody.innerHTML += row;
+            });
+        }
+
+        function toggleAvailability(checkbox) {
+            const label = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                label.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                label.classList.remove('border-gray-300');
+                if (!selectedAvailability.includes(checkbox.value)) {
+                    selectedAvailability.push(checkbox.value);
+                }
+            } else {
+                label.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                label.classList.add('border-gray-300');
+                selectedAvailability = selectedAvailability.filter(v => v !== checkbox.value);
+            }
+        }
+
         function getSubjectIcon(subject) {
             const icons = {
-                'Mathematics': '📐',
-                'Physical Science': '🔬',
-                'Life Sciences': '🧬',
-                'English': '📚',
-                'Afrikaans': '🇿🇦',
-                'Accounting': '💰',
-                'Economics': '📊',
-                'Business Studies': '💼',
-                'Geography': '🌍',
-                'History': '📜',
-                'Mathematical Literacy': '📏',
-                'Information Technology': '💻',
+                'Mathematics': '📐', 'Physical Science': '🔬', 'Life Sciences': '🧬',
+                'English': '📚', 'Afrikaans': '🇿🇦', 'Accounting': '💰',
+                'Economics': '📊', 'Business Studies': '💼', 'Geography': '🌍',
+                'History': '📜', 'Mathematical Literacy': '📏', 'Information Technology': '💻',
                 'Life Orientation': '🧘'
             };
             return icons[subject] || '📖';
         }
 
-        let currentStep = 1;
-        const totalSteps = 4;
+        // ==================== NAVIGATION ====================
+        function updateProgress(step) {
+            const progress = step * 25;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressLabel').textContent = `Step ${step} of 4`;
 
-        // Load user data from multiple storage locations
-        function loadUserData() {
-            let userData = null;
-
-            // Try localStorage first
-            const localStorageData = localStorage.getItem('p2p_user');
-            if (localStorageData) {
-                try {
-                    userData = JSON.parse(localStorageData);
-                } catch (e) {
-                    console.warn('Failed to parse localStorage data:', e);
-                }
-            }
-
-            // Fallback to sessionStorage
-            if (!userData) {
-                const sessionStorageData = sessionStorage.getItem('p2p_user');
-                if (sessionStorageData) {
-                    try {
-                        userData = JSON.parse(sessionStorageData);
-                    } catch (e) {
-                        console.warn('Failed to parse sessionStorage data:', e);
-                    }
-                }
-            }
-
-            // Fallback to individual items
-            if (!userData) {
-                const email = localStorage.getItem('p2p_email') || sessionStorage.getItem('p2p_email');
-                const name = localStorage.getItem('p2p_name') || sessionStorage.getItem('p2p_name');
-
-                if (email && name) {
-                    userData = {
-                        email: email,
-                        first_name: name.split(' ')[0] || '',
-                        last_name: name.split(' ')[1] || ''
-                    };
-                }
-            }
-
-            // If we have data, populate fields
-            if (userData && userData.email) {
-                document.getElementById('email').value = userData.email;
-
-                let fullName = '';
-                if (userData.first_name || userData.last_name) {
-                    fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-                } else if (userData.name) {
-                    fullName = userData.name;
+            // Update step indicators
+            ['step1Indicator', 'step2Indicator', 'step3Indicator', 'step4Indicator'].forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if (idx + 1 < step) {
+                    el.className = 'step-complete px-2 py-1 rounded text-green-700';
+                    el.innerHTML = `<i class="fas fa-check mr-1"></i>${el.textContent.replace('✓', '').trim()}`;
+                } else if (idx + 1 === step) {
+                    el.className = 'step-active px-2 py-1 rounded';
                 } else {
-                    // Extract name from email as fallback
-                    fullName = userData.email.split('@')[0].replace(/\./g, ' ').replace(/_/g, ' ');
+                    el.className = 'px-2 py-1 rounded';
                 }
-
-                document.getElementById('fullName').value = fullName;
-
-                // Pre-fill phone if available
-                if (userData.phone_number) {
-                    document.getElementById('phone').value = userData.phone_number;
-                } else if (userData.phone) {
-                    document.getElementById('phone').value = userData.phone;
-                }
-
-                return true;
-            } else {
-                // Show error message
-                document.getElementById('accountError').style.display = 'block';
-                document.querySelector('.progress-container').style.display = 'none';
-                document.getElementById('tutorProfileForm').style.display = 'none';
-                return false;
-            }
-        }
-
-        // Back button functionality
-        document.getElementById('backBtn').addEventListener('click', function () {
-            window.location.href = 'tutor-portal.html';
-        });
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            const dataLoaded = loadUserData();
-            if (dataLoaded) {
-                updateProgress();
-
-                // Make time slots clickable
-                document.querySelectorAll('.time-slot').forEach(slot => {
-                    slot.addEventListener('click', function (e) {
-                        if (!e.target.matches('input[type="checkbox"]')) {
-                            const checkbox = this.querySelector('input[type="checkbox"]');
-                            checkbox.checked = !checkbox.checked;
-                            this.classList.toggle('selected', checkbox.checked);
-                        }
-                    });
-                });
-            }
-        });
-
-        function nextStep() {
-            if (validateStep(currentStep)) {
-                document.getElementById(`step${currentStep}`).classList.remove('active');
-                currentStep++;
-                document.getElementById(`step${currentStep}`).classList.add('active');
-                updateProgress();
-                window.scrollTo(0, 0);
-            }
-        }
-
-        function prevStep() {
-            if (currentStep > 1) {
-                document.getElementById(`step${currentStep}`).classList.remove('active');
-                currentStep--;
-                document.getElementById(`step${currentStep}`).classList.add('active');
-                updateProgress();
-                window.scrollTo(0, 0);
-            }
-        }
-
-        function updateProgress() {
-            const progressPercent = Math.round((currentStep / totalSteps) * 100);
-            document.getElementById('progressFill').style.width = `${progressPercent}%`;
-            document.getElementById('currentStep').textContent = currentStep;
-            document.getElementById('progressPercent').textContent = progressPercent;
-        }
-
-        function validateStep(step) {
-            let isValid = true;
-
-            // Clear all errors first
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.style.display = 'none';
             });
-
-            switch (step) {
-                case 1:
-                    const phone = document.getElementById('phone').value.trim();
-                    const bio = document.getElementById('bio').value.trim();
-                    const rate = document.getElementById('hourlyRate').value;
-                    const fullName = document.getElementById('fullName').value.trim();
-
-                    if (!fullName || fullName === 'Loading your name...') {
-                        document.getElementById('fullNameError').textContent = 'Account name not loaded. Please refresh or log in again.';
-                        document.getElementById('fullNameError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (!phone) {
-                        document.getElementById('phoneError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (!bio || bio.length < 50) {
-                        document.getElementById('bioError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (!rate || rate < 100 || rate > 1000) {
-                        document.getElementById('hourlyRateError').style.display = 'block';
-                        isValid = false;
-                    }
-                    break;
-
-                case 2:
-                    const qualifiedSubjects = document.querySelectorAll('input[name="qualifiedSubjects"]:checked');
-                    const experiencedSubjects = document.querySelectorAll('input[name="experiencedSubjects"]:checked');
-                    const teachingGrades = document.querySelectorAll('input[name="teachingGrades"]:checked');
-
-                    if (qualifiedSubjects.length === 0) {
-                        document.getElementById('qualifiedSubjectsError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (experiencedSubjects.length === 0) {
-                        document.getElementById('experiencedSubjectsError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (teachingGrades.length === 0) {
-                        document.getElementById('teachingGradesError').style.display = 'block';
-                        isValid = false;
-                    }
-                    break;
-
-                case 3:
-                    const availability = document.querySelectorAll('input[name="availability"]:checked');
-                    if (availability.length === 0) {
-                        document.getElementById('availabilityError').style.display = 'block';
-                        isValid = false;
-                    }
-                    break;
-
-                case 4:
-                    if (!document.getElementById('termsAgreement').checked) {
-                        document.getElementById('termsError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (!document.getElementById('availabilityConfirmation').checked) {
-                        document.getElementById('availabilityConfirmationError').style.display = 'block';
-                        isValid = false;
-                    }
-
-                    if (!document.getElementById('dataConsent').checked) {
-                        document.getElementById('dataConsentError').style.display = 'block';
-                        isValid = false;
-                    }
-                    break;
-            }
-
-            return isValid;
         }
 
-        document.getElementById('tutorProfileForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        function nextStep(fromStep) {
+            // Validate current step
+            if (fromStep === 1) {
+                const bio = document.getElementById('bio').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                if (!bio || bio.length < 50) {
+                    alert('Please write a bio with at least 50 characters');
+                    document.getElementById('bio').focus();
+                    return;
+                }
+                if (!phone || !/^\+?27\d{9}$|^\d{10}$/.test(phone)) {
+                    alert('Please enter a valid South African phone number (+27...)');
+                    document.getElementById('phone').focus();
+                    return;
+                }
+            }
 
-            if (!validateStep(4)) return;
+            if (fromStep === 2) {
+                const qualified = document.querySelectorAll('input[name="qualified"]:checked');
+                const grades = document.querySelectorAll('input[name="grade"]:checked');
+                let valid = true;
 
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Profile...';
+                if (qualified.length === 0) {
+                    document.getElementById('qualifiedError').classList.remove('hidden');
+                    valid = false;
+                } else {
+                    document.getElementById('qualifiedError').classList.add('hidden');
+                }
 
-            // Collect all form data
-            const formData = {
-                name: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                bio: document.getElementById('bio').value,
-                hourly_rate: parseFloat(document.getElementById('hourlyRate').value),
+                if (grades.length === 0) {
+                    document.getElementById('gradesError').classList.remove('hidden');
+                    valid = false;
+                } else {
+                    document.getElementById('gradesError').classList.add('hidden');
+                }
 
-                qualified_subjects: Array.from(
-                    document.querySelectorAll('input[name="qualifiedSubjects"]:checked')
-                ).map(cb => cb.value),
+                if (!valid) return;
+            }
 
-                experienced_subjects: Array.from(
-                    document.querySelectorAll('input[name="experiencedSubjects"]:checked')
-                ).map(cb => cb.value),
+            if (fromStep === 3) {
+                if (selectedAvailability.length === 0) {
+                    document.getElementById('availabilityError').classList.remove('hidden');
+                    return;
+                }
+                document.getElementById('availabilityError').classList.add('hidden');
+            }
 
-                grades: Array.from(
-                    document.querySelectorAll('input[name="teachingGrades"]:checked')
-                ).map(cb => cb.value),
+            // Update review section before final step
+            if (fromStep === 3) {
+                updateReviewSection();
+            }
 
-                availability: Array.from(
-                    document.querySelectorAll('input[name="availability"]:checked')
-                ).map(cb => cb.value),
+            // Hide current, show next
+            document.getElementById(`step${fromStep}`).classList.add('hidden');
+            document.getElementById(`step${fromStep + 1}`).classList.remove('hidden');
 
-                terms_agreed: true,
-                data_consent: true,
-                is_verified: false,
+            currentStep = fromStep + 1;
+            updateProgress(currentStep);
+
+            // Scroll to top of form
+            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function prevStep(fromStep) {
+            document.getElementById(`step${fromStep}`).classList.add('hidden');
+            document.getElementById(`step${fromStep - 1}`).classList.remove('hidden');
+            currentStep = fromStep - 1;
+            updateProgress(currentStep);
+            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateReviewSection() {
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            const qualified = Array.from(document.querySelectorAll('input[name="qualified"]:checked')).map(cb => cb.value);
+
+            document.getElementById('reviewName').textContent = fullName || '-';
+            document.getElementById('reviewEmail').textContent = email || '-';
+            document.getElementById('reviewPhone').textContent = phone || '-';
+            document.getElementById('reviewSubjects').textContent = qualified.length > 0 ? qualified.slice(0, 3).join(', ') + (qualified.length > 3 ? '...' : '') : '-';
+        }
+
+        // ==================== SUBMISSION ====================
+        async function submitProfile() {
+            // Final validation
+            const checks = ['termsCheck', 'availabilityCheck', 'consentCheck'];
+            for (const id of checks) {
+                if (!document.getElementById(id).checked) {
+                    alert(`Please confirm: ${document.getElementById(id).nextElementSibling.textContent.trim()}`);
+                    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+            }
+
+            const email = sessionStorage.getItem('p2p_email');
+
+            const payload = {
+                email: email,
+                name: document.getElementById('fullName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                backupPhone: document.getElementById('backupPhone').value.trim(),
+                bio: document.getElementById('bio').value.trim(),
+                // ❌ NO hourly_rate - admin sets this manually in database
+                qualified_subjects: Array.from(document.querySelectorAll('input[name="qualified"]:checked')).map(cb => cb.value),
+                experienced_subjects: Array.from(document.querySelectorAll('input[name="experienced"]:checked')).map(cb => cb.value),
+                grades: Array.from(document.querySelectorAll('input[name="grade"]:checked')).map(cb => cb.value),
+                availability: selectedAvailability,
                 is_available: true
             };
 
+            const btn = document.getElementById('submitBtn');
+            const originalBtnHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Profile...';
+
             try {
-                const response = await fetch('https://booking-worker.buhle-1ce.workers.dev/api/tutor/profile', {
+                const response = await fetch(`${API_BASE}/api/tutor/profile`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
 
-                if (response.ok) {
-                    document.getElementById('successMessage').style.display = 'block';
-                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Profile Complete!';
-
-                    // Update profile status in localStorage
-                    localStorage.setItem('tutor_profile_complete', 'true');
-                    localStorage.setItem('tutor_id', result.tutorId);
-
-                    // Redirect after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = 'tutor-portal.html';
-                    }, 2000);
+                if (response.ok && result.success) {
+                    // ✅ Show profile summary instead of form
+                    showProfileSummary({
+                        ...payload,
+                        hourly_rate: result.hourly_rate || 120.00,
+                        verified: false,
+                        available: true
+                    });
                 } else {
-                    alert(result.error || 'Failed to save profile. Please try again.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Profile';
+                    alert(`Error: ${result.error || 'Failed to save profile'}`);
                 }
-            } catch (error) {
-                console.error('Error:', error);
+            } catch (err) {
+                console.error('Profile save error:', err);
                 alert('Connection error. Please check your internet and try again.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Profile';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+            }
+        }
+
+        function showProfileSummary(data) {
+            // Hide form, show summary
+            document.getElementById('profileForm').classList.add('hidden');
+            document.getElementById('profileSummary').classList.remove('hidden');
+
+            // Populate summary fields
+            document.getElementById('summaryEmail').textContent = data.email || '';
+
+            // Subjects
+            const subjectsContainer = document.getElementById('summaryQualifiedSubjects');
+            subjectsContainer.innerHTML = '';
+            (data.qualified_subjects || []).forEach(sub => {
+                subjectsContainer.innerHTML += `
+      <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1">
+        ${getSubjectIcon(sub)} ${sub}
+      </span>`;
+            });
+
+            // Grades
+            const gradesContainer = document.getElementById('summaryGrades');
+            gradesContainer.innerHTML = '';
+            (data.grades || []).forEach(grade => {
+                gradesContainer.innerHTML += `
+      <span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+        ${grade}
+      </span>`;
+            });
+
+            // Bio
+            document.getElementById('summaryBio').textContent = data.bio || 'No bio provided';
+
+            // Rate (admin-set)
+            const rate = data.hourly_rate || 120.00;
+            document.getElementById('summaryRate').innerHTML = `R${rate.toFixed(2)} <span class="text-sm font-normal text-gray-500">/hour</span>`;
+
+            // Availability summary
+            const availContainer = document.getElementById('summaryAvailability');
+            availContainer.innerHTML = '';
+            if (data.availability && data.availability.length > 0) {
+                const grouped = {};
+                data.availability.forEach(slot => {
+                    const [day, time] = slot.split('_');
+                    if (!grouped[day]) grouped[day] = [];
+                    grouped[day].push(time);
+                });
+
+                Object.entries(grouped).slice(0, 5).forEach(([day, times]) => {
+                    const dayLabel = DAYS.find(d => d.code === day)?.label || day;
+                    availContainer.innerHTML += `
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700 w-10">${dayLabel}:</span>
+          <span class="text-gray-600">${times.slice(0, 2).join(', ')}${times.length > 2 ? '...' : ''}</span>
+        </div>`;
+                });
+                if (Object.keys(grouped).length > 5) {
+                    availContainer.innerHTML += `<p class="text-xs text-gray-500 italic">+ ${Object.keys(grouped).length - 5} more days</p>`;
+                }
+            } else {
+                availContainer.innerHTML = '<p class="text-gray-500 text-sm">No availability set</p>';
+            }
+        }
+
+        function editProfile() {
+            document.getElementById('profileSummary').classList.add('hidden');
+            document.getElementById('profileForm').classList.remove('hidden');
+            currentStep = 1;
+            updateProgress(1);
+            document.getElementById('step1').classList.remove('hidden');
+            ['step2', 'step3', 'step4'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==================== UTILS ====================
+        // Add checkbox visual feedback
+        document.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox' && (e.target.name === 'qualified' || e.target.name === 'experienced' || e.target.name === 'grade')) {
+                const card = e.target.closest('.checkbox-card');
+                if (e.target.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
             }
         });
     </script>

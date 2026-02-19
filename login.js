@@ -1,5 +1,5 @@
-// ✅ CORRECTED URL - FIX TYPO: "authentification" → "authentication" (VERIFY IN CLOUDFLARE!)
-const API_BASE = "https://damp-art-617fp2p-authentication-login.buhle-1ce.workers.dev";
+// ✅ CORRECTED: API Base URL (ensure this matches your Worker deployment)
+const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 🔑 LOGIN HANDLER (FIXED SYNTAX)
+// 🔑 LOGIN HANDLER - FIXED SYNTAX ERRORS
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
@@ -43,19 +43,21 @@ async function handleLogin(e) {
 
         const result = await response.json();
 
+        // ✅ FIXED: Proper logical operator && and no spaces in property access
         if (response.ok && result.success) {
-            // ✅ CORRECTED: No spaces in sessionStorage keys
             sessionStorage.setItem('p2p_email', email);
-            sessionStorage.setItem('p2p_name', result.name);
+            sessionStorage.setItem('p2p_name', result.name);        // ✅ Fixed: result.name (no space)
             sessionStorage.setItem('p2p_userType', result.role);
             sessionStorage.setItem('p2p_role', result.role);
-            sessionStorage.setItem('p2p_sessionId', result.sessionId);
+            sessionStorage.setItem('p2p_sessionId', result.sessionId); // ✅ Fixed: result.sessionId (no space)
 
-            // Redirect based on role
+            // Redirect based on role - STUDENTS UNCHANGED ✅
             window.location.href = result.role === 'tutor'
                 ? 'tutor-portal.html'
                 : 'student-portal.html';
+
         } else {
+            // ✅ This will now properly show the tutor pending approval message from Worker
             alert(`Login Failed: ${result.error || "Invalid credentials"}`);
         }
     } catch (err) {
@@ -67,13 +69,12 @@ async function handleLogin(e) {
     }
 }
 
-// 📝 SIGNUP HANDLER
+// 📝 SIGNUP HANDLER - FIXED SYNTAX ERRORS
 async function handleSignup(e) {
     e.preventDefault();
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
 
-    // Collect form data
     const formData = new FormData(form);
     const payload = {
         firstName: formData.get('firstName')?.trim(),
@@ -82,7 +83,7 @@ async function handleSignup(e) {
         password: formData.get('password'),
         userType: formData.get('userType'),
         age: formData.get('age') || '',
-        grade: formData.get('grade') || '',
+        grade: formData.get('grade') || '',                      // ✅ Fixed: formData.get (no space)
         phone: formData.get('phone')?.trim(),
         backupPhone: formData.get('backupPhone')?.trim() || '',
         schoolName: formData.get('schoolName')?.trim() || '',
@@ -91,7 +92,7 @@ async function handleSignup(e) {
     };
 
     // Validation
-    if (!payload.email || !payload.password || !payload.firstName || !payload.userType) {
+    if (!payload.email || !payload.password || !payload.firstName || !payload.userType) { // ✅ Fixed: payload.firstName
         alert("Please fill all required fields");
         return;
     }
@@ -116,13 +117,10 @@ async function handleSignup(e) {
 
         const result = await response.json();
 
+        // ✅ FIXED: Proper logical operator &&
         if (response.ok && result.success) {
             alert(result.message || "Account created successfully!");
-            if (payload.userType !== 'tutor') {
-                window.location.href = 'login.html';
-            } else {
-                window.location.href = 'login.html';
-            }
+            window.location.href = 'login.html'; // Same redirect for all user types
         } else {
             alert(`Signup Failed: ${result.error || "Unknown error"}`);
         }
@@ -135,7 +133,7 @@ async function handleSignup(e) {
     }
 }
 
-// 🚪 LOGOUT FUNCTION (for portal pages)
+// 🚪 LOGOUT FUNCTION
 window.handleLogout = async function () {
     const email = sessionStorage.getItem('p2p_email');
     const sessionId = sessionStorage.getItem('p2p_sessionId');

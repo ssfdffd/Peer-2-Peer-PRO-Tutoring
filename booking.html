@@ -409,7 +409,57 @@
         </div>
 
     </div><!-- /booking-container -->
+    <!-- Key changes in booking.html: -->
+    <!-- 1. Remove tutor selection grid -->
+    <!-- 2. Show fixed R120/hour rate -->
+    <!-- 3. Simplified flow: Subject → Info → Schedule → Confirm -->
 
+    <div id="step2" class="hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chalkboard-teacher text-3xl text-green-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">One-on-One Session</h3>
+            <p class="text-gray-600 mb-4">
+                You'll be matched with a verified tutor specializing in <strong
+                    id="selectedSubject">Mathematics</strong>
+                for <strong id="selectedGrade">Grade 10</strong>.
+            </p>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <p class="text-blue-800 font-semibold">
+                    <i class="fas fa-tag mr-2"></i>
+                    Fixed Rate: <span class="text-2xl">R120</span> / hour
+                </p>
+                <p class="text-sm text-blue-700 mt-1">
+                    Rate set by admin • Secure payment • 100% satisfaction guarantee
+                </p>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 text-sm text-gray-600">
+                <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Verified
+                    Tutors</span>
+                <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Secure Jitsi
+                    Meet</span>
+                <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Parental
+                    Consent</span>
+            </div>
+        </div>
+
+        <button onclick="nextStep(2)"
+            class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg">
+            Continue to Booking Details <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+
+    <!-- In confirmation step, show: -->
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p class="text-amber-800 text-sm">
+            <i class="fas fa-info-circle mr-2"></i>
+            <strong>Important:</strong> Your booking requires admin approval.
+            You'll receive an email with your meeting link once approved (usually within 24 hours).
+        </p>
+    </div>
     <script src="booking.js"></script>
 </body>
 

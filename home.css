@@ -2,88 +2,106 @@
    CSS VARIABLES
 ================================= */
 :root {
-    /* Updated to match login.css colors */
     --primary-color: #000033;
-    /* Deep Navy from logo background */
     --secondary-color: #32cd32;
-    /* Lime Green from "PRO" */
     --text-color: #7fdff0;
-    /* Light Sky Blue accents */
     --light-text: #ffffff;
     --accent-color: #32cd32;
-    /* Same as secondary-color */
     --transition-speed: 0.3s;
     --overlay-dark: rgba(0, 0, 0, 0.6);
     --light-bg: #f4f7f9;
-    /* Updated to match login.css */
     --border-color: #e1e5eb;
     --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.12);
     --navy-bg: #000033;
-    /* Added from login.css */
     --pro-green: #32cd32;
-    /* Added from login.css */
     --sky-blue: #7fdff0;
-    /* Added from login.css */
     --white: #ffffff;
-    /* Added from login.css */
 }
 
 /* =================================
-   NAVBAR - UPDATED TO MATCH LOGIN.CSS
+   ANIMATIONS
+================================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+}
+
+/* =================================
+   NAVBAR
 ================================= */
 #navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
     background-color: var(--navy-bg);
-    /* Updated to match login.css */
     color: var(--light-text);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: clamp(0.9rem, 2vw, 1.2rem) 5%;
+    padding: 0.8rem 5%;
+    /* Reduced base padding */
     border-bottom: 3px solid var(--pro-green);
-    /* Added border like login.css */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--white);
     display: flex;
     align-items: center;
-    text-decoration: none;
 }
 
 .logo img {
-    height: 35px;
-    margin-right: 10px;
+    height: 32px;
+    margin-right: 8px;
 }
 
 .logo span.pro-text {
     color: var(--pro-green);
-    /* Updated to use pro-green variable */
-    margin-left: 5px;
+    margin-left: 4px;
 }
 
 .nav-right {
     display: flex;
     align-items: center;
-    gap: clamp(8px, 2vw, 20px);
+    gap: 12px;
 }
 
 .auth-btn {
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1.2rem;
     border-radius: 50px;
-    /* Changed to match login.css button style */
-    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-size: 0.9rem;
     font-weight: 600;
     border: none;
     cursor: pointer;
     transition: all var(--transition-speed) ease;
-    text-decoration: none;
 }
 
 .login {
@@ -95,22 +113,27 @@
 .login:hover {
     background: #fff;
     color: var(--navy-bg);
-    /* Updated to use navy-bg variable */
 }
 
 .signup {
     background: var(--pro-green);
-    /* Updated to use pro-green variable */
     color: #fff;
 }
 
 .signup:hover {
     background: #28b528;
-    transform: translateY(-2px);
+}
+
+.menu-toggle {
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0 5px;
+    color: var(--white);
+    display: none;
 }
 
 /* =================================
-   SIDE MENU - UPDATED COLORS
+   SIDE MENU
 ================================= */
 .side-nav {
     height: 100%;
@@ -120,51 +143,53 @@
     top: 0;
     right: 0;
     background-color: var(--navy-bg);
-    /* Updated to match navbar */
     overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
+    transition: 0.4s;
+    padding-top: 50px;
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
     border-left: 3px solid var(--pro-green);
-    /* Added border for consistency */
 }
 
 .side-nav a {
-    padding: 15px 20px;
+    padding: 12px 25px;
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #fff;
     display: block;
-    border-radius: 6px;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .side-nav a:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    padding-left: 25px;
     color: var(--pro-green);
-    /* Added color change on hover */
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2.2rem !important;
 }
 
 /* =================================
-   HERO SECTION - UPDATED ACCENT COLORS
+   HERO SECTION
 ================================= */
 .hero {
-    min-height: clamp(55vh, 70vh, 85vh);
+    /* Removed min-height to prevent "fat" vertical spacing */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 0 5%;
+    padding: 60px 5% 40px 5%;
+    /* Comfortable padding */
     color: #fff;
+    background-color: var(--navy-bg);
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     animation: backgroundSlider 15s infinite ease-in-out;
     position: relative;
 }
 
-/* Hero overlay for better text readability */
 .hero::before {
     content: '';
     position: absolute;
@@ -172,7 +197,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 51, 0.7) 0%, rgba(0, 0, 51, 0.4) 100%);
+    background: linear-gradient(135deg, rgba(0, 0, 51, 0.85) 0%, rgba(0, 0, 51, 0.5) 100%);
     z-index: 1;
 }
 
@@ -194,196 +219,110 @@
     }
 }
 
-/* Fallback in case images don't load */
-.hero {
-    background-color: var(--navy-bg);
-    /* Fallback color */
-}
-
 .hero-content {
-    max-width: 900px;
+    max-width: 800px;
     padding: 2rem;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 51, 0.5);
-    backdrop-filter: blur(5px);
-    animation: fadeIn 1s ease-out;
-    border: 1px solid rgba(50, 205, 50, 0.3);
+    border-radius: 8px;
+    background-color: rgba(0, 0, 51, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.8s ease-out;
+    border: 1px solid rgba(50, 205, 50, 0.2);
     position: relative;
     z-index: 2;
-    /* Ensure content is above overlay */
+}
+
+.hero-content h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+}
+
+.hero-content p {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    opacity: 0.9;
 }
 
 /* =================================
-   UPLOAD SECTION - REMOVED AND REPLACED WITH ANIMATION
+   UPLOAD SECTION
 ================================= */
-
-/* =================================
-   ANIMATED GRID SECTION
-================================= */
-.port-set {
-    height: 100%;
-    margin: auto;
-    padding: 30px 5%;
-    max-width: 100%;
-    align-items: center;
-    position: relative;
+.upload-section {
+    max-width: 800px;
+    margin: 2.5rem auto;
+    padding: 1.8rem;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow-medium);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    animation: slideUp 0.6s ease-out;
 }
 
-/* .port-container z-index has to be set for this to work */
-.port-container {
-    z-index: 1;
+.upload-section h2 {
+    color: var(--navy-bg);
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
 }
 
-.under-port-container {
-    z-index: 0;
-    display: block;
-    overflow: hidden;
-    position: relative;
+.upload-section p {
+    color: #666;
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
 }
 
-.port-container {
-    display: block;
-    position: relative;
-}
-
-.portfolio {
-    display: grid;
-    grid-template-rows: repeat(8, 1fr);
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 10px;
-    margin: auto;
-    position: relative;
-    width: min(90vw, 440px);
-    padding: 10px;
-    top: clamp(-35em, -46.970em, -50em);
-}
-
-.under-portfolio {
-    display: grid;
-    grid-template-rows: repeat(8, 1fr);
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 10px;
-    margin: auto;
-    position: relative;
-    width: min(90vw, 440px);
-    padding: 10px;
-}
-
-.under-items {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border: .2em solid var(--pro-green);
-}
-
-.item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    cursor: pointer;
-    background-color: rgba(0, 0, 51, 0.85);
-    border: .2em solid var(--pro-green);
-    border-radius: 0px;
-    box-shadow: none;
-    transform: translateZ(0);
-}
-
-svg {
-    top: 0;
-    left: 0;
+.upload-input {
     width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drop-zone:hover {
+    border-color: var(--pro-green);
+    background-color: rgba(50, 205, 50, 0.05);
+}
+
+#progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 6px;
+    margin-top: 15px;
+    height: 18px;
+    overflow: hidden;
+}
+
+#progress-bar {
     height: 100%;
+    background-color: var(--pro-green);
+    width: 0%;
+    transition: width 0.4s ease;
 }
-
-circle {
-    transform-origin: 50% 50%;
-    transform: scale(0);
-    transition: transform 500ms;
-}
-
-text {
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    text-anchor: middle;
-    letter-spacing: 1px;
-}
-
-.svg-text {
-    fill: var(--white);
-    display: block;
-    font-family: 'Archivo', sans-serif;
-}
-
-image {
-    transform: scale(2);
-    transform-origin: 50% 50%;
-    transition: transform 100ms cubic-bezier(0.25, 0.46, 0.45, 0.24);
-}
-
-.small {
-    grid-row: span 1;
-    grid-column: span 1;
-}
-
-.medium {
-    grid-row: span 2;
-    grid-column: span 2;
-}
-
-.large {
-    grid-row: span 3;
-    grid-column: span 3;
-}
-
-.tall {
-    grid-row: span 3;
-    grid-column: span 2;
-}
-
-.wide {
-    grid-row: span 2;
-    grid-column: span 3;
-}
-
-.item:hover circle {
-    transform: scale(5);
-}
-
-.item:hover image {
-    transform: scale(1);
-}
-
-.port-heading {
-    font-size: 2rem;
-    color: var(--white);
-    font-weight: bold;
-    text-decoration: underline var(--pro-green);
-    margin: auto;
-    font-family: 'Raleway', sans-serif;
-}
-
-.big-box {
-    font-size: 1rem;
-}
-
-.small-box {
-    font-size: 3em;
-}
-
 
 /* =================================
-   FOOTER - UPDATED TO MATCH LOGIN.CSS
+   FOOTER
 ================================= */
 .footer {
     background-color: var(--navy-bg);
-    /* Updated to solid color like login.css */
     color: #ffffff;
-    padding: 50px 5% 20px;
+    padding: 40px 5% 20px;
     margin-top: auto;
     border-top: 2px solid var(--pro-green);
-    /* Added border like login.css */
 }
 
 .footer-inner {
@@ -391,76 +330,45 @@ image {
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 50px;
+    gap: 20px;
     text-align: left;
 }
 
 .footer-box h4 {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
     color: var(--pro-green);
-    /* Updated to use pro-green */
-    position: relative;
-    padding-bottom: 10px;
-}
-
-.footer-box h4::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 40px;
-    height: 3px;
-    background-color: var(--pro-green);
-    /* Updated to use pro-green */
-    border-radius: 2px;
+    font-weight: 700;
 }
 
 .footer-box a {
     display: block;
-    margin: 8px 0;
-    font-size: 0.95rem;
-    color: #ffffff;
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: #ddd;
     text-decoration: none;
     transition: all 0.3s ease;
-    padding: 5px 0;
-    position: relative;
 }
 
 .footer-box a:hover {
     color: var(--pro-green);
-    /* Updated to use pro-green */
-    padding-left: 8px;
-}
-
-.footer-box a::before {
-    content: "→";
-    position: absolute;
-    left: -15px;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.footer-box a:hover::before {
-    left: 0;
-    opacity: 1;
 }
 
 .footer-bottom {
-    margin-top: 50px;
-    padding-top: 20px;
+    margin-top: 30px;
+    padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
+    font-size: 0.8rem;
+    color: #aaa;
 }
 
 /* =================================
-   RESPONSIVE FIXES
+   RESPONSIVE - TABLETS
 ================================= */
 @media (max-width: 768px) {
     .menu-toggle {
-        display: block !important;
+        display: block;
     }
 
     .auth-btn {
@@ -469,81 +377,89 @@ image {
 
     .footer-inner {
         grid-template-columns: 1fr;
-    }
-
-    .portfolio {
-        width: min(95vw, 380px);
-        top: clamp(-30em, -35em, -40em);
-        grid-gap: 8px;
-    }
-
-    .under-portfolio {
-        width: min(95vw, 380px);
-        grid-gap: 8px;
-    }
-
-    .port-set {
-        padding: 20px 3%;
-    }
-
-    text {
-        font-size: 1.2rem;
+        gap: 30px;
+        text-align: center;
     }
 }
 
-@media (min-width: 769px) {
-    .menu-toggle {
-        display: none;
-    }
-
-    .auth-btn {
-        display: inline-block;
-    }
-}
-
+/* =================================
+   RESPONSIVE - PHONES (SLIM FIT)
+================================= */
 @media (max-width: 480px) {
+
+    /* Navbar Slimming */
     #navbar {
-        padding: 1rem 4%;
+        padding: 0.8rem 4%;
+        /* Compact vertical padding */
     }
 
+    .logo {
+        font-size: 1.1rem;
+        /* Slightly smaller text */
+    }
+
+    .logo img {
+        height: 28px;
+        /* Smaller icon */
+    }
+
+    .menu-toggle {
+        font-size: 1.6rem;
+    }
+
+    /* Hero Slimming */
     .hero {
-        padding: 40px 4%;
+        padding: 80px 4% 30px 4%;
+        /* Reduce vertical space */
+        min-height: auto;
+        /* Allow it to shrink */
     }
 
-    .hero h1 {
-        font-size: 1.8rem;
+    .hero-content {
+        padding: 1.2rem;
+        /* Less box padding */
+        width: 100%;
     }
 
-    .portfolio {
-        width: min(98vw, 320px);
-        top: clamp(-25em, -28em, -32em);
-        grid-gap: 6px;
-        grid-template-rows: repeat(8, 1fr);
-        grid-template-columns: repeat(5, 1fr);
+    /* Content Slimming */
+    .upload-section {
+        margin: 1.5rem;
+        /* Less margin around the box */
+        padding: 1.2rem;
+        /* Less padding inside */
+        border-radius: 8px;
     }
 
-    .under-portfolio {
-        width: min(98vw, 320px);
-        grid-gap: 6px;
+    .upload-section h2 {
+        font-size: 1.3rem;
     }
 
-    .port-set {
-        padding: 15px 2%;
+    .upload-input {
+        padding: 8px;
     }
 
-    text {
-        font-size: 1rem;
+    .drop-zone {
+        min-height: 100px;
+        /* Smaller drop area */
+        padding: 1rem;
+        font-size: 0.9rem;
     }
 
-    .small-box {
-        font-size: 2em;
-    }
-
-    .big-box {
-        font-size: 0.8rem;
-    }
-
+    /* Footer Slimming */
     .footer {
-        padding: 40px 4% 20px;
+        padding: 30px 4% 15px;
     }
+
+    .footer-box h4 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-box p,
+    .footer-box a {
+        font-size: 0.85rem;
+        /* Smaller text */
+        margin: 4px 0;
+    }
+
 }

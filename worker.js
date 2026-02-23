@@ -118,11 +118,11 @@ var worker_default = {
 
         // ✅ CRITICAL FIX 5: NORMALIZE USER TYPE AND ACCESS VALUES
         const userType = (user.user_type || "").toLowerCase().trim();
-        // Use ONLY lowercase "access" column (matches your schema)
-        const accessValue = (user.access || "").toString().toLowerCase().trim();
+        // Use ONLY lowercase "Access" column (matches your schema)
+        const AccessValue = (user.Access || "").toString().toLowerCase().trim();
 
         // ✅ CRITICAL FIX 6: STRING COMPARISON WITHOUT TRAILING SPACES
-        if (userType === "tutor" && accessValue !== "granted") {
+        if (userType === "tutor" && AccessValue !== "granted") {
           return new Response(JSON.stringify({
             success: false,
             error: "Your tutor account is pending approval. Contact admin for access."
@@ -180,7 +180,7 @@ var worker_default = {
         const passwordHash = await hashPassword(data.password);
 
         // ✅ SET CLEAN ACCESS VALUES (NO TRAILING SPACES)
-        const accessStatus = data.userType.toLowerCase().trim() === "tutor"
+        const AccessStatus = data.userType.toLowerCase().trim() === "tutor"
           ? "not granted"
           : "granted";
 
@@ -188,7 +188,7 @@ var worker_default = {
         await env.DB.prepare(`
           INSERT INTO users (
             first_name, last_name, email, password_hash, user_type, grade,
-            school_name, phone_number, access, data_consent_commercial
+            school_name, phone_number, Access, data_consent_commercial
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           data.firstName.trim(),
@@ -199,7 +199,7 @@ var worker_default = {
           (data.grade || "").trim(),
           (data.schoolName || "").trim(),
           (data.phone || "").trim(),
-          accessStatus, // CLEAN STRING VALUE
+          AccessStatus, // CLEAN STRING VALUE
           data.agreeTerms ? 1 : 0
         ).run();
 
@@ -240,7 +240,7 @@ var worker_default = {
       // 👥 ONLINE USERS ENDPOINT (for admin dashboard)
       if (url.pathname === "/api/online-users" && request.method === "GET") {
         const result = await env.DB.prepare(`
-          SELECT id, first_name, last_name, email, user_type, access, last_login 
+          SELECT id, first_name, last_name, email, user_type, Access, last_login 
           FROM users 
           WHERE is_online = 1
           ORDER BY last_login DESC

@@ -403,455 +403,470 @@
     </div>
 
     <script>
-        // ==================== CONFIG ====================
-        const API_BASE = "https://damp-art-617fp2p-authentication-login.buhle-1ce.workers.dev";
+        // ============================================
+        // TUTOR PROFILE SETUP - CLOUDFLARE WORKER COMPATIBLE
+        // ============================================
+
+        // Configuration - UPDATE THIS TO YOUR WORKER URL
+        const API_BASE_URL = 'https://booking-worker.buhle-1ce.workers.dev';
+
+        // Subject & Grade Lists
         const SUBJECTS = [
-            'Mathematics', 'Physical Science', 'Life Sciences', 'English', 'Afrikaans',
-            'Accounting', 'Economics', 'Business Studies', 'Geography', 'History',
-            'Mathematical Literacy', 'Information Technology', 'Life Orientation'
-        ];
-        const GRADES = ['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'University/Tertiary', 'Adult Learner'];
-        const TIME_SLOTS = ['08:00-10:00', '10:00-12:00', '12:00-14:00', '14:00-16:00', '16:00-18:00', '18:00-20:00'];
-        const DAYS = [
-            { code: 'mon', label: 'Mon' }, { code: 'tue', label: 'Tue' }, { code: 'wed', label: 'Wed' },
-            { code: 'thu', label: 'Thu' }, { code: 'fri', label: 'Fri' }, { code: 'sat', label: 'Sat' }, { code: 'sun', label: 'Sun' }
+            'Mathematics', 'Math Lit', 'Physical Science', 'Life Science',
+            'English', 'Afrikaans', 'IsiZulu', 'IsiXhosa', 'History',
+            'Geography', 'Business Studies', 'Accounting', 'Economics',
+            'CAT', 'IT', 'Engineering Graphics', 'Civil Technology',
+            'Electrical Technology', 'Mechanical Technology', 'Tourism',
+            'Hospitality', 'Life Orientation', 'Visual Arts', 'Music',
+            'Dramatic Arts', 'Sport Science', 'Agricultural Science'
         ];
 
+        const GRADES = ['Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
+        const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+            '18:00', '19:00'];
+        const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+        // State
         let currentStep = 1;
-        let userData = {};
-        let selectedAvailability = [];
+        let formData = {
+            fullName: '',
+            email: '',
+            phone: '',
+            backupPhone: '',
+            bio: '',
+            qualified_subjects: [],
+            experienced_subjects: [],
+            grades: [],
+            availability: [],
+            is_available: true
+        };
 
-        // ==================== INIT ====================
-        document.addEventListener('DOMContentLoaded', async () => {
-            const email = sessionStorage.getItem('p2p_email');
-            if (!email) {
-                showAccountError();
-                return;
-            }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            loadUserData();
+            populateSubjects();
+            populateGrades();
+            populateTimeSlots();
+            updateProgress();
 
-            // Fetch user data from workers (users table)
-            await loadUserData(email);
-
-            // Render form elements
-            renderSubjectCheckboxes();
-            renderGradeCheckboxes();
-            renderAvailabilityGrid();
-
-            // Pre-fill review section
-            updateReviewSection();
-
-            // Check if profile already exists
-            await checkProfileStatus(email);
+            // Auto-save on input change
+            setupAutoSave();
         });
 
-        // ==================== DATA LOADING ====================
-        async function loadUserData(email) {
-            try {
-                const response = await fetch(`${API_BASE}/api/user/profile?email=${encodeURIComponent(email)}`);
-                if (response.ok) {
-                    userData = await response.json();
-                    prefillForm();
-                    document.getElementById('headerName').textContent = userData.first_name || 'Tutor';
-                    document.getElementById('summaryEmail').textContent = email;
-                }
-            } catch (err) {
-                console.warn('Could not fetch user profile:', err);
-                // Fallback to session storage
-                userData = {
-                    first_name: sessionStorage.getItem('p2p_name')?.split(' ')[0] || '',
-                    last_name: sessionStorage.getItem('p2p_name')?.split(' ')[1] || '',
-                    email: email,
-                    phone_number: '',
-                    backup_phone: '',
-                    hourly_rate: 120.00
-                };
-                prefillForm();
+        // Load user data from localStorage or URL params
+        function loadUserData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email') || localStorage.getItem('userEmail');
+
+            if (email) {
+                document.getElementById('email').value = email;
+                document.getElementById('email').disabled = true;
+                formData.email = email;
+
+                // Fetch existing profile data
+                fetchUserProfile(email);
             }
         }
 
-        function prefillForm() {
-            const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-            document.getElementById('fullName').value = fullName || 'Please enter your full name';
-            document.getElementById('email').value = userData.email || '';
-            document.getElementById('phone').value = userData.phone_number || '';
-            document.getElementById('backupPhone').value = userData.backup_phone || '';
-
-            // Update review section
-            document.getElementById('reviewName').textContent = fullName || '-';
-            document.getElementById('reviewEmail').textContent = userData.email || '-';
-            document.getElementById('reviewPhone').textContent = userData.phone_number || '-';
-
-            // Set summary avatar initials
-            const initials = fullName.split(' ').map(n => n[0]).filter(Boolean).join('').substring(0, 2).toUpperCase() || 'TU';
-            document.getElementById('summaryAvatar').textContent = initials;
-            document.getElementById('summaryFullName').textContent = fullName || 'Tutor Name';
-        }
-
-        async function checkProfileStatus(email) {
+        // Fetch existing tutor profile from API
+        async function fetchUserProfile(email) {
             try {
-                const response = await fetch(`${API_BASE}/api/tutor/profile/status?email=${encodeURIComponent(email)}`);
+                const response = await fetch(`${API_BASE_URL}/tutor/profile/status?email=${encodeURIComponent(email)}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
                 if (response.ok) {
-                    const status = await response.json();
-                    if (status.exists && status.complete) {
-                        // Profile already set up - show summary directly
-                        showProfileSummary({
-                            ...status,
-                            hourly_rate: status.hourly_rate || userData.hourly_rate || 120.00
-                        });
+                    const data = await response.json();
+                    if (data.exists) {
+                        // Pre-fill form with existing data
+                        if (data.name) document.getElementById('profileName').textContent = `Welcome, ${data.name}`;
+                        if (data.hourly_rate) document.getElementById('hourlyRateDisplay').textContent =
+                            `R${data.hourly_rate.toFixed(2)}/hour`;
+
+                        // You can expand this to pre-fill all fields if needed
                     }
                 }
-            } catch (err) {
-                console.warn('Could not check profile status:', err);
+            } catch (error) {
+                console.log('Could not fetch existing profile (new user):', error);
             }
         }
 
-        function showAccountError() {
-            document.getElementById('profileForm').innerHTML = `
-    <div class="text-center py-12">
-      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-      </div>
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Account Information Missing</h3>
-      <p class="text-gray-600 mb-6">We couldn't find your account details. Please log in again to continue setting up your tutor profile.</p>
-      <a href="login.html" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-        <i class="fas fa-sign-in-alt"></i> Go to Login
-      </a>
-    </div>
-  `;
-        }
-
-        // ==================== FORM RENDERING ====================
-        function renderSubjectCheckboxes() {
-            const qualifiedContainer = document.getElementById('qualifiedSubjectsContainer');
-            const experiencedContainer = document.getElementById('experiencedSubjectsContainer');
+        // Populate subjects checkboxes
+        function populateSubjects() {
+            const qualifiedContainer = document.getElementById('qualifiedSubjects');
+            const experienceContainer = document.getElementById('experienceSubjects');
 
             SUBJECTS.forEach(subject => {
-                const icon = getSubjectIcon(subject);
-                const id = `qualified-${subject.replace(/\s+/g, '-').toLowerCase()}`;
-                const expId = `experienced-${subject.replace(/\s+/g, '-').toLowerCase()}`;
+                const safeId = subject.replace(/\s+/g, '_').toLowerCase();
 
-                qualifiedContainer.innerHTML += `
-      <label class="checkbox-card flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all">
-        <input type="checkbox" name="qualified" value="${subject}" id="${id}" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-        <span class="text-sm">${icon} ${subject}</span>
-      </label>`;
+                // Qualified Subjects
+                const qualDiv = document.createElement('div');
+                qualDiv.className = 'checkbox-item';
+                qualDiv.innerHTML = `
+    <input type="checkbox" id="qual_${safeId}" value="${subject}" data-type="qualified">
+    <label for="qual_${safeId}">${subject}</label>
+    `;
+                qualifiedContainer.appendChild(qualDiv);
 
-                experiencedContainer.innerHTML += `
-      <label class="checkbox-card flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all">
-        <input type="checkbox" name="experienced" value="${subject}" id="${expId}" class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
-        <span class="text-sm">${icon} ${subject}</span>
-      </label>`;
+                // Experience Subjects
+                const expDiv = document.createElement('div');
+                expDiv.className = 'checkbox-item';
+                expDiv.innerHTML = `
+    <input type="checkbox" id="exp_${safeId}" value="${subject}" data-type="experience">
+    <label for="exp_${safeId}">${subject}</label>
+    `;
+                experienceContainer.appendChild(expDiv);
             });
-        }
 
-        function renderGradeCheckboxes() {
-            const container = document.getElementById('gradesContainer');
-            GRADES.forEach(grade => {
-                const id = `grade-${grade.replace(/\s+/g, '-').toLowerCase()}`;
-                container.innerHTML += `
-      <label class="checkbox-card flex items-center gap-2 px-4 py-2.5 border rounded-lg cursor-pointer transition-all">
-        <input type="checkbox" name="grade" value="${grade}" id="${id}" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-        <span class="text-sm">${grade}</span>
-      </label>`;
-            });
-        }
-
-        function renderAvailabilityGrid() {
-            const tbody = document.getElementById('availabilityGrid');
-            TIME_SLOTS.forEach(time => {
-                let row = `<tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium text-gray-700">${time}</td>`;
-                DAYS.forEach(day => {
-                    const slotId = `${day.code}_${time.replace(':', '-')}`;
-                    const checkboxId = `avail-${slotId}`;
-                    row += `
-        <td class="text-center py-3 px-2">
-          <input type="checkbox" id="${checkboxId}" class="time-slot hidden" value="${slotId}" onchange="toggleAvailability(this)">
-          <label for="${checkboxId}" class="inline-flex items-center justify-center w-8 h-8 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-xs">
-            ✓
-          </label>
-        </td>`;
+            // Add change listeners
+            document.querySelectorAll('#qualifiedSubjects input').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    updateFormData();
+                    // Auto-check experience if qualified
+                    if (this.checked) {
+                        const expCb = document.getElementById(`exp_${this.id.replace('qual_', 'exp_')}`);
+                        if (expCb) expCb.checked = true;
+                    }
+                    saveToLocalStorage();
                 });
-                row += '</tr>';
-                tbody.innerHTML += row;
+            });
+
+            document.querySelectorAll('#experienceSubjects input').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    updateFormData();
+                    saveToLocalStorage();
+                });
             });
         }
 
-        function toggleAvailability(checkbox) {
-            const label = checkbox.nextElementSibling;
-            if (checkbox.checked) {
-                label.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-                label.classList.remove('border-gray-300');
-                if (!selectedAvailability.includes(checkbox.value)) {
-                    selectedAvailability.push(checkbox.value);
-                }
-            } else {
-                label.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                label.classList.add('border-gray-300');
-                selectedAvailability = selectedAvailability.filter(v => v !== checkbox.value);
+        // Populate grades checkboxes
+        function populateGrades() {
+            const gradesContainer = document.getElementById('grades');
+            GRADES.forEach(grade => {
+                const safeId = grade.replace(/\s+/g, '_').toLowerCase();
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+    <input type="checkbox" id="grade_${safeId}" value="${grade}">
+    <label for="grade_${safeId}">${grade}</label>
+    `;
+                gradesContainer.appendChild(div);
+            });
+
+            document.querySelectorAll('#grades input').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    updateFormData();
+                    saveToLocalStorage();
+                });
+            });
+        }
+
+        // Populate time slots grid
+        function populateTimeSlots() {
+            const grid = document.getElementById('timeSlotGrid');
+
+            // Header row
+            const headerCell = document.createElement('div');
+            headerCell.className = 'time-slot-header';
+            headerCell.textContent = 'Time';
+            grid.appendChild(headerCell);
+
+            DAYS.forEach(day => {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'time-slot-header';
+                dayCell.textContent = day;
+                grid.appendChild(dayCell);
+            });
+
+            // Time slot rows
+            TIME_SLOTS.forEach(time => {
+                const timeCell = document.createElement('div');
+                timeCell.className = 'time-slot-header';
+                timeCell.textContent = time;
+                grid.appendChild(timeCell);
+
+                DAYS.forEach((day, dayIndex) => {
+                    const slot = `${day}-${time}`;
+                    const cell = document.createElement('div');
+                    cell.className = 'time-slot-cell';
+                    cell.textContent = '✓';
+                    cell.dataset.slot = slot;
+                    cell.addEventListener('click', function () {
+                        this.classList.toggle('selected');
+                        updateFormData();
+                        saveToLocalStorage();
+                    });
+                    grid.appendChild(cell);
+                });
+            });
+        }
+
+        // Update formData from current form state
+        function updateFormData() {
+            formData.fullName = document.getElementById('fullName').value.trim();
+            formData.phone = document.getElementById('phone').value.trim();
+            formData.backupPhone = document.getElementById('backupPhone').value.trim();
+            formData.bio = document.getElementById('bio').value.trim();
+
+            formData.qualified_subjects = Array.from(
+                document.querySelectorAll('#qualifiedSubjects input:checked')
+            ).map(cb => cb.value);
+
+            formData.experienced_subjects = Array.from(
+                document.querySelectorAll('#experienceSubjects input:checked')
+            ).map(cb => cb.value);
+
+            formData.grades = Array.from(
+                document.querySelectorAll('#grades input:checked')
+            ).map(cb => cb.value);
+
+            formData.availability = Array.from(
+                document.querySelectorAll('.time-slot-cell.selected')
+            ).map(cell => cell.dataset.slot);
+        }
+
+        // Save to localStorage for auto-recovery
+        function saveToLocalStorage() {
+            if (formData.email) {
+                localStorage.setItem(`tutorFormData_${formData.email}`, JSON.stringify(formData));
             }
         }
 
-        function getSubjectIcon(subject) {
-            const icons = {
-                'Mathematics': '📐', 'Physical Science': '🔬', 'Life Sciences': '🧬',
-                'English': '📚', 'Afrikaans': '🇿🇦', 'Accounting': '💰',
-                'Economics': '📊', 'Business Studies': '💼', 'Geography': '🌍',
-                'History': '📜', 'Mathematical Literacy': '📏', 'Information Technology': '💻',
-                'Life Orientation': '🧘'
-            };
-            return icons[subject] || '📖';
-        }
-
-        // ==================== NAVIGATION ====================
-        function updateProgress(step) {
-            const progress = step * 25;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            document.getElementById('progressLabel').textContent = `Step ${step} of 4`;
-
-            // Update step indicators
-            ['step1Indicator', 'step2Indicator', 'step3Indicator', 'step4Indicator'].forEach((id, idx) => {
-                const el = document.getElementById(id);
-                if (idx + 1 < step) {
-                    el.className = 'step-complete px-2 py-1 rounded text-green-700';
-                    el.innerHTML = `<i class="fas fa-check mr-1"></i>${el.textContent.replace('✓', '').trim()}`;
-                } else if (idx + 1 === step) {
-                    el.className = 'step-active px-2 py-1 rounded';
-                } else {
-                    el.className = 'px-2 py-1 rounded';
-                }
+        // Setup auto-save on input changes
+        function setupAutoSave() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    updateFormData();
+                    saveToLocalStorage();
+                });
             });
         }
 
-        function nextStep(fromStep) {
-            // Validate current step
-            if (fromStep === 1) {
-                const bio = document.getElementById('bio').value.trim();
+        // Update progress bar
+        function updateProgress() {
+            const steps = document.querySelectorAll('.step');
+            const progressLine = document.getElementById('progressLine');
+
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) { step.classList.add('completed'); } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            }); const progress = ((currentStep - 1) / 3) * 100; if (progressLine)
+                progressLine.style.width = `${progress}%`;
+        } // Navigate to next step with validation function nextStep(current) {
+        if (!validateStep(current)) return; updateFormData(); currentStep = current + 1;
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+
+        if (currentStep === 4) populateReview();
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+        // Navigate to previous step
+        function prevStep(current) {
+            currentStep = current - 1;
+
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Validate current step
+        function validateStep(step) {
+            let isValid = true;
+
+            if (step === 1) {
+                const fullName = document.getElementById('fullName').value.trim();
                 const phone = document.getElementById('phone').value.trim();
-                if (!bio || bio.length < 50) {
-                    alert('Please write a bio with at least 50 characters');
-                    document.getElementById('bio').focus();
-                    return;
-                }
-                if (!phone || !/^\+?27\d{9}$|^\d{10}$/.test(phone)) {
-                    alert('Please enter a valid South African phone number (+27...)');
-                    document.getElementById('phone').focus();
-                    return;
-                }
-            }
+                const bio = document.getElementById('bio').value.trim();
 
-            if (fromStep === 2) {
-                const qualified = document.querySelectorAll('input[name="qualified"]:checked');
-                const grades = document.querySelectorAll('input[name="grade"]:checked');
-                let valid = true;
+                if (!fullName) {
+                    showAlert('Please enter your full name', 'error');
+                    isValid = false;
+                } else if (!phone) {
+                    showAlert('Please enter your phone number', 'error');
+                    isValid = false;
+                } else if (!bio || bio.length < 50) {
+                    showAlert('Please write a bio (at least 50 characters)', 'error');
+                    isValid = false;
+                }
+            } if (step === 2) {
+                const qualifiedSubjects = Array.from(
+                    document.querySelectorAll('#qualifiedSubjects input:checked')).map(cb => cb.value);
+                const grades = Array.from(
+                    document.querySelectorAll('#grades input:checked')
+                ).map(cb => cb.value);
 
-                if (qualified.length === 0) {
-                    document.getElementById('qualifiedError').classList.remove('hidden');
-                    valid = false;
+                if (qualifiedSubjects.length === 0) {
+                    document.getElementById('qualifiedSubjectsError').style.display = 'block';
+                    isValid = false;
                 } else {
-                    document.getElementById('qualifiedError').classList.add('hidden');
+                    document.getElementById('qualifiedSubjectsError').style.display = 'none';
                 }
 
                 if (grades.length === 0) {
-                    document.getElementById('gradesError').classList.remove('hidden');
-                    valid = false;
+                    document.getElementById('gradesError').style.display = 'block';
+                    isValid = false;
                 } else {
-                    document.getElementById('gradesError').classList.add('hidden');
-                }
-
-                if (!valid) return;
-            }
-
-            if (fromStep === 3) {
-                if (selectedAvailability.length === 0) {
-                    document.getElementById('availabilityError').classList.remove('hidden');
-                    return;
-                }
-                document.getElementById('availabilityError').classList.add('hidden');
-            }
-
-            // Update review section before final step
-            if (fromStep === 3) {
-                updateReviewSection();
-            }
-
-            // Hide current, show next
-            document.getElementById(`step${fromStep}`).classList.add('hidden');
-            document.getElementById(`step${fromStep + 1}`).classList.remove('hidden');
-
-            currentStep = fromStep + 1;
-            updateProgress(currentStep);
-
-            // Scroll to top of form
-            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function prevStep(fromStep) {
-            document.getElementById(`step${fromStep}`).classList.add('hidden');
-            document.getElementById(`step${fromStep - 1}`).classList.remove('hidden');
-            currentStep = fromStep - 1;
-            updateProgress(currentStep);
-            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function updateReviewSection() {
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-
-            const qualified = Array.from(document.querySelectorAll('input[name="qualified"]:checked')).map(cb => cb.value);
-
-            document.getElementById('reviewName').textContent = fullName || '-';
-            document.getElementById('reviewEmail').textContent = email || '-';
-            document.getElementById('reviewPhone').textContent = phone || '-';
-            document.getElementById('reviewSubjects').textContent = qualified.length > 0 ? qualified.slice(0, 3).join(', ') + (qualified.length > 3 ? '...' : '') : '-';
-        }
-
-        // ==================== SUBMISSION ====================
-        async function submitProfile() {
-            // Final validation
-            const checks = ['termsCheck', 'availabilityCheck', 'consentCheck'];
-            for (const id of checks) {
-                if (!document.getElementById(id).checked) {
-                    alert(`Please confirm: ${document.getElementById(id).nextElementSibling.textContent.trim()}`);
-                    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return;
+                    document.getElementById('gradesError').style.display = 'none';
                 }
             }
 
-            const email = sessionStorage.getItem('p2p_email');
+            if (step === 3) {
+                const availability = Array.from(
+                    document.querySelectorAll('.time-slot-cell.selected')
+                ).map(cell => cell.dataset.slot);
 
-            const payload = {
-                email: email,
-                name: document.getElementById('fullName').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                backupPhone: document.getElementById('backupPhone').value.trim(),
-                bio: document.getElementById('bio').value.trim(),
-                // ❌ NO hourly_rate - admin sets this manually in database
-                qualified_subjects: Array.from(document.querySelectorAll('input[name="qualified"]:checked')).map(cb => cb.value),
-                experienced_subjects: Array.from(document.querySelectorAll('input[name="experienced"]:checked')).map(cb => cb.value),
-                grades: Array.from(document.querySelectorAll('input[name="grade"]:checked')).map(cb => cb.value),
-                availability: selectedAvailability,
-                is_available: true
-            };
+                if (availability.length === 0) {
+                    document.getElementById('timeSlotsError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('timeSlotsError').style.display = 'none';
+                }
+            }
 
-            const btn = document.getElementById('submitBtn');
-            const originalBtnHtml = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Profile...';
+            return isValid;
+        }
+
+        // Populate review section
+        function populateReview() {
+            updateFormData();
+            document.getElementById('reviewName').textContent = formData.fullName || '-';
+            document.getElementById('reviewEmail').textContent = formData.email || '-';
+            document.getElementById('reviewPhone').textContent = formData.phone || '-';
+            document.getElementById('reviewSubjects').textContent = formData.qualified_subjects.join(', ') || '-';
+            document.getElementById('reviewGrades').textContent = formData.grades.join(', ') || '-';
+            document.getElementById('reviewSlots').textContent = `${formData.availability.length} slots selected`;
+        }
+
+        // Show alert message
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            if (!container) return;
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+            `;
+            container.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Submit form to Cloudflare Worker
+        async function submitProfile(e) {
+            e.preventDefault();
+
+            // Validate agreements
+            const agreeTerms = document.getElementById('agreeTerms')?.checked;
+            const agreeAvailability = document.getElementById('agreeAvailability')?.checked;
+            const agreePOPIA = document.getElementById('agreePOPIA')?.checked;
+
+            if (!agreeTerms || !agreeAvailability || !agreePOPIA) {
+                showAlert('Please agree to all terms and conditions', 'error');
+                return;
+            }
+
+            updateFormData();
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/tutor/profile`, {
+                // Prepare payload - field names MUST match worker expectations
+                const payload = {
+                    email: formData.email,
+                    phone: formData.phone,
+                    backupPhone: formData.backupPhone,
+                    bio: formData.bio,
+                    qualified_subjects: formData.qualified_subjects, // underscore format
+                    experienced_subjects: formData.experienced_subjects,
+                    grades: formData.grades,
+                    availability: formData.availability,
+                    is_available: true
+                };
+
+                console.log('Sending to API:', payload);
+
+                const response = await fetch(`${API_BASE_URL}/tutor/profile`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add Authorization header if you implement auth tokens
+                        // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
                     body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
+                console.log('API Response:', result);
 
                 if (response.ok && result.success) {
-                    // ✅ Show profile summary instead of form
-                    showProfileSummary({
-                        ...payload,
-                        hourly_rate: result.hourly_rate || 120.00,
-                        verified: false,
-                        available: true
-                    });
+                    showAlert('✅ Profile saved successfully! Awaiting admin approval.', 'success');
+
+                    // Clear saved data
+                    if (formData.email) {
+                        localStorage.removeItem(`tutorFormData_${formData.email}`);
+                    }
+
+                    // Update UI
+                    const statusBadge = document.getElementById('profileStatus');
+                    if (statusBadge) {
+                        statusBadge.className = 'status-badge status-pending';
+                        statusBadge.innerHTML = '<i class="fas fa-clock"></i> Pending Admin Approval';
+                    }
+
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'tutor-portal.html';
+                    }, 2500);
                 } else {
-                    alert(`Error: ${result.error || 'Failed to save profile'}`);
+                    throw new Error(result.error || 'Failed to save profile');
                 }
-            } catch (err) {
-                console.error('Profile save error:', err);
-                alert('Connection error. Please check your internet and try again.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalBtnHtml;
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                showAlert(`❌ ${error.message}`, 'error');
+
+                // Keep button enabled for retry
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
         }
 
-        function showProfileSummary(data) {
-            // Hide form, show summary
-            document.getElementById('profileForm').classList.add('hidden');
-            document.getElementById('profileSummary').classList.remove('hidden');
-
-            // Populate summary fields
-            document.getElementById('summaryEmail').textContent = data.email || '';
-
-            // Subjects
-            const subjectsContainer = document.getElementById('summaryQualifiedSubjects');
-            subjectsContainer.innerHTML = '';
-            (data.qualified_subjects || []).forEach(sub => {
-                subjectsContainer.innerHTML += `
-      <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1">
-        ${getSubjectIcon(sub)} ${sub}
-      </span>`;
-            });
-
-            // Grades
-            const gradesContainer = document.getElementById('summaryGrades');
-            gradesContainer.innerHTML = '';
-            (data.grades || []).forEach(grade => {
-                gradesContainer.innerHTML += `
-      <span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-        ${grade}
-      </span>`;
-            });
-
-            // Bio
-            document.getElementById('summaryBio').textContent = data.bio || 'No bio provided';
-
-            // Rate (admin-set)
-            const rate = data.hourly_rate || 120.00;
-            document.getElementById('summaryRate').innerHTML = `R${rate.toFixed(2)} <span class="text-sm font-normal text-gray-500">/hour</span>`;
-
-            // Availability summary
-            const availContainer = document.getElementById('summaryAvailability');
-            availContainer.innerHTML = '';
-            if (data.availability && data.availability.length > 0) {
-                const grouped = {};
-                data.availability.forEach(slot => {
-                    const [day, time] = slot.split('_');
-                    if (!grouped[day]) grouped[day] = [];
-                    grouped[day].push(time);
-                });
-
-                Object.entries(grouped).slice(0, 5).forEach(([day, times]) => {
-                    const dayLabel = DAYS.find(d => d.code === day)?.label || day;
-                    availContainer.innerHTML += `
-        <div class="flex items-center gap-2">
-          <span class="font-medium text-gray-700 w-10">${dayLabel}:</span>
-          <span class="text-gray-600">${times.slice(0, 2).join(', ')}${times.length > 2 ? '...' : ''}</span>
-        </div>`;
-                });
-                if (Object.keys(grouped).length > 5) {
-                    availContainer.innerHTML += `<p class="text-xs text-gray-500 italic">+ ${Object.keys(grouped).length - 5} more days</p>`;
-                }
+        // Back button function
+        window.goBack = function () {
+            if (document.referrer && !document.referrer.includes('tutor-profile-setup')) {
+                window.history.back();
             } else {
-                availContainer.innerHTML = '<p class="text-gray-500 text-sm">No availability set</p>';
+                window.location.href = 'tutor-portal.html';
             }
-        }
+        };
 
-        function editProfile() {
-            document.getElementById('profileSummary').classList.add('hidden');
-            document.getElementById('profileForm').classList.remove('hidden');
-            currentStep = 1;
-            updateProgress(1);
-            document.getElementById('step1').classList.remove('hidden');
-            ['step2', 'step3', 'step4'].forEach(s => document.getElementById(s).classList.add('hidden'));
-            document.getElementById('profileForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // ==================== UTILS ====================
-        // Add checkbox visual feedback
-        document.addEventListener('change', (e) => {
-            if (e.target.type === 'checkbox' && (e.target.name === 'qualified' || e.target.name === 'experienced' || e.target.name === 'grade')) {
-                const card = e.target.closest('.checkbox-card');
-                if (e.target.checked) {
-                    card.classList.add('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
+        // Form submit listener
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('tutorProfileForm');
+            if (form) {
+                form.addEventListener('submit', submitProfile);
             }
         });
+
     </script>
 </body>
 

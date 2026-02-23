@@ -70,7 +70,7 @@
         }
 
         /* ============================================
-           NAVIGATION - LIGHT MODE
+           NAVIGATION - LIGHT MODE WITH BACK BUTTON
         ============================================ */
         .navbar {
             background: var(--bg-nav);
@@ -107,42 +107,41 @@
             font-size: 1.8rem;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
+        /* Back Button Styles - ADDED */
+        .back-button {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 16px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a i {
-            color: var(--navy);
-            font-size: 1rem;
-        }
-
-        .nav-links a:hover {
             background: var(--navy-soft);
             color: var(--navy);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            border: none;
         }
 
-        .nav-links a.active {
+        .back-button i {
+            font-size: 1rem;
+            color: var(--green);
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
             background: var(--navy);
             color: white;
+            border-color: var(--navy);
+            transform: translateX(-3px);
         }
 
-        .nav-links a.active i {
+        .back-button:hover i {
             color: var(--green);
+            transform: translateX(-3px);
         }
 
         /* ============================================
@@ -200,6 +199,167 @@
         }
 
         /* ============================================
+           UPLOAD SECTION - LIGHT MODE
+        ============================================ */
+        .upload-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 24px;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid var(--green-soft);
+            padding-bottom: 16px;
+        }
+
+        .upload-section h2 i {
+            color: var(--green);
+        }
+
+        .upload-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group label i {
+            color: var(--green);
+            width: 18px;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            width: 100%;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(50, 205, 50, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2332cd32' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            appearance: none;
+            padding-right: 45px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload-container {
+            grid-column: 1 / -1;
+            border: 2.5px dashed rgba(50, 205, 50, 0.4);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            background: var(--bg-body);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-container:hover {
+            border-color: var(--green);
+            background: var(--green-soft);
+        }
+
+        .file-upload-container i {
+            font-size: 3rem;
+            color: var(--green);
+            margin-bottom: 16px;
+        }
+
+        .file-upload-container p {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .file-upload-container small {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        #selectedFileName {
+            margin-top: 16px;
+            font-weight: 600;
+            color: var(--navy);
+            padding: 8px 16px;
+            background: rgba(50, 205, 50, 0.1);
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .btn-upload {
+            grid-column: 1 / -1;
+            background: var(--navy);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            border: 1px solid var(--navy);
+            margin-top: 8px;
+        }
+
+        .btn-upload:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: var(--navy);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
+        }
+
+        .btn-upload i {
+            font-size: 1.1rem;
+        }
+
+        /* ============================================
            FILTERS SECTION - LIGHT MODE
         ============================================ */
         .filters-section {
@@ -249,34 +409,6 @@
 
         .filter-group label i {
             color: var(--green);
-        }
-
-        .form-control {
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--border);
-            background: var(--bg-body);
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            width: 100%;
-            transition: var(--transition);
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--green);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(50, 205, 50, 0.1);
-        }
-
-        select.form-control {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2332cd32' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            appearance: none;
-            padding-right: 45px;
         }
 
         .reset-filters {
@@ -729,20 +861,16 @@
                 padding: 16px 5%;
             }
 
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
             .page-header h1 {
                 font-size: 2rem;
             }
 
+            .upload-form,
             .filters-grid {
                 grid-template-columns: 1fr;
             }
 
+            .upload-section,
             .filters-section {
                 padding: 24px 20px;
             }
@@ -787,6 +915,7 @@
                 font-size: 0.95rem;
             }
 
+            .upload-section h2,
             .filters-section h2 {
                 font-size: 1.3rem;
             }
@@ -823,20 +952,11 @@
             margin: -8px -12px;
             border: 1px solid var(--green);
         }
-
-        /* Decorative elements */
-        .navy-dot {
-            color: var(--navy);
-        }
-
-        .green-dot {
-            color: var(--green);
-        }
     </style>
 </head>
 
 <body>
-    <!-- Navigation - Light Mode -->
+    <!-- Navigation - Light Mode with Back Button -->
     <nav class="navbar">
         <a href="index.html" class="logo">
             <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo"
@@ -844,415 +964,348 @@
             <i class="fas fa-graduation-cap" style="display: none;"></i>
             <span>PEER<span style="color: var(--green);">-2-</span>PEER PRO</span>
         </a>
-        <div class="nav-left">
-            <button class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i> Back
-            </button>
-        </div>
+        <button onclick="goBack()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Go Back</span>
+        </button>
     </nav>
 
-    <!-- Add this right after your navbar closes -->
-    <div class="whatsapp-banner-container">
-        <div class="whatsapp-card">
-            <div class="animated-text-wrapper">
-                <span id="animated-text"></span>
+    <!-- MAIN CONTAINER - ADDED BACK -->
+    <div class="container">
+        <!-- UPLOAD SECTION -->
+        <section class="upload-section">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Share Study Materials</h2>
+            <form id="uploadForm" class="upload-form">
+                <div class="form-group">
+                    <label for="fileName"><i class="fas fa-heading"></i> Document Title</label>
+                    <input type="text" id="fileName" class="form-control" placeholder="e.g., Quadratic Equations Notes"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileSubject"><i class="fas fa-book"></i> Subject</label>
+                    <select id="fileSubject" class="form-control" required>
+                        <option value="">-- Select Subject --</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="afrikaans">Afrikaans</option>
+                        <option value="agricultural management practices">Agricultural Management Practices</option>
+                        <option value="agricultural science">Agricultural Science</option>
+                        <option value="agricultural technology">Agricultural Technology</option>
+                        <option value="business">Business Studies</option>
+                        <option value="cat">CAT</option>
+                        <option value="civil technology">Civil Technology</option>
+                        <option value="computer applications technology">Computer Applications Technology</option>
+                        <option value="consumer studies">Consumer Studies</option>
+                        <option value="dance studies">Dance Studies</option>
+                        <option value="design">Design</option>
+                        <option value="development studies">Development Studies</option>
+                        <option value="dramatic arts">Dramatic Arts</option>
+                        <option value="economic and management sciences">Economic and Management Sciences</option>
+                        <option value="economics">Economics</option>
+                        <option value="electrical technology">Electrical Technology</option>
+                        <option value="engineering graphics and design">Engineering Graphics and Design</option>
+                        <option value="english">English</option>
+                        <option value="equine studies">Equine Studies</option>
+                        <option value="geography">Geography</option>
+                        <option value="history">History</option>
+                        <option value="hospitality studies">Hospitality Studies</option>
+                        <option value="isindebele">IsiNdebele</option>
+                        <option value="isixhosa">IsiXhosa</option>
+                        <option value="isizulu">IsiZulu</option>
+                        <option value="it">IT</option>
+                        <option value="life orientation">Life Orientation</option>
+                        <option value="life_science">Life Science</option>
+                        <option value="marine sciences">Marine Sciences</option>
+                        <option value="maritime economics">Maritime Economics</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="math_lit">Math Lit</option>
+                        <option value="mechanical technology">Mechanical Technology</option>
+                        <option value="music">Music</option>
+                        <option value="nautical science">Nautical Science</option>
+                        <option value="physics">Physics</option>
+                        <option value="religion studies">Religion Studies</option>
+                        <option value="sepedi">Sepedi</option>
+                        <option value="sesotho">Sesotho</option>
+                        <option value="setswana">Setswana</option>
+                        <option value="siswati">Siswati</option>
+                        <option value="sport and exercise science">Sport and Exercise Science</option>
+                        <option value="technical maths">Technical Maths</option>
+                        <option value="technical sciences">Technical Sciences</option>
+                        <option value="tourism">Tourism</option>
+                        <option value="tshivenda">Tshivenda</option>
+                        <option value="visual arts">Visual Arts</option>
+                        <option value="xitsonga">Xitsonga</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileGrade"><i class="fas fa-graduation-cap"></i> Grade Level</label>
+                    <select id="fileGrade" class="form-control" required>
+                        <option value="">-- Select Grade --</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="uploaderRole"><i class="fas fa-user-tag"></i> Your Role</label>
+                    <select id="uploaderRole" class="form-control" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="teacher">👨‍🏫 Teacher</option>
+                        <option value="student">👩‍🎓 Student</option>
+                        <option value="tutor">🧑‍🏫 Tutor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="docType"><i class="fas fa-file-alt"></i> Document Type</label>
+                    <select id="docType" class="form-control" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="notes"> Notes</option>
+                        <option value="worksheet"> Worksheet</option>
+                        <option value="past_paper"> Past Paper</option>
+                        <option value="memo"> Memo/Solutions</option>
+                        <option value="study_guide"> Study Guide</option>
+                        <option value="presentation"> Presentation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="docDate"><i class="fas fa-calendar"></i> Document Date</label>
+                    <input type="date" id="docDate" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="docDescription"><i class="fas fa-sticky-note"></i> Description</label>
+                    <textarea id="docDescription" class="form-control" rows="3"
+                        placeholder="Brief description of the document..."></textarea>
+                </div>
+
+                <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p><strong>Click to browse</strong> or drag & drop</p>
+                    <small>PDF, DOC, PPT, Images</small>
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
+                        style="display: none;" required>
+                    <div id="selectedFileName"></div>
+                </div>
+
+                <button type="button" id="uploadBtn" class="btn-upload" onclick="uploadDocument()">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload to Library
+                </button>
+            </form>
+        </section>
+
+        <!-- FILTERS SECTION -->
+        <section class="filters-section">
+            <h2><i class="fas fa-filter"></i> Filter Resources</h2>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="searchInput"><i class="fas fa-search"></i> Search</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
+                    <select id="subjectFilter" class="form-control">
+                        <option value="all">All Subjects</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="afrikaans">Afrikaans</option>
+                        <option value="agricultural management practices">Agricultural Management Practices</option>
+                        <option value="agricultural science">Agricultural Science</option>
+                        <option value="agricultural technology">Agricultural Technology</option>
+                        <option value="business">Business Studies</option>
+                        <option value="cat">CAT</option>
+                        <option value="civil technology">Civil Technology</option>
+                        <option value="computer applications technology">Computer Applications Technology</option>
+                        <option value="consumer studies">Consumer Studies</option>
+                        <option value="dance studies">Dance Studies</option>
+                        <option value="design">Design</option>
+                        <option value="development studies">Development Studies</option>
+                        <option value="dramatic arts">Dramatic Arts</option>
+                        <option value="economic and management sciences">Economic and Management Sciences</option>
+                        <option value="economics">Economics</option>
+                        <option value="electrical technology">Electrical Technology</option>
+                        <option value="engineering graphics and design">Engineering Graphics and Design</option>
+                        <option value="english">English</option>
+                        <option value="equine studies">Equine Studies</option>
+                        <option value="geography">Geography</option>
+                        <option value="history">History</option>
+                        <option value="hospitality studies">Hospitality Studies</option>
+                        <option value="isindebele">IsiNdebele</option>
+                        <option value="isixhosa">IsiXhosa</option>
+                        <option value="isizulu">IsiZulu</option>
+                        <option value="it">IT</option>
+                        <option value="life orientation">Life Orientation</option>
+                        <option value="life_science">Life Science</option>
+                        <option value="marine sciences">Marine Sciences</option>
+                        <option value="maritime economics">Maritime Economics</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="math_lit">Math Lit</option>
+                        <option value="mechanical technology">Mechanical Technology</option>
+                        <option value="music">Music</option>
+                        <option value="nautical science">Nautical Science</option>
+                        <option value="physics">Physics</option>
+                        <option value="religion studies">Religion Studies</option>
+                        <option value="sepedi">Sepedi</option>
+                        <option value="sesotho">Sesotho</option>
+                        <option value="setswana">Setswana</option>
+                        <option value="siswati">Siswati</option>
+                        <option value="sport and exercise science">Sport and Exercise Science</option>
+                        <option value="technical maths">Technical Maths</option>
+                        <option value="technical sciences">Technical Sciences</option>
+                        <option value="tourism">Tourism</option>
+                        <option value="tshivenda">Tshivenda</option>
+                        <option value="visual arts">Visual Arts</option>
+                        <option value="xitsonga">Xitsonga</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
+                    <select id="gradeFilter" class="form-control">
+                        <option value="all">All Grades</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="docTypeFilter"><i class="fas fa-file-alt"></i> Document Type</label>
+                    <select id="docTypeFilter" class="form-control">
+                        <option value="all">All Types</option>
+                        <option value="notes">Notes</option>
+                        <option value="worksheet">Worksheet</option>
+                        <option value="past_paper">Past Paper</option>
+                        <option value="memo">Solutions</option>
+                    </select>
+                </div>
+
+                <button type="button" class="reset-filters" onclick="resetFilters()">
+                    <i class="fas fa-sync-alt"></i> Reset Filters
+                </button>
             </div>
-            <a href="https://wa.me/27732792426" target="_blank" class="whatsapp-click-area">
-                <i class="fab fa-whatsapp"></i> Book Now on WhatsApp
-            </a>
+        </section>
+
+        <!-- DOCUMENTS GRID -->
+        <div id="fileGrid" class="documents-grid">
+            <!-- Loading State -->
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p style="color: var(--text-muted);">Loading library resources...</p>
+            </div>
         </div>
-    </div>
 
-    <style>
-        .whatsapp-banner-container {
-            max-width: 1400px;
-            margin: 20px auto 10px;
-            padding: 0 24px;
-        }
-
-        .whatsapp-card {
-            background: linear-gradient(145deg, var(--navy, #000033), var(--navy-light, #1a1a4d));
-            border-radius: 24px;
-            padding: 30px 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 51, 0.3);
-            border: 2px solid var(--green, #32cd32);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 25px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .whatsapp-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(50, 205, 50, 0.1) 0%, transparent 70%);
-            animation: pulse 8s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.3;
-            }
-
-            50% {
-                transform: scale(1.2);
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: scale(0.8);
-                opacity: 0.3;
-            }
-        }
-
-        .animated-text-wrapper {
-            flex: 2;
-            min-width: 280px;
-        }
-
-        #animated-text {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            line-height: 1.4;
-            display: inline-block;
-        }
-
-        .whatsapp-click-area {
-            flex: 0 0 auto;
-            background: var(--green, #32cd32);
-            color: var(--navy, #000033);
-            padding: 18px 35px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 1.2rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            border: 2px solid white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            white-space: nowrap;
-        }
-
-        .whatsapp-click-area i {
-            font-size: 2rem;
-        }
-
-        .whatsapp-click-area:hover {
-            background: white;
-            color: var(--navy, #000033);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(50, 205, 50, 0.4);
-        }
-
-        /* Typing animation effect */
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        .typing-cursor {
-            display: inline-block;
-            width: 4px;
-            height: 2.2rem;
-            background: var(--green, #32cd32);
-            margin-left: 8px;
-            vertical-align: middle;
-            animation: blink 1s infinite;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .whatsapp-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 30px 20px;
-            }
-
-            #animated-text {
-                font-size: 1.4rem;
-            }
-
-            .whatsapp-click-area {
-                width: 100%;
-                justify-content: center;
-                padding: 15px 25px;
-                font-size: 1.1rem;
-            }
-
-            .typing-cursor {
-                height: 1.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .whatsapp-banner-container {
-                padding: 0 16px;
-            }
-
-            #animated-text {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
-
-    <script>
-        // Text animation without external library
-        document.addEventListener('DOMContentLoaded', function () {
-            const textElement = document.getElementById('animated-text');
-            const fullText = "Book your next Professional Online, one-on-one or group classes";
-
-            // Create cursor element
-            const cursor = document.createElement('span');
-            cursor.className = 'typing-cursor';
-
-            // Animation states
-            let charIndex = 0;
-            let isDeleting = false;
-            let isPaused = false;
-
-            function animateText() {
-                if (!textElement) return;
-
-                // Current visible text
-                const currentText = fullText.substring(0, charIndex);
-                textElement.textContent = currentText;
-
-                // Append cursor after text
-                if (!textElement.nextElementSibling || !textElement.nextElementSibling.classList.contains('typing-cursor')) {
-                    if (textElement.parentNode) {
-                        textElement.parentNode.appendChild(cursor);
-                    }
-                }
-
-                // Typing logic
-                if (!isDeleting && charIndex < fullText.length) {
-                    // Typing forward
-                    charIndex++;
-                    setTimeout(animateText, 100);
-                } else if (isDeleting && charIndex > 0) {
-                    // Deleting backward
-                    charIndex--;
-                    setTimeout(animateText, 50);
-                } else {
-                    // Change direction
-                    if (!isPaused) {
-                        isPaused = true;
-                        setTimeout(() => {
-                            isDeleting = !isDeleting;
-                            isPaused = false;
-                            animateText();
-                        }, 2000); // Pause at full text
-                    } else {
-                        setTimeout(animateText, 100);
-                    }
-                }
-            }
-
-            // Start animation after a short delay
-            setTimeout(animateText, 500);
-        });
-    </script>
-    <!-- FILTERS SECTION -->
-    <section class="filters-section">
-        <h2><i class="fas fa-filter"></i> Filter Resources</h2>
-        <div class="filters-grid">
-            <div class="filter-group">
-                <label for="searchInput"><i class="fas fa-search"></i> Search</label>
-                <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
-            </div>
-
-            <div class="filter-group">
-                <label for="subjectFilter"><i class="fas fa-book"></i> Subject</label>
-                <select id="subjectFilter" class="form-control">
-                    <option value="all">All Subjects</option>
-                    <option value="accounting">Accounting</option>
-                    <option value="afrikaans">Afrikaans</option>
-                    <option value="agricultural management practices">Agricultural Management Practices</option>
-                    <option value="agricultural science">Agricultural Science</option>
-                    <option value="agricultural technology">Agricultural Technology</option>
-                    <option value="business">Business Studies</option>
-                    <option value="cat">CAT</option>
-                    <option value="civil technology">Civil Technology</option>
-                    <option value="computer applications technology">Computer Applications Technology</option>
-                    <option value="consumer studies">Consumer Studies</option>
-                    <option value="dance studies">Dance Studies</option>
-                    <option value="design">Design</option>
-                    <option value="development studies">Development Studies</option>
-                    <option value="dramatic arts">Dramatic Arts</option>
-                    <option value="economic and management sciences">Economic and Management Sciences</option>
-                    <option value="economics">Economics</option>
-                    <option value="electrical technology">Electrical Technology</option>
-                    <option value="engineering graphics and design">Engineering Graphics and Design</option>
-                    <option value="english">English</option>
-                    <option value="equine studies">Equine Studies</option>
-                    <option value="geography">Geography</option>
-                    <option value="history">History</option>
-                    <option value="hospitality studies">Hospitality Studies</option>
-                    <option value="isindebele">IsiNdebele</option>
-                    <option value="isixhosa">IsiXhosa</option>
-                    <option value="isizulu">IsiZulu</option>
-                    <option value="it">IT</option>
-                    <option value="life orientation">Life Orientation</option>
-                    <option value="life_science">Life Science</option>
-                    <option value="marine sciences">Marine Sciences</option>
-                    <option value="maritime economics">Maritime Economics</option>
-                    <option value="mathematics">Mathematics</option>
-                    <option value="math_lit">Math Lit</option>
-                    <option value="mechanical technology">Mechanical Technology</option>
-                    <option value="music">Music</option>
-                    <option value="nautical science">Nautical Science</option>
-                    <option value="physics">Physics</option>
-                    <option value="religion studies">Religion Studies</option>
-                    <option value="sepedi">Sepedi</option>
-                    <option value="sesotho">Sesotho</option>
-                    <option value="setswana">Setswana</option>
-                    <option value="siswati">Siswati</option>
-                    <option value="sport and exercise science">Sport and Exercise Science</option>
-                    <option value="technical maths">Technical Maths</option>
-                    <option value="technical sciences">Technical Sciences</option>
-                    <option value="tourism">Tourism</option>
-                    <option value="tshivenda">Tshivenda</option>
-                    <option value="visual arts">Visual Arts</option>
-                    <option value="xitsonga">Xitsonga</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="gradeFilter"><i class="fas fa-graduation-cap"></i> Grade</label>
-                <select id="gradeFilter" class="form-control">
-                    <option value="all">All Grades</option>
-                    <option value="1">Grade 1</option>
-                    <option value="2">Grade 2</option>
-                    <option value="3">Grade 3</option>
-                    <option value="4">Grade 4</option>
-                    <option value="5">Grade 5</option>
-                    <option value="6">Grade 6</option>
-                    <option value="7">Grade 7</option>
-                    <option value="8">Grade 8</option>
-                    <option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="docTypeFilter"><i class="fas fa-file-alt"></i> Document Type</label>
-                <select id="docTypeFilter" class="form-control">
-                    <option value="all">All Types</option>
-                    <option value="notes">Notes</option>
-                    <option value="worksheet">Worksheet</option>
-                    <option value="past_paper">Past Paper</option>
-                    <option value="memo">Solutions</option>
-                    <option value="study_guide">Study Guide</option>
-                    <option value="presentation">Presentation</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="uploaderRoleFilter"><i class="fas fa-user-tag"></i> Uploaded By</label>
-                <select id="uploaderRoleFilter" class="form-control">
-                    <option value="all">All Roles</option>
-                    <option value="teacher">Teachers</option>
-                    <option value="student">Students</option>
-                    <option value="tutor">Tutors</option>
-                </select>
-            </div>
-
-            <button type="button" class="reset-filters" onclick="resetFilters()">
-                <i class="fas fa-sync-alt"></i> Reset Filters
+        <!-- PAGINATION -->
+        <div class="pagination">
+            <button id="prevPage" class="page-btn" onclick="changePage(-1)" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="page-info" id="pageInfo">Page 1 of 3</div>
+            <button id="nextPage" class="page-btn" onclick="changePage(1)">
+                <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-    </section>
 
-    <!-- DOCUMENTS GRID -->
-    <div id="fileGrid" class="documents-grid">
-        <!-- Loading State -->
-        <div class="loading-container">
-            <div class="spinner"></div>
-            <p style="color: var(--text-muted);">Loading library resources...</p>
-        </div>
-    </div>
-
-    <!-- PAGINATION -->
-    <div class="pagination">
-        <button id="prevPage" class="page-btn" disabled>
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <div class="page-info" id="pageInfo">Page 1 of 1</div>
-        <button id="nextPage" class="page-btn">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    </div>
-
-    <!-- DOCUMENT VIEWER MODAL -->
-    <div id="docModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-file-alt" style="color: var(--green);"></i> <span id="modalTitle">Document
-                        Viewer</span></h3>
-                <button class="close-modal" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <iframe id="docViewer" frameborder="0" title="Document Viewer"></iframe>
+        <!-- DOCUMENT VIEWER MODAL -->
+        <div id="docModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-alt" style="color: var(--green);"></i> <span id="modalTitle">Document
+                            Viewer</span></h3>
+                    <button class="close-modal" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="docViewer" frameborder="0" title="Document Viewer"></iframe>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
-            <div>
-                <strong style="color: var(--navy);">📚 Resources:</strong>
-                <a href="#">Past Papers</a> |
-                <a href="#">Study Guides</a> |
-                <a href="#">Video Tutorials</a>
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div>
+                    <strong style="color: var(--navy);">📚 Resources:</strong>
+                    <a href="#">Past Papers</a> |
+                    <a href="#">Study Guides</a> |
+                    <a href="#">Video Tutorials</a>
+                </div>
+                <div>
+                    <strong style="color: var(--navy);">📞 Help:</strong>
+                    <a href="mailto:admin@peer-2-peer.co.za"><i class="fas fa-envelope"></i> Email</a> |
+                    <a href="https://wa.me/27732792426" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                </div>
             </div>
-            <div>
-                <strong style="color: var(--navy);">📞 Help:</strong>
-                <a href="mailto:admin@peer-2-peer.co.za"><i class="fas fa-envelope"></i> Email</a> |
-                <a href="https://wa.me/27732792426" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            </div>
-        </div>
-        <p>
-            <a href="index.html">Home</a> |
-            <a href="resources.html">Resources</a> |
-            <a href="faq.html">FAQ</a> |
-            <a href="privacy.html">Privacy</a> |
-            <a href="terms.html">Terms</a>
-        </p>
-        <p style="margin-top: 16px;">&copy; <span id="currentYear"></span> Peer-2-Peer PRO. Quality Education for
-            All</p>
-    </footer>
+            <p>
+                <a href="index.html">Home</a> |
+                <a href="resources.html">Resources</a> |
+                <a href="faq.html">FAQ</a> |
+                <a href="privacy.html">Privacy</a> |
+                <a href="terms.html">Terms</a>
+            </p>
+            <p style="margin-top: 16px;">&copy; <span id="currentYear"></span> Peer-2-Peer PRO. Quality Education for
+                All</p>
+        </footer>
     </div>
+    <!-- END CONTAINER -->
 
     <script>
+        // Back button function
+        function goBack() {
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
         // ============================================
         // RESOURCES PAGE - LIGHT MODE SCRIPT
         // ============================================
 
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Initialize today's date for document date
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const docDate = document.getElementById('docDate');
+        if (docDate) docDate.value = `${yyyy}-${mm}-${dd}`;
+
+        // File input change handler
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                    document.getElementById('selectedFileName').innerHTML =
+                        `<i class="fas fa-check-circle" style="color: var(--green);"></i> ${file.name} (${sizeInMB} MB)`;
+                }
+            });
+        }
 
         // Close modal on ESC key
         document.addEventListener('keydown', function (e) {
@@ -1270,24 +1323,11 @@
             document.body.style.overflow = 'auto';
         }
 
-        function openDocument(url, title) {
-            const modal = document.getElementById('docModal');
-            const viewer = document.getElementById('docViewer');
-            const modalTitle = document.getElementById('modalTitle');
-
-            if (modal && viewer) {
-                modalTitle.textContent = title || "Document Viewer";
-
-                // For PDFs, use Google Docs viewer for better compatibility
-                if (url.toLowerCase().endsWith('.pdf')) {
-                    viewer.src = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-                } else {
-                    viewer.src = url;
-                }
-
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
+        function openDocument(title, url) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('docViewer').src = url;
+            document.getElementById('docModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
 
         // Reset filters function
@@ -1296,11 +1336,37 @@
             document.getElementById('subjectFilter').value = 'all';
             document.getElementById('gradeFilter').value = 'all';
             document.getElementById('docTypeFilter').value = 'all';
-            document.getElementById('uploaderRoleFilter').value = 'all';
             // Trigger filter function if exists
             if (typeof filterDocuments === 'function') {
                 filterDocuments();
             }
+        };
+
+        // Change page function
+        window.changePage = function (direction) {
+            if (typeof changePageLogic === 'function') {
+                changePageLogic(direction);
+            }
+        };
+
+        // Sample upload function
+        window.uploadDocument = function () {
+            const title = document.getElementById('fileName').value;
+            const subject = document.getElementById('fileSubject').value;
+            const grade = document.getElementById('fileGrade').value;
+            const file = fileInput?.files[0];
+
+            if (!title || !subject || !grade || !file) {
+                alert('Please complete all required fields and select a file');
+                return;
+            }
+
+            alert('📚 Document uploaded successfully! It will appear in the library after review.');
+
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            docDate.value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('selectedFileName').innerHTML = '';
         };
 
         // Load sample documents
@@ -1336,12 +1402,12 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="view-link" onclick="openDocument('https://docs.google.com/viewer?url=example.com/sample.pdf', 'Mathematics Grade 12 - Calculus Notes')">
+                                <button class="view-link" onclick="openDocument('Mathematics Grade 12 - Calculus Notes', 'https://docs.google.com/viewer?url=example.com/sample.pdf')">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <a href="#" class="down-link">
+                                <button class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </a>
+                                </button>
                             </div>
                         </div>
                         <div class="file-card">
@@ -1374,9 +1440,9 @@
                                 <button class="view-link">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <a href="#" class="down-link">
+                                <button class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </a>
+                                </button>
                             </div>
                         </div>
                         <div class="file-card">
@@ -1409,242 +1475,17 @@
                                 <button class="view-link">
                                     <i class="fas fa-eye"></i> Preview
                                 </button>
-                                <a href="#" class="down-link">
+                                <button class="down-link">
                                     <i class="fas fa-download"></i> Download
-                                </a>
+                                </button>
                             </div>
                         </div>
                     `;
-
-                    // Update stats
-                    document.getElementById('totalDocuments').textContent = '124';
-                    document.getElementById('totalContributors').textContent = '48';
                 }
             }, 800);
         });
     </script>
-    <!-- Add this right after your navbar closes -->
-    <div class="whatsapp-banner-container">
-        <div class="whatsapp-card">
-            <div class="animated-text-wrapper">
-                <span id="animated-text"></span>
-            </div>
-            <a href="https://wa.me/27732792426" target="_blank" class="whatsapp-click-area">
-                <i class="fab fa-whatsapp"></i> Book Now on WhatsApp
-            </a>
-        </div>
-    </div>
-
-    <style>
-        .whatsapp-banner-container {
-            max-width: 1400px;
-            margin: 20px auto 10px;
-            padding: 0 24px;
-        }
-
-        .whatsapp-card {
-            background: linear-gradient(145deg, var(--navy, #000033), var(--navy-light, #1a1a4d));
-            border-radius: 24px;
-            padding: 30px 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 51, 0.3);
-            border: 2px solid var(--green, #32cd32);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 25px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .whatsapp-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(50, 205, 50, 0.1) 0%, transparent 70%);
-            animation: pulse 8s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.3;
-            }
-
-            50% {
-                transform: scale(1.2);
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: scale(0.8);
-                opacity: 0.3;
-            }
-        }
-
-        .animated-text-wrapper {
-            flex: 2;
-            min-width: 280px;
-        }
-
-        #animated-text {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            line-height: 1.4;
-            display: inline-block;
-        }
-
-        .whatsapp-click-area {
-            flex: 0 0 auto;
-            background: var(--green, #32cd32);
-            color: var(--navy, #000033);
-            padding: 18px 35px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 1.2rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            border: 2px solid white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            white-space: nowrap;
-        }
-
-        .whatsapp-click-area i {
-            font-size: 2rem;
-        }
-
-        .whatsapp-click-area:hover {
-            background: white;
-            color: var(--navy, #000033);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(50, 205, 50, 0.4);
-        }
-
-        /* Typing animation effect */
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        .typing-cursor {
-            display: inline-block;
-            width: 4px;
-            height: 2.2rem;
-            background: var(--green, #32cd32);
-            margin-left: 8px;
-            vertical-align: middle;
-            animation: blink 1s infinite;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .whatsapp-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 30px 20px;
-            }
-
-            #animated-text {
-                font-size: 1.4rem;
-            }
-
-            .whatsapp-click-area {
-                width: 100%;
-                justify-content: center;
-                padding: 15px 25px;
-                font-size: 1.1rem;
-            }
-
-            .typing-cursor {
-                height: 1.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .whatsapp-banner-container {
-                padding: 0 16px;
-            }
-
-            #animated-text {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
-
-    <script>
-        // Text animation without external library
-        document.addEventListener('DOMContentLoaded', function () {
-            const textElement = document.getElementById('animated-text');
-            const fullText = "Book your next Professional Online, one-on-one or group classes";
-
-            // Create cursor element
-            const cursor = document.createElement('span');
-            cursor.className = 'typing-cursor';
-
-            // Animation states
-            let charIndex = 0;
-            let isDeleting = false;
-            let isPaused = false;
-
-            function animateText() {
-                if (!textElement) return;
-
-                // Current visible text
-                const currentText = fullText.substring(0, charIndex);
-                textElement.textContent = currentText;
-
-                // Append cursor after text
-                if (!textElement.nextElementSibling || !textElement.nextElementSibling.classList.contains('typing-cursor')) {
-                    if (textElement.parentNode) {
-                        textElement.parentNode.appendChild(cursor);
-                    }
-                }
-
-                // Typing logic
-                if (!isDeleting && charIndex < fullText.length) {
-                    // Typing forward
-                    charIndex++;
-                    setTimeout(animateText, 100);
-                } else if (isDeleting && charIndex > 0) {
-                    // Deleting backward
-                    charIndex--;
-                    setTimeout(animateText, 50);
-                } else {
-                    // Change direction
-                    if (!isPaused) {
-                        isPaused = true;
-                        setTimeout(() => {
-                            isDeleting = !isDeleting;
-                            isPaused = false;
-                            animateText();
-                        }, 2000); // Pause at full text
-                    } else {
-                        setTimeout(animateText, 100);
-                    }
-                }
-            }
-
-            // Start animation after a short delay
-            setTimeout(animateText, 500);
-        });
-    </script>
-    <script src="resources-final.js"></script>
+    <script src="resources.js"></script>
 </body>
 
 </html>

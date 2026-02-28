@@ -70,7 +70,7 @@
         }
 
         /* ============================================
-           NAVIGATION - LIGHT MODE
+           NAVIGATION - LIGHT MODE WITH BACK BUTTON
         ============================================ */
         .navbar {
             background: var(--bg-nav);
@@ -107,42 +107,41 @@
             font-size: 1.8rem;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
+        /* Back Button Styles - ADDED */
+        .back-button {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 16px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a i {
-            color: var(--navy);
-            font-size: 1rem;
-        }
-
-        .nav-links a:hover {
             background: var(--navy-soft);
             color: var(--navy);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 40px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            border: none;
         }
 
-        .nav-links a.active {
+        .back-button i {
+            font-size: 1rem;
+            color: var(--green);
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
             background: var(--navy);
             color: white;
+            border-color: var(--navy);
+            transform: translateX(-3px);
         }
 
-        .nav-links a.active i {
+        .back-button:hover i {
             color: var(--green);
+            transform: translateX(-3px);
         }
 
         /* ============================================
@@ -862,12 +861,6 @@
                 padding: 16px 5%;
             }
 
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
             .page-header h1 {
                 font-size: 2rem;
             }
@@ -959,20 +952,11 @@
             margin: -8px -12px;
             border: 1px solid var(--green);
         }
-
-        /* Decorative elements */
-        .navy-dot {
-            color: var(--navy);
-        }
-
-        .green-dot {
-            color: var(--green);
-        }
     </style>
 </head>
 
 <body>
-    <!-- Navigation - Light Mode -->
+    <!-- Navigation - Light Mode with Back Button -->
     <nav class="navbar">
         <a href="index.html" class="logo">
             <img src="android-chrome-512x512.png" alt="Peer-2-Peer PRO Logo"
@@ -980,36 +964,14 @@
             <i class="fas fa-graduation-cap" style="display: none;"></i>
             <span>PEER<span style="color: var(--green);">-2-</span>PEER PRO</span>
         </a>
-        <div class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i> Home</a>
-            <a href="student-portal.html"><i class="fas fa-user-graduate"></i> Dashboard</a>
-            <a href="student-view.html"><i class="fas fa-video"></i> Live</a>
-            <a href="resources.html" class="active"><i class="fas fa-book-open"></i> Resources</a>
-            <a href="forum.html"><i class="fas fa-comments"></i> Forum</a>
-            <a href="booking.html"><i class="fas fa-calendar-check"></i> Book</a>
-        </div>
+        <button onclick="goBack()" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Go Back</span>
+        </button>
     </nav>
 
+    <!-- MAIN CONTAINER - ADDED BACK -->
     <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>
-                <i class="fas fa-book-open"></i>
-                Study Material Hub
-            </h1>
-            <p>Explore documents shared by your peers. Upload your own materials to help others learn!</p>
-            <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-                <span
-                    style="background: var(--navy-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-file-pdf" style="color: #e74c3c;"></i> 124 Documents
-                </span>
-                <span
-                    style="background: var(--green-soft); color: var(--navy); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;">
-                    <i class="fas fa-users"></i> 48 Contributors
-                </span>
-            </div>
-        </div>
-
         <!-- UPLOAD SECTION -->
         <section class="upload-section">
             <h2><i class="fas fa-cloud-upload-alt"></i> Share Study Materials</h2>
@@ -1132,7 +1094,7 @@
                 <div class="file-upload-container" onclick="document.getElementById('fileInput').click()">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p><strong>Click to browse</strong> or drag & drop</p>
-                    <small>PDF, DOC, PPT, Images (Max 50MB)</small>
+                    <small>PDF, DOC, PPT, Images</small>
                     <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
                         style="display: none;" required>
                     <div id="selectedFileName"></div>
@@ -1252,8 +1214,6 @@
                 <div class="spinner"></div>
                 <p style="color: var(--text-muted);">Loading library resources...</p>
             </div>
-
-            <!-- Sample documents will be loaded via JavaScript -->
         </div>
 
         <!-- PAGINATION -->
@@ -1307,8 +1267,18 @@
                 All</p>
         </footer>
     </div>
+    <!-- END CONTAINER -->
 
     <script>
+        // Back button function
+        function goBack() {
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
         // ============================================
         // RESOURCES PAGE - LIGHT MODE SCRIPT
         // ============================================

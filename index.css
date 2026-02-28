@@ -1,148 +1,249 @@
 /* =================================
-   CSS VARIABLES
+CSS VARIABLES
 ================================= */
 :root {
-  /* Updated to match login.css colors */
-  --primary-color: #000033;        /* Deep Navy from logo background */
-  --secondary-color: #32cd32;      /* Lime Green from "PRO" */
-  --text-color: #7fdff0;           /* Light Sky Blue accents */
+  --primary-color: #000033;
+  --secondary-color: #32cd32;
+  --text-color: #7fdff0;
   --light-text: #ffffff;
-  --accent-color: #32cd32;         /* Same as secondary-color */
+  --accent-color: #32cd32;
   --transition-speed: 0.3s;
   --overlay-dark: rgba(0, 0, 0, 0.6);
-  --light-bg: #f4f7f9;            /* Updated to match login.css */
+  --light-bg: #f4f7f9;
   --border-color: #e1e5eb;
   --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.12);
-  --navy-bg: #000033;              /* Added from login.css */
-  --pro-green: #32cd32;            /* Added from login.css */
-  --sky-blue: #7fdff0;             /* Added from login.css */
-  --white: #ffffff;                /* Added from login.css */
+  --navy-bg: #000033;
+  --pro-green: #32cd32;
+  --sky-blue: #7fdff0;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* =================================
-   NAVBAR - UPDATED TO MATCH LOGIN.CSS
+NAVBAR - FULLY RESPONSIVE
 ================================= */
 #navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: var(--navy-bg);    /* Updated to match login.css */
+  background-color: var(--navy-bg);
   color: var(--light-text);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: clamp(0.9rem, 2vw, 1.2rem) 5%;
-  border-bottom: 3px solid var(--pro-green);  /* Added border like login.css */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  padding: 0.8rem 4%;
+  border-bottom: 3px solid var(--pro-green);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  min-height: 60px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 4vw, 1.5rem);
   font-weight: 800;
   color: var(--white);
   display: flex;
   align-items: center;
+  gap: 8px;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logo img {
-  height: 35px;
-  margin-right: 10px;
+  height: clamp(25px, 5vw, 35px);
+  width: auto;
 }
 
 .logo span.pro-text {
-  color: var(--pro-green);  /* Updated to use pro-green variable */
-  margin-left: 5px;
+  color: var(--pro-green);
+  margin-left: 2px;
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 2vw, 20px);
+  gap: 15px;
+  flex-shrink: 0;
 }
 
+/* Auth Buttons */
 .auth-btn {
   padding: 0.6rem 1.2rem;
-  border-radius: 50px;      /* Changed to match login.css button style */
-  font-size: clamp(0.85rem, 2vw, 1rem);
+  border-radius: 50px;
+  font-size: 0.9rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   transition: all var(--transition-speed) ease;
   text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .login {
   background: transparent;
   color: #fff;
-  border: 1.5px solid #fff;
+  border: 2px solid #fff;
 }
 
 .login:hover {
   background: #fff;
-  color: var(--navy-bg);    /* Updated to use navy-bg variable */
+  color: var(--navy-bg);
+  transform: translateY(-2px);
 }
 
 .signup {
-  background: var(--pro-green);  /* Updated to use pro-green variable */
+  background: var(--pro-green);
   color: #fff;
+  border: 2px solid var(--pro-green);
 }
 
 .signup:hover {
   background: #28b528;
+  border-color: #28b528;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
+}
+
+/* Menu Toggle Button - Visible on Mobile */
+.menu-toggle {
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--white);
+  transition: all var(--transition-speed) ease;
+  line-height: 1;
+  padding: 5px 10px;
+  display: none;
+  background: transparent;
+  border: none;
+}
+
+.menu-toggle:hover {
+  color: var(--pro-green);
+  transform: scale(1.1);
 }
 
 /* =================================
-   SIDE MENU - UPDATED COLORS
+SIDE MENU - MOBILE
 ================================= */
 .side-nav {
-  height: 100%;
+  height: 100vh;
   width: 0;
   position: fixed;
   z-index: 1100;
   top: 0;
   right: 0;
-  background-color: var(--navy-bg);  /* Updated to match navbar */
+  background-color: var(--navy-bg);
   overflow-x: hidden;
-  transition: 0.5s;
+  transition: width 0.4s ease;
   padding-top: 60px;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-  border-left: 3px solid var(--pro-green);  /* Added border for consistency */
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--pro-green);
+}
+
+.side-nav.active {
+  width: 280px;
+}
+
+.side-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .side-nav a {
-  padding: 15px 20px;
+  padding: 15px 25px;
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #fff;
   display: block;
-  border-radius: 6px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
 }
 
 .side-nav a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding-left: 25px;
-  color: var(--pro-green);  /* Added color change on hover */
+  background-color: rgba(50, 205, 50, 0.15);
+  padding-left: 35px;
+  color: var(--pro-green);
 }
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2rem !important;
+  padding: 10px !important;
+  border-bottom: none !important;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  cursor: pointer;
+  min-height: auto;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Overlay for side menu */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+
+.menu-overlay.active {
+  display: block;
+}
+
 /* =================================
-   HERO SECTION - UPDATED ACCENT COLORS
+HERO SECTION - WITH BACKGROUND TRANSITIONS
 ================================= */
 .hero {
-  min-height: clamp(55vh, 70vh, 85vh);
+  min-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 5%;
+  padding: 2rem 5%;
   color: #fff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   animation: backgroundSlider 15s infinite ease-in-out;
   position: relative;
+  width: 100%;
+  background-color: var(--navy-bg);
 }
 
 /* Hero overlay for better text readability */
@@ -153,109 +254,157 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 51, 0.7) 0%, rgba(0, 0, 51, 0.4) 100%);
+  background: linear-gradient(135deg, rgba(0, 0, 51, 0.8) 0%, rgba(0, 0, 51, 0.5) 100%);
   z-index: 1;
 }
 
+/* Background Image Slider Animation */
 @keyframes backgroundSlider {
-  0% {
-    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
-  }
-  33% {
-    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero2.jpeg");
-  }
-  66% {
-    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero3.jpeg");
-  }
+
+  0%,
   100% {
     background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero.jpeg");
   }
-}
 
-/* Fallback in case images don't load */
-.hero {
-  background-color: var(--navy-bg); /* Fallback color */
+  33% {
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero2.jpeg");
+  }
+
+  66% {
+    background-image: linear-gradient(var(--overlay-dark), var(--overlay-dark)), url("hero3.jpeg");
+  }
 }
 
 .hero-content {
   max-width: 900px;
-  padding: 2rem;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 51, 0.5);
-  backdrop-filter: blur(5px);
-  animation: fadeIn 1s ease-out;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background-color: rgba(0, 0, 51, 0.6);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(50, 205, 50, 0.3);
   position: relative;
-  z-index: 2; /* Ensure content is above overlay */
+  z-index: 2;
+  width: 100%;
 }
+
+.hero-content h1 {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  margin-bottom: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-content p {
+  font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  opacity: 0.95;
+  margin-bottom: 1.5rem;
+}
+
 /* =================================
-   UPLOAD SECTION - UPDATED COLORS
+CAROUSEL SECTION
 ================================= */
-.upload-section {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 2.5rem;
+.logos-carousel-section {
+  max-width: 95%;
+  margin: 2rem auto;
+  padding: 1.5rem;
   background-color: var(--light-bg);
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: var(--shadow-medium);
   text-align: center;
   border: 1px solid var(--border-color);
-  animation: slideUp 0.8s ease-out;
+  width: 100%;
+  overflow: hidden;
 }
 
-.upload-section h2 {
-  color: var(--navy-bg);  /* Updated to use navy color */
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.logos-carousel-section h2 {
+  color: var(--navy-bg);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
-.drop-zone:hover {
-  border-color: var(--pro-green);  /* Updated to use pro-green */
-  background-color: rgba(50, 205, 50, 0.05);
-  transform: translateY(-3px);
+.logos-carousel-section p {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.logos-track {
+  --logo-size: 100px;
+  --gap: 10px;
+  --anim-duration: 20s;
+  display: flex;
+  gap: var(--gap);
+  padding: 10px 0;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.logos-track .logo-item {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  flex-shrink: 0;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  background: white;
+  padding: 5px;
   box-shadow: var(--shadow-light);
+  transition: transform 0.3s ease;
 }
 
-.drop-zone.drag-over {
-  border-color: var(--pro-green);  /* Updated to use pro-green */
-  background-color: rgba(50, 205, 50, 0.1);
+.logos-track .logo-item:hover {
+  transform: scale(1.05);
+  z-index: 2;
 }
 
-#progress-bar {
-  height: 100%;
-  background-color: var(--pro-green);  /* Updated to use pro-green */
-  width: 0%;
-  transition: width 0.4s ease;
-  border-radius: 6px;
+@keyframes logosScroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(calc(-50% - var(--gap) / 2));
+  }
+}
+
+.logos-track {
+  animation: logosScroll var(--anim-duration) linear infinite;
+  will-change: transform;
+}
+
+.logos-track:hover {
+  animation-play-state: paused;
 }
 
 /* =================================
-   FOOTER - UPDATED TO MATCH LOGIN.CSS
+FOOTER
 ================================= */
 .footer {
-  background-color: var(--navy-bg);  /* Updated to solid color like login.css */
+  background-color: var(--navy-bg);
   color: #ffffff;
-  padding: 50px 5% 20px;
+  padding: 2rem 4% 1.5rem;
   margin-top: auto;
-  border-top: 2px solid var(--pro-green);  /* Added border like login.css */
+  border-top: 3px solid var(--pro-green);
+  width: 100%;
 }
 
 .footer-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 50px;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   text-align: left;
 }
 
 .footer-box h4 {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--pro-green);  /* Updated to use pro-green */
+  color: var(--pro-green);
   position: relative;
   padding-bottom: 10px;
 }
@@ -265,102 +414,257 @@
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 40px;
+  width: 50px;
   height: 3px;
-  background-color: var(--pro-green);  /* Updated to use pro-green */
+  background-color: var(--pro-green);
   border-radius: 2px;
 }
 
+.footer-box p,
 .footer-box a {
-  display: block;
-  margin: 8px 0;
   font-size: 0.95rem;
-  color: #ffffff;
+  margin: 10px 0;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
+  display: block;
   transition: all 0.3s ease;
   padding: 5px 0;
-  position: relative;
 }
 
 .footer-box a:hover {
-  color: var(--pro-green);  /* Updated to use pro-green */
-  padding-left: 8px;
-}
-
-.footer-box a::before {
-  content: "→";
-  position: absolute;
-  left: -15px;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.footer-box a:hover::before {
-  left: 0;
-  opacity: 1;
+  color: var(--pro-green);
+  padding-left: 10px;
 }
 
 .footer-bottom {
-  margin-top: 50px;
-  padding-top: 20px;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   text-align: center;
+  font-size: 0.9rem;
 }
 
 /* =================================
-   RESPONSIVE FIXES
+RESPONSIVE BREAKPOINTS
 ================================= */
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: block !important;
-  }
-  
-  .auth-btn {
-    display: none;
-  }
-  
-  .footer-inner {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (min-width: 769px) {
-  .menu-toggle {
-    display: none;
-  }
-  
-  .auth-btn {
-    display: inline-block;
-  }
-}
-
+/* Mobile Phones (up to 480px) */
 @media (max-width: 480px) {
   #navbar {
-    padding: 1rem 4%;
+    padding: 0.6rem 3%;
+    min-height: 55px;
   }
-  
+
+  .logo {
+    font-size: 0.95rem;
+  }
+
+  .logo img {
+    height: 22px;
+  }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .menu-toggle {
+    display: block !important;
+    font-size: 1.6rem;
+    padding: 5px 8px;
+  }
+
+  .auth-btn {
+    display: none !important;
+  }
+
+  .side-nav {
+    width: 0;
+  }
+
+  .side-nav.active {
+    width: 260px;
+  }
+
+  .side-nav a {
+    padding: 12px 20px;
+    font-size: 1rem;
+    min-height: 45px;
+  }
+
+  .close-btn {
+    font-size: 1.8rem !important;
+    width: 35px;
+    height: 35px;
+    top: 8px;
+    right: 10px;
+  }
+
   .hero {
-    padding: 40px 4%;
+    min-height: 45vh;
+    padding: 1.5rem 4%;
   }
-  
-  .hero h1 {
+
+  .hero-content {
+    padding: 1.2rem;
+  }
+
+  .hero-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+
+  .logos-carousel-section {
+    padding: 1.2rem;
+    margin: 1.5rem auto;
+  }
+
+  .logos-track {
+    --logo-size: 70px;
+    --gap: 8px;
+    --anim-duration: 15s;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .footer {
+    padding: 1.5rem 3% 1rem;
+  }
+}
+
+/* Tablets (481px to 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  #navbar {
+    padding: 0.7rem 4%;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .logo img {
+    height: 26px;
+  }
+
+  .menu-toggle {
+    display: block !important;
     font-size: 1.8rem;
   }
-  
-  .upload-section {
+
+  .auth-btn {
+    display: none !important;
+  }
+
+  .side-nav.active {
+    width: 280px;
+  }
+
+  .hero {
+    min-height: 50vh;
+  }
+
+  .hero-content {
     padding: 1.5rem;
   }
-  
-  .upload-section h2 {
-    font-size: 1.6rem;
+
+  .logos-track {
+    --logo-size: 90px;
   }
-  
-  .drop-zone {
-    min-height: 180px;
-    padding: 1.5rem;
+
+  .footer-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
-  
-  .footer {
-    padding: 40px 4% 20px;
+}
+
+/* Desktop (769px and above) */
+@media (min-width: 769px) {
+  .menu-toggle {
+    display: none !important;
   }
+
+  .auth-btn {
+    display: inline-block !important;
+  }
+
+  .side-nav {
+    display: none !important;
+  }
+
+  .menu-overlay {
+    display: none !important;
+  }
+
+  .hero-content {
+    max-width: 800px;
+  }
+
+  .footer-inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large Desktop (1200px and above) */
+@media (min-width: 1200px) {
+  .hero {
+    min-height: 65vh;
+  }
+
+  .hero-content {
+    max-width: 900px;
+  }
+
+  .logos-track {
+    --logo-size: 150px;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+
+  .auth-btn,
+  .menu-toggle,
+  .side-nav a {
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .auth-btn:active,
+  .logos-track .logo-item:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Landscape Mode on Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    min-height: 60vh;
+  }
+
+  .side-nav {
+    padding-top: 50px;
+  }
+
+  .side-nav a {
+    padding: 10px 20px;
+    min-height: 40px;
+  }
+}
+
+/* Prevent horizontal scroll */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
 }

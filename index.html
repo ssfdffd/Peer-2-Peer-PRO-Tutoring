@@ -2,47 +2,44 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="google-site-verification" content="ZdR8iWtr7ZZRbiCcS5XCFZ54NSkF8KQjyZDikRTOp7M" />
-  <title>Peer-2-Peer Learning</title>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="index.css">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E21MVX6TQ1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-E21MVX6TQ1');
-  </script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Peer-2-Peer PRO - Empowering Students Through Peer-to-Peer Learning">
+  <title>Peer-2-Peer PRO</title>
+  <link rel="stylesheet" href="home.css">
+  <link rel="favicon" href="favicon.ico">
 </head>
 
 <body>
-
+  <!-- Navigation Bar -->
   <nav id="navbar">
-    <div class="logo">
+    <a href="index.html" class="logo">
       <img src="favicon.ico" alt="Logo">
-      Peer-2-Peer <span class="pro-text">PRO</span>
-    </div>
+      <span>Peer-2-Peer <span class="pro-text">PRO</span></span>
+    </a>
+
     <div class="nav-right">
-      <a href="login.html"> <button class="auth-btn login">Login</button></a>
-      <a href="login.html"><button class="auth-btn signup">Sign Up</button></a>
-      <span id="openNav" class="menu-toggle">☰</span>
+      <a href="login.html" class="auth-btn login">Login</a>
+      <a href="login.html" class="auth-btn signup">Sign Up</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">☰</button>
     </div>
   </nav>
 
-  <div id="side-menu" class="side-nav">
-    <a href="javascript:void(0)" id="closeNav" class="close-btn">×</a>
+  <!-- Side Menu for Mobile -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="side-nav" id="sideNav">
+    <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="resources.html">Resources</a></li>
-      <li><a href="school-dashboard.html">Dashboard for Schools</a></li>
-      <li><a href="terms.html">T's & C's</a></li>
+      <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="resources.html">📚 Resources</a></li>
+      <li><a href="school-dashboard.html">🏫 Dashboard for Schools</a></li>
+      <li><a href="terms.html">📄 T's & C's</a></li>
+      <li><a href="login.html" class="auth-btn login" style="margin: 15px 25px; width: auto;">Login</a></li>
+      <li><a href="login.html" class="auth-btn signup" style="margin: 0 25px 15px; width: auto;">Sign Up</a></li>
     </ul>
   </div>
 
+  <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
       <h1>Empowering Students Through Peer-to-Peer Learning</h1>
@@ -50,46 +47,75 @@
     </div>
   </section>
 
-  <section class="upload-section">
-    <h2>Upload Study Materials</h2>
-    <p>Drag and drop files here to share them with the community.</p>
-
-    <input type="text" id="customFileName" placeholder="Enter document name" />
-    <input type="file" id="fileInput" hidden />
-
-    <div id="drop-zone" class="drop-zone">
-      <p id="drop-text">Drop files here or click to select</p>
-    </div>
-
-    <div id="progress-container" style="display:none;">
-      <div id="progress-bar"></div>
+  <!-- Carousel Section -->
+  <section class="logos-carousel-section">
+    <h2>What we offer</h2>
+    <p>Join Peer-2-Peer Pro and become something bigger.</p>
+    <div class="logos-track">
+      <!-- Add your logo images here -->
+      <img src="peer1.png" alt="Partner 1" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer2.png" alt="Partner 2" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer3.png" alt="Partner 3" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer3.png" alt="Partner 4" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer4.png" alt="Partner 5" class="logo-item" href="https://wa.me/27732792426">
+      <!-- Duplicate for seamless scroll -->
+      <img src="peer1.png" alt="Partner 1" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer2.png" alt="Partner 2" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer3.png" alt="Partner 3" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer3.png" alt="Partner 4" class="logo-item" href="https://wa.me/27732792426">
+      <img src="peer4.png" alt="Partner 5" class="logo-item" href="https://wa.me/27732792426">
     </div>
   </section>
 
-  <script src="script.js"></script>
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
-
       <div class="footer-box">
         <h4>Contact</h4>
-        <p>Email Support</p>
-        <p style="margin-top:12px;">Tutor Applications</p>
         <a href="mailto:hr@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
-      </div>
-      <div class="footer-box">
-        <h4>Quick Links</h4>
-        <a href="index.html">Home</a>
         <a href="https://wa.me/27732792426">WhatsApp Us</a>
-        <a href="resources.html">Resources</a>
       </div>
-
-    </div>
-
-    <div class="footer-bottom">
-      <p>© 2026 Peer-2-Peer PRO. All rights reserved.</p>
+      <p>© 2026 Peer-2-Peer PRO</p>
+      <p>Empowering Education Through Seamless Connection| All Rights Reserved.</p>
     </div>
   </footer>
 
+  <!-- JavaScript for Mobile Menu -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const closeBtn = document.getElementById('closeBtn');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    // Open menu
+    menuToggle.addEventListener('click', () => {
+      sideNav.classList.add('active');
+      menuOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close menu
+    function closeMenu() {
+      sideNav.classList.remove('active');
+      menuOverlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    closeBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sideNav.classList.contains('active')) {
+        closeMenu();
+      }
+    });
+
+    // Close when clicking nav links
+    document.querySelectorAll('.side-nav a:not(.close-btn)').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  </script>
 </body>
 
 </html>

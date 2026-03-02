@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal | Peer-2-Peer PRO</title>
+    <link rel="stylesheet" href="login.css" />
+    <style>
+        /* Admin-specific overrides using brand variables */
+        .admin-header {
+            background: linear-gradient(135deg, var(--navy-bg) 0%, #000055 100%);
+            color: var(--white);
+            padding: 20px 5%;
+            border-bottom: 3px solid var(--pro-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--pro-green);
+        }
+
+        .admin-card h3 {
+            color: var(--navy-bg);
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e1e5eb;
+        }
+
+        .stat-box .number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--pro-green);
+        }
+
+        .stat-box .label {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            background: var(--pro-green);
+            color: var(--navy-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
+        }
+
+        .secure-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Hide sensitive data containers by default - loaded via API only */
+        #admin-data-container {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="logo">Peer-2-Peer <span>PRO</span> | Admin</div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-container">
+        <div class="secure-notice">
+            🔒 <strong>Secure Admin Area:</strong> All data is fetched server-side.
+            No sensitive information is embedded in this page.
+        </div>
+
+        <!-- Dashboard Stats (Populated via API) -->
+        <div class="admin-card">
+            <h3>📊 System Overview</h3>
+            <div class="stat-grid" id="stats-grid">
+                <div class="stat-box">
+                    <div class="number" id="stat-users">--</div>
+                    <div class="label">Total Users</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="stat-online">--</div>
+                    <div class="label">Online Now</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="stat-tutors">--</div>
+                    <div class="label">Pending Tutors</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="stat-activity">--</div>
+                    <div class="label">Today's Logins</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions (Secure - Requires API Validation) -->
+        <div class="admin-card">
+            <h3>⚙️ Admin Actions</h3>
+            <p style="color: #666; margin-bottom: 15px;">
+                All actions are validated server-side. Your session and role are verified on every request.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="auth-btn signup-btn" style="width: auto;" onclick="loadPendingTutors()">Review Tutor
+                    Applications</button>
+                <button class="auth-btn signup-btn" style="width: auto;" onclick="exportUserData()">Export User Data
+                    (CSV)</button>
+                <button class="auth-btn signup-btn" style="width: auto;" onclick="viewAuditLog()">View Audit
+                    Log</button>
+            </div>
+        </div>
+
+        <!-- Secure Data Container (Populated ONLY via authenticated API calls) -->
+        <div id="admin-data-container" class="admin-card">
+            <h3 id="data-section-title">Data</h3>
+            <div id="data-content"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-box">
+                <h4>Peer-2-Peer PRO</h4>
+                <p>Secure Admin Portal</p>
+            </div>
+            <div class="footer-box">
+                <h4>Support</h4>
+                <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Peer-2-Peer PRO. All Rights Reserved. Admin access logged and monitored.
+        </div>
+    </footer>
+
+    <script>
+        // 🔐 SECURITY: Session validation on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const email = sessionStorage.getItem('p2p_email');
+            const role = sessionStorage.getItem('p2p_role');
+
+            // Block access if not admin or no session
+            if (!email || role !== 'admin') {
+                // Double-check with backend for security
+                try {
+                    const res = await fetch(`${API_BASE}/api/verify-admin`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email,
+                            sessionId: sessionStorage.getItem('p2p_sessionId')
+                        }),
+                        credentials: 'include'
+                    });
+                    const result = await res.json();
+                    if (!result.success) throw new Error('Unauthorized');
+                } catch (e) {
+                    alert('Admin access required. Redirecting...');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
+
+            // Load dashboard stats (via secure API)
+            loadAdminStats();
+        });
+
+        // 📊 Load stats via API (no data in HTML)
+        async function loadAdminStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('p2p_sessionId')}` },
+                    credentials: 'include'
+                });
+                if (!res.ok) throw new Error('Failed to load stats');
+                const data = await res.json();
+
+                document.getElementById('stat-users').textContent = data.totalUsers || 0;
+                document.getElementById('stat-online').textContent = data.onlineNow || 0;
+                document.getElementById('stat-tutors').textContent = data.pendingTutors || 0;
+                document.getElementById('stat-activity').textContent = data.todayLogins || 0;
+            } catch (err) {
+                console.error('Stats load error:', err);
+                document.getElementById('stats-grid').innerHTML =
+                    '<p style="color: #dc3545">Unable to load dashboard data. Please refresh.</p>';
+            }
+        }
+
+        // 🔄 Placeholder functions for admin actions (implement backend endpoints)
+        async function loadPendingTutors() {
+            alert('Fetching pending tutor applications... (Backend endpoint required)');
+            // Example: fetch(`${API_BASE}/api/admin/pending-tutors`, { headers: { 'Authorization': ... } })
+        }
+
+        async function exportUserData() {
+            alert('Generating secure export... (Requires backend CSV generation)');
+        }
+
+        async function viewAuditLog() {
+            alert('Loading audit trail... (Backend logging required)');
+        }
+
+        // 🚪 Reuse logout from login.js
+        // (Ensure handleLogout is globally accessible or re-define here)
+    </script>
+</body>
+
+</html>

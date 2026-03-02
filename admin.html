@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | Peer-2-Peer PRO</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav id="navbar">
+        <a href="index.html" class="logo">
+            Peer-2-Peer <span>PRO</span>
+        </a>
+        <ul class="nav-right">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="login.html">User Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- Admin Login Section -->
+    <div class="split-screen-wrapper">
+        <div class="auth-section login-side">
+            <div class="form-box">
+                <h2>🔐 Admin Portal</h2>
+                <p>Secure access for administrators only</p>
+
+                <form id="adminLoginForm">
+                    <div class="input-group">
+                        <label for="adminEmail">Admin Email</label>
+                        <input type="email" id="adminEmail" name="email" required placeholder="admin@peer-2-peer.co.za">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" name="password" required
+                            placeholder="Enter admin password">
+                    </div>
+
+                    <div class="forgot-link">
+                        <a href="#" onclick="alert('Contact system administrator for password reset')">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="auth-btn login-btn">
+                        🔐 Admin Login
+                    </button>
+                </form>
+
+                <div class="admin-notice">
+                    <p>⚠️ This portal is restricted to authorized administrators only.</p>
+                    <p>Unauthorized access attempts are logged and monitored.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-section signup-side">
+            <div class="form-box">
+                <h2>Admin Dashboard</h2>
+                <p>Manage your Peer-2-Peer PRO platform</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📚</span>
+                        <div>
+                            <h4>Upload Questions</h4>
+                            <p>Add questions & answers for all subjects</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div>
+                            <h4>Manage Topics</h4>
+                            <p>Create subjects, grades & topics</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">👥</span>
+                        <div>
+                            <h4>User Management</h4>
+                            <p>Approve tutors & monitor activity</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📈</span>
+                        <div>
+                            <h4>Analytics</h4>
+                            <p>View platform statistics & reports</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-box">
+                <h4>Contact</h4>
+                <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
+                <a href="tel:+27123456789">+27 12 345 6789</a>
+            </div>
+            <div class="footer-box">
+                <h4>Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="login.html">User Login</a>
+                <a href="admin-login.html">Admin Portal</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Peer-2-Peer PRO. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="admin-login.js"></script>
+</body>
+
+</html>

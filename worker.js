@@ -1,11 +1,13 @@
 // ============================================
 // PEER-2-PEER PRO AUTHENTICATION WORKER
-// FIXED: Tutor access checks, password validation, CORS, string normalization
 // ============================================
-var __defProp = Object.defineProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ✅ CRITICAL FIX 1: CLEAN CORS HEADERS (NO TRAILING SPACES IN KEYS OR VALUES)
+// ✅ ADMIN CONFIGURATION
+// For better security, use Wrangler Secrets: `wrangler secret put ADMIN_PASSWORD`
+// Then access via env.ADMIN_PASSWORD. For now, we hardcode as requested.
+const ADMIN_EMAIL = "admin@peer-2-peer.co.za";
+const ADMIN_PASSWORD = "Admin@2014"; // ⚠️ CHANGE THIS PASSWORD
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://peer-2-peer.co.za",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -13,7 +15,7 @@ const corsHeaders = {
   "Access-Control-Allow-Credentials": "true"
 };
 
-// ✅ CRITICAL FIX 2: PROPER PBKDF2 PASSWORD HASHING
+// ✅ PASSWORD HASHING
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -33,9 +35,8 @@ async function hashPassword(password) {
   const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
   return `${saltHex}:${hashHex}`;
 }
-__name(hashPassword, "hashPassword");
 
-// ✅ CRITICAL FIX 3: PROPER PASSWORD VERIFICATION (MATCHES HASH FORMAT)
+// ✅ PASSWORD VERIFICATION
 async function verifyPassword(password, storedHash) {
   if (!storedHash || !storedHash.includes(":")) return false;
   try {
@@ -59,22 +60,19 @@ async function verifyPassword(password, storedHash) {
       .join("");
     return currentHashHex === originalHashHex;
   } catch (e) {
-    console.error("Password verification failed:", e);
+    console.error("Password verification failed: ", e);
     return false;
   }
 }
-__name(verifyPassword, "verifyPassword");
 
-// Helper to get client info
 function getClientInfo(request) {
   return {
     ip: request.headers.get("CF-Connecting-IP") || "unknown",
     userAgent: request.headers.get("User-Agent") || "unknown"
   };
 }
-__name(getClientInfo, "getClientInfo");
 
-var worker_default = {
+export default {
   async fetch(request, env) {
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
@@ -85,12 +83,36 @@ var worker_default = {
     const now = Math.floor(Date.now() / 1000);
 
     try {
-      // 🔑 LOGIN ENDPOINT - FIXED ACCESS CHECK + PASSWORD VALIDATION
+      // 🔑 LOGIN ENDPOINT
       if (url.pathname === "/api/login" && request.method === "POST") {
         const { email, password } = await request.json();
         const clientInfo = getClientInfo(request);
 
-        // Get user (case-insensitive email match)
+        // ✅ HARDCODED ADMIN CHECK (Bypasses Database)
+        if (email === ADMIN_EMAIL) {
+          if (password === ADMIN_PASSWORD) {
+            return new Response(JSON.stringify({
+              success: true,
+              email: email,
+              name: "System Administrator",
+              role: "admin",
+              sessionId: "admin-" + Date.now()
+            }), {
+              status: 200,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          } else {
+            return new Response(JSON.stringify({
+              success: false,
+              error: "Invalid credentials"
+            }), {
+              status: 401,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          }
+        }
+
+        // ✅ NORMAL USER CHECK (Database)
         const user = await env.DB.prepare(
           "SELECT * FROM users WHERE LOWER(email) = LOWER(?)"
         ).bind(email).first();
@@ -105,7 +127,6 @@ var worker_default = {
           });
         }
 
-        // ✅ CRITICAL FIX 4: VERIFY PASSWORD FIRST (NO BACKDOORS)
         if (!(await verifyPassword(password, user.password_hash))) {
           return new Response(JSON.stringify({
             success: false,
@@ -116,12 +137,9 @@ var worker_default = {
           });
         }
 
-        // ✅ CRITICAL FIX 5: NORMALIZE USER TYPE AND ACCESS VALUES
-        const userType = (user.user_type || "").toLowerCase().trim();
-        // Use ONLY lowercase "Access" column (matches your schema)
-        const AccessValue = (user.Access || "").toString().toLowerCase().trim();
+        const userType = (user.user_type || " ").toLowerCase().trim();
+        const AccessValue = (user.Access || " ").toString().toLowerCase().trim();
 
-        // ✅ CRITICAL FIX 6: STRING COMPARISON WITHOUT TRAILING SPACES
         if (userType === "tutor" && AccessValue !== "granted") {
           return new Response(JSON.stringify({
             success: false,
@@ -161,11 +179,10 @@ var worker_default = {
         });
       }
 
-      // 📝 SIGNUP ENDPOINT - HASH PASSWORD + SET ACCESS CORRECTLY
+      // 📝 SIGNUP ENDPOINT
       if (url.pathname === "/api/signup" && request.method === "POST") {
         const data = await request.json();
 
-        // Validate required fields
         if (!data.email || !data.password || !data.firstName || !data.userType) {
           return new Response(JSON.stringify({
             success: false,
@@ -176,15 +193,11 @@ var worker_default = {
           });
         }
 
-        // Hash password securely
         const passwordHash = await hashPassword(data.password);
-
-        // ✅ SET CLEAN ACCESS VALUES (NO TRAILING SPACES)
         const AccessStatus = data.userType.toLowerCase().trim() === "tutor"
           ? "not granted"
           : "granted";
 
-        // Insert user with all required fields
         await env.DB.prepare(`
           INSERT INTO users (
             first_name, last_name, email, password_hash, user_type, grade,
@@ -192,14 +205,14 @@ var worker_default = {
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           data.firstName.trim(),
-          (data.lastName || "").trim(),
+          (data.lastName || " ").trim(),
           data.email.trim().toLowerCase(),
           passwordHash,
           data.userType.toLowerCase().trim(),
-          (data.grade || "").trim(),
-          (data.schoolName || "").trim(),
-          (data.phone || "").trim(),
-          AccessStatus, // CLEAN STRING VALUE
+          (data.grade || " ").trim(),
+          (data.schoolName || " ").trim(),
+          (data.phone || " ").trim(),
+          AccessStatus,
           data.agreeTerms ? 1 : 0
         ).run();
 
@@ -218,12 +231,10 @@ var worker_default = {
         const { email, sessionId } = await request.json();
         const logoutTime = Math.floor(Date.now() / 1000);
 
-        // Update online status
         await env.DB.prepare("UPDATE users SET is_online = 0 WHERE email = ?")
           .bind(email)
           .run();
 
-        // Record logout time if sessionId provided
         if (sessionId) {
           await env.DB.prepare(`
             UPDATE user_activity 
@@ -237,7 +248,7 @@ var worker_default = {
         });
       }
 
-      // 👥 ONLINE USERS ENDPOINT (for admin dashboard)
+      // 👥 ONLINE USERS ENDPOINT
       if (url.pathname === "/api/online-users" && request.method === "GET") {
         const result = await env.DB.prepare(`
           SELECT id, first_name, last_name, email, user_type, Access, last_login 
@@ -254,18 +265,7 @@ var worker_default = {
         });
       }
 
-      // 🔑 FORGOT PASSWORD (minimal implementation)
-      if (url.pathname === "/api/forgot-password" && request.method === "POST") {
-        // In production: generate token, send email, store with expiry
-        return new Response(JSON.stringify({
-          success: true,
-          message: "If account exists, reset instructions will be sent"
-        }), {
-          headers: { "Content-Type": "application/json", ...corsHeaders }
-        });
-      }
-
-      // ❌ 404 FOR UNKNOWN ROUTES
+      // ❌ 404
       return new Response(JSON.stringify({
         success: false,
         error: "Endpoint not found"
@@ -275,7 +275,7 @@ var worker_default = {
       });
 
     } catch (err) {
-      console.error("Worker error:", err);
+      console.error("Worker error: ", err);
       return new Response(JSON.stringify({
         success: false,
         error: "Internal server error"
@@ -286,5 +286,3 @@ var worker_default = {
     }
   }
 };
-
-export { worker_default as default };

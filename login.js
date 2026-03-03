@@ -1,4 +1,4 @@
-// ✅ CORRECTED: API Base URL (ensure this matches your Worker deployment)
+// ✅ CORRECTED: API Base URL
 const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 🔑 LOGIN HANDLER - FIXED SYNTAX ERRORS
+// 🔑 LOGIN HANDLER
 async function handleLogin(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
@@ -43,25 +43,26 @@ async function handleLogin(e) {
 
         const result = await response.json();
 
-        // ✅ FIXED: Proper logical operator && and no spaces in property access
+        // ✅ FIXED: Logical operator &&
         if (response.ok && result.success) {
             sessionStorage.setItem('p2p_email', email);
-            sessionStorage.setItem('p2p_name', result.name);        // ✅ Fixed: result.name (no space)
+            sessionStorage.setItem('p2p_name', result.name);
             sessionStorage.setItem('p2p_userType', result.role);
             sessionStorage.setItem('p2p_role', result.role);
-            sessionStorage.setItem('p2p_sessionId', result.sessionId); // ✅ Fixed: result.sessionId (no space)
+            sessionStorage.setItem('p2p_sessionId', result.sessionId);
 
-            // Redirect based on role - STUDENTS UNCHANGED ✅
-            window.location.href = result.role === 'tutor'
-                ? 'tutor-portal.html'
-                : 'student-portal.html';
+            // ✅ REDIRECT LOGIC UPDATED FOR ADMIN
+            window.location.href = result.role === 'admin'
+                ? 'admin-portal.html'
+                : result.role === 'tutor'
+                    ? 'tutor-portal.html'
+                    : 'student-portal.html';
 
         } else {
-            // ✅ This will now properly show the tutor pending approval message from Worker
             alert(`Login Failed: ${result.error || "Invalid credentials"}`);
         }
     } catch (err) {
-        console.error("Login error:", err);
+        console.error("Login error: ", err);
         alert(`Connection Error: ${err.message}\n\nCheck:\n1. Worker URL spelling\n2. Internet connection`);
     } finally {
         btn.disabled = false;
@@ -69,13 +70,13 @@ async function handleLogin(e) {
     }
 }
 
-// 📝 SIGNUP HANDLER - FIXED SYNTAX ERRORS
+// 📝 SIGNUP HANDLER
 async function handleSignup(e) {
     e.preventDefault();
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
-
     const formData = new FormData(form);
+
     const payload = {
         firstName: formData.get('firstName')?.trim(),
         lastName: formData.get('lastName')?.trim() || '',
@@ -83,7 +84,7 @@ async function handleSignup(e) {
         password: formData.get('password'),
         userType: formData.get('userType'),
         age: formData.get('age') || '',
-        grade: formData.get('grade') || '',                      // ✅ Fixed: formData.get (no space)
+        grade: formData.get('grade') || '',
         phone: formData.get('phone')?.trim(),
         backupPhone: formData.get('backupPhone')?.trim() || '',
         schoolName: formData.get('schoolName')?.trim() || '',
@@ -91,8 +92,7 @@ async function handleSignup(e) {
         agreeTerms: formData.get('agreeTerms') === 'on'
     };
 
-    // Validation
-    if (!payload.email || !payload.password || !payload.firstName || !payload.userType) { // ✅ Fixed: payload.firstName
+    if (!payload.email || !payload.password || !payload.firstName || !payload.userType) {
         alert("Please fill all required fields");
         return;
     }
@@ -117,15 +117,14 @@ async function handleSignup(e) {
 
         const result = await response.json();
 
-        // ✅ FIXED: Proper logical operator &&
         if (response.ok && result.success) {
             alert(result.message || "Account created successfully!");
-            window.location.href = 'login.html'; // Same redirect for all user types
+            window.location.href = 'login.html';
         } else {
             alert(`Signup Failed: ${result.error || "Unknown error"}`);
         }
     } catch (err) {
-        console.error("Signup error:", err);
+        console.error("Signup error: ", err);
         alert(`Connection Error: ${err.message}`);
     } finally {
         btn.disabled = false;

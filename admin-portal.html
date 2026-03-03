@@ -7,158 +7,514 @@
     <title>Admin Portal | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="login.css" />
     <style>
-        /* Admin-specific overrides using brand variables */
+        /* Question Management Specific Styles */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         .admin-header {
-            background: linear-gradient(135deg, var(--navy-bg) 0%, #000055 100%);
-            color: var(--white);
-            padding: 20px 5%;
-            border-bottom: 3px solid var(--pro-green);
+            background: linear-gradient(135deg, #000033, #000055);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .admin-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .admin-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid var(--pro-green);
+            flex-wrap: wrap;
         }
 
-        .admin-card h3 {
-            color: var(--navy-bg);
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+        .tab-btn {
+            padding: 12px 24px;
+            background: #000033;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-        .stat-grid {
+        .tab-btn.active,
+        .tab-btn:hover {
+            background: #32cd32;
+            color: #000033;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #32cd32;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .answers-container {
+            border: 2px dashed #e1e5eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .answer-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .answer-item input {
+            flex: 1;
+        }
+
+        .answer-item .correct-check {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn-add-answer {
+            background: #7fdff0;
+            color: #000033;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .btn-remove-answer {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #32cd32;
+            color: #000033;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(50, 205, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: #000033;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 15px;
         }
 
-        .stat-box {
-            background: var(--bg-light);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #e1e5eb;
-        }
-
-        .stat-box .number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--pro-green);
-        }
-
-        .stat-box .label {
-            font-size: 0.85rem;
-            color: var(--text-dark);
-            margin-top: 5px;
-        }
-
-        .logout-btn {
-            background: var(--pro-green);
-            color: var(--navy-bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
-        }
-
-        .secure-notice {
-            background: #fff3cd;
-            color: #856404;
+        .data-table th,
+        .data-table td {
             padding: 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            border-left: 4px solid #ffc107;
+            text-align: left;
+            border-bottom: 1px solid #e1e5eb;
         }
 
-        /* Hide sensitive data containers by default - loaded via API only */
-        #admin-data-container {
-            display: none;
+        .data-table th {
+            background: #000033;
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .hint-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 0 6px 6px 0;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #32cd32;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .answer-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Admin Header -->
-    <header class="admin-header">
-        <div class="logo">Peer-2-Peer <span>PRO</span> | Admin</div>
-        <button class="logout-btn" onclick="handleLogout()">Logout</button>
-    </header>
+    <!-- Navbar -->
+    <nav id="navbar">
+        <a href="index.html" class="logo">Peer-2-Peer <span>PRO</span></a>
+        <ul class="nav-right">
+            <li><a href="#" onclick="handleLogout(); return false;">🔐 Admin Logout</a></li>
+        </ul>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="admin-container">
-        <div class="secure-notice">
-            🔒 <strong>Secure Admin Area:</strong> All data is fetched server-side.
-            No sensitive information is embedded in this page.
+    <!-- Main Admin Container -->
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1>🎓 Question Management System</h1>
+                <p>Create study questions, topic introductions & practice quizzes for students</p>
+            </div>
+            <button class="btn-secondary" onclick="loadStats()">🔄 Refresh Stats</button>
         </div>
 
-        <!-- Dashboard Stats (Populated via API) -->
-        <div class="admin-card">
-            <h3>📊 System Overview</h3>
-            <div class="stat-grid" id="stats-grid">
-                <div class="stat-box">
-                    <div class="number" id="stat-users">--</div>
-                    <div class="label">Total Users</div>
-                </div>
-                <div class="stat-box">
-                    <div class="number" id="stat-online">--</div>
-                    <div class="label">Online Now</div>
-                </div>
-                <div class="stat-box">
-                    <div class="number" id="stat-tutors">--</div>
-                    <div class="label">Pending Tutors</div>
-                </div>
-                <div class="stat-box">
-                    <div class="number" id="stat-activity">--</div>
-                    <div class="label">Today's Logins</div>
-                </div>
+        <!-- Stats Overview -->
+        <div class="stats-grid" id="statsContainer">
+            <div class="stat-card">
+                <div class="number" id="statUsers">-</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statQuestions">-</div>
+                <div class="label">Total Questions</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statTopics">-</div>
+                <div class="label">Total Topics</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="statGrades">-</div>
+                <div class="label">Total Grades</div>
             </div>
         </div>
 
-        <!-- Admin Actions (Secure - Requires API Validation) -->
-        <div class="admin-card">
-            <h3>⚙️ Admin Actions</h3>
-            <p style="color: #666; margin-bottom: 15px;">
-                All actions are validated server-side. Your session and role are verified on every request.
-            </p>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="auth-btn signup-btn" style="width: auto;" onclick="loadPendingTutors()">Review Tutor
-                    Applications</button>
-                <button class="auth-btn signup-btn" style="width: auto;" onclick="exportUserData()">Export User Data
-                    (CSV)</button>
-                <button class="auth-btn signup-btn" style="width: auto;" onclick="viewAuditLog()">View Audit
-                    Log</button>
+        <!-- Navigation Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('grades')">📚 Grades</button>
+            <button class="tab-btn" onclick="switchTab('subjects')">📖 Subjects</button>
+            <button class="tab-btn" onclick="switchTab('topics')">🎯 Topics</button>
+            <button class="tab-btn" onclick="switchTab('questions')">❓ Questions</button>
+        </div>
+
+        <!-- GRADES TAB -->
+        <div id="grades-tab" class="tab-content active">
+            <div class="form-card">
+                <h3>➕ Add New Grade</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Grade Name *</label>
+                        <input type="text" id="gradeName" placeholder="e.g., Grade 10">
+                    </div>
+                    <div class="form-group">
+                        <label>Display Order *</label>
+                        <input type="number" id="gradeOrder" placeholder="1, 2, 3..." value="1">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="createGrade()">Create Grade</button>
+            </div>
+            <div class="form-card">
+                <h3>📋 Existing Grades</h3>
+                <div id="gradesList" class="loading">Loading grades...</div>
             </div>
         </div>
 
-        <!-- Secure Data Container (Populated ONLY via authenticated API calls) -->
-        <div id="admin-data-container" class="admin-card">
-            <h3 id="data-section-title">Data</h3>
-            <div id="data-content"></div>
+        <!-- SUBJECTS TAB -->
+        <div id="subjects-tab" class="tab-content">
+            <div class="form-card">
+                <h3>➕ Add New Subject</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Grade *</label>
+                        <select id="subjectGradeSelect">
+                            <option value="">Select Grade...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject Name *</label>
+                        <input type="text" id="subjectName" placeholder="e.g., Mathematics">
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>Description (Optional)</label>
+                        <textarea id="subjectDesc" placeholder="Brief description of the subject..."></textarea>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="createSubject()">Create Subject</button>
+            </div>
+            <div class="form-card">
+                <h3>📋 Existing Subjects</h3>
+                <div id="subjectsList" class="loading">Loading subjects...</div>
+            </div>
         </div>
-    </main>
+
+        <!-- TOPICS TAB -->
+        <div id="topics-tab" class="tab-content">
+            <div class="form-card">
+                <h3>➕ Add New Topic</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Subject *</label>
+                        <select id="topicSubjectSelect">
+                            <option value="">Select Subject...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Topic Name *</label>
+                        <input type="text" id="topicName" placeholder="e.g., Quadratic Equations">
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>Topic Introduction (Shown to students)</label>
+                        <textarea id="topicIntro" placeholder="Brief introduction to this topic..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>Topic Description (Admin notes)</label>
+                        <textarea id="topicDesc" placeholder="Additional notes for admins/tutors..."></textarea>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="createTopic()">Create Topic</button>
+            </div>
+            <div class="form-card">
+                <h3>📋 Existing Topics</h3>
+                <div id="topicsList" class="loading">Loading topics...</div>
+            </div>
+        </div>
+
+        <!-- QUESTIONS TAB -->
+        <div id="questions-tab" class="tab-content">
+            <div class="form-card">
+                <h3>➕ Create New Question</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Grade</label>
+                        <select id="qGradeSelect" onchange="filterSubjectsByGrade()">
+                            <option value="">All Grades</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <select id="qSubjectSelect" onchange="filterTopicsBySubject()">
+                            <option value="">All Subjects</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Topic *</label>
+                        <select id="qTopicSelect">
+                            <option value="">Select Topic...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Question Type</label>
+                        <select id="qType">
+                            <option value="multiple_choice">Multiple Choice</option>
+                            <option value="true_false">True/False</option>
+                            <option value="short_answer">Short Answer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Difficulty</label>
+                        <select id="qDifficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Points</label>
+                        <input type="number" id="qPoints" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Time Limit (seconds, optional)</label>
+                        <input type="number" id="qTimeLimit" placeholder="e.g., 60">
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>Question Text *</label>
+                        <textarea id="qText" placeholder="Enter the question here..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>💡 Hints (Shown to students when stuck)</label>
+                        <textarea id="qHints" placeholder="Enter helpful hints..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>✅ Explanation (Shown after answering)</label>
+                        <textarea id="qExplanation" placeholder="Explain the correct answer..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Answers Section (for multiple choice) -->
+                <div id="answersSection" class="answers-container">
+                    <h4>🔘 Answer Options</h4>
+                    <div id="answersList">
+                        <div class="answer-item">
+                            <input type="checkbox" class="correct-check" checked title="Mark as correct answer">
+                            <input type="text" class="answer-text" placeholder="Answer option...">
+                            <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
+                        </div>
+                        <div class="answer-item">
+                            <input type="checkbox" class="correct-check" title="Mark as correct answer">
+                            <input type="text" class="answer-text" placeholder="Answer option...">
+                            <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn-add-answer" onclick="addAnswer()">+ Add Another Option</button>
+                </div>
+
+                <button class="btn-primary" onclick="createQuestion()">💾 Save Question</button>
+            </div>
+
+            <div class="form-card">
+                <h3>📋 Existing Questions</h3>
+                <div class="form-grid" style="margin-bottom:15px;">
+                    <div class="form-group">
+                        <label>Filter by Topic</label>
+                        <select id="filterTopic" onchange="loadQuestions()">
+                            <option value="">All Topics</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="questionsList" class="loading">Loading questions...</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -177,76 +533,8 @@
         </div>
     </footer>
 
-    <script>
-        // 🔐 SECURITY: Session validation on page load
-        document.addEventListener('DOMContentLoaded', async () => {
-            const email = sessionStorage.getItem('p2p_email');
-            const role = sessionStorage.getItem('p2p_role');
-
-            // Block access if not admin or no session
-            if (!email || role !== 'admin') {
-                // Double-check with backend for security
-                try {
-                    const res = await fetch(`${API_BASE}/api/verify-admin`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            email,
-                            sessionId: sessionStorage.getItem('p2p_sessionId')
-                        }),
-                        credentials: 'include'
-                    });
-                    const result = await res.json();
-                    if (!result.success) throw new Error('Unauthorized');
-                } catch (e) {
-                    alert('Admin access required. Redirecting...');
-                    window.location.href = 'login.html';
-                    return;
-                }
-            }
-
-            // Load dashboard stats (via secure API)
-            loadAdminStats();
-        });
-
-        // 📊 Load stats via API (no data in HTML)
-        async function loadAdminStats() {
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/stats`, {
-                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('p2p_sessionId')}` },
-                    credentials: 'include'
-                });
-                if (!res.ok) throw new Error('Failed to load stats');
-                const data = await res.json();
-
-                document.getElementById('stat-users').textContent = data.totalUsers || 0;
-                document.getElementById('stat-online').textContent = data.onlineNow || 0;
-                document.getElementById('stat-tutors').textContent = data.pendingTutors || 0;
-                document.getElementById('stat-activity').textContent = data.todayLogins || 0;
-            } catch (err) {
-                console.error('Stats load error:', err);
-                document.getElementById('stats-grid').innerHTML =
-                    '<p style="color: #dc3545">Unable to load dashboard data. Please refresh.</p>';
-            }
-        }
-
-        // 🔄 Placeholder functions for admin actions (implement backend endpoints)
-        async function loadPendingTutors() {
-            alert('Fetching pending tutor applications... (Backend endpoint required)');
-            // Example: fetch(`${API_BASE}/api/admin/pending-tutors`, { headers: { 'Authorization': ... } })
-        }
-
-        async function exportUserData() {
-            alert('Generating secure export... (Requires backend CSV generation)');
-        }
-
-        async function viewAuditLog() {
-            alert('Loading audit trail... (Backend logging required)');
-        }
-
-        // 🚪 Reuse logout from login.js
-        // (Ensure handleLogout is globally accessible or re-define here)
-    </script>
+    <!-- Admin JS -->
+    <script src="admin.js"></script>
 </body>
 
 </html>

@@ -313,3 +313,64 @@ ADMIN DASHBOARD STYLES
         grid-template-columns: 1fr;
     }
 }
+
+/* Advanced Question Fields */
+.question-type-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #32cd32;
+}
+
+.question-type-section h4 {
+    margin: 0 0 10px 0;
+    color: #000033;
+    font-size: 1rem;
+}
+
+.question-type-section p {
+    margin: 0 0 15px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+#advancedQuestionFields.hidden,
+.question-type-section.hidden {
+    display: none !important;
+}
+
+/* Media Items Styling */
+#topicMediaList .answer-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #e1e5eb;
+}
+
+#topicMediaList select,
+#topicMediaList input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #e1e5eb;
+}
+
+#topicMediaList .media-type {
+    min-width: 140px;
+}
+
+#topicMediaList .media-url {
+    flex: 2;
+}
+
+#topicMediaList .media-caption {
+    flex: 2;
+}
+
+#topicMediaList .media-order {
+    width: 70px;
+}

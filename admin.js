@@ -1,21 +1,27 @@
+// ============================================
+// PEER-2-PEER PRO: ADMIN PORTAL JAVASCRIPT
+// Endpoint: https://practice.buhle-1ce.workers.dev
+// Features: Grades, Subjects, Topics (+Media), Questions (All Types)
+// ============================================
+
 const API_BASE = "https://practice.buhle-1ce.workers.dev";
 const ADMIN_EMAIL = "admin@peer-2-peer.co.za";
-const ADMIN_PASSWORD = "Admin@2014"; // ⚠️ In production, use secure auth flow
+const ADMIN_PASSWORD = "Admin@2014"; // ⚠️ Use Wrangler secrets in production
 
-// Tab switching
+// ✅ TAB SWITCHING
 function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    event.target.classList.add('active');
+    event.currentTarget.classList.add('active');
     document.getElementById(tabName + '-tab').classList.add('active');
-    // Load data for the tab
+
     if (tabName === 'grades') loadGrades();
     if (tabName === 'subjects') { loadGradesForSelect(); loadSubjects(); }
     if (tabName === 'topics') { loadSubjectsForSelect(); loadTopics(); }
-    if (tabName === 'questions') { loadGradesForSelect(); loadQuestions(); }
+    if (tabName === 'questions') { loadGradesForSelect(); loadSubjectsForSelect(); loadTopicsForQuestionSelect(); loadQuestions(); }
 }
 
-// Stats loading
+// ✅ LOAD ADMIN STATS
 async function loadStats() {
     try {
         const res = await fetch(`${API_BASE}/api/admin/stats`, {
@@ -33,17 +39,19 @@ async function loadStats() {
     } catch (e) { console.error("Stats error:", e); }
 }
 
-// GRADES
+// ============================================
+// 📚 GRADES FUNCTIONS
+// ============================================
 async function loadGrades() {
     const container = document.getElementById('gradesList');
-    container.innerHTML = '<div class="loading">Loading...</div>';
+    container.innerHTML = '<div class="loading">Loading grades...</div>';
     try {
         const res = await fetch(`${API_BASE}/api/grades`);
         const data = await res.json();
         if (data.success && data.grades.length > 0) {
             let html = '<table class="data-table"><thead><tr><th>Grade</th><th>Order</th><th>Actions</th></tr></thead><tbody>';
             data.grades.forEach(g => {
-                html += `<tr><td>${g.grade_name}</td><td>${g.grade_order}</td><td><button class="btn-danger" onclick="alert('Delete functionality can be added')">Delete</button></td></tr>`;
+                html += `<tr><td>${g.grade_name}</td><td>${g.grade_order}</td><td><button class="btn-danger" onclick="deleteGrade(${g.id})">Delete</button></td></tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
@@ -57,7 +65,6 @@ async function createGrade() {
     const grade_name = document.getElementById('gradeName').value.trim();
     const grade_order = document.getElementById('gradeOrder').value;
     if (!grade_name || !grade_order) { alert("Please fill all required fields"); return; }
-
     try {
         const res = await fetch(`${API_BASE}/api/grades`, {
             method: 'POST',
@@ -69,9 +76,15 @@ async function createGrade() {
             alert("✅ Grade created!");
             document.getElementById('gradeName').value = '';
             loadGrades();
-            loadGradesForSelect(); // Refresh dropdowns
+            loadGradesForSelect();
         } else { alert("Error: " + data.error); }
     } catch (e) { alert("Connection error"); }
+}
+
+async function deleteGrade(id) {
+    if (!confirm("Delete this grade? This will also delete associated subjects, topics, and questions.")) return;
+    // Note: Implement CASCADE deletes in DB or handle manually
+    alert("Delete functionality: Implement CASCADE delete or soft delete as needed");
 }
 
 async function loadGradesForSelect() {
@@ -92,10 +105,12 @@ async function loadGradesForSelect() {
     } catch (e) { console.error("Load grades select error:", e); }
 }
 
-// SUBJECTS
+// ============================================
+// 📖 SUBJECTS FUNCTIONS
+// ============================================
 async function loadSubjects() {
     const container = document.getElementById('subjectsList');
-    container.innerHTML = '<div class="loading">Loading...</div>';
+    container.innerHTML = '<div class="loading">Loading subjects...</div>';
     try {
         const res = await fetch(`${API_BASE}/api/subjects`);
         const data = await res.json();
@@ -107,7 +122,7 @@ async function loadSubjects() {
             html += '</tbody></table>';
             container.innerHTML = html;
         } else { container.innerHTML = '<p>No subjects found</p>'; }
-    } catch (e) { container.innerHTML = '<p style="color:red">Error</p>'; }
+    } catch (e) { container.innerHTML = '<p style="color:red">Error loading subjects</p>'; }
 }
 
 async function createSubject() {
@@ -115,7 +130,6 @@ async function createSubject() {
     const grade_id = document.getElementById('subjectGradeSelect').value;
     const description = document.getElementById('subjectDesc').value.trim();
     if (!subject_name || !grade_id) { alert("Please fill required fields"); return; }
-
     try {
         const res = await fetch(`${API_BASE}/api/subjects`, {
             method: 'POST',
@@ -155,24 +169,32 @@ async function loadSubjectsForSelect() {
 }
 
 function filterSubjectsByGrade() { loadSubjectsForSelect(); }
-function filterTopicsBySubject() { loadTopicsForQuestionSelect(); }
 
-// TOPICS
+// ============================================
+// 🎯 TOPICS FUNCTIONS (+ MEDIA)
+// ============================================
 async function loadTopics() {
     const container = document.getElementById('topicsList');
-    container.innerHTML = '<div class="loading">Loading...</div>';
+    container.innerHTML = '<div class="loading">Loading topics...</div>';
     try {
         const res = await fetch(`${API_BASE}/api/topics`);
         const data = await res.json();
         if (data.success && data.topics.length > 0) {
-            let html = '<table class="data-table"><thead><tr><th>Topic</th><th>Subject</th><th>Grade</th><th>Intro</th></tr></thead><tbody>';
+            let html = '<table class="data-table"><thead><tr><th>Topic</th><th>Subject</th><th>Grade</th><th>Intro</th><th>Media</th></tr></thead><tbody>';
             data.topics.forEach(t => {
-                html += `<tr><td>${t.topic_name}</td><td>${t.subject_name}</td><td>${t.grade_name}</td><td>${t.intro?.substring(0, 50) || '-'}...</td></tr>`;
+                const mediaCount = t.media?.length || 0;
+                html += `<tr>
+          <td>${t.topic_name}</td>
+          <td>${t.subject_name}</td>
+          <td>${t.grade_name}</td>
+          <td>${t.intro?.substring(0, 40) || '-'}${t.intro?.length > 40 ? '...' : ''}</td>
+          <td>${mediaCount > 0 ? `${mediaCount} item(s)` : '-'}</td>
+        </tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
         } else { container.innerHTML = '<p>No topics found</p>'; }
-    } catch (e) { container.innerHTML = '<p style="color:red">Error</p>'; }
+    } catch (e) { container.innerHTML = '<p style="color:red">Error loading topics</p>'; }
 }
 
 async function createTopic() {
@@ -186,7 +208,11 @@ async function createTopic() {
         const res = await fetch(`${API_BASE}/api/topics`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic_name, subject_id, intro, description, adminEmail: ADMIN_EMAIL, adminPassword: ADMIN_PASSWORD })
+            body: JSON.stringify({
+                topic_name, subject_id, intro, description,
+                media: gatherTopicMedia(),
+                adminEmail: ADMIN_EMAIL, adminPassword: ADMIN_PASSWORD
+            })
         });
         const data = await res.json();
         if (data.success) {
@@ -194,10 +220,48 @@ async function createTopic() {
             document.getElementById('topicName').value = '';
             document.getElementById('topicIntro').value = '';
             document.getElementById('topicDesc').value = '';
+            document.getElementById('topicMediaList').innerHTML = '';
             loadTopics();
             loadTopicsForQuestionSelect();
         } else { alert("Error: " + data.error); }
     } catch (e) { alert("Connection error"); }
+}
+
+// 🎬 TOPIC MEDIA FUNCTIONS
+function addTopicMedia() {
+    const container = document.getElementById('topicMediaList');
+    const div = document.createElement('div');
+    div.className = 'answer-item';
+    div.innerHTML = `
+    <select class="media-type" style="padding:8px; border-radius:6px; border:1px solid #e1e5eb; min-width:120px;">
+      <option value="youtube">🎬 YouTube</option>
+      <option value="image">🖼️ Image</option>
+    </select>
+    <input type="text" class="media-url" placeholder="Paste URL..." style="flex:2; padding:8px; border-radius:6px; border:1px solid #e1e5eb;">
+    <input type="text" class="media-caption" placeholder="Caption (optional)" style="flex:1; padding:8px; border-radius:6px; border:1px solid #e1e5eb;">
+    <input type="number" class="media-order" placeholder="Order" value="0" style="width:60px; padding:8px; border-radius:6px; border:1px solid #e1e5eb;">
+    <button class="btn-remove-answer" onclick="removeTopicMedia(this)" title="Remove">✕</button>
+  `;
+    container.appendChild(div);
+}
+
+function removeTopicMedia(btn) {
+    const item = btn.closest('.answer-item');
+    item.remove();
+}
+
+function gatherTopicMedia() {
+    const media = [];
+    document.querySelectorAll('#topicMediaList .answer-item').forEach((item, idx) => {
+        const type = item.querySelector('.media-type').value;
+        const url = item.querySelector('.media-url').value.trim();
+        const caption = item.querySelector('.media-caption').value.trim();
+        const order = parseInt(item.querySelector('.media-order').value) || idx;
+        if (url) {
+            media.push({ media_type: type, media_url: url, caption, display_order: order });
+        }
+    });
+    return media;
 }
 
 async function loadTopicsForQuestionSelect() {
@@ -221,31 +285,142 @@ async function loadTopicsForQuestionSelect() {
     } catch (e) { console.error("Load topics select error:", e); }
 }
 
-// QUESTIONS
+function filterTopicsBySubject() { loadTopicsForQuestionSelect(); }
+
+// ============================================
+// ❓ QUESTIONS FUNCTIONS (ALL TYPES)
+// ============================================
+
+// Toggle question type fields
+function toggleQuestionTypeFields() {
+    const type = document.getElementById('qType').value;
+    document.querySelectorAll('.question-type-section').forEach(sec => sec.classList.add('hidden'));
+
+    if (type === 'essay') {
+        document.getElementById('essayFields').classList.remove('hidden');
+        document.getElementById('answersSection').classList.add('hidden');
+    } else if (type === 'matching') {
+        document.getElementById('matchingFields').classList.remove('hidden');
+        document.getElementById('answersSection').classList.add('hidden');
+    } else if (type === 'comprehension') {
+        document.getElementById('comprehensionFields').classList.remove('hidden');
+        document.getElementById('answersSection').classList.remove('hidden');
+    } else {
+        document.getElementById('answersSection').classList.remove('hidden');
+    }
+}
+
+// 📝 ESSAY FUNCTIONS
+function addEssayPoint() {
+    const container = document.getElementById('essayPointsList');
+    const div = document.createElement('div');
+    div.className = 'answer-item';
+    div.innerHTML = `
+    <input type="text" class="point-text" placeholder="Key point..." style="flex:2;">
+    <input type="number" class="point-marks" placeholder="Marks" value="1" style="width:70px;">
+    <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem;">
+      <input type="checkbox" class="point-required" checked> Required
+    </label>
+    <button class="btn-remove-answer" onclick="removeEssayPoint(this)">✕</button>
+  `;
+    container.appendChild(div);
+}
+function removeEssayPoint(btn) {
+    const item = btn.closest('.answer-item');
+    if (document.querySelectorAll('#essayPointsList .answer-item').length > 1) {
+        item.remove();
+    } else { alert("At least one marking point required"); }
+}
+function gatherEssayPoints() {
+    const points = [];
+    document.querySelectorAll('#essayPointsList .answer-item').forEach((item, idx) => {
+        const text = item.querySelector('.point-text').value.trim();
+        const marks = parseInt(item.querySelector('.point-marks').value) || 1;
+        const required = item.querySelector('.point-required').checked;
+        if (text) {
+            points.push({ point_text: text, point_marks: marks, is_required: required, point_order: idx + 1 });
+        }
+    });
+    return points;
+}
+
+// 🔗 MATCHING FUNCTIONS
+function addMatchingPair() {
+    const container = document.getElementById('matchingPairsList');
+    const div = document.createElement('div');
+    div.className = 'answer-item';
+    div.style.flexWrap = 'wrap';
+    div.innerHTML = `
+    <input type="text" class="column-a" placeholder="Column A..." style="flex:1; min-width:120px;">
+    <span style="margin:0 10px; color:#999;">↔</span>
+    <input type="text" class="column-b" placeholder="Column B..." style="flex:1; min-width:120px;">
+    <input type="number" class="pair-order" placeholder="Order" value="1" style="width:60px;">
+    <button class="btn-remove-answer" onclick="removeMatchingPair(this)">✕</button>
+  `;
+    container.appendChild(div);
+}
+function removeMatchingPair(btn) {
+    const item = btn.closest('.answer-item');
+    if (document.querySelectorAll('#matchingPairsList .answer-item').length > 1) {
+        item.remove();
+    } else { alert("At least one matching pair required"); }
+}
+function gatherMatchingPairs() {
+    const pairs = [];
+    document.querySelectorAll('#matchingPairsList .answer-item').forEach((item, idx) => {
+        const a = item.querySelector('.column-a').value.trim();
+        const b = item.querySelector('.column-b').value.trim();
+        const order = parseInt(item.querySelector('.pair-order').value) || idx + 1;
+        if (a && b) {
+            pairs.push({ column_a: a, column_b: b, pair_order: order });
+        }
+    });
+    return pairs;
+}
+
+// 📖 COMPREHENSION FUNCTIONS
+function gatherComprehensionPassage() {
+    const text = document.getElementById('passageText').value.trim();
+    if (!text) return null;
+    return {
+        passage_text: text,
+        passage_title: document.getElementById('passageTitle').value.trim() || null,
+        passage_source: document.getElementById('passageSource').value.trim() || null
+    };
+}
+
+// Standard answer functions (for MCQ, TF, Short Answer, Comprehension Q&A)
 function addAnswer() {
     const container = document.getElementById('answersList');
     const div = document.createElement('div');
     div.className = 'answer-item';
     div.innerHTML = `
-        <input type="checkbox" class="correct-check" title="Mark as correct answer">
-        <input type="text" class="answer-text" placeholder="Answer option...">
-        <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
-      `;
+    <input type="checkbox" class="correct-check" title="Mark as correct">
+    <input type="text" class="answer-text" placeholder="Answer option..." style="flex:1;">
+    <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
+  `;
     container.appendChild(div);
 }
-
 function removeAnswer(btn) {
     const item = btn.closest('.answer-item');
-    if (document.querySelectorAll('.answer-item').length > 1) {
+    if (document.querySelectorAll('#answersList .answer-item').length > 1) {
         item.remove();
-    } else {
-        alert("At least one answer option is required");
-    }
+    } else { alert("At least one answer option required"); }
+}
+function gatherAnswers() {
+    const answers = [];
+    document.querySelectorAll('#answersList .answer-item').forEach(item => {
+        const text = item.querySelector('.answer-text').value.trim();
+        const is_correct = item.querySelector('.correct-check').checked;
+        if (text) answers.push({ answer_text: text, is_correct });
+    });
+    return answers;
 }
 
+// LOAD QUESTIONS
 async function loadQuestions() {
     const container = document.getElementById('questionsList');
-    container.innerHTML = '<div class="loading">Loading...</div>';
+    container.innerHTML = '<div class="loading">Loading questions...</div>';
     try {
         const topic_id = document.getElementById('filterTopic').value;
         let url = `${API_BASE}/api/questions`;
@@ -253,45 +428,53 @@ async function loadQuestions() {
         const res = await fetch(url);
         const data = await res.json();
         if (data.success && data.questions.length > 0) {
-            let html = '<table class="data-table"><thead><tr><th>Question</th><th>Type</th><th>Points</th><th>Answers</th><th>Actions</th></tr></thead><tbody>';
+            let html = '<table class="data-table"><thead><tr><th>Question</th><th>Type</th><th>Points</th><th>Details</th><th>Actions</th></tr></thead><tbody>';
             data.questions.forEach(q => {
-                const correctCount = q.answers?.filter(a => a.is_correct).length || 0;
-                html += `
-              <tr>
-                <td>${q.question_text.substring(0, 80)}${q.question_text.length > 80 ? '...' : ''}</td>
-                <td>${q.question_type}</td>
-                <td>${q.points}</td>
-                <td>${correctCount} correct / ${q.answers?.length || 0} total</td>
-                <td>
-                  <button class="btn-secondary" onclick="editQuestion(${q.id})">✏️</button>
-                  <button class="btn-danger" onclick="deleteQuestion(${q.id})">🗑️</button>
-                </td>
-              </tr>
-            `;
+                let details = '';
+                if (q.question_type === 'essay') details = `${q.essay_points?.length || 0} marking points`;
+                else if (q.question_type === 'matching') details = `${q.matching_pairs?.length || 0} pairs`;
+                else if (q.question_type === 'comprehension') details = 'Passage + Q&A';
+                else details = `${q.answers?.filter(a => a.is_correct).length || 0} correct / ${q.answers?.length || 0} total`;
+
+                html += `<tr>
+          <td>${q.question_text.substring(0, 60)}${q.question_text.length > 60 ? '...' : ''}</td>
+          <td>${q.question_type}</td>
+          <td>${q.points}</td>
+          <td>${details}</td>
+          <td>
+            <button class="btn-secondary" onclick="editQuestion(${q.id})">✏️</button>
+            <button class="btn-danger" onclick="deleteQuestion(${q.id})">🗑️</button>
+          </td>
+        </tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
-        } else { container.innerHTML = '<p>No questions found for this topic</p>'; }
+        } else { container.innerHTML = '<p>No questions found</p>'; }
     } catch (e) { container.innerHTML = '<p style="color:red">Error loading questions</p>'; }
 }
 
+// CREATE QUESTION (SUPPORTS ALL TYPES)
 async function createQuestion() {
     const topic_id = document.getElementById('qTopicSelect').value;
     const question_text = document.getElementById('qText').value.trim();
     if (!topic_id || !question_text) { alert("Please select a topic and enter question text"); return; }
 
-    // Gather answers
-    const answers = [];
-    document.querySelectorAll('.answer-item').forEach(item => {
-        const text = item.querySelector('.answer-text').value.trim();
-        const is_correct = item.querySelector('.correct-check').checked;
-        if (text) answers.push({ answer_text: text, is_correct });
-    });
-
-    // For non-multiple choice, ensure at least one "answer" for validation
     const qType = document.getElementById('qType').value;
-    if (qType !== 'multiple_choice' && answers.length === 0) {
-        answers.push({ answer_text: "N/A", is_correct: true });
+    let answers = [], essay_points = [], matching_pairs = [], comprehension_passage = null;
+
+    if (qType === 'essay') {
+        essay_points = gatherEssayPoints();
+        if (essay_points.length === 0) { alert("Add at least one marking point for essay questions"); return; }
+    } else if (qType === 'matching') {
+        matching_pairs = gatherMatchingPairs();
+        if (matching_pairs.length === 0) { alert("Add at least one matching pair"); return; }
+    } else if (qType === 'comprehension') {
+        comprehension_passage = gatherComprehensionPassage();
+        if (!comprehension_passage) { alert("Enter a comprehension passage"); return; }
+        answers = gatherAnswers(); // Q&A for comprehension
+    } else {
+        answers = gatherAnswers();
+        if (answers.length === 0 && qType !== 'short_answer') { alert("Add at least one answer option"); return; }
     }
 
     try {
@@ -307,7 +490,10 @@ async function createQuestion() {
                 time_limit: document.getElementById('qTimeLimit').value || null,
                 hints: document.getElementById('qHints').value.trim() || null,
                 explanation: document.getElementById('qExplanation').value.trim() || null,
-                answers,
+                answers: answers.length > 0 ? answers : undefined,
+                essay_points: essay_points.length > 0 ? essay_points : undefined,
+                matching_pairs: matching_pairs.length > 0 ? matching_pairs : undefined,
+                comprehension_passage,
                 adminEmail: ADMIN_EMAIL,
                 adminPassword: ADMIN_PASSWORD
             })
@@ -319,12 +505,29 @@ async function createQuestion() {
             document.getElementById('qText').value = '';
             document.getElementById('qHints').value = '';
             document.getElementById('qExplanation').value = '';
-            document.getElementById('qTimeLimit').value = '';
+            document.getElementById('essayPointsList').innerHTML = '';
+            document.getElementById('matchingPairsList').innerHTML = '';
+            document.getElementById('passageText').value = '';
+            document.getElementById('passageTitle').value = '';
+            document.getElementById('passageSource').value = '';
+            document.getElementById('answersList').innerHTML = `
+        <div class="answer-item">
+          <input type="checkbox" class="correct-check" checked>
+          <input type="text" class="answer-text" placeholder="Answer option...">
+          <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
+        </div>
+        <div class="answer-item">
+          <input type="checkbox" class="correct-check">
+          <input type="text" class="answer-text" placeholder="Answer option...">
+          <button class="btn-remove-answer" onclick="removeAnswer(this)">✕</button>
+        </div>
+      `;
             loadQuestions();
         } else { alert("Error: " + data.error); }
     } catch (e) { alert("Connection error: " + e.message); }
 }
 
+// DELETE QUESTION
 async function deleteQuestion(id) {
     if (!confirm("Delete this question permanently?")) return;
     try {
@@ -339,20 +542,27 @@ async function deleteQuestion(id) {
     } catch (e) { alert("Connection error"); }
 }
 
+// EDIT QUESTION (Placeholder - implement full edit logic as needed)
 function editQuestion(id) {
-    alert("Edit functionality: Load question data into form (implementation similar to create)");
-    // Implementation: Fetch question by ID, populate form fields, change save button to "Update"
+    alert("Edit functionality: Fetch question by ID and populate form. Implementation similar to create but with PUT request.");
+    // Full implementation: 
+    // 1. Fetch question: GET /api/questions?topic_id=X, find by id
+    // 2. Populate all form fields including essay_points, matching_pairs, etc.
+    // 3. Change save button to "Update" and send PUT to /api/questions/{id}
 }
 
-// Logout
+// ============================================
+// 🚪 LOGOUT & INIT
+// ============================================
 window.handleLogout = function () {
     sessionStorage.clear();
     window.location.href = 'login.html';
 };
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     loadGrades();
     loadGradesForSelect();
+    // Initialize question type toggle
+    document.getElementById('qType')?.addEventListener('change', toggleQuestionTypeFields);
 });

@@ -7,7 +7,9 @@
     <title>Admin Portal | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="login.css" />
     <style>
-        /* Question Management Specific Styles */
+        /* ============================================
+       ADMIN PORTAL SPECIFIC STYLES
+       ============================================ */
         .admin-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -23,6 +25,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .admin-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
         }
 
         .admin-tabs {
@@ -78,6 +93,13 @@
             margin-bottom: 20px;
         }
 
+        .form-card h3 {
+            margin-top: 0;
+            color: #000033;
+            border-bottom: 2px solid #32cd32;
+            padding-bottom: 10px;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -93,6 +115,7 @@
             font-weight: 600;
             margin-bottom: 5px;
             color: #333;
+            font-size: 0.9rem;
         }
 
         .form-group input,
@@ -104,6 +127,7 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            box-sizing: border-box;
         }
 
         .form-group input:focus,
@@ -118,11 +142,13 @@
             resize: vertical;
         }
 
+        /* Answers Container */
         .answers-container {
             border: 2px dashed #e1e5eb;
             padding: 15px;
             border-radius: 8px;
             margin: 15px 0;
+            background: #fafafa;
         }
 
         .answer-item {
@@ -131,12 +157,15 @@
             align-items: center;
             margin-bottom: 10px;
             padding: 10px;
-            background: #f8f9fa;
+            background: white;
             border-radius: 6px;
+            border: 1px solid #e1e5eb;
+            flex-wrap: wrap;
         }
 
-        .answer-item input {
+        .answer-item input[type="text"] {
             flex: 1;
+            min-width: 150px;
         }
 
         .answer-item .correct-check {
@@ -156,6 +185,10 @@
             margin-top: 10px;
         }
 
+        .btn-add-answer:hover {
+            background: #5ec9e0;
+        }
+
         .btn-remove-answer {
             background: #ff6b6b;
             color: white;
@@ -165,8 +198,16 @@
             border-radius: 50%;
             cursor: pointer;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        .btn-remove-answer:hover {
+            background: #ff5252;
+        }
+
+        /* Buttons */
         .btn-primary {
             background: #32cd32;
             color: #000033;
@@ -177,6 +218,7 @@
             cursor: pointer;
             font-size: 1rem;
             transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
         }
 
         .btn-primary:hover {
@@ -194,6 +236,10 @@
             font-weight: 600;
         }
 
+        .btn-secondary:hover {
+            background: #000055;
+        }
+
         .btn-danger {
             background: #ff6b6b;
             color: white;
@@ -203,10 +249,16 @@
             cursor: pointer;
         }
 
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        /* Data Table */
         .data-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            font-size: 0.95rem;
         }
 
         .data-table th,
@@ -226,18 +278,10 @@
             background: #f8f9fa;
         }
 
-        .hint-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px;
-            border-radius: 0 6px 6px 0;
-            margin: 10px 0;
-            font-size: 0.9rem;
-        }
-
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -261,21 +305,92 @@
             font-size: 0.9rem;
         }
 
+        /* Topic Media */
+        #topicMediaList .answer-item {
+            flex-wrap: wrap;
+        }
+
+        #topicMediaList select {
+            min-width: 130px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e1e5eb;
+        }
+
+        #topicMediaList .media-url {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        #topicMediaList .media-caption {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #topicMediaList .media-order {
+            width: 70px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e1e5eb;
+        }
+
+        /* Advanced Question Fields */
+        .question-type-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #32cd32;
+        }
+
+        .question-type-section h4 {
+            margin: 0 0 10px 0;
+            color: #000033;
+            font-size: 1rem;
+        }
+
+        .question-type-section p {
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .question-type-section.hidden,
+        #advancedQuestionFields.hidden {
+            display: none !important;
+        }
+
+        /* Loading & Empty States */
         .loading {
             text-align: center;
             padding: 40px;
             color: #666;
         }
 
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
         .hidden {
             display: none !important;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .admin-header {
                 flex-direction: column;
                 text-align: center;
-                gap: 10px;
             }
 
             .form-grid {
@@ -285,6 +400,19 @@
             .answer-item {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .answer-item input[type="text"] {
+                min-width: 100%;
+            }
+
+            .admin-tabs {
+                justify-content: center;
+            }
+
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -410,6 +538,18 @@
                         <label>Topic Description (Admin notes)</label>
                         <textarea id="topicDesc" placeholder="Additional notes for admins/tutors..."></textarea>
                     </div>
+                    <!-- 🎬 TOPIC MEDIA SECTION -->
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>🎬 Topic Media (YouTube Videos & Images)</label>
+                        <div id="topicMediaList" class="answers-container">
+                            <!-- Media items will appear here -->
+                        </div>
+                        <button type="button" class="btn-add-answer" onclick="addTopicMedia()">+ Add Media</button>
+                        <small style="color:#666; display:block; margin-top:5px;">
+                            • YouTube: Paste video URL (e.g., https://youtu.be/abc123)<br>
+                            • Images: Use direct image URL (e.g., https://example.com/diagram.png)
+                        </small>
+                    </div>
                 </div>
                 <button class="btn-primary" onclick="createTopic()">Create Topic</button>
             </div>
@@ -443,11 +583,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Question Type</label>
-                        <select id="qType">
+                        <label>Question Type *</label>
+                        <select id="qType" onchange="toggleQuestionTypeFields()">
                             <option value="multiple_choice">Multiple Choice</option>
                             <option value="true_false">True/False</option>
                             <option value="short_answer">Short Answer</option>
+                            <option value="essay">✍️ Essay Question</option>
+                            <option value="matching">🔗 Match Column A & B</option>
+                            <option value="comprehension">📖 Comprehension Passage</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -480,7 +623,78 @@
                     </div>
                 </div>
 
-                <!-- Answers Section (for multiple choice) -->
+                <!-- 🔄 DYNAMIC FIELDS CONTAINER -->
+                <div id="advancedQuestionFields" class="hidden"
+                    style="margin-top:20px; border-top:2px dashed #e1e5eb; padding-top:20px;">
+
+                    <!-- 📝 ESSAY FIELDS -->
+                    <div id="essayFields" class="question-type-section hidden">
+                        <h4>✍️ Essay Marking Points (Rubric)</h4>
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">
+                            Add key points students should include. Each point can have marks assigned.
+                        </p>
+                        <div id="essayPointsList" class="answers-container">
+                            <div class="answer-item">
+                                <input type="text" class="point-text" placeholder="Key point students should mention..."
+                                    style="flex:2;">
+                                <input type="number" class="point-marks" placeholder="Marks" value="1"
+                                    style="width:70px;">
+                                <label style="display:flex; align-items:center; gap:5px; font-size:0.85rem;">
+                                    <input type="checkbox" class="point-required" checked> Required
+                                </label>
+                                <button class="btn-remove-answer" onclick="removeEssayPoint(this)">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add-answer" onclick="addEssayPoint()">+ Add Marking
+                            Point</button>
+                    </div>
+
+                    <!-- 🔗 MATCHING FIELDS -->
+                    <div id="matchingFields" class="question-type-section hidden">
+                        <h4>🔗 Matching Pairs (Column A ↔ Column B)</h4>
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:10px;">
+                            Create pairs where students match items from Column A to Column B.
+                        </p>
+                        <div id="matchingPairsList" class="answers-container">
+                            <div class="answer-item" style="flex-wrap:wrap;">
+                                <input type="text" class="column-a" placeholder="Column A item..."
+                                    style="flex:1; min-width:120px;">
+                                <span style="margin:0 10px; color:#999;">↔</span>
+                                <input type="text" class="column-b" placeholder="Column B match..."
+                                    style="flex:1; min-width:120px;">
+                                <input type="number" class="pair-order" placeholder="Order" value="1"
+                                    style="width:60px;">
+                                <button class="btn-remove-answer" onclick="removeMatchingPair(this)">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add-answer" onclick="addMatchingPair()">+ Add Pair</button>
+                    </div>
+
+                    <!-- 📖 COMPREHENSION FIELDS -->
+                    <div id="comprehensionFields" class="question-type-section hidden">
+                        <h4>📖 Comprehension Passage</h4>
+                        <div class="form-group">
+                            <label>Passage Title (Optional)</label>
+                            <input type="text" id="passageTitle" placeholder="e.g., The Water Cycle">
+                        </div>
+                        <div class="form-group">
+                            <label>Passage Source (Optional)</label>
+                            <input type="text" id="passageSource"
+                                placeholder="e.g., Grade 10 Geography Textbook, Page 42">
+                        </div>
+                        <div class="form-group">
+                            <label>Passage Text *</label>
+                            <textarea id="passageText" placeholder="Paste or type the comprehension passage here..."
+                                style="min-height:150px;"></textarea>
+                        </div>
+                        <p style="font-size:0.9rem; color:#666; margin:10px 0;">
+                            💡 Add questions about this passage using the "Answer Options" section below.
+                            Each answer option can be marked correct/incorrect.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Standard Answer Options (for MCQ, TF, Short Answer, Comprehension Q&A) -->
                 <div id="answersSection" class="answers-container">
                     <h4>🔘 Answer Options</h4>
                     <div id="answersList">

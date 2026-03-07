@@ -1,7 +1,7 @@
 // ============================================
-// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS
+// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FIXED)
 // Endpoint: https://learneranswer.buhle-1ce.workers.dev
-// Smart Identification: DB + sessionStorage
+// FIXED: Navigation, Database Schema, Question Loading
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
@@ -24,13 +24,11 @@ let currentQuestionIndex = 0;
 let selectedAnswer = null;
 let quizStats = { correct: 0, attempted: 0, points: 0 };
 
-// Initialize - Smart Check
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     if (studentNumber) {
-        // Student has session - verify with DB
         verifyStudentAndLoad();
     } else {
-        // First time or session cleared - show form
         showView('studentIdView');
         currentView = 'studentId';
         document.getElementById('searchBar').classList.add('hidden');
@@ -64,7 +62,6 @@ async function registerStudent() {
         const data = await res.json();
 
         if (data.success) {
-            // Save to sessionStorage
             studentNumber = data.student.student_number;
             studentName = `${data.student.first_name} ${data.student.last_name}`;
             studentEmail = data.student.email || '';
@@ -75,12 +72,10 @@ async function registerStudent() {
             sessionStorage.setItem('p2p_email', studentEmail);
             sessionStorage.setItem('p2p_grade', studentGrade);
 
-            // Show welcome message if new student
             if (data.message && data.message.includes('created')) {
                 alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}`);
             }
 
-            // Load practice content
             loadGrades();
         } else {
             alert("Error: " + data.error);
@@ -106,7 +101,6 @@ async function verifyStudentAndLoad() {
         const data = await res.json();
 
         if (data.success) {
-            // Student verified in DB - load practice directly
             studentName = `${data.student.first_name} ${data.student.last_name}`;
             studentEmail = data.student.email || '';
             studentGrade = data.student.grade || '';
@@ -115,7 +109,6 @@ async function verifyStudentAndLoad() {
             sessionStorage.setItem('p2p_grade', studentGrade);
             loadGrades();
         } else {
-            // Student not in DB - clear session and show form
             sessionStorage.clear();
             studentNumber = '';
             showView('studentIdView');
@@ -124,12 +117,11 @@ async function verifyStudentAndLoad() {
         }
     } catch (e) {
         console.error("Verify error:", e);
-        // On error, still try to load (graceful degradation)
         loadGrades();
     }
 }
 
-// Load Grades
+// Load Grades - ALL GRADES
 async function loadGrades(searchQuery = '') {
     showView('gradesView');
     currentView = 'grades';
@@ -203,7 +195,7 @@ async function selectSubject(subjectId, subjectName) {
     loadTopics(subjectId);
 }
 
-// Load Topics
+// Load Topics - ALL TOPICS FROM SUBJECT
 async function loadTopics(subjectId, searchQuery = '') {
     const container = document.getElementById('topicsList');
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
@@ -236,7 +228,7 @@ async function loadTopics(subjectId, searchQuery = '') {
     }
 }
 
-// Start Quiz
+// Start Quiz - LOAD ALL QUESTIONS FROM TOPIC
 async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     selectedTopicId = topicId;
     showView('quizView');
@@ -448,14 +440,29 @@ function showResults() {
     document.getElementById('resultsMessage').textContent = `${message} (${percentage}%)`;
 }
 
-// Navigation
+// ✅ FIXED NAVIGATION - Back buttons work properly
 function goBack(view) {
-    if (view === 'grades') { loadGrades(); }
-    else if (view === 'subjects' && selectedGradeId) { loadSubjects(selectedGradeId); }
-    else if (view === 'topics' && selectedSubjectId) { loadTopics(selectedSubjectId); }
+    if (view === 'grades') {
+        selectedGradeId = null;
+        selectedSubjectId = null;
+        selectedTopicId = null;
+        loadGrades();
+    }
+    else if (view === 'subjects' && selectedGradeId) {
+        selectedSubjectId = null;
+        selectedTopicId = null;
+        loadSubjects(selectedGradeId);
+    }
+    else if (view === 'topics' && selectedSubjectId) {
+        selectedTopicId = null;
+        loadTopics(selectedSubjectId);
+    }
 }
 
-function restartPractice() { goBack('topics'); }
+function restartPractice() {
+    selectedTopicId = null;
+    goBack('topics');
+}
 
 // Search
 function performSearch() {
@@ -493,6 +500,7 @@ function showView(viewId) {
         document.getElementById(id).classList.add('hidden');
     });
     document.getElementById(viewId).classList.remove('hidden');
+    window.scrollTo(0, 0);
 }
 
 function extractYouTubeId(url) {

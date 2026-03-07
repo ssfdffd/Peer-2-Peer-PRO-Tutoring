@@ -4,13 +4,15 @@
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
+
+// Student identity (loaded from sessionStorage or form)
 let studentNumber = sessionStorage.getItem('p2p_student_number') || '';
 let studentName = sessionStorage.getItem('p2p_name') || '';
 let studentEmail = sessionStorage.getItem('p2p_email') || '';
 let studentGrade = sessionStorage.getItem('p2p_grade') || '';
 
 // Navigation state
-let currentView = 'grades';
+let currentView = 'studentId';
 let selectedGradeId = null;
 let selectedSubjectId = null;
 let selectedTopicId = null;
@@ -22,37 +24,112 @@ let selectedAnswer = null;
 let quizStats = { correct: 0, attempted: 0, points: 0 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', async () => {
-    if (!studentNumber || !studentEmail) {
-        alert("Please login to access practice questions");
-        window.location.href = 'login.html';
-        return;
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if student is already identified
+    if (studentNumber) {
+        // Verify student exists in DB, then show practice
+        verifyStudentAndLoad();
+    } else {
+        // Show identification form
+        showView('studentIdView');
+        currentView = 'studentId';
+        document.getElementById('searchBar').classList.add('hidden');
     }
-    await syncStudentToPracticeDB();
-    loadGrades();
 });
 
-// Sync student to practice database
-async function syncStudentToPracticeDB() {
+// Register new student with name/surname
+async function registerStudent() {
+    const firstName = document.getElementById('firstNameInput').value.trim();
+    const lastName = document.getElementById('lastNameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const grade = document.getElementById('gradeInput').value.trim();
+    const schoolName = document.getElementById('schoolInput').value.trim();
+
+    if (!firstName || !lastName) {
+        alert("Please enter your first name and last name");
+        return;
+    }
+
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = "Setting up...";
+
     try {
-        await fetch(`${API_BASE}/api/sync-student`, {
+        const res = await fetch(`${API_BASE}/api/register-student`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                student_number: studentNumber,
-                first_name: studentName.split(' ')[0] || 'Student',
-                last_name: studentName.split(' ')[1] || '',
-                email: studentEmail,
-                grade: studentGrade
-            })
+            body: JSON.stringify({ firstName, lastName, email, grade, schoolName })
         });
-    } catch (e) { console.error("Sync error:", e); }
+
+        const data = await res.json();
+
+        if (data.success) {
+            // Save to sessionStorage
+            studentNumber = data.student.student_number;
+            studentName = `${data.student.first_name} ${data.student.last_name}`;
+            studentEmail = data.student.email || '';
+            studentGrade = data.student.grade || '';
+
+            sessionStorage.setItem('p2p_student_number', studentNumber);
+            sessionStorage.setItem('p2p_name', studentName);
+            sessionStorage.setItem('p2p_email', studentEmail);
+            sessionStorage.setItem('p2p_grade', studentGrade);
+
+            // Load practice content
+            loadGrades();
+        } else {
+            alert("Error: " + data.error);
+            btn.disabled = false;
+            btn.textContent = "Start Practicing →";
+        }
+    } catch (e) {
+        console.error("Register error:", e);
+        alert("Connection error. Please try again.");
+        btn.disabled = false;
+        btn.textContent = "Start Practicing →";
+    }
 }
 
-// Load Grades with search
+// Verify existing student by student_number
+async function verifyStudentAndLoad() {
+    try {
+        const res = await fetch(`${API_BASE}/api/verify-student`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_number: studentNumber })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Student verified, load practice
+            studentName = `${data.student.first_name} ${data.student.last_name}`;
+            studentEmail = data.student.email || '';
+            studentGrade = data.student.grade || '';
+            sessionStorage.setItem('p2p_name', studentName);
+            sessionStorage.setItem('p2p_email', studentEmail);
+            sessionStorage.setItem('p2p_grade', studentGrade);
+            loadGrades();
+        } else {
+            // Student not found, show registration form
+            sessionStorage.clear();
+            studentNumber = '';
+            showView('studentIdView');
+            currentView = 'studentId';
+            document.getElementById('searchBar').classList.add('hidden');
+        }
+    } catch (e) {
+        console.error("Verify error:", e);
+        // On error, still try to load (graceful degradation)
+        loadGrades();
+    }
+}
+
+// Load Grades
 async function loadGrades(searchQuery = '') {
     showView('gradesView');
     currentView = 'grades';
+    document.getElementById('searchBar').classList.remove('hidden');
+
     const container = document.getElementById('gradesList');
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
 
@@ -86,7 +163,7 @@ async function selectGrade(gradeId, gradeName) {
     loadSubjects(gradeId);
 }
 
-// Load Subjects with search
+// Load Subjects
 async function loadSubjects(gradeId, searchQuery = '') {
     const container = document.getElementById('subjectsList');
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
@@ -121,7 +198,7 @@ async function selectSubject(subjectId, subjectName) {
     loadTopics(subjectId);
 }
 
-// Load Topics with search + media display
+// Load Topics
 async function loadTopics(subjectId, searchQuery = '') {
     const container = document.getElementById('topicsList');
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
@@ -154,7 +231,7 @@ async function loadTopics(subjectId, searchQuery = '') {
     }
 }
 
-// Start Quiz - with proper media display
+// Start Quiz
 async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     selectedTopicId = topicId;
     showView('quizView');
@@ -167,7 +244,7 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
         document.getElementById('topicIntro').classList.remove('hidden');
     }
 
-    // Display media (videos & images) - proper sizing
+    // Display media
     if (topicMedia && topicMedia.length > 0) {
         const mediaGrid = document.getElementById('topicMediaGrid');
         mediaGrid.innerHTML = topicMedia.map(m => {
@@ -388,7 +465,7 @@ function performSearch() {
     else if (currentView === 'topics' && selectedSubjectId) { loadTopics(selectedSubjectId, query); }
 }
 
-// Fullscreen Modal for Media
+// Fullscreen Modal
 function openFullscreen(type, src, caption) {
     const modal = document.getElementById('fullscreenModal');
     const content = document.getElementById('fullscreenContent');
@@ -411,7 +488,7 @@ function closeFullscreen(event) {
 
 // Utilities
 function showView(viewId) {
-    ['gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'].forEach(id => {
+    ['studentIdView', 'gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
     });
     document.getElementById(viewId).classList.remove('hidden');
@@ -419,7 +496,7 @@ function showView(viewId) {
 
 function extractYouTubeId(url) {
     if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
 }

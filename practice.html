@@ -12,6 +12,67 @@
             max-width: 100%;
             margin: 0;
             padding: 0;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Student Identification Form */
+        .student-id-form {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .student-id-form h2 {
+            color: #000033;
+            margin-bottom: 10px;
+        }
+
+        .student-id-form p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .student-id-form input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .student-id-form input:focus {
+            border-color: #32cd32;
+            outline: none;
+        }
+
+        .student-id-form button {
+            width: 100%;
+            padding: 14px;
+            background: #32cd32;
+            color: #000033;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .student-id-form button:hover {
+            transform: translateY(-2px);
+        }
+
+        .student-id-form .note {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 15px;
         }
 
         /* Search Bar */
@@ -51,7 +112,7 @@
             cursor: pointer;
         }
 
-        /* Grid Layout - Items nest side-by-side */
+        /* Grid Layout */
         .selection-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -88,7 +149,7 @@
             margin: 0;
         }
 
-        /* Topic Media - Proper sizing & display */
+        /* Topic Media */
         .topic-media-section {
             padding: 20px;
             background: white;
@@ -338,6 +399,11 @@
             .search-bar input {
                 width: 100%;
             }
+
+            .student-id-form {
+                margin: 30px 15px;
+                padding: 25px;
+            }
         }
     </style>
 </head>
@@ -352,17 +418,34 @@
         </ul>
     </nav>
 
-    <!-- Search Bar (after navbar) -->
-    <div class="search-bar" id="searchBar">
-        <input type="text" id="searchInput" placeholder="Search grades, subjects, or topics...">
-        <button onclick="performSearch()">🔍 Search</button>
-    </div>
-
     <!-- Main Wrapper -->
     <div class="practice-wrapper">
 
+        <!-- STUDENT IDENTIFICATION FORM (shown first if not identified) -->
+        <div id="studentIdView">
+            <div class="student-id-form">
+                <h2>🎓 Welcome to Practice</h2>
+                <p>Enter your details to start practicing questions. Your progress will be saved.</p>
+
+                <input type="text" id="firstNameInput" placeholder="First Name *" required>
+                <input type="text" id="lastNameInput" placeholder="Last Name *" required>
+                <input type="email" id="emailInput" placeholder="Email (optional)">
+                <input type="text" id="gradeInput" placeholder="Grade/Level (e.g., Grade 10)">
+                <input type="text" id="schoolInput" placeholder="School Name (optional)">
+
+                <button onclick="registerStudent()">Start Practicing →</button>
+                <p class="note">🔒 Your data is secure. We only store what's needed to track your progress.</p>
+            </div>
+        </div>
+
+        <!-- Search Bar (hidden until student is identified) -->
+        <div class="search-bar hidden" id="searchBar">
+            <input type="text" id="searchInput" placeholder="Search grades, subjects, or topics...">
+            <button onclick="performSearch()">🔍 Search</button>
+        </div>
+
         <!-- GRADES VIEW -->
-        <div id="gradesView">
+        <div id="gradesView" class="hidden">
             <h2 style="padding:20px; color:#000033;">📚 Select Your Grade</h2>
             <div class="selection-grid" id="gradesList">
                 <div style="padding:40px; text-align:center; color:#666;">Loading grades...</div>
@@ -386,7 +469,7 @@
                 style="padding:20px; margin:0 20px; background:#e6f7ff; border-radius:12px; border-left:4px solid #7fdff0;">
             </div>
 
-            <!-- Media Section (videos & images) -->
+            <!-- Media Section -->
             <div id="topicMediaSection" class="topic-media-section hidden">
                 <h3 style="margin:0 0 15px 0; color:#000033;">🎬 Learning Resources</h3>
                 <div class="media-grid" id="topicMediaGrid"></div>

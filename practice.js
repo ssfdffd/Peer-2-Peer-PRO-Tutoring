@@ -1,11 +1,12 @@
 // ============================================
-// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL)
+// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS
 // Endpoint: https://learneranswer.buhle-1ce.workers.dev
+// NO LOGIN REQUIRED - Just name/surname identification
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
 
-// Student identity (loaded from sessionStorage or form)
+// Student identity (loaded from sessionStorage)
 let studentNumber = sessionStorage.getItem('p2p_student_number') || '';
 let studentName = sessionStorage.getItem('p2p_name') || '';
 let studentEmail = sessionStorage.getItem('p2p_email') || '';
@@ -23,21 +24,21 @@ let currentQuestionIndex = 0;
 let selectedAnswer = null;
 let quizStats = { correct: 0, attempted: 0, points: 0 };
 
-// Initialize
+// Initialize - NO LOGIN CHECK
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if student is already identified
+    // Check if student is already identified (from previous session)
     if (studentNumber) {
-        // Verify student exists in DB, then show practice
-        verifyStudentAndLoad();
+        // Load practice directly
+        loadGrades();
     } else {
-        // Show identification form
+        // Show identification form (name/surname)
         showView('studentIdView');
         currentView = 'studentId';
         document.getElementById('searchBar').classList.add('hidden');
     }
 });
 
-// Register new student with name/surname
+// Register/Identify student with name/surname
 async function registerStudent() {
     const firstName = document.getElementById('firstNameInput').value.trim();
     const lastName = document.getElementById('lastNameInput').value.trim();
@@ -87,40 +88,6 @@ async function registerStudent() {
         alert("Connection error. Please try again.");
         btn.disabled = false;
         btn.textContent = "Start Practicing →";
-    }
-}
-
-// Verify existing student by student_number
-async function verifyStudentAndLoad() {
-    try {
-        const res = await fetch(`${API_BASE}/api/verify-student`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ student_number: studentNumber })
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            // Student verified, load practice
-            studentName = `${data.student.first_name} ${data.student.last_name}`;
-            studentEmail = data.student.email || '';
-            studentGrade = data.student.grade || '';
-            sessionStorage.setItem('p2p_name', studentName);
-            sessionStorage.setItem('p2p_email', studentEmail);
-            sessionStorage.setItem('p2p_grade', studentGrade);
-            loadGrades();
-        } else {
-            // Student not found, show registration form
-            sessionStorage.clear();
-            studentNumber = '';
-            showView('studentIdView');
-            currentView = 'studentId';
-            document.getElementById('searchBar').classList.add('hidden');
-        }
-    } catch (e) {
-        console.error("Verify error:", e);
-        // On error, still try to load (graceful degradation)
-        loadGrades();
     }
 }
 

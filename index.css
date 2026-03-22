@@ -74,6 +74,38 @@ NAVBAR - FULLY RESPONSIVE
   margin-left: 2px;
 }
 
+/* Add to your existing CSS */
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.favicon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Update existing logo styles if needed */
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  color: var(--primary-blue);
+  margin: 0;
+  /* Remove any default margin */
+}
+
 .nav-right {
   display: flex;
   align-items: center;

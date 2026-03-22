@@ -5,194 +5,335 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Practice Questions | Peer-2-Peer PRO</title>
-    <link rel="stylesheet" href="login.css" />
     <style>
-        /* Practice Specific Styles */
-        .practice-wrapper {
-            max-width: 100%;
+        /* ===== BASE STYLES ===== */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            min-height: calc(100vh - 120px);
         }
 
-        /* Student Identification Form */
-        .student-id-form {
-            max-width: 500px;
-            margin: 60px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            text-align: center;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #1a202c;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px;
         }
 
-        .student-id-form h2 {
-            color: #000033;
-            margin-bottom: 10px;
+        .hidden {
+            display: none !important;
         }
 
-        .student-id-form p {
-            color: #666;
-            margin-bottom: 25px;
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo span {
+            color: #3498db;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.2s;
             font-size: 0.95rem;
         }
 
-        .student-id-form input {
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-links a.logout {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .nav-links a.logout:hover {
+            background: #c0392b;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ===== WELCOME CARD ===== */
+        .welcome-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .welcome-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .security-note {
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        /* ===== FORM INPUTS ===== */
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
+            padding: 0.9rem 1.2rem;
             border: 2px solid #e1e5eb;
             border-radius: 10px;
             font-size: 1rem;
-            box-sizing: border-box;
+            transition: border-color 0.2s;
         }
 
-        .student-id-form input:focus {
-            border-color: #32cd32;
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
         }
 
-        .student-id-form button {
-            width: 100%;
-            padding: 14px;
-            background: #32cd32;
-            color: #000033;
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .student-id-form button:hover {
-            transform: translateY(-2px);
-        }
-
-        .student-id-form .note {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 15px;
-        }
-
-        /* Search Bar */
+        /* ===== SEARCH BAR ===== */
         .search-bar {
-            background: white;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e1e5eb;
-            position: sticky;
-            top: 60px;
-            z-index: 100;
             display: flex;
-            gap: 10px;
-            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
         .search-bar input {
             flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #e1e5eb;
-            border-radius: 50px;
+            border: none;
+            padding: 0.8rem 1.5rem;
             font-size: 1rem;
-            transition: all 0.3s;
+            border-radius: 50px;
+            background: transparent;
         }
 
         .search-bar input:focus {
-            border-color: #32cd32;
             outline: none;
         }
 
         .search-bar button {
-            padding: 12px 25px;
-            background: #32cd32;
-            color: #000033;
+            background: #3498db;
+            color: white;
             border: none;
+            padding: 0.8rem 1.5rem;
             border-radius: 50px;
-            font-weight: 700;
             cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
         }
 
-        /* Grid Layout */
+        .search-bar button:hover {
+            background: #2980b9;
+        }
+
+        /* ===== SELECTION LISTS ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        .back-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #d5dbdb;
+        }
+
         .selection-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-            padding: 20px;
-            background: #f8f9fa;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
         }
 
         .selection-item {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            border: 2px solid #e1e5eb;
+            padding: 1.3rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
             cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
         }
 
         .selection-item:hover {
-            border-color: #32cd32;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(50, 205, 50, 0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            border-color: #3498db;
         }
 
         .selection-item h4 {
-            margin: 10px 0 5px;
-            color: #000033;
-            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 0.4rem;
+            font-size: 1.15rem;
         }
 
         .selection-item p {
-            font-size: 0.85rem;
             color: #666;
-            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
 
-        /* Topic Media */
-        .topic-media-section {
-            padding: 20px;
-            background: white;
-            border-bottom: 1px solid #e1e5eb;
+        /* ===== TOPIC INTRO & MEDIA ===== */
+        .topic-intro {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 1rem 1.3rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.95rem;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .media-section h4 {
+            color: #2c3e50;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.2rem;
         }
 
         .media-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .media-card {
             position: relative;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
             aspect-ratio: 16/9;
             background: #000;
-            transition: transform 0.3s;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s;
         }
 
         .media-card:hover {
             transform: scale(1.03);
         }
 
-        .media-card img,
-        .media-card iframe {
+        .media-card iframe,
+        .media-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border: none;
-        }
-
-        .media-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-            padding: 12px;
-            color: white;
-            font-size: 0.9rem;
         }
 
         .play-icon {
@@ -202,121 +343,79 @@
             transform: translate(-50%, -50%);
             width: 50px;
             height: 50px;
-            background: rgba(50, 205, 50, 0.9);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             font-size: 1.2rem;
+            color: #e74c3c;
+            font-weight: bold;
+            pointer-events: none;
         }
 
-        /* Fullscreen Modal */
-        .fullscreen-modal {
-            display: none;
-            position: fixed;
-            top: 0;
+        .media-overlay {
+            position: absolute;
+            bottom: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 2rem 0.8rem 0.8rem;
+            font-size: 0.85rem;
+            pointer-events: none;
         }
 
-        .fullscreen-modal.active {
-            display: flex;
-        }
-
-        .fullscreen-content {
-            max-width: 95vw;
-            max-height: 95vh;
-            position: relative;
-        }
-
-        .fullscreen-content img,
-        .fullscreen-content iframe {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 8px;
-        }
-
-        .fullscreen-close {
-            position: absolute;
-            top: -45px;
-            right: 0;
-            background: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #000033;
-        }
-
-        /* Quiz Area */
+        /* ===== QUIZ VIEW ===== */
         .quiz-container {
             background: white;
-            padding: 25px;
-            margin: 20px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e1e5eb;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .question-counter {
-            background: #32cd32;
-            color: #000033;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 700;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
         }
 
         .question-text {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #000033;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1.8rem;
+            line-height: 1.5;
+            font-weight: 500;
         }
 
-        /* Answer Options */
         .answer-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
         }
 
         .answer-option {
-            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.9rem 1.2rem;
             background: #f8f9fa;
-            border: 2px solid #e1e5eb;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            border: 2px solid transparent;
         }
 
         .answer-option:hover {
-            background: #e8fce8;
-            border-color: #32cd32;
+            background: #ecf0f1;
+            border-color: #bdc3c7;
         }
 
         .answer-option.selected {
-            background: #d4edda;
-            border-color: #32cd32;
+            background: #e8f4fd;
+            border-color: #3498db;
         }
 
         .answer-option.correct {
@@ -325,223 +424,383 @@
         }
 
         .answer-option.incorrect {
-            background: #ffebee;
-            border-color: #ff6b6b;
+            background: #f8d7da;
+            border-color: #dc3545;
         }
 
-        /* Buttons */
-        .btn-primary {
-            background: #32cd32;
-            color: #000033;
+        .answer-option input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .hint-box,
+        .explanation-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem 1.3rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            color: #856404;
+            line-height: 1.5;
+        }
+
+        .explanation-box {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
             border: none;
-            padding: 14px 30px;
+            padding: 0.8rem 1.6rem;
             border-radius: 50px;
-            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            font-weight: 500;
+            transition: background 0.2s;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+        .btn-secondary:hover {
+            background: #d5dbdb;
         }
 
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        .btn-hint {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
         }
 
-        .btn-back {
-            background: #000033;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 10px;
+        .btn-hint:hover {
+            background: #ffeaa7;
         }
 
-        /* Results */
-        .results-container {
-            text-align: center;
-            padding: 40px 20px;
+        /* ===== RESULTS VIEW ===== */
+        .results-card {
             background: white;
-            margin: 20px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            margin: 2rem auto;
         }
 
-        .score-display {
+        .results-card h3 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .final-score {
             font-size: 3.5rem;
-            font-weight: 800;
-            color: #32cd32;
-            margin: 15px 0;
+            font-weight: 700;
+            color: #3498db;
+            margin: 1rem 0;
+            line-height: 1;
         }
 
-        .hidden {
-            display: none !important;
+        .results-message {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
         }
 
-        @media (max-width: 768px) {
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== FULLSCREEN MODAL ===== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 95vw;
+            max-height: 95vh;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .welcome-card,
+            .quiz-container,
+            .results-card {
+                padding: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.15rem;
+            }
+
+            .final-score {
+                font-size: 2.8rem;
+            }
+
             .selection-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .media-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .search-bar {
-                flex-wrap: wrap;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-
-            .student-id-form {
-                margin: 30px 15px;
-                padding: 25px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav id="navbar">
+
+    <!-- ===== HEADER ===== -->
+    <header>
         <a href="index.html" class="logo">Peer-2-Peer <span>PRO</span></a>
-        <ul class="nav-right">
-            <li><a href="student-portal.html">🏠 Dashboard</a></li>
-            <li><a href="#" onclick="handleLogout(); return false;">🔐 Logout</a></li>
-        </ul>
-    </nav>
+        <nav class="nav-links">
+            <a href="student-portal.html">🏠 Dashboard</a>
+            <a href="#" class="logout" onclick="handleLogout(); return false;">🔐 Logout</a>
+        </nav>
+    </header>
 
-    <!-- Main Wrapper -->
-    <div class="practice-wrapper">
+    <!-- ===== MAIN CONTAINER ===== -->
+    <main class="container">
 
-        <!-- STUDENT IDENTIFICATION FORM (shown first if not identified) -->
-        <div id="studentIdView">
-            <div class="student-id-form">
-                <h2>🎓 Welcome to Practice</h2>
-                <p>Enter your details to start practicing questions. Your progress will be saved.</p>
+        <!-- 🔹 Student ID View -->
+        <section id="studentIdView" class="welcome-card">
+            <h2>🎓 Welcome to Practice</h2>
+            <p>Enter your details to start practicing questions. Your progress will be saved.</p>
 
-                <input type="text" id="firstNameInput" placeholder="First Name *" required>
-                <input type="text" id="lastNameInput" placeholder="Last Name *" required>
-                <input type="email" id="emailInput" placeholder="Email (optional)">
-                <input type="text" id="gradeInput" placeholder="Grade/Level (e.g., Grade 10)">
-                <input type="text" id="schoolInput" placeholder="School Name (optional)">
-
-                <button onclick="registerStudent()">Start Practicing →</button>
-                <p class="note">🔒 Your data is secure. We only store what's needed to track your progress.</p>
+            <div class="form-group">
+                <label for="firstNameInput">First Name *</label>
+                <input type="text" id="firstNameInput" placeholder="e.g. Thandi" required />
             </div>
-        </div>
+            <div class="form-group">
+                <label for="lastNameInput">Last Name *</label>
+                <input type="text" id="lastNameInput" placeholder="e.g. Ndlovu" required />
+            </div>
+            <div class="form-group">
+                <label for="emailInput">Email (optional)</label>
+                <input type="email" id="emailInput" placeholder="you@example.com" />
+            </div>
+            <div class="form-group">
+                <label for="gradeInput">Grade</label>
+                <select id="gradeInput">
+                    <option value="">Select Grade</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="schoolInput">School Name (optional)</label>
+                <input type="text" id="schoolInput" placeholder="e.g. Springfield High" />
+            </div>
 
-        <!-- Search Bar (hidden until student is identified) -->
-        <div class="search-bar hidden" id="searchBar">
-            <input type="text" id="searchInput" placeholder="Search grades, subjects, or topics...">
-            <button onclick="performSearch()">🔍 Search</button>
-        </div>
+            <button class="btn-primary" onclick="registerStudent(event)">
+                Start Practicing →
+            </button>
 
-        <!-- GRADES VIEW -->
-        <div id="gradesView" class="hidden">
-            <h2 style="padding:20px; color:#000033;">📚 Select Your Grade</h2>
-            <div class="selection-grid" id="gradesList">
+            <div class="security-note">
+                🔒 Your data is secure. We only store what's needed to track your progress.
+            </div>
+        </section>
+
+        <!-- 🔹 Grades View -->
+        <section id="gradesView" class="hidden">
+            <div class="section-header">
+                <h3>📚 Select Your Grade</h3>
+                <button class="back-btn" onclick="goBack('grades')">← Back to Grades</button>
+            </div>
+
+            <div id="searchBar" class="search-bar hidden">
+                <input type="text" id="searchInput" placeholder="🔍 Search grades..."
+                    onkeypress="if(event.key==='Enter')performSearch()">
+                <button onclick="performSearch()">Search</button>
+            </div>
+
+            <div id="gradesList" class="selection-grid">
                 <div style="padding:40px; text-align:center; color:#666;">Loading grades...</div>
             </div>
-        </div>
+        </section>
 
-        <!-- SUBJECTS VIEW -->
-        <div id="subjectsView" class="hidden">
-            <button class="btn-back" onclick="goBack('grades')">← Back to Grades</button>
-            <h2 style="padding:20px; color:#000033;">📖 Select a Subject</h2>
-            <div class="selection-grid" id="subjectsList"></div>
-        </div>
-
-        <!-- TOPICS VIEW -->
-        <div id="topicsView" class="hidden">
-            <button class="btn-back" onclick="goBack('subjects')">← Back to Subjects</button>
-            <h2 style="padding:20px; color:#000033;">🎯 Select a Topic</h2>
-
-            <!-- Topic Intro -->
-            <div id="topicIntro" class="hidden"
-                style="padding:20px; margin:0 20px; background:#e6f7ff; border-radius:12px; border-left:4px solid #7fdff0;">
+        <!-- 🔹 Subjects View -->
+        <section id="subjectsView" class="hidden">
+            <div class="section-header">
+                <h3>📖 Select a Subject</h3>
+                <button class="back-btn" data-back="subjects" onclick="goBack('subjects')">← Back to Subjects</button>
             </div>
 
-            <!-- Media Section -->
-            <div id="topicMediaSection" class="topic-media-section hidden">
-                <h3 style="margin:0 0 15px 0; color:#000033;">🎬 Learning Resources</h3>
-                <div class="media-grid" id="topicMediaGrid"></div>
+            <div id="searchBarSub" class="search-bar hidden">
+                <input type="text" id="searchInputSub" placeholder="🔍 Search subjects..."
+                    onkeypress="if(event.key==='Enter')performSearch()">
+                <button onclick="performSearch()">Search</button>
             </div>
 
-            <div class="selection-grid" id="topicsList"></div>
-        </div>
+            <div id="subjectsList" class="selection-grid">
+                <div style="padding:40px; text-align:center; color:#666;">Loading subjects...</div>
+            </div>
+        </section>
 
-        <!-- QUIZ VIEW -->
-        <div id="quizView" class="hidden">
-            <button class="btn-back" onclick="goBack('topics')">← Back to Topics</button>
+        <!-- 🔹 Topics View -->
+        <section id="topicsView" class="hidden">
+            <div class="section-header">
+                <h3>🎯 Select a Topic</h3>
+                <button class="back-btn" data-back="topics" onclick="goBack('topics')">← Back to Topics</button>
+            </div>
+
+            <div id="searchBarTop" class="search-bar hidden">
+                <input type="text" id="searchInputTop" placeholder="🔍 Search topics..."
+                    onkeypress="if(event.key==='Enter')performSearch()">
+                <button onclick="performSearch()">Search</button>
+            </div>
+
+            <div id="topicIntro" class="topic-intro hidden"></div>
+
+            <div id="topicMediaSection" class="media-section hidden">
+                <h4>🎬 Learning Resources</h4>
+                <div id="topicMediaGrid" class="media-grid"></div>
+            </div>
+
+            <div id="topicsList" class="selection-grid">
+                <div style="padding:40px; text-align:center; color:#666;">Loading topics...</div>
+            </div>
+        </section>
+
+        <!-- 🔹 Quiz View -->
+        <section id="quizView" class="hidden">
             <div class="quiz-container">
-                <div class="question-header">
-                    <div class="question-counter" id="questionCounter">Question 1 of 10</div>
-                    <button id="hintBtn" onclick="showHint()"
-                        style="background:#ffc107; color:#333; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; display:none;">💡
-                        Hint</button>
-                </div>
-                <div class="question-text" id="questionText">Loading...</div>
-                <div class="answer-list" id="answerList"></div>
-                <div id="hintBox" class="hidden"
-                    style="background:#fff3cd; padding:12px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ffc107;">
-                </div>
-                <div id="explanationBox" class="hidden"
-                    style="background:#d4edda; padding:12px; border-radius:8px; margin-bottom:15px; border-left:4px solid #28a745;">
-                </div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <button class="btn-primary" id="submitBtn" onclick="submitAnswer()">Submit Answer</button>
-                    <button class="btn-primary hidden" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+                <div class="question-counter" id="questionCounter">Question 1 of 10</div>
+                <div class="question-text" id="questionText">Loading question...</div>
+
+                <div id="answerList" class="answer-list"></div>
+
+                <div id="hintBox" class="hint-box hidden"></div>
+                <div id="explanationBox" class="explanation-box hidden"></div>
+
+                <div class="quiz-actions">
+                    <button id="hintBtn" class="btn-secondary btn-hint" onclick="showHint()">💡 Hint</button>
+                    <button id="submitBtn" class="btn-primary" onclick="submitAnswer()">Submit Answer</button>
+                    <button id="nextBtn" class="btn-primary hidden" onclick="nextQuestion()">Next Question →</button>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- RESULTS VIEW -->
-        <div id="resultsView" class="hidden">
-            <div class="results-container">
-                <h2>🎉 Practice Complete!</h2>
-                <div class="score-display" id="finalScore">0/0</div>
-                <p id="resultsMessage" style="font-size:1.1rem; color:#666; margin-bottom:25px;"></p>
-                <button class="btn-primary" onclick="restartPractice()">🔄 Practice Another Topic</button>
-                <button class="btn-back" onclick="goBack('grades')" style="margin-left:10px;">📚 Back to Grades</button>
+        <!-- 🔹 Results View -->
+        <section id="resultsView" class="hidden">
+            <div class="results-card">
+                <h3>🎉 Practice Complete!</h3>
+                <div class="final-score" id="finalScore">0/0</div>
+                <p class="results-message" id="resultsMessage">Good effort!</p>
+                <div class="results-actions">
+                    <button class="btn-secondary" onclick="restartPractice()">🔄 Practice Another Topic</button>
+                    <button class="btn-primary" onclick="goBack('grades')">📚 Back to Grades</button>
+                </div>
             </div>
-        </div>
+        </section>
 
-    </div>
+    </main>
 
-    <!-- Fullscreen Modal for Media -->
-    <div class="fullscreen-modal" id="fullscreenModal" onclick="closeFullscreen(event)">
-        <div class="fullscreen-content">
+    <!-- ===== FULLSCREEN MODAL ===== -->
+    <div id="fullscreenModal" class="modal" onclick="closeFullscreen(event)">
+        <div class="modal-content">
             <button class="fullscreen-close" onclick="closeFullscreen(event)">×</button>
             <div id="fullscreenContent"></div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-box">
-                <h4>Peer-2-Peer PRO</h4>
-                <p>Practice makes perfect! 🎯</p>
-            </div>
-            <div class="footer-box">
-                <h4>Support</h4>
-                <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <p>
+            <strong>Peer-2-Peer PRO</strong><br>
+            Practice makes perfect! 🎯<br><br>
+            Support: <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a><br>
             © 2026 Peer-2-Peer PRO. All practice data saved securely.
-        </div>
+        </p>
     </footer>
 
+    <!-- ===== JAVASCRIPT ===== -->
     <script src="practice.js"></script>
+
+    <!-- ===== GLOBAL ERROR HANDLER (DEBUG) ===== -->
+    <script>
+        window.addEventListener('error', (e) => {
+            console.error('🚨 Global error:', e.message, 'at', e.filename + ':' + e.lineno + ':' + e.colno);
+        });
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('🚨 Unhandled promise rejection:', e.reason);
+        });
+    </script>
+
 </body>
 
 </html>

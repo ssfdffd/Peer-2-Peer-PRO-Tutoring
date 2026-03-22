@@ -1,7 +1,7 @@
 // ============================================
-// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL FIXED)
+// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL)
 // Endpoint: https://learneranswer.buhle-1ce.workers.dev
-// Database: auth-db (Cloudflare D1)
+// FIXED: All syntax errors, navigation, special character handling
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
@@ -24,18 +24,14 @@ let currentQuestionIndex = 0;
 let selectedAnswer = null;
 let quizStats = { correct: 0, attempted: 0, points: 0 };
 
-// Initialize
+// ============================================
+// INITIALIZATION
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Setup back button listeners
-    setupBackButtons();
-
-    // Setup search listener
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-    }
+    // Global error handler for debugging
+    window.addEventListener('error', (e) => {
+        console.error('🚨 Global error:', e.message, 'at', e.filename + ':' + e.lineno);
+    });
 
     if (studentNumber) {
         verifyStudentAndLoad();
@@ -47,35 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ✅ Setup back button event listeners (replaces inline onclick)
-function setupBackButtons() {
-    document.querySelectorAll('.back-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const view = btn.dataset.back;
-            if (view) goBack(view);
-        });
-    });
-}
-
-// Register/Identify student
+// ============================================
+// STUDENT REGISTRATION
+// ============================================
 async function registerStudent(event) {
-    const firstName = document.getElementById('firstNameInput')?.value.trim();
-    const lastName = document.getElementById('lastNameInput')?.value.trim();
-    const email = document.getElementById('emailInput')?.value.trim();
-    const grade = document.getElementById('gradeInput')?.value.trim();
-    const schoolName = document.getElementById('schoolInput')?.value.trim();
+    if (event) event.preventDefault();
+
+    const firstName = document.getElementById('firstNameInput').value.trim();
+    const lastName = document.getElementById('lastNameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const grade = document.getElementById('gradeInput').value.trim();
+    const schoolName = document.getElementById('schoolInput').value.trim();
 
     if (!firstName || !lastName) {
         alert("Please enter your first name and last name");
         return;
     }
 
-    const btn = event?.target;
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Setting up...";
-    }
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = "Setting up...";
 
     try {
         const res = await fetch(`${API_BASE}/api/register-student`, {
@@ -104,22 +91,20 @@ async function registerStudent(event) {
             loadGrades();
         } else {
             alert("Error: " + data.error);
-            if (btn) {
-                btn.disabled = false;
-                btn.textContent = "Start Practicing →";
-            }
+            btn.disabled = false;
+            btn.textContent = "Start Practicing →";
         }
     } catch (e) {
         console.error("Register error:", e);
         alert("Connection error. Please try again.");
-        if (btn) {
-            btn.disabled = false;
-            btn.textContent = "Start Practicing →";
-        }
+        btn.disabled = false;
+        btn.textContent = "Start Practicing →";
     }
 }
 
-// Verify student exists in DB
+// ============================================
+// VERIFY STUDENT
+// ============================================
 async function verifyStudentAndLoad() {
     try {
         const res = await fetch(`${API_BASE}/api/verify-student`, {
@@ -151,7 +136,9 @@ async function verifyStudentAndLoad() {
     }
 }
 
-// Load Grades - ALL GRADES
+// ============================================
+// LOAD GRADES
+// ============================================
 async function loadGrades(searchQuery = '') {
     showView('gradesView');
     currentView = 'grades';
@@ -159,9 +146,7 @@ async function loadGrades(searchQuery = '') {
     if (searchBar) searchBar.classList.remove('hidden');
 
     const container = document.getElementById('gradesList');
-    if (container) {
-        container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
-    }
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
 
     try {
         let url = `${API_BASE}/api/grades`;
@@ -171,20 +156,21 @@ async function loadGrades(searchQuery = '') {
 
         if (data.success && data.grades && data.grades.length > 0) {
             container.innerHTML = data.grades.map(g => `
-        <div class="selection-item" data-grade-id="${g.id}" data-grade-name="${g.grade_name}">
+        <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${g.grade_name.replace(/"/g, '&quot;')}">
           <h4>${g.grade_name}</h4>
           <p>Practice questions</p>
         </div>
       `).join('');
 
-            // Add click listeners to grade items
-            container.querySelectorAll('.selection-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const gradeId = item.dataset.gradeId;
-                    const gradeName = item.dataset.gradeName;
-                    selectGrade(parseInt(gradeId), gradeName);
-                });
-            });
+            // Event delegation for grade clicks
+            container.onclick = (e) => {
+                const card = e.target.closest('.grade-card');
+                if (card) {
+                    const gradeId = card.dataset.gradeId;
+                    const gradeName = card.dataset.gradeName;
+                    selectGrade(gradeId, gradeName);
+                }
+            };
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No grades found</div>';
         }
@@ -194,7 +180,9 @@ async function loadGrades(searchQuery = '') {
     }
 }
 
-// Select Grade
+// ============================================
+// SELECT GRADE
+// ============================================
 async function selectGrade(gradeId, gradeName) {
     selectedGradeId = gradeId;
     showView('subjectsView');
@@ -202,11 +190,11 @@ async function selectGrade(gradeId, gradeName) {
     loadSubjects(gradeId);
 }
 
-// Load Subjects
+// ============================================
+// LOAD SUBJECTS
+// ============================================
 async function loadSubjects(gradeId, searchQuery = '') {
     const container = document.getElementById('subjectsList');
-    if (!container) return;
-
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
 
     try {
@@ -217,20 +205,21 @@ async function loadSubjects(gradeId, searchQuery = '') {
 
         if (data.success && data.subjects && data.subjects.length > 0) {
             container.innerHTML = data.subjects.map(s => `
-        <div class="selection-item" data-subject-id="${s.id}" data-subject-name="${s.subject_name}">
+        <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${s.subject_name.replace(/"/g, '&quot;')}">
           <h4>${s.subject_name}</h4>
-          <p>${s.description?.substring(0, 60) || 'Practice questions'}${s.description?.length > 60 ? '...' : ''}</p>
+          <p>${s.description ? s.description.substring(0, 60) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
         </div>
       `).join('');
 
-            // Add click listeners to subject items
-            container.querySelectorAll('.selection-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const subjectId = item.dataset.subjectId;
-                    const subjectName = item.dataset.subjectName;
-                    selectSubject(parseInt(subjectId), subjectName);
-                });
-            });
+            // Event delegation for subject clicks
+            container.onclick = (e) => {
+                const card = e.target.closest('.subject-card');
+                if (card) {
+                    const subjectId = card.dataset.subjectId;
+                    const subjectName = card.dataset.subjectName;
+                    selectSubject(subjectId, subjectName);
+                }
+            };
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No subjects found</div>';
         }
@@ -240,7 +229,9 @@ async function loadSubjects(gradeId, searchQuery = '') {
     }
 }
 
-// Select Subject
+// ============================================
+// SELECT SUBJECT
+// ============================================
 async function selectSubject(subjectId, subjectName) {
     selectedSubjectId = subjectId;
     showView('topicsView');
@@ -248,16 +239,16 @@ async function selectSubject(subjectId, subjectName) {
     loadTopics(subjectId);
 }
 
-// Load Topics - ALL TOPICS FROM SUBJECT (SAFE: uses data attributes instead of inline onclick)
+// ============================================
+// LOAD TOPICS - FIXED: Safe data attributes + event delegation
+// ============================================
 async function loadTopics(subjectId, searchQuery = '') {
     const container = document.getElementById('topicsList');
-    if (!container) return;
-
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
 
-    const topicIntroEl = document.getElementById('topicIntro');
+    const topicIntro = document.getElementById('topicIntro');
     const topicMediaSection = document.getElementById('topicMediaSection');
-    if (topicIntroEl) topicIntroEl.classList.add('hidden');
+    if (topicIntro) topicIntro.classList.add('hidden');
     if (topicMediaSection) topicMediaSection.classList.add('hidden');
 
     try {
@@ -267,39 +258,39 @@ async function loadTopics(subjectId, searchQuery = '') {
         const data = await res.json();
 
         if (data.success && data.topics && data.topics.length > 0) {
+            // Build HTML with safe data-* attributes (NO inline onclick)
             container.innerHTML = data.topics.map(t => {
-                const mediaCount = t.media?.length || 0;
+                const mediaCount = t.media ? t.media.length : 0;
+                // Escape for HTML attributes: " → &quot;, newlines → \\n
                 const safeIntro = (t.intro || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+                const safeName = (t.topic_name || '').replace(/"/g, '&quot;');
                 const safeMedia = JSON.stringify(t.media || []).replace(/"/g, '&quot;');
 
                 return `
-          <div class="selection-item topic-card" 
-               data-topic-id="${t.id}" 
-               data-topic-name="${(t.topic_name || '').replace(/"/g, '&quot;')}" 
-               data-topic-intro="${safeIntro}" 
-               data-topic-media='${safeMedia}'>
+          <div class="selection-item topic-card"
+               data-topic-id="${t.id}"
+               data-topic-name="${safeName}"
+               data-topic-intro="${safeIntro}"
+               data-topic-media="${safeMedia}">
             <h4>${t.topic_name}</h4>
-            <p>${t.description?.substring(0, 70) || 'Start practicing'}${t.description?.length > 70 ? '...' : ''}</p>
+            <p>${t.description ? t.description.substring(0, 70) : 'Start practicing'}${t.description && t.description.length > 70 ? '...' : ''}</p>
             ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
           </div>
         `;
             }).join('');
 
-            // Add click listeners to topic cards (SAFE: no inline JS, handles special chars)
-            container.querySelectorAll('.topic-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const topicId = parseInt(card.dataset.topicId);
+            // Event delegation for topic clicks (safe from special characters)
+            container.onclick = (e) => {
+                const card = e.target.closest('.topic-card');
+                if (card) {
+                    const topicId = card.dataset.topicId;
                     const topicName = card.dataset.topicName;
-                    const topicIntro = card.dataset.topicIntro || '';
-                    let topicMedia = [];
-                    try {
-                        topicMedia = JSON.parse(card.dataset.topicMedia || '[]');
-                    } catch (e) {
-                        console.warn('Failed to parse topic media:', e);
-                    }
+                    const topicIntro = card.dataset.topicIntro;
+                    const topicMedia = JSON.parse(card.dataset.topicMedia || '[]');
                     startQuiz(topicId, topicName, topicIntro, topicMedia);
-                });
-            });
+                }
+            };
+
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No topics found</div>';
         }
@@ -309,36 +300,42 @@ async function loadTopics(subjectId, searchQuery = '') {
     }
 }
 
-// Start Quiz - LOAD ALL QUESTIONS FROM TOPIC
+// ============================================
+// START QUIZ - FIXED: Null intro handling
+// ============================================
 async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     selectedTopicId = topicId;
     showView('quizView');
     currentView = 'quiz';
+
     const searchBar = document.getElementById('searchBar');
     if (searchBar) searchBar.classList.add('hidden');
 
-    // Show topic intro if available
-    const topicIntroEl = document.getElementById('topicIntro');
-    if (topicIntroEl) {
+    // Safe intro display - handles null/empty
+    const introEl = document.getElementById('topicIntro');
+    if (introEl) {
         if (topicIntro && topicIntro.trim()) {
-            topicIntroEl.textContent = topicIntro;
-            topicIntroEl.classList.remove('hidden');
+            introEl.textContent = topicIntro;
+            introEl.classList.remove('hidden');
         } else {
-            topicIntroEl.classList.add('hidden');
+            introEl.classList.add('hidden');
         }
     }
 
-    // Show media resources if available
+    // Media section
+    const mediaSection = document.getElementById('topicMediaSection');
     if (topicMedia && topicMedia.length > 0) {
         const mediaGrid = document.getElementById('topicMediaGrid');
         if (mediaGrid) {
             mediaGrid.innerHTML = topicMedia.map(m => {
+                const safeCaption = (m.caption || '').replace(/"/g, '&quot;');
+
                 if (m.media_type === 'youtube') {
                     const videoId = extractYouTubeId(m.media_url);
                     if (videoId) {
                         return `
-              <div class="media-card" data-media-type="youtube" data-media-src="${videoId}" data-media-caption="${(m.caption || '').replace(/"/g, '&quot;')}">
-                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${m.caption || 'Video'}"></iframe>
+              <div class="media-card" data-type="youtube" data-src="${videoId}" data-caption="${safeCaption}">
+                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${safeCaption}"></iframe>
                 <div class="play-icon">▶</div>
                 ${m.caption ? `<div class="media-overlay">${m.caption}</div>` : ''}
               </div>
@@ -346,8 +343,8 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
                     }
                 } else if (m.media_type === 'image') {
                     return `
-            <div class="media-card" data-media-type="image" data-media-src="${m.media_url}" data-media-caption="${(m.caption || '').replace(/"/g, '&quot;')}">
-              <img src="${m.media_url}" alt="${m.caption || 'Image'}" onerror="this.parentElement.style.display='none'">
+            <div class="media-card" data-type="image" data-src="${m.media_url}" data-caption="${safeCaption}">
+              <img src="${m.media_url}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'">
               ${m.caption ? `<div class="media-overlay">${m.caption}</div>` : ''}
             </div>
           `;
@@ -355,19 +352,20 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
                 return '';
             }).join('');
 
-            // Add click listeners to media cards
-            mediaGrid.querySelectorAll('.media-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const type = card.dataset.mediaType;
-                    const src = card.dataset.mediaSrc;
-                    const caption = card.dataset.mediaCaption || '';
+            // Media click handlers
+            document.querySelectorAll('.media-card').forEach(card => {
+                card.onclick = () => {
+                    const type = card.dataset.type;
+                    const src = card.dataset.src;
+                    const caption = card.dataset.caption;
                     openFullscreen(type, src, caption);
-                });
+                };
             });
 
-            const topicMediaSection = document.getElementById('topicMediaSection');
-            if (topicMediaSection) topicMediaSection.classList.remove('hidden');
+            if (mediaSection) mediaSection.classList.remove('hidden');
         }
+    } else {
+        if (mediaSection) mediaSection.classList.add('hidden');
     }
 
     // Load questions
@@ -391,79 +389,83 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     }
 }
 
-// Show Question
+// ============================================
+// SHOW QUESTION
+// ============================================
 function showQuestion() {
     const q = currentQuestions[currentQuestionIndex];
     if (!q) return;
 
-    const counterEl = document.getElementById('questionCounter');
-    if (counterEl) counterEl.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
-
-    const questionTextEl = document.getElementById('questionText');
-    if (questionTextEl) questionTextEl.textContent = q.question_text;
+    document.getElementById('questionCounter').textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+    document.getElementById('questionText').textContent = q.question_text;
 
     const answerList = document.getElementById('answerList');
-    if (answerList) {
-        answerList.innerHTML = '';
+    answerList.innerHTML = '';
 
-        if (q.question_type === 'multiple_choice' || q.question_type === 'true_false') {
-            q.answers?.forEach((ans) => {
+    if (q.question_type === 'multiple_choice' || q.question_type === 'true_false') {
+        if (q.answers) {
+            q.answers.forEach((ans) => {
                 const option = document.createElement('div');
                 option.className = 'answer-option';
                 option.innerHTML = `
           <input type="radio" name="answer" id="ans${ans.id}" value="${ans.id}" style="width:18px; height:18px;">
           <label for="ans${ans.id}" style="flex:1; cursor:pointer;">${ans.answer_text}</label>
         `;
-                option.addEventListener('click', () => selectAnswer(ans.id, option));
+                option.onclick = () => selectAnswer(ans.id, option);
                 answerList.appendChild(option);
             });
-        } else if (q.question_type === 'short_answer') {
-            answerList.innerHTML = `
-        <textarea id="shortAnswerInput" placeholder="Type your answer..." style="width:100%; min-height:80px; padding:12px; border:2px solid #e1e5eb; border-radius:10px; font-size:1rem;"></textarea>
-      `;
         }
+    } else if (q.question_type === 'short_answer') {
+        answerList.innerHTML = `
+      <textarea id="shortAnswerInput" placeholder="Type your answer..." style="width:100%; min-height:80px; padding:12px; border:2px solid #e1e5eb; border-radius:10px; font-size:1rem;"></textarea>
+    `;
     }
 
     selectedAnswer = null;
-
     const hintBox = document.getElementById('hintBox');
-    if (hintBox) hintBox.classList.add('hidden');
-
     const explanationBox = document.getElementById('explanationBox');
-    if (explanationBox) explanationBox.classList.add('hidden');
-
     const hintBtn = document.getElementById('hintBtn');
-    if (hintBtn) hintBtn.style.display = q.hints ? 'inline-block' : 'none';
-
     const submitBtn = document.getElementById('submitBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (hintBox) hintBox.classList.add('hidden');
+    if (explanationBox) explanationBox.classList.add('hidden');
+    if (hintBtn) hintBtn.style.display = q.hints ? 'inline-block' : 'none';
     if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.classList.remove('hidden');
     }
-
-    const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) nextBtn.classList.add('hidden');
 }
 
+// ============================================
+// SELECT ANSWER
+// ============================================
 function selectAnswer(answerId, element) {
     document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
     element.classList.add('selected');
     selectedAnswer = answerId;
 }
 
+// ============================================
+// SHOW HINT
+// ============================================
 function showHint() {
     const q = currentQuestions[currentQuestionIndex];
-    if (q?.hints) {
+    if (q && q.hints) {
         const hintBox = document.getElementById('hintBox');
+        const hintBtn = document.getElementById('hintBtn');
         if (hintBox) {
             hintBox.textContent = '💡 ' + q.hints;
             hintBox.classList.remove('hidden');
         }
-        const hintBtn = document.getElementById('hintBtn');
         if (hintBtn) hintBtn.style.display = 'none';
     }
 }
 
+// ============================================
+// SUBMIT ANSWER
+// ============================================
 async function submitAnswer() {
     const q = currentQuestions[currentQuestionIndex];
     if (!q) return;
@@ -473,7 +475,7 @@ async function submitAnswer() {
 
     if (q.question_type === 'short_answer') {
         const input = document.getElementById('shortAnswerInput');
-        answerText = input?.value.trim();
+        answerText = input ? input.value.trim() : null;
         if (!answerText) {
             alert("Please enter an answer");
             return;
@@ -517,19 +519,18 @@ async function submitAnswer() {
             const answerOptions = document.querySelectorAll('.answer-option');
             answerOptions.forEach(opt => {
                 const input = opt.querySelector('input');
-                if (!input) return;
-                const optId = parseInt(input.value);
-                const correctAnswer = q.answers?.find(a => a.is_correct && a.id === optId);
-                if (correctAnswer) opt.classList.add('correct');
-                else if (optId === selectedAnswer && !result.is_correct) opt.classList.add('incorrect');
+                if (input) {
+                    const optId = parseInt(input.value);
+                    const correctAnswer = q.answers ? q.answers.find(a => a.is_correct && a.id === optId) : null;
+                    if (correctAnswer) opt.classList.add('correct');
+                    else if (optId === selectedAnswer && !result.is_correct) opt.classList.add('incorrect');
+                }
             });
 
-            if (result.explanation) {
-                const explanationBox = document.getElementById('explanationBox');
-                if (explanationBox) {
-                    explanationBox.textContent = '✅ ' + result.explanation;
-                    explanationBox.classList.remove('hidden');
-                }
+            const explanationBox = document.getElementById('explanationBox');
+            if (result.explanation && explanationBox) {
+                explanationBox.textContent = '✅ ' + result.explanation;
+                explanationBox.classList.remove('hidden');
             }
 
             const nextBtn = document.getElementById('nextBtn');
@@ -552,6 +553,9 @@ async function submitAnswer() {
     }
 }
 
+// ============================================
+// NEXT QUESTION
+// ============================================
 function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < currentQuestions.length) {
@@ -561,9 +565,13 @@ function nextQuestion() {
     }
 }
 
+// ============================================
+// SHOW RESULTS
+// ============================================
 function showResults() {
     showView('resultsView');
     currentView = 'results';
+
     const searchBar = document.getElementById('searchBar');
     if (searchBar) searchBar.classList.add('hidden');
 
@@ -571,8 +579,7 @@ function showResults() {
     const correct = quizStats.correct;
     const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-    const finalScoreEl = document.getElementById('finalScore');
-    if (finalScoreEl) finalScoreEl.textContent = `${correct}/${total}`;
+    document.getElementById('finalScore').textContent = `${correct}/${total}`;
 
     let message = "Good effort!";
     if (percentage >= 80) message = "🌟 Outstanding!";
@@ -580,11 +587,12 @@ function showResults() {
     else if (percentage >= 40) message = "💪 Keep practicing!";
     else message = "📚 Don't give up!";
 
-    const resultsMessageEl = document.getElementById('resultsMessage');
-    if (resultsMessageEl) resultsMessageEl.textContent = `${message} (${percentage}%)`;
+    document.getElementById('resultsMessage').textContent = `${message} (${percentage}%)`;
 }
 
-// ✅ FIXED NAVIGATION - Back buttons work properly
+// ============================================
+// NAVIGATION - Back buttons work properly
+// ============================================
 function goBack(view) {
     if (view === 'grades') {
         selectedGradeId = null;
@@ -606,10 +614,11 @@ function restartPractice() {
     goBack('topics');
 }
 
-// Search
+// ============================================
+// SEARCH
+// ============================================
 function performSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput?.value.trim();
+    const query = document.getElementById('searchInput').value.trim();
     if (!query) return;
 
     if (currentView === 'grades') {
@@ -621,37 +630,38 @@ function performSearch() {
     }
 }
 
-// Fullscreen Modal
+// ============================================
+// FULLSCREEN MODAL
+// ============================================
 function openFullscreen(type, src, caption) {
     const modal = document.getElementById('fullscreenModal');
     const content = document.getElementById('fullscreenContent');
-    if (!modal || !content) return;
 
     if (type === 'youtube') {
         content.innerHTML = `<iframe src="https://www.youtube.com/embed/${src}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:90vw; height:80vh; border-radius:8px;"></iframe>`;
     } else if (type === 'image') {
         content.innerHTML = `<img src="${src}" alt="${caption}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
     }
-    modal.classList.add('active');
+
+    if (modal) modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 function closeFullscreen(event) {
-    const modal = document.getElementById('fullscreenModal');
-    const content = document.getElementById('fullscreenContent');
-    if (!modal || !content) return;
-
-    if (event?.target?.id === 'fullscreenModal' || event?.target?.className === 'fullscreen-close') {
-        modal.classList.remove('active');
-        content.innerHTML = '';
+    if (event.target.id === 'fullscreenModal' || event.target.className === 'fullscreen-close') {
+        const modal = document.getElementById('fullscreenModal');
+        const content = document.getElementById('fullscreenContent');
+        if (modal) modal.classList.remove('active');
+        if (content) content.innerHTML = '';
         document.body.style.overflow = 'auto';
     }
 }
 
-// Utilities
+// ============================================
+// UTILITIES
+// ============================================
 function showView(viewId) {
-    const views = ['studentIdView', 'gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'];
-    views.forEach(id => {
+    ['studentIdView', 'gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
@@ -662,29 +672,12 @@ function showView(viewId) {
 
 function extractYouTubeId(url) {
     if (!url) return null;
-    // Handle various YouTube URL formats
-    const patterns = [
-        /youtube\.com\/watch\?v=([^&]+)/,
-        /youtu\.be\/([^?]+)/,
-        /youtube\.com\/embed\/([^?]+)/,
-        /youtube\.com\/v\/([^?]+)/
-    ];
-
-    for (const pattern of patterns) {
-        const match = url.match(pattern);
-        if (match && match[1]?.length === 11) {
-            return match[1];
-        }
-    }
-    return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 }
 
 function handleLogout() {
     sessionStorage.clear();
     window.location.href = 'login.html';
 }
-
-// Global error handler for debugging
-window.addEventListener('error', (e) => {
-    console.error('Global error:', e.message, 'at', e.filename + ':' + e.lineno);
-});

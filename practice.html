@@ -2,11 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practice Questions | Peer-2-Peer PRO</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        /* ===== BASE STYLES ===== */
+        /* Inline critical styles for immediate rendering */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,163 +15,83 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: #1a202c;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
             line-height: 1.6;
-            min-height: 100vh;
-            padding-bottom: 80px;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* ===== HEADER ===== */
-        header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem 2rem;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            font-size: 1.3rem;
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header nav a {
+            color: white;
             text-decoration: none;
-            color: white;
+            margin-left: 16px;
+            font-weight: 500;
         }
 
-        .logo span {
-            color: #3498db;
+        .header nav a:hover {
+            text-decoration: underline;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
+        /* Views */
+        .view {
+            animation: fadeIn 0.3s ease;
         }
 
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            font-size: 0.95rem;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .nav-links a.logout {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .nav-links a.logout:hover {
-            background: #c0392b;
-        }
-
-        /* ===== MAIN CONTAINER ===== */
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-
-        /* ===== WELCOME CARD ===== */
-        .welcome-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .welcome-card h2 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
-        }
-
-        .welcome-card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 0.9rem 2rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .security-note {
-            margin-top: 1.5rem;
-            padding: 0.8rem;
-            background: #e8f4fd;
-            border-left: 4px solid #3498db;
-            border-radius: 0 8px 8px 0;
-            font-size: 0.9rem;
-            color: #2c3e50;
-        }
-
-        /* ===== FORM INPUTS ===== */
+        /* Forms */
         .form-group {
-            margin-bottom: 1.2rem;
-            text-align: left;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.4rem;
+            margin-bottom: 6px;
             font-weight: 500;
-            color: #2c3e50;
+            color: #334155;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 0.9rem 1.2rem;
+            padding: 12px;
             border: 2px solid #e1e5eb;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.2s;
         }
@@ -178,154 +99,192 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            border-color: #667eea;
         }
 
-        /* ===== SEARCH BAR ===== */
-        .search-bar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            background: white;
-            padding: 0.5rem;
-            border-radius: 50px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .search-bar input {
-            flex: 1;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 50px;
-            background: transparent;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-        }
-
-        .search-bar button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .search-bar button:hover {
-            background: #2980b9;
-        }
-
-        /* ===== SELECTION LISTS ===== */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .section-header h3 {
-            color: #2c3e50;
-            font-size: 1.4rem;
-        }
-
-        .back-btn {
-            background: #ecf0f1;
-            color: #2c3e50;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
+        /* Buttons */
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            transition: background 0.2s;
+            justify-content: center;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
         }
 
-        .back-btn:hover {
-            background: #d5dbdb;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        /* Selection Cards */
         .selection-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
+            gap: 16px;
+            margin-top: 20px;
         }
 
         .selection-item {
             background: white;
+            padding: 20px;
             border-radius: 12px;
-            padding: 1.3rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border: 2px solid #e1e5eb;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 2px solid transparent;
+            transition: all 0.2s;
         }
 
         .selection-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-            border-color: #3498db;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .selection-item h4 {
-            color: #2c3e50;
-            margin-bottom: 0.4rem;
-            font-size: 1.15rem;
+            color: #1e293b;
+            margin-bottom: 8px;
         }
 
         .selection-item p {
-            color: #666;
+            color: #64748b;
             font-size: 0.95rem;
-            line-height: 1.5;
         }
 
-        /* ===== TOPIC INTRO & MEDIA ===== */
-        .topic-intro {
-            background: #f8f9fa;
-            border-left: 4px solid #3498db;
-            padding: 1rem 1.3rem;
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+        }
+
+        /* Quiz View */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e1e5eb;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+
+        .answer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .answer-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .answer-option:hover {
+            border-color: #667eea;
+        }
+
+        .answer-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .answer-option.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .answer-option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Hint & Explanation */
+        .hint-box,
+        .explanation-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 12px 16px;
             border-radius: 0 8px 8px 0;
-            margin: 1rem 0 1.5rem;
+            margin: 16px 0;
             font-size: 0.95rem;
-            color: #2c3e50;
-            line-height: 1.6;
         }
 
-        .media-section h4 {
-            color: #2c3e50;
-            margin: 1.5rem 0 1rem;
-            font-size: 1.2rem;
+        .explanation-box {
+            background: #f0fdf4;
+            border-left-color: #22c55e;
+        }
+
+        /* Media Section */
+        .media-section {
+            margin: 20px 0;
         }
 
         .media-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 16px;
+            margin-top: 12px;
         }
 
         .media-card {
             position: relative;
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
             aspect-ratio: 16/9;
             background: #000;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s;
-        }
-
-        .media-card:hover {
-            transform: scale(1.03);
         }
 
         .media-card iframe,
@@ -333,7 +292,22 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border: none;
+        }
+
+        .media-card .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #667eea;
         }
 
         .media-overlay {
@@ -341,177 +315,42 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            background: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 2rem 0.8rem 0.8rem;
+            padding: 8px 12px;
             font-size: 0.85rem;
-            pointer-events: none;
         }
 
-        /* ===== QUIZ VIEW ===== */
-        .quiz-container {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .question-counter {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .question-text {
-            font-size: 1.3rem;
-            color: #2c3e50;
-            margin-bottom: 1.8rem;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .answer-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .answer-option {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.9rem 1.2rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .answer-option:hover {
-            background: #ecf0f1;
-            border-color: #bdc3c7;
-        }
-
-        .answer-option.selected {
-            background: #e8f4fd;
-            border-color: #3498db;
-        }
-
-        .answer-option.correct {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-
-        .answer-option.incorrect {
-            background: #f8d7da;
-            border-color: #dc3545;
-        }
-
-        .answer-option input {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .hint-box,
-        .explanation-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 1rem 1.3rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1rem 0;
-            font-size: 0.95rem;
-            color: #856404;
-            line-height: 1.5;
-        }
-
-        .explanation-box {
-            background: #d4edda;
-            border-left-color: #28a745;
-            color: #155724;
-        }
-
-        .quiz-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #2c3e50;
-            border: none;
-            padding: 0.8rem 1.6rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-        }
-
-        .btn-hint {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffc107;
-        }
-
-        .btn-hint:hover {
-            background: #ffeaa7;
-        }
-
-        /* ===== RESULTS VIEW ===== */
+        /* Results */
         .results-card {
             background: white;
+            padding: 40px;
             border-radius: 16px;
-            padding: 2.5rem;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             max-width: 500px;
-            margin: 2rem auto;
+            margin: 40px auto;
         }
 
-        .results-card h3 {
-            color: #2c3e50;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .final-score {
-            font-size: 3.5rem;
+        .results-score {
+            font-size: 3rem;
             font-weight: 700;
-            color: #3498db;
-            margin: 1rem 0;
-            line-height: 1;
+            color: #667eea;
+            margin: 20px 0;
         }
 
         .results-message {
-            color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 32px;
         }
 
-        .results-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* ===== FULLSCREEN MODAL ===== */
+        /* Fullscreen Modal */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.9);
             display: flex;
             align-items: center;
@@ -529,11 +368,11 @@
 
         .modal-content {
             position: relative;
-            max-width: 95vw;
-            max-height: 95vh;
+            max-width: 90vw;
+            max-height: 90vh;
         }
 
-        .fullscreen-close {
+        .modal-close {
             position: absolute;
             top: -40px;
             right: 0;
@@ -542,1026 +381,228 @@
             cursor: pointer;
             background: none;
             border: none;
-            padding: 0.5rem;
         }
 
-        /* ===== FOOTER ===== */
-        footer {
+        /* Footer */
+        .footer {
             text-align: center;
-            padding: 2rem;
-            color: #666;
+            padding: 32px 20px;
+            color: #64748b;
             font-size: 0.9rem;
-            margin-top: 3rem;
+            border-top: 1px solid #e1e5eb;
+            margin-top: 40px;
         }
 
-        footer a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            header {
-                padding: 1rem;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
                 flex-direction: column;
+                gap: 12px;
                 text-align: center;
             }
 
-            .nav-links {
+            .header nav {
+                display: flex;
+                flex-wrap: wrap;
                 justify-content: center;
-            }
-
-            .container {
-                padding: 0 1rem;
-                margin: 1rem auto;
-            }
-
-            .welcome-card,
-            .quiz-container,
-            .results-card {
-                padding: 1.5rem;
-            }
-
-            .question-text {
-                font-size: 1.15rem;
-            }
-
-            .final-score {
-                font-size: 2.8rem;
+                gap: 8px;
             }
 
             .selection-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- ===== HEADER ===== -->
-    <header>
-        <a href="index.html" class="logo">Peer-2-Peer <span>PRO</span></a>
-        <nav class="nav-links">
-            <a href="student-portal.html">🏠 Dashboard</a>
-            <a href="#" class="logout" onclick="handleLogout(); return false;">🔐 Logout</a>
-        </nav>
+    <!-- Header -->
+    <header class="container">
+        <div class="header">
+            <h1>🎓 Peer-2-Peer <strong>PRO</strong></h1>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="student-portal.html">🏠 Dashboard</a>
+                <a href="#" onclick="handleLogout(); return false;">🔐 Logout</a>
+            </nav>
+        </div>
     </header>
 
-    <!-- ===== MAIN CONTAINER ===== -->
     <main class="container">
 
-        <!-- 🔹 Student ID View -->
-        <section id="studentIdView" class="welcome-card">
-            <h2>🎓 Welcome to Practice</h2>
-            <p>Enter your details to start practicing questions. Your progress will be saved.</p>
+        <!-- 🔐 Student ID View -->
+        <section id="studentIdView" class="view">
+            <div
+                style="max-width: 500px; margin: 40px auto; background: white; padding: 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <h2 style="margin-bottom: 8px;">🎓 Welcome to Practice</h2>
+                <p style="color: #64748b; margin-bottom: 24px;">Enter your details to start practicing. Your progress
+                    will be saved.</p>
 
-            <div class="form-group">
-                <label for="firstNameInput">First Name *</label>
-                <input type="text" id="firstNameInput" placeholder="e.g. Thandi" required />
-            </div>
-            <div class="form-group">
-                <label for="lastNameInput">Last Name *</label>
-                <input type="text" id="lastNameInput" placeholder="e.g. Ndlovu" required />
-            </div>
-            <div class="form-group">
-                <label for="emailInput">Email (optional)</label>
-                <input type="email" id="emailInput" placeholder="you@example.com" />
-            </div>
-            <div class="form-group">
-                <label for="gradeInput">Grade</label>
-                <select id="gradeInput">
-                    <option value="">Select Grade</option>
-                    <option value="Grade 8">Grade 8</option>
-                    <option value="Grade 9">Grade 9</option>
-                    <option value="Grade 10">Grade 10</option>
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="schoolInput">School Name (optional)</label>
-                <input type="text" id="schoolInput" placeholder="e.g. Springfield High" />
-            </div>
+                <form onsubmit="registerStudent(event)">
+                    <div class="form-group">
+                        <label for="firstNameInput">First Name *</label>
+                        <input type="text" id="firstNameInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastNameInput">Last Name *</label>
+                        <input type="text" id="lastNameInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailInput">Email (optional)</label>
+                        <input type="email" id="emailInput">
+                    </div>
+                    <div class="form-group">
+                        <label for="gradeInput">Grade</label>
+                        <select id="gradeInput">
+                            <option value="">Select Grade</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolInput">School Name (optional)</label>
+                        <input type="text" id="schoolInput">
+                    </div>
 
-            <button class="btn-primary" onclick="registerStudent(event)">
-                Start Practicing →
-            </button>
+                    <label style="display: flex; align-items: center; gap: 8px; margin: 16px 0; font-size: 0.9rem;">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span style="color: #64748b;">Remember me on this device</span>
+                    </label>
 
-            <div class="security-note">
-                🔒 Your data is secure. We only store what's needed to track your progress.
+                    <button type="submit" class="btn" style="width: 100%;">Start Practicing →</button>
+                </form>
+
+                <p style="text-align: center; margin-top: 20px; font-size: 0.85rem; color: #64748b;">
+                    🔒 Your data is secure. We only store what's needed to track your progress.
+                </p>
             </div>
         </section>
 
-        <!-- 🔹 Grades View -->
-        <section id="gradesView" class="hidden">
-            <div class="section-header">
-                <h3>📚 Select Your Grade</h3>
-                <button class="back-btn" onclick="goBack('grades')">← Back to Grades</button>
+        <!-- 📚 Grades View -->
+        <section id="gradesView" class="view hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="btn btn-outline" onclick="goBack('grades')">← Back</button>
+                <h2>📚 Select Your Grade</h2>
+                <div style="width: 100px;"></div>
             </div>
 
             <div id="searchBar" class="search-bar hidden">
-                <input type="text" id="searchInput" placeholder="🔍 Search grades..."
-                    onkeypress="if(event.key==='Enter')performSearch()">
-                <button onclick="performSearch()">Search</button>
+                <input type="text" id="searchInput" placeholder="Search grades...">
+                <button class="btn" onclick="performSearch('grades')">🔍</button>
             </div>
 
-            <div id="gradesList" class="selection-grid">
-                <div style="padding:40px; text-align:center; color:#666;">Loading grades...</div>
-            </div>
+            <div id="gradesList" class="selection-grid"></div>
         </section>
 
-        <!-- 🔹 Subjects View -->
-        <section id="subjectsView" class="hidden">
-            <div class="section-header">
-                <h3>📖 Select a Subject</h3>
-                <button class="back-btn" onclick="goBack('subjects')">← Back to Subjects</button>
+        <!-- 📖 Subjects View -->
+        <section id="subjectsView" class="view hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="btn btn-outline" onclick="goBack('subjects')">← Back to Grades</button>
+                <h2>📖 Select a Subject</h2>
+                <div style="width: 100px;"></div>
             </div>
 
             <div id="searchBarSub" class="search-bar hidden">
-                <input type="text" id="searchInputSub" placeholder="🔍 Search subjects..."
-                    onkeypress="if(event.key==='Enter')performSearch()">
-                <button onclick="performSearch()">Search</button>
+                <input type="text" id="searchInputSub" placeholder="Search subjects...">
+                <button class="btn" onclick="performSearch('subjects')">🔍</button>
             </div>
 
-            <div id="subjectsList" class="selection-grid">
-                <div style="padding:40px; text-align:center; color:#666;">Loading subjects...</div>
-            </div>
+            <div id="subjectsList" class="selection-grid"></div>
         </section>
 
-        <!-- 🔹 Topics View -->
-        <section id="topicsView" class="hidden">
-            <div class="section-header">
-                <h3>🎯 Select a Topic</h3>
-                <button class="back-btn" onclick="goBack('topics')">← Back to Topics</button>
+        <!-- 🎯 Topics View -->
+        <section id="topicsView" class="view hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="btn btn-outline" onclick="goBack('topics')">← Back to Subjects</button>
+                <h2>🎯 Select a Topic</h2>
+                <div style="width: 100px;"></div>
             </div>
 
             <div id="searchBarTop" class="search-bar hidden">
-                <input type="text" id="searchInputTop" placeholder="🔍 Search topics..."
-                    onkeypress="if(event.key==='Enter')performSearch()">
-                <button onclick="performSearch()">Search</button>
+                <input type="text" id="searchInputTop" placeholder="Search topics...">
+                <button class="btn" onclick="performSearch('topics')">🔍</button>
             </div>
 
-            <div id="topicIntro" class="topic-intro hidden"></div>
+            <!-- Topic Intro (shown in quiz) -->
+            <div id="topicIntro" class="hidden"
+                style="background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0; font-size: 1.05rem;">
+            </div>
 
+            <!-- Topic Media -->
             <div id="topicMediaSection" class="media-section hidden">
-                <h4>🎬 Learning Resources</h4>
+                <h3 style="margin-bottom: 12px;">🎬 Learning Resources</h3>
                 <div id="topicMediaGrid" class="media-grid"></div>
             </div>
 
-            <div id="topicsList" class="selection-grid">
-                <div style="padding:40px; text-align:center; color:#666;">Loading topics...</div>
+            <div id="topicsList" class="selection-grid"></div>
+        </section>
+
+        <!-- ❓ Quiz View -->
+        <section id="quizView" class="view hidden">
+            <div class="quiz-header">
+                <button class="btn btn-outline" onclick="goBack('quiz')">← Back</button>
+                <span id="questionCounter" style="font-weight: 600; color: #64748b;">Question 1 of 10</span>
+                <div style="width: 80px;"></div>
+            </div>
+
+            <div id="questionText" class="question-text">Loading question...</div>
+
+            <div id="answerList" class="answer-list"></div>
+
+            <div id="hintBox" class="hint-box hidden"></div>
+            <div id="explanationBox" class="explanation-box hidden"></div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button id="hintBtn" class="btn btn-secondary" onclick="showHint()" style="display: none;">💡
+                    Hint</button>
+                <button id="submitBtn" class="btn" onclick="submitAnswer()">Submit Answer</button>
+                <button id="nextBtn" class="btn hidden" onclick="nextQuestion()">Next Question →</button>
             </div>
         </section>
 
-        <!-- 🔹 Quiz View -->
-        <section id="quizView" class="hidden">
-            <div class="quiz-container">
-                <div class="question-counter" id="questionCounter">Question 1 of 10</div>
-                <div class="question-text" id="questionText">Loading question...</div>
-
-                <div id="answerList" class="answer-list"></div>
-
-                <div id="hintBox" class="hint-box hidden"></div>
-                <div id="explanationBox" class="explanation-box hidden"></div>
-
-                <div class="quiz-actions">
-                    <button id="hintBtn" class="btn-secondary btn-hint" onclick="showHint()">💡 Hint</button>
-                    <button id="submitBtn" class="btn-primary" onclick="submitAnswer()">Submit Answer</button>
-                    <button id="nextBtn" class="btn-primary hidden" onclick="nextQuestion()">Next Question →</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 🔹 Results View -->
-        <section id="resultsView" class="hidden">
+        <!-- 🏆 Results View -->
+        <section id="resultsView" class="view hidden">
             <div class="results-card">
-                <h3>🎉 Practice Complete!</h3>
-                <div class="final-score" id="finalScore">0/0</div>
+                <h2>🎉 Practice Complete!</h2>
+                <div class="results-score" id="finalScore">0/0</div>
                 <p class="results-message" id="resultsMessage">Good effort!</p>
-                <div class="results-actions">
-                    <button class="btn-secondary" onclick="restartPractice()">🔄 Practice Another Topic</button>
-                    <button class="btn-primary" onclick="goBack('grades')">📚 Back to Grades</button>
+
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn" onclick="restartPractice()">🔄 Practice Another Topic</button>
+                    <button class="btn btn-secondary" onclick="goBack('grades')">📚 Back to Grades</button>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- ===== FULLSCREEN MODAL ===== -->
-    <div id="fullscreenModal" class="modal" onclick="closeFullscreen(event)">
+    <!-- 🖼️ Fullscreen Modal -->
+    <div id="fullscreenModal" class="modal">
         <div class="modal-content">
-            <button class="fullscreen-close" onclick="closeFullscreen(event)">×</button>
+            <button class="modal-close" onclick="closeFullscreen()">×</button>
             <div id="fullscreenContent"></div>
         </div>
     </div>
 
-    <!-- ===== FOOTER ===== -->
-    <footer>
-        <p>
-            <strong>Peer-2-Peer PRO</strong><br>
-            Practice makes perfect! 🎯<br><br>
-            Support: <a href="mailto:info@peer-2-peer.co.za">info@peer-2-peer.co.za</a><br>
-            © 2026 Peer-2-Peer PRO. All practice data saved securely.
-        </p>
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>Peer-2-Peer PRO</strong> — Practice makes perfect! 🎯</p>
+        <p style="margin-top: 8px;">Support: <a href="mailto:info@peer-2-peer.co.za"
+                style="color: #667eea;">info@peer-2-peer.co.za</a></p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">© 2026 Peer-2-Peer PRO. All practice data saved securely.</p>
     </footer>
 
-    <!-- ===== JAVASCRIPT ===== -->
-    <script>
-        // ============================================
-        // PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL - FIXED)
-        // Endpoint: https://learneranswer.buhle-1ce.workers.dev
-        // FIXED: Topic intro, media display, student persistence, navigation
-        // ============================================
-
-        const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
-
-        // Student identity from localStorage (persistent across sessions)
-        let studentNumber = localStorage.getItem('p2p_student_number') || '';
-        let studentName = localStorage.getItem('p2p_name') || '';
-        let studentEmail = localStorage.getItem('p2p_email') || '';
-        let studentGrade = localStorage.getItem('p2p_grade') || '';
-
-        // Navigation state
-        let currentView = 'studentId';
-        let selectedGradeId = null;
-        let selectedGradeName = null;
-        let selectedSubjectId = null;
-        let selectedSubjectName = null;
-        let selectedTopicId = null;
-        let currentTopicData = null;
-
-        // Quiz state
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let selectedAnswer = null;
-        let quizStats = { correct: 0, attempted: 0, points: 0 };
-
-        // Search state
-        let currentSearchQuery = '';
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            if (studentNumber) {
-                verifyStudentAndLoad();
-            } else {
-                showView('studentIdView');
-                currentView = 'studentId';
-                hideAllSearchBars();
-            }
-        });
-
-        function hideAllSearchBars() {
-            const searchBars = ['searchBar', 'searchBarSub', 'searchBarTop'];
-            searchBars.forEach(barId => {
-                const bar = document.getElementById(barId);
-                if (bar) bar.classList.add('hidden');
-            });
-        }
-
-        // ============================================
-        // STUDENT REGISTRATION
-        // ============================================
-        async function registerStudent(event) {
-            if (event) event.preventDefault();
-
-            const firstName = document.getElementById('firstNameInput').value.trim();
-            const lastName = document.getElementById('lastNameInput').value.trim();
-            const email = document.getElementById('emailInput').value.trim();
-            const grade = document.getElementById('gradeInput').value.trim();
-            const schoolName = document.getElementById('schoolInput').value.trim();
-
-            if (!firstName || !lastName) {
-                alert("Please enter your first name and last name");
-                return;
-            }
-
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = "Setting up...";
-
-            try {
-                const res = await fetch(`${API_BASE}/api/register-student`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ firstName, lastName, email, grade, schoolName })
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    studentNumber = data.student.student_number;
-                    studentName = `${data.student.first_name} ${data.student.last_name}`;
-                    studentEmail = data.student.email || '';
-                    studentGrade = data.student.grade || '';
-
-                    localStorage.setItem('p2p_student_number', studentNumber);
-                    localStorage.setItem('p2p_name', studentName);
-                    localStorage.setItem('p2p_email', studentEmail);
-                    localStorage.setItem('p2p_grade', studentGrade);
-
-                    if (data.message && data.message.includes('created')) {
-                        alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}\nPlease save this ID for future logins.`);
-                    }
-
-                    loadGrades();
-                } else {
-                    alert("Error: " + data.error);
-                    btn.disabled = false;
-                    btn.textContent = "Start Practicing →";
-                }
-            } catch (e) {
-                console.error("Register error:", e);
-                alert("Connection error. Please try again.");
-                btn.disabled = false;
-                btn.textContent = "Start Practicing →";
-            }
-        }
-
-        // ============================================
-        // VERIFY STUDENT
-        // ============================================
-        async function verifyStudentAndLoad() {
-            try {
-                const res = await fetch(`${API_BASE}/api/verify-student`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ student_number: studentNumber })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    studentName = `${data.student.first_name} ${data.student.last_name}`;
-                    studentEmail = data.student.email || '';
-                    studentGrade = data.student.grade || '';
-                    localStorage.setItem('p2p_name', studentName);
-                    localStorage.setItem('p2p_email', studentEmail);
-                    localStorage.setItem('p2p_grade', studentGrade);
-                    loadGrades();
-                } else {
-                    localStorage.clear();
-                    studentNumber = '';
-                    showView('studentIdView');
-                    currentView = 'studentId';
-                    hideAllSearchBars();
-                }
-            } catch (e) {
-                console.error("Verify error:", e);
-                loadGrades();
-            }
-        }
-
-        // ============================================
-        // LOAD GRADES
-        // ============================================
-        async function loadGrades(searchQuery = '') {
-            showView('gradesView');
-            currentView = 'grades';
-            currentSearchQuery = searchQuery;
-
-            const searchBar = document.getElementById('searchBar');
-            if (searchBar) {
-                searchBar.classList.remove('hidden');
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) searchInput.value = searchQuery;
-            }
-
-            const container = document.getElementById('gradesList');
-            container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
-
-            try {
-                let url = `${API_BASE}/api/grades`;
-                const res = await fetch(url);
-                const data = await res.json();
-
-                if (data.success && data.grades && data.grades.length > 0) {
-                    let filtered = data.grades;
-                    if (searchQuery) {
-                        filtered = data.grades.filter(g =>
-                            g.grade_name.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    }
-
-                    if (filtered.length > 0) {
-                        container.innerHTML = filtered.map(g => `
-                            <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${escapeHtml(g.grade_name)}">
-                                <h4>${escapeHtml(g.grade_name)}</h4>
-                                <p>Practice questions</p>
-                            </div>
-                        `).join('');
-
-                        container.onclick = (e) => {
-                            const card = e.target.closest('.grade-card');
-                            if (card) {
-                                const gradeId = card.dataset.gradeId;
-                                const gradeName = card.dataset.gradeName;
-                                selectGrade(gradeId, gradeName);
-                            }
-                        };
-                    } else {
-                        container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching grades found</div>';
-                    }
-                } else {
-                    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No grades found</div>';
-                }
-            } catch (e) {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:red;">Error loading grades</div>';
-                console.error("Load grades error:", e);
-            }
-        }
-
-        // ============================================
-        // SELECT GRADE
-        // ============================================
-        async function selectGrade(gradeId, gradeName) {
-            selectedGradeId = gradeId;
-            selectedGradeName = gradeName;
-            showView('subjectsView');
-            currentView = 'subjects';
-            currentSearchQuery = '';
-            loadSubjects(gradeId);
-        }
-
-        // ============================================
-        // LOAD SUBJECTS
-        // ============================================
-        async function loadSubjects(gradeId, searchQuery = '') {
-            const container = document.getElementById('subjectsList');
-            container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
-
-            currentSearchQuery = searchQuery;
-
-            const searchBar = document.getElementById('searchBarSub');
-            if (searchBar) {
-                searchBar.classList.remove('hidden');
-                const searchInput = document.getElementById('searchInputSub');
-                if (searchInput) searchInput.value = searchQuery;
-            }
-
-            try {
-                let url = `${API_BASE}/api/subjects?grade_id=${gradeId}`;
-                const res = await fetch(url);
-                const data = await res.json();
-
-                if (data.success && data.subjects && data.subjects.length > 0) {
-                    let filtered = data.subjects;
-                    if (searchQuery) {
-                        filtered = data.subjects.filter(s =>
-                            s.subject_name.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    }
-
-                    if (filtered.length > 0) {
-                        container.innerHTML = filtered.map(s => `
-                            <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${escapeHtml(s.subject_name)}">
-                                <h4>${escapeHtml(s.subject_name)}</h4>
-                                <p>${s.description ? escapeHtml(s.description.substring(0, 60)) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
-                            </div>
-                        `).join('');
-
-                        container.onclick = (e) => {
-                            const card = e.target.closest('.subject-card');
-                            if (card) {
-                                const subjectId = card.dataset.subjectId;
-                                const subjectName = card.dataset.subjectName;
-                                selectSubject(subjectId, subjectName);
-                            }
-                        };
-                    } else {
-                        container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching subjects found</div>';
-                    }
-                } else {
-                    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No subjects found</div>';
-                }
-            } catch (e) {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:red;">Error loading subjects</div>';
-                console.error("Load subjects error:", e);
-            }
-        }
-
-        // ============================================
-        // SELECT SUBJECT
-        // ============================================
-        async function selectSubject(subjectId, subjectName) {
-            selectedSubjectId = subjectId;
-            selectedSubjectName = subjectName;
-            showView('topicsView');
-            currentView = 'topics';
-            currentSearchQuery = '';
-            loadTopics(subjectId);
-        }
-
-        // ============================================
-        // LOAD TOPICS
-        // ============================================
-        async function loadTopics(subjectId, searchQuery = '') {
-            const container = document.getElementById('topicsList');
-            container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
-
-            const topicIntroEl = document.getElementById('topicIntro');
-            const topicMediaSection = document.getElementById('topicMediaSection');
-            if (topicIntroEl) topicIntroEl.classList.add('hidden');
-            if (topicMediaSection) topicMediaSection.classList.add('hidden');
-
-            currentSearchQuery = searchQuery;
-
-            const searchBar = document.getElementById('searchBarTop');
-            if (searchBar) {
-                searchBar.classList.remove('hidden');
-                const searchInput = document.getElementById('searchInputTop');
-                if (searchInput) searchInput.value = searchQuery;
-            }
-
-            try {
-                let url = `${API_BASE}/api/topics?subject_id=${subjectId}`;
-                const res = await fetch(url);
-                const data = await res.json();
-
-                if (data.success && data.topics && data.topics.length > 0) {
-                    let filtered = data.topics;
-                    if (searchQuery) {
-                        filtered = data.topics.filter(t =>
-                            t.topic_name.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    }
-
-                    if (filtered.length > 0) {
-                        container.innerHTML = filtered.map(t => {
-                            const mediaCount = t.media ? t.media.length : 0;
-                            return `
-                                <div class="selection-item topic-card" 
-                                     data-topic-id="${t.id}"
-                                     data-topic-name="${escapeHtml(t.topic_name)}"
-                                     data-topic-intro="${escapeHtml(t.intro || '')}"
-                                     data-topic-media='${JSON.stringify(t.media || []).replace(/'/g, "&#39;")}'>
-                                    <h4>${escapeHtml(t.topic_name)}</h4>
-                                    <p>${escapeHtml(t.description ? t.description.substring(0, 70) : 'Start practicing')}${t.description && t.description.length > 70 ? '...' : ''}</p>
-                                    ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
-                                </div>
-                            `;
-                        }).join('');
-
-                        container.onclick = (e) => {
-                            const card = e.target.closest('.topic-card');
-                            if (card) {
-                                const topicId = parseInt(card.dataset.topicId);
-                                const topicName = card.dataset.topicName;
-                                const topicIntro = card.dataset.topicIntro;
-                                let topicMedia = [];
-                                try {
-                                    topicMedia = JSON.parse(card.dataset.topicMedia.replace(/&#39;/g, "'")) || [];
-                                } catch (err) {
-                                    console.error("Error parsing media:", err);
-                                    topicMedia = [];
-                                }
-                                startQuiz(topicId, topicName, topicIntro, topicMedia);
-                            }
-                        };
-                    } else {
-                        container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching topics found</div>';
-                    }
-                } else {
-                    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No topics found</div>';
-                }
-            } catch (e) {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:red;">Error loading topics</div>';
-                console.error("Load topics error:", e);
-            }
-        }
-
-        // ============================================
-        // START QUIZ
-        // ============================================
-        async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
-            selectedTopicId = topicId;
-            currentTopicData = { intro: topicIntro, media: topicMedia };
-
-            showView('quizView');
-            currentView = 'quiz';
-
-            hideAllSearchBars();
-
-            const introEl = document.getElementById('topicIntro');
-            if (introEl) {
-                if (topicIntro && topicIntro.trim()) {
-                    introEl.innerHTML = `<strong>📖 ${escapeHtml(topicName)}</strong><br>${escapeHtml(topicIntro)}`;
-                    introEl.classList.remove('hidden');
-                } else {
-                    introEl.classList.add('hidden');
-                }
-            }
-
-            const mediaSection = document.getElementById('topicMediaSection');
-            const mediaGrid = document.getElementById('topicMediaGrid');
-
-            if (mediaGrid) {
-                if (topicMedia && topicMedia.length > 0) {
-                    mediaGrid.innerHTML = topicMedia.map((m, idx) => {
-                        const safeCaption = escapeHtml(m.caption || '');
-
-                        if (m.media_type === 'youtube') {
-                            const videoId = extractYouTubeId(m.media_url);
-                            if (videoId) {
-                                return `
-                                    <div class="media-card" data-type="youtube" data-src="${videoId}" data-caption="${safeCaption}">
-                                        <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${safeCaption}"></iframe>
-                                        ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
-                                    </div>
-                                `;
-                            }
-                        } else if (m.media_type === 'image') {
-                            return `
-                                <div class="media-card" data-type="image" data-src="${escapeHtml(m.media_url)}" data-caption="${safeCaption}">
-                                    <img src="${escapeHtml(m.media_url)}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'">
-                                    ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
-                                </div>
-                            `;
-                        }
-                        return '';
-                    }).join('');
-
-                    document.querySelectorAll('.media-card').forEach(card => {
-                        card.onclick = (e) => {
-                            e.stopPropagation();
-                            const type = card.dataset.type;
-                            const src = card.dataset.src;
-                            const caption = card.dataset.caption;
-                            openFullscreen(type, src, caption);
-                        };
-                    });
-
-                    if (mediaSection) mediaSection.classList.remove('hidden');
-                } else {
-                    if (mediaSection) mediaSection.classList.add('hidden');
-                }
-            }
-
-            try {
-                const res = await fetch(`${API_BASE}/api/questions?topic_id=${topicId}`);
-                const data = await res.json();
-
-                if (data.success && data.questions && data.questions.length > 0) {
-                    currentQuestions = data.questions;
-                    currentQuestionIndex = 0;
-                    quizStats = { correct: 0, attempted: 0, points: 0 };
-                    showQuestion();
-                } else {
-                    alert("No questions available for this topic yet.");
-                    goBack('topics');
-                }
-            } catch (e) {
-                console.error("Load questions error:", e);
-                alert("Error loading questions. Please try again.");
-                goBack('topics');
-            }
-        }
-
-        // ============================================
-        // SHOW QUESTION
-        // ============================================
-        function showQuestion() {
-            const q = currentQuestions[currentQuestionIndex];
-            if (!q) return;
-
-            document.getElementById('questionCounter').textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
-            document.getElementById('questionText').textContent = q.question_text;
-
-            const answerList = document.getElementById('answerList');
-            answerList.innerHTML = '';
-
-            if (q.question_type === 'multiple_choice' || q.question_type === 'true_false') {
-                if (q.answers && q.answers.length > 0) {
-                    q.answers.forEach((ans) => {
-                        const option = document.createElement('div');
-                        option.className = 'answer-option';
-                        option.innerHTML = `
-                            <input type="radio" name="answer" id="ans${ans.id}" value="${ans.id}" style="width:18px; height:18px;">
-                            <label for="ans${ans.id}" style="flex:1; cursor:pointer;">${escapeHtml(ans.answer_text)}</label>
-                        `;
-                        option.onclick = () => selectAnswer(ans.id, option);
-                        answerList.appendChild(option);
-                    });
-                }
-            } else if (q.question_type === 'short_answer') {
-                answerList.innerHTML = `
-                    <textarea id="shortAnswerInput" placeholder="Type your answer..." style="width:100%; min-height:80px; padding:12px; border:2px solid #e1e5eb; border-radius:10px; font-size:1rem;"></textarea>
-                `;
-            }
-
-            selectedAnswer = null;
-            const hintBox = document.getElementById('hintBox');
-            const explanationBox = document.getElementById('explanationBox');
-            const hintBtn = document.getElementById('hintBtn');
-            const submitBtn = document.getElementById('submitBtn');
-            const nextBtn = document.getElementById('nextBtn');
-
-            if (hintBox) hintBox.classList.add('hidden');
-            if (explanationBox) explanationBox.classList.add('hidden');
-            if (hintBtn) hintBtn.style.display = q.hints ? 'inline-block' : 'none';
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('hidden');
-                submitBtn.textContent = "Submit Answer";
-            }
-            if (nextBtn) nextBtn.classList.add('hidden');
-        }
-
-        // ============================================
-        // SELECT ANSWER
-        // ============================================
-        function selectAnswer(answerId, element) {
-            document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedAnswer = answerId;
-        }
-
-        // ============================================
-        // SHOW HINT
-        // ============================================
-        function showHint() {
-            const q = currentQuestions[currentQuestionIndex];
-            if (q && q.hints) {
-                const hintBox = document.getElementById('hintBox');
-                if (hintBox) {
-                    hintBox.textContent = '💡 ' + q.hints;
-                    hintBox.classList.remove('hidden');
-                }
-                const hintBtn = document.getElementById('hintBtn');
-                if (hintBtn) hintBtn.style.display = 'none';
-            }
-        }
-
-        // ============================================
-        // SUBMIT ANSWER
-        // ============================================
-        async function submitAnswer() {
-            const q = currentQuestions[currentQuestionIndex];
-            if (!q) return;
-
-            let answerId = selectedAnswer;
-            let answerText = null;
-
-            if (q.question_type === 'short_answer') {
-                const input = document.getElementById('shortAnswerInput');
-                answerText = input ? input.value.trim() : null;
-                if (!answerText) {
-                    alert("Please enter an answer");
-                    return;
-                }
-            } else if ((q.question_type === 'multiple_choice' || q.question_type === 'true_false') && !answerId) {
-                alert("Please select an answer");
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = "Checking...";
-            }
-
-            const startTime = Date.now();
-
-            try {
-                const res = await fetch(`${API_BASE}/api/answer`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        student_number: studentNumber,
-                        question_id: q.id,
-                        selected_answer_id: answerId,
-                        answer_text: answerText,
-                        time_taken: Math.round((Date.now() - startTime) / 1000),
-                        question_type: q.question_type
-                    })
-                });
-
-                const result = await res.json();
-
-                if (result.success) {
-                    quizStats.attempted++;
-                    if (result.is_correct) {
-                        quizStats.correct++;
-                        quizStats.points += result.points_earned;
-                    }
-
-                    const answerOptions = document.querySelectorAll('.answer-option');
-                    answerOptions.forEach(opt => {
-                        const input = opt.querySelector('input');
-                        if (input && input.type === 'radio') {
-                            const optId = parseInt(input.value);
-                            const correctAnswer = q.answers ? q.answers.find(a => a.is_correct && a.id === optId) : null;
-                            if (correctAnswer) opt.classList.add('correct');
-                            else if (optId === selectedAnswer && !result.is_correct) opt.classList.add('incorrect');
-                        }
-                    });
-
-                    const explanationBox = document.getElementById('explanationBox');
-                    if (result.explanation && explanationBox) {
-                        explanationBox.textContent = '✅ ' + result.explanation;
-                        explanationBox.classList.remove('hidden');
-                    }
-
-                    const nextBtn = document.getElementById('nextBtn');
-                    if (nextBtn) nextBtn.classList.remove('hidden');
-                    if (submitBtn) submitBtn.classList.add('hidden');
-                } else {
-                    alert("Error: " + result.error);
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = "Submit Answer";
-                    }
-                }
-            } catch (e) {
-                console.error("Submit error:", e);
-                alert("Connection error. Please try again.");
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Submit Answer";
-                }
-            }
-        }
-
-        // ============================================
-        // NEXT QUESTION
-        // ============================================
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < currentQuestions.length) {
-                showQuestion();
-            } else {
-                showResults();
-            }
-        }
-
-        // ============================================
-        // SHOW RESULTS
-        // ============================================
-        function showResults() {
-            showView('resultsView');
-            currentView = 'results';
-
-            hideAllSearchBars();
-
-            const total = currentQuestions.length;
-            const correct = quizStats.correct;
-            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-            document.getElementById('finalScore').textContent = `${correct}/${total}`;
-
-            let message = "Good effort!";
-            if (percentage >= 80) message = "🌟 Outstanding!";
-            else if (percentage >= 60) message = "👍 Good job!";
-            else if (percentage >= 40) message = "💪 Keep practicing!";
-            else message = "📚 Don't give up!";
-
-            document.getElementById('resultsMessage').textContent = `${message} (${percentage}%)`;
-        }
-
-        // ============================================
-        // NAVIGATION
-        // ============================================
-        function goBack(view) {
-            if (view === 'grades') {
-                selectedGradeId = null;
-                selectedGradeName = null;
-                selectedSubjectId = null;
-                selectedSubjectName = null;
-                selectedTopicId = null;
-                currentTopicData = null;
-                loadGrades();
-            } else if (view === 'subjects') {
-                if (selectedGradeId) {
-                    selectedSubjectId = null;
-                    selectedSubjectName = null;
-                    selectedTopicId = null;
-                    currentTopicData = null;
-                    loadSubjects(selectedGradeId);
-                } else {
-                    loadGrades();
-                }
-            } else if (view === 'topics') {
-                if (selectedSubjectId) {
-                    selectedTopicId = null;
-                    currentTopicData = null;
-                    loadTopics(selectedSubjectId);
-                } else if (selectedGradeId) {
-                    loadSubjects(selectedGradeId);
-                } else {
-                    loadGrades();
-                }
-            }
-        }
-
-        function restartPractice() {
-            selectedTopicId = null;
-            currentTopicData = null;
-            if (selectedSubjectId) {
-                loadTopics(selectedSubjectId);
-            } else if (selectedGradeId) {
-                loadSubjects(selectedGradeId);
-            } else {
-                loadGrades();
-            }
-        }
-
-        // ============================================
-        // SEARCH
-        // ============================================
-        function performSearch() {
-            let query = '';
-
-            if (currentView === 'grades') {
-                query = document.getElementById('searchInput').value.trim();
-                loadGrades(query);
-            } else if (currentView === 'subjects' && selectedGradeId) {
-                query = document.getElementById('searchInputSub').value.trim();
-                loadSubjects(selectedGradeId, query);
-            } else if (currentView === 'topics' && selectedSubjectId) {
-                query = document.getElementById('searchInputTop').value.trim();
-                loadTopics(selectedSubjectId, query);
-            }
-        }
-
-        // ============================================
-        // FULLSCREEN MODAL
-        // ============================================
-        function openFullscreen(type, src, caption) {
-            const modal = document.getElementById('fullscreenModal');
-            const content = document.getElementById('fullscreenContent');
-
-            if (type === 'youtube') {
-                content.innerHTML = `<iframe src="https://www.youtube.com/embed/${src}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:90vw; height:80vh; border-radius:8px;"></iframe>`;
-            } else if (type === 'image') {
-                content.innerHTML = `<img src="${src}" alt="${caption || ''}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
-            }
-
-            if (modal) modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeFullscreen(event) {
-            if (event && (event.target.id === 'fullscreenModal' || event.target.className === 'fullscreen-close' || !event)) {
-                const modal = document.getElementById('fullscreenModal');
-                const content = document.getElementById('fullscreenContent');
-                if (modal) modal.classList.remove('active');
-                if (content) content.innerHTML = '';
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        // ============================================
-        // UTILITIES
-        // ============================================
-        function showView(viewId) {
-            const views = ['studentIdView', 'gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'];
-            views.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            const target = document.getElementById(viewId);
-            if (target) target.classList.remove('hidden');
-            window.scrollTo(0, 0);
-        }
-
-        function extractYouTubeId(url) {
-            if (!url) return null;
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
-    </script>
-
-    <!-- ===== GLOBAL ERROR HANDLER (DEBUG) ===== -->
-    <script>
-        window.addEventListener('error', (e) => {
-            console.error('🚨 Global error:', e.message, 'at', e.filename + ':' + e.lineno + ':' + e.colno);
-        });
-        window.addEventListener('unhandledrejection', (e) => {
-            console.error('🚨 Unhandled promise rejection:', e.reason);
-        });
-    </script>
-
+    <!-- ✅ Load optimized practice.js -->
+    <script src="practice.js"></script>
 </body>
 
 </html>

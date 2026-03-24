@@ -1,40 +1,44 @@
 // ============================================
-// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL - FIXED)
+// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (OPTIMIZED FINAL)
 // Endpoint: https://learneranswer.buhle-1ce.workers.dev
-// FIXED: Topic intro, media display, student persistence, navigation
+// ✅ FIXED: Topic media clickability, localStorage persistence, all buttons working
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
 
-// Student identity from localStorage (persistent across sessions)
-let studentNumber = localStorage.getItem('p2p_student_number') || '';
-let studentName = localStorage.getItem('p2p_name') || '';
-let studentEmail = localStorage.getItem('p2p_email') || '';
-let studentGrade = localStorage.getItem('p2p_grade') || '';
+// 🎯 Student identity - localStorage for persistence, sessionStorage fallback
+let studentNumber = localStorage.getItem('p2p_student_number') || sessionStorage.getItem('p2p_student_number') || '';
+let studentName = localStorage.getItem('p2p_name') || sessionStorage.getItem('p2p_name') || '';
+let studentEmail = localStorage.getItem('p2p_email') || sessionStorage.getItem('p2p_email') || '';
+let studentGrade = localStorage.getItem('p2p_grade') || sessionStorage.getItem('p2p_grade') || '';
 
-// Navigation state
+// 🧭 Navigation state
 let currentView = 'studentId';
 let selectedGradeId = null;
 let selectedGradeName = null;
 let selectedSubjectId = null;
 let selectedSubjectName = null;
 let selectedTopicId = null;
-let currentTopicData = null; // Store full topic data including intro and media
 
-// Quiz state
+// 📝 Quiz state
 let currentQuestions = [];
 let currentQuestionIndex = 0;
 let selectedAnswer = null;
 let quizStats = { correct: 0, attempted: 0, points: 0 };
 
-// Search state
+// 🔍 Search state
 let currentSearchQuery = '';
 
 // ============================================
-// INITIALIZATION
+// 🚀 INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if student exists in localStorage
+    // Global error handler
+    window.addEventListener('error', (e) => {
+        console.error('🚨 Global error:', e.message, 'at', e.filename + ':' + e.lineno);
+    });
+
+    // Auto-login if student exists in storage
     if (studentNumber) {
         verifyStudentAndLoad();
     } else {
@@ -42,36 +46,43 @@ document.addEventListener('DOMContentLoaded', () => {
         currentView = 'studentId';
         hideAllSearchBars();
     }
+
+    // Setup search listeners
+    setupSearchListeners();
+
+    // Setup fullscreen modal close
+    const modal = document.getElementById('fullscreenModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.classList.contains('fullscreen-close')) {
+                closeFullscreen();
+            }
+        });
+    }
 });
 
-function hideAllSearchBars() {
-    const searchBars = ['searchBar', 'searchBarSub', 'searchBarTop'];
-    searchBars.forEach(barId => {
-        const bar = document.getElementById(barId);
-        if (bar) bar.classList.add('hidden');
-    });
-}
-
 // ============================================
-// STUDENT REGISTRATION
+// 👤 STUDENT REGISTRATION
 // ============================================
 async function registerStudent(event) {
     if (event) event.preventDefault();
 
-    const firstName = document.getElementById('firstNameInput').value.trim();
-    const lastName = document.getElementById('lastNameInput').value.trim();
-    const email = document.getElementById('emailInput').value.trim();
-    const grade = document.getElementById('gradeInput').value.trim();
-    const schoolName = document.getElementById('schoolInput').value.trim();
+    const firstName = document.getElementById('firstNameInput')?.value.trim() || '';
+    const lastName = document.getElementById('lastNameInput')?.value.trim() || '';
+    const email = document.getElementById('emailInput')?.value.trim() || '';
+    const grade = document.getElementById('gradeInput')?.value.trim() || '';
+    const schoolName = document.getElementById('schoolInput')?.value.trim() || '';
 
     if (!firstName || !lastName) {
         alert("Please enter your first name and last name");
         return;
     }
 
-    const btn = event.target;
-    btn.disabled = true;
-    btn.textContent = "Setting up...";
+    const btn = event?.target;
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Setting up...";
+    }
 
     try {
         const res = await fetch(`${API_BASE}/api/register-student`, {
@@ -88,32 +99,46 @@ async function registerStudent(event) {
             studentEmail = data.student.email || '';
             studentGrade = data.student.grade || '';
 
-            // Save to localStorage for persistence
-            localStorage.setItem('p2p_student_number', studentNumber);
-            localStorage.setItem('p2p_name', studentName);
-            localStorage.setItem('p2p_email', studentEmail);
-            localStorage.setItem('p2p_grade', studentGrade);
+            // ✅ Save to BOTH localStorage (persistent) and sessionStorage (tab navigation)
+            saveStudentToStorage();
 
             if (data.message && data.message.includes('created')) {
-                alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}\nPlease save this ID for future logins.`);
+                alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}`);
             }
 
             loadGrades();
         } else {
             alert("Error: " + data.error);
-            btn.disabled = false;
-            btn.textContent = "Start Practicing →";
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = "Start Practicing →";
+            }
         }
     } catch (e) {
         console.error("Register error:", e);
         alert("Connection error. Please try again.");
-        btn.disabled = false;
-        btn.textContent = "Start Practicing →";
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "Start Practicing →";
+        }
     }
 }
 
+// Save student to both storage types
+function saveStudentToStorage() {
+    localStorage.setItem('p2p_student_number', studentNumber);
+    localStorage.setItem('p2p_name', studentName);
+    localStorage.setItem('p2p_email', studentEmail);
+    localStorage.setItem('p2p_grade', studentGrade);
+
+    sessionStorage.setItem('p2p_student_number', studentNumber);
+    sessionStorage.setItem('p2p_name', studentName);
+    sessionStorage.setItem('p2p_email', studentEmail);
+    sessionStorage.setItem('p2p_grade', studentGrade);
+}
+
 // ============================================
-// VERIFY STUDENT
+// ✅ VERIFY STUDENT & LOAD
 // ============================================
 async function verifyStudentAndLoad() {
     try {
@@ -128,27 +153,36 @@ async function verifyStudentAndLoad() {
             studentName = `${data.student.first_name} ${data.student.last_name}`;
             studentEmail = data.student.email || '';
             studentGrade = data.student.grade || '';
-            localStorage.setItem('p2p_name', studentName);
-            localStorage.setItem('p2p_email', studentEmail);
-            localStorage.setItem('p2p_grade', studentGrade);
+            saveStudentToStorage();
             loadGrades();
         } else {
-            // Student not found, clear storage and show registration
-            localStorage.clear();
-            studentNumber = '';
+            clearStudentStorage();
             showView('studentIdView');
             currentView = 'studentId';
             hideAllSearchBars();
         }
     } catch (e) {
         console.error("Verify error:", e);
-        // Try to load grades anyway, but show error if needed
+        // Still try to load grades in case of network glitch
         loadGrades();
     }
 }
 
+// Clear all student storage
+function clearStudentStorage() {
+    localStorage.removeItem('p2p_student_number');
+    localStorage.removeItem('p2p_name');
+    localStorage.removeItem('p2p_email');
+    localStorage.removeItem('p2p_grade');
+    sessionStorage.clear();
+    studentNumber = '';
+    studentName = '';
+    studentEmail = '';
+    studentGrade = '';
+}
+
 // ============================================
-// LOAD GRADES
+// 📚 LOAD GRADES
 // ============================================
 async function loadGrades(searchQuery = '') {
     showView('gradesView');
@@ -163,41 +197,33 @@ async function loadGrades(searchQuery = '') {
     }
 
     const container = document.getElementById('gradesList');
-    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
+    if (!container) return;
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading grades...</div>';
 
     try {
         let url = `${API_BASE}/api/grades`;
+        if (searchQuery) url += `?search=${encodeURIComponent(searchQuery)}`;
+
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.grades && data.grades.length > 0) {
-            let filtered = data.grades;
-            if (searchQuery) {
-                filtered = data.grades.filter(g =>
-                    g.grade_name.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
+            container.innerHTML = data.grades.map(g => `
+        <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${escapeHtml(g.grade_name)}">
+          <h4>${escapeHtml(g.grade_name)}</h4>
+          <p>Practice questions</p>
+        </div>
+      `).join('');
 
-            if (filtered.length > 0) {
-                container.innerHTML = filtered.map(g => `
-                    <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${escapeHtml(g.grade_name)}">
-                        <h4>${escapeHtml(g.grade_name)}</h4>
-                        <p>Practice questions</p>
-                    </div>
-                `).join('');
-
-                // Event delegation for grade clicks
-                container.onclick = (e) => {
-                    const card = e.target.closest('.grade-card');
-                    if (card) {
-                        const gradeId = card.dataset.gradeId;
-                        const gradeName = card.dataset.gradeName;
-                        selectGrade(gradeId, gradeName);
-                    }
-                };
-            } else {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching grades found</div>';
-            }
+            // Event delegation for grade clicks
+            container.onclick = (e) => {
+                const card = e.target.closest('.grade-card');
+                if (card) {
+                    const gradeId = card.dataset.gradeId;
+                    const gradeName = card.dataset.gradeName;
+                    selectGrade(gradeId, gradeName);
+                }
+            };
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No grades found</div>';
         }
@@ -208,23 +234,29 @@ async function loadGrades(searchQuery = '') {
 }
 
 // ============================================
-// SELECT GRADE
+// 🎯 SELECT GRADE
 // ============================================
-async function selectGrade(gradeId, gradeName) {
+function selectGrade(gradeId, gradeName) {
     selectedGradeId = gradeId;
     selectedGradeName = gradeName;
+    selectedSubjectId = null;
+    selectedSubjectName = null;
+    selectedTopicId = null;
+
     showView('subjectsView');
     currentView = 'subjects';
     currentSearchQuery = '';
+
     loadSubjects(gradeId);
 }
 
 // ============================================
-// LOAD SUBJECTS
+// 📖 LOAD SUBJECTS
 // ============================================
 async function loadSubjects(gradeId, searchQuery = '') {
     const container = document.getElementById('subjectsList');
-    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
+    if (!container) return;
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading subjects...</div>';
 
     currentSearchQuery = searchQuery;
 
@@ -237,37 +269,28 @@ async function loadSubjects(gradeId, searchQuery = '') {
 
     try {
         let url = `${API_BASE}/api/subjects?grade_id=${gradeId}`;
+        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.subjects && data.subjects.length > 0) {
-            let filtered = data.subjects;
-            if (searchQuery) {
-                filtered = data.subjects.filter(s =>
-                    s.subject_name.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
+            container.innerHTML = data.subjects.map(s => `
+        <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${escapeHtml(s.subject_name)}">
+          <h4>${escapeHtml(s.subject_name)}</h4>
+          <p>${s.description ? escapeHtml(s.description.substring(0, 60)) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
+        </div>
+      `).join('');
 
-            if (filtered.length > 0) {
-                container.innerHTML = filtered.map(s => `
-                    <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${escapeHtml(s.subject_name)}">
-                        <h4>${escapeHtml(s.subject_name)}</h4>
-                        <p>${s.description ? escapeHtml(s.description.substring(0, 60)) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
-                    </div>
-                `).join('');
-
-                // Event delegation for subject clicks
-                container.onclick = (e) => {
-                    const card = e.target.closest('.subject-card');
-                    if (card) {
-                        const subjectId = card.dataset.subjectId;
-                        const subjectName = card.dataset.subjectName;
-                        selectSubject(subjectId, subjectName);
-                    }
-                };
-            } else {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching subjects found</div>';
-            }
+            // Event delegation for subject clicks
+            container.onclick = (e) => {
+                const card = e.target.closest('.subject-card');
+                if (card) {
+                    const subjectId = card.dataset.subjectId;
+                    const subjectName = card.dataset.subjectName;
+                    selectSubject(subjectId, subjectName);
+                }
+            };
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No subjects found</div>';
         }
@@ -278,28 +301,32 @@ async function loadSubjects(gradeId, searchQuery = '') {
 }
 
 // ============================================
-// SELECT SUBJECT
+// 🎯 SELECT SUBJECT
 // ============================================
-async function selectSubject(subjectId, subjectName) {
+function selectSubject(subjectId, subjectName) {
     selectedSubjectId = subjectId;
     selectedSubjectName = subjectName;
+    selectedTopicId = null;
+
     showView('topicsView');
     currentView = 'topics';
     currentSearchQuery = '';
+
     loadTopics(subjectId);
 }
 
 // ============================================
-// LOAD TOPICS - FIXED: Properly loads and displays topic intro and media
+// 📚 LOAD TOPICS - ✅ FIXED: Proper encoding for media data
 // ============================================
 async function loadTopics(subjectId, searchQuery = '') {
     const container = document.getElementById('topicsList');
-    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
+    if (!container) return;
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading topics...</div>';
 
-    // Reset intro and media sections
-    const topicIntroEl = document.getElementById('topicIntro');
+    // Hide intro/media sections initially
+    const topicIntro = document.getElementById('topicIntro');
     const topicMediaSection = document.getElementById('topicMediaSection');
-    if (topicIntroEl) topicIntroEl.classList.add('hidden');
+    if (topicIntro) topicIntro.classList.add('hidden');
     if (topicMediaSection) topicMediaSection.classList.add('hidden');
 
     currentSearchQuery = searchQuery;
@@ -313,53 +340,53 @@ async function loadTopics(subjectId, searchQuery = '') {
 
     try {
         let url = `${API_BASE}/api/topics?subject_id=${subjectId}`;
+        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.topics && data.topics.length > 0) {
-            let filtered = data.topics;
-            if (searchQuery) {
-                filtered = data.topics.filter(t =>
-                    t.topic_name.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
+            container.innerHTML = data.topics.map(t => {
+                const mediaCount = t.media ? t.media.length : 0;
 
-            if (filtered.length > 0) {
-                container.innerHTML = filtered.map(t => {
-                    const mediaCount = t.media ? t.media.length : 0;
-                    return `
-                        <div class="selection-item topic-card" 
-                             data-topic-id="${t.id}"
-                             data-topic-name="${escapeHtml(t.topic_name)}"
-                             data-topic-intro="${escapeHtml(t.intro || '')}"
-                             data-topic-media='${JSON.stringify(t.media || []).replace(/'/g, "&#39;")}'>
-                            <h4>${escapeHtml(t.topic_name)}</h4>
-                            <p>${escapeHtml(t.description ? t.description.substring(0, 70) : 'Start practicing')}${t.description && t.description.length > 70 ? '...' : ''}</p>
-                            ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
-                        </div>
-                    `;
-                }).join('');
+                // ✅ FIX: Use encodeURIComponent for JSON in data attributes
+                const safeIntro = encodeURIComponent(t.intro || '');
+                const safeName = encodeURIComponent(t.topic_name || '');
+                const safeMedia = encodeURIComponent(JSON.stringify(t.media || []));
 
-                // Event delegation for topic clicks
-                container.onclick = (e) => {
-                    const card = e.target.closest('.topic-card');
-                    if (card) {
-                        const topicId = parseInt(card.dataset.topicId);
-                        const topicName = card.dataset.topicName;
-                        const topicIntro = card.dataset.topicIntro;
-                        let topicMedia = [];
-                        try {
-                            topicMedia = JSON.parse(card.dataset.topicMedia.replace(/&#39;/g, "'")) || [];
-                        } catch (err) {
-                            console.error("Error parsing media:", err);
-                            topicMedia = [];
-                        }
-                        startQuiz(topicId, topicName, topicIntro, topicMedia);
+                return `
+          <div class="selection-item topic-card"
+               data-topic-id="${t.id}"
+               data-topic-name="${safeName}"
+               data-topic-intro="${safeIntro}"
+               data-topic-media="${safeMedia}">
+            <h4>${escapeHtml(t.topic_name)}</h4>
+            <p>${escapeHtml(t.description ? t.description.substring(0, 70) : 'Start practicing')}${t.description && t.description.length > 70 ? '...' : ''}</p>
+            ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
+          </div>
+        `;
+            }).join('');
+
+            // ✅ Event delegation for topic clicks - with proper decoding
+            container.onclick = (e) => {
+                const card = e.target.closest('.topic-card');
+                if (card) {
+                    const topicId = card.dataset.topicId;
+                    const topicName = decodeURIComponent(card.dataset.topicName || '');
+                    const topicIntro = decodeURIComponent(card.dataset.topicIntro || '');
+
+                    let topicMedia = [];
+                    try {
+                        topicMedia = JSON.parse(decodeURIComponent(card.dataset.topicMedia || '[]'));
+                    } catch (err) {
+                        console.error("Error parsing media:", err);
+                        topicMedia = [];
                     }
-                };
-            } else {
-                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching topics found</div>';
-            }
+
+                    startQuiz(topicId, topicName, topicIntro, topicMedia);
+                }
+            };
+
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No topics found</div>';
         }
@@ -370,77 +397,81 @@ async function loadTopics(subjectId, searchQuery = '') {
 }
 
 // ============================================
-// START QUIZ - FIXED: Properly displays topic intro and media
+// 🎮 START QUIZ - ✅ Handles null intro/media gracefully
 // ============================================
 async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     selectedTopicId = topicId;
-    currentTopicData = { intro: topicIntro, media: topicMedia };
-
     showView('quizView');
     currentView = 'quiz';
 
-    // Hide search bars
+    // Hide all search bars in quiz view
     hideAllSearchBars();
 
     // Display topic intro if available
     const introEl = document.getElementById('topicIntro');
     if (introEl) {
         if (topicIntro && topicIntro.trim()) {
-            introEl.innerHTML = `<strong>📖 ${topicName}</strong><br>${escapeHtml(topicIntro)}`;
+            introEl.textContent = topicIntro;
             introEl.classList.remove('hidden');
         } else {
             introEl.classList.add('hidden');
         }
     }
 
-    // Display topic media if available
+    // Display media section if available
     const mediaSection = document.getElementById('topicMediaSection');
     const mediaGrid = document.getElementById('topicMediaGrid');
 
-    if (mediaGrid) {
-        if (topicMedia && topicMedia.length > 0) {
-            mediaGrid.innerHTML = topicMedia.map((m, idx) => {
-                const safeCaption = escapeHtml(m.caption || '');
+    if (mediaGrid && topicMedia && topicMedia.length > 0) {
+        mediaGrid.innerHTML = topicMedia.map(m => {
+            const safeCaption = escapeHtml(m.caption || '');
+            const safeUrl = escapeHtml(m.media_url || '');
 
-                if (m.media_type === 'youtube') {
-                    const videoId = extractYouTubeId(m.media_url);
-                    if (videoId) {
-                        return `
-                            <div class="media-card" data-type="youtube" data-src="${videoId}" data-caption="${safeCaption}">
-                                <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${safeCaption}"></iframe>
-                                ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
-                            </div>
-                        `;
-                    }
-                } else if (m.media_type === 'image') {
+            if (m.media_type === 'youtube') {
+                const videoId = extractYouTubeId(m.media_url);
+                if (videoId) {
                     return `
-                        <div class="media-card" data-type="image" data-src="${escapeHtml(m.media_url)}" data-caption="${safeCaption}">
-                            <img src="${escapeHtml(m.media_url)}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'">
-                            ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
-                        </div>
-                    `;
+            <div class="media-card" data-type="youtube" data-src="${videoId}" data-caption="${safeCaption}" role="button" tabindex="0">
+              <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${safeCaption}" loading="lazy"></iframe>
+              <div class="play-icon">▶</div>
+              ${m.caption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
+            </div>
+          `;
                 }
-                return '';
-            }).join('');
+            } else if (m.media_type === 'image') {
+                return `
+          <div class="media-card" data-type="image" data-src="${safeUrl}" data-caption="${safeCaption}" role="button" tabindex="0">
+            <img src="${safeUrl}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'" loading="lazy">
+            ${m.caption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
+          </div>
+        `;
+            }
+            return '';
+        }).join('');
 
-            // Attach media click handlers
-            document.querySelectorAll('.media-card').forEach(card => {
-                card.onclick = (e) => {
-                    e.stopPropagation();
-                    const type = card.dataset.type;
-                    const src = card.dataset.src;
-                    const caption = card.dataset.caption;
-                    openFullscreen(type, src, caption);
-                };
-            });
+        // Add click handlers to media cards
+        document.querySelectorAll('.media-card').forEach(card => {
+            card.onclick = () => {
+                const type = card.dataset.type;
+                const src = card.dataset.src;
+                const caption = card.dataset.caption;
+                openFullscreen(type, src, caption);
+            };
+            // Keyboard accessibility
+            card.onkeydown = (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            };
+        });
 
-            if (mediaSection) mediaSection.classList.remove('hidden');
-        } else {
-            if (mediaSection) mediaSection.classList.add('hidden');
-        }
+        if (mediaSection) mediaSection.classList.remove('hidden');
+    } else {
+        if (mediaSection) mediaSection.classList.add('hidden');
     }
 
-    // Load questions
+    // Load questions for this topic
     try {
         const res = await fetch(`${API_BASE}/api/questions?topic_id=${topicId}`);
         const data = await res.json();
@@ -462,7 +493,7 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
 }
 
 // ============================================
-// SHOW QUESTION
+// ❓ SHOW QUESTION
 // ============================================
 function showQuestion() {
     const q = currentQuestions[currentQuestionIndex];
@@ -473,27 +504,31 @@ function showQuestion() {
 
     const answerList = document.getElementById('answerList');
     answerList.innerHTML = '';
+    selectedAnswer = null;
 
+    // Multiple choice / True-False
     if (q.question_type === 'multiple_choice' || q.question_type === 'true_false') {
         if (q.answers && q.answers.length > 0) {
             q.answers.forEach((ans) => {
                 const option = document.createElement('div');
                 option.className = 'answer-option';
                 option.innerHTML = `
-                    <input type="radio" name="answer" id="ans${ans.id}" value="${ans.id}" style="width:18px; height:18px;">
-                    <label for="ans${ans.id}" style="flex:1; cursor:pointer;">${escapeHtml(ans.answer_text)}</label>
-                `;
+          <input type="radio" name="answer" id="ans${ans.id}" value="${ans.id}" style="width:18px; height:18px;">
+          <label for="ans${ans.id}" style="flex:1; cursor:pointer;">${escapeHtml(ans.answer_text)}</label>
+        `;
                 option.onclick = () => selectAnswer(ans.id, option);
                 answerList.appendChild(option);
             });
         }
-    } else if (q.question_type === 'short_answer') {
+    }
+    // Short answer
+    else if (q.question_type === 'short_answer') {
         answerList.innerHTML = `
-            <textarea id="shortAnswerInput" placeholder="Type your answer..." style="width:100%; min-height:80px; padding:12px; border:2px solid #e1e5eb; border-radius:10px; font-size:1rem;"></textarea>
-        `;
+      <textarea id="shortAnswerInput" placeholder="Type your answer..." style="width:100%; min-height:80px; padding:12px; border:2px solid #e1e5eb; border-radius:10px; font-size:1rem;"></textarea>
+    `;
     }
 
-    selectedAnswer = null;
+    // Reset UI elements
     const hintBox = document.getElementById('hintBox');
     const explanationBox = document.getElementById('explanationBox');
     const hintBtn = document.getElementById('hintBtn');
@@ -512,7 +547,7 @@ function showQuestion() {
 }
 
 // ============================================
-// SELECT ANSWER
+// ✅ SELECT ANSWER
 // ============================================
 function selectAnswer(answerId, element) {
     document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
@@ -521,23 +556,23 @@ function selectAnswer(answerId, element) {
 }
 
 // ============================================
-// SHOW HINT
+// 💡 SHOW HINT
 // ============================================
 function showHint() {
     const q = currentQuestions[currentQuestionIndex];
     if (q && q.hints) {
         const hintBox = document.getElementById('hintBox');
+        const hintBtn = document.getElementById('hintBtn');
         if (hintBox) {
             hintBox.textContent = '💡 ' + q.hints;
             hintBox.classList.remove('hidden');
         }
-        const hintBtn = document.getElementById('hintBtn');
         if (hintBtn) hintBtn.style.display = 'none';
     }
 }
 
 // ============================================
-// SUBMIT ANSWER
+// 📤 SUBMIT ANSWER
 // ============================================
 async function submitAnswer() {
     const q = currentQuestions[currentQuestionIndex];
@@ -586,30 +621,35 @@ async function submitAnswer() {
             quizStats.attempted++;
             if (result.is_correct) {
                 quizStats.correct++;
-                quizStats.points += result.points_earned;
+                quizStats.points += result.points_earned || 0;
             }
 
-            // Show correct/incorrect styling
+            // Visual feedback for answers
             const answerOptions = document.querySelectorAll('.answer-option');
             answerOptions.forEach(opt => {
                 const input = opt.querySelector('input');
-                if (input && input.type === 'radio') {
+                if (input) {
                     const optId = parseInt(input.value);
-                    const correctAnswer = q.answers ? q.answers.find(a => a.is_correct && a.id === optId) : null;
-                    if (correctAnswer) opt.classList.add('correct');
-                    else if (optId === selectedAnswer && !result.is_correct) opt.classList.add('incorrect');
+                    if (q.answers) {
+                        const correctAnswer = q.answers.find(a => a.is_correct && a.id === optId);
+                        if (correctAnswer) opt.classList.add('correct');
+                        else if (optId === selectedAnswer && !result.is_correct) opt.classList.add('incorrect');
+                    }
                 }
             });
 
+            // Show explanation if available
             const explanationBox = document.getElementById('explanationBox');
             if (result.explanation && explanationBox) {
                 explanationBox.textContent = '✅ ' + result.explanation;
                 explanationBox.classList.remove('hidden');
             }
 
+            // Show next button, hide submit
             const nextBtn = document.getElementById('nextBtn');
             if (nextBtn) nextBtn.classList.remove('hidden');
             if (submitBtn) submitBtn.classList.add('hidden');
+
         } else {
             alert("Error: " + result.error);
             if (submitBtn) {
@@ -628,7 +668,7 @@ async function submitAnswer() {
 }
 
 // ============================================
-// NEXT QUESTION
+// ➡️ NEXT QUESTION
 // ============================================
 function nextQuestion() {
     currentQuestionIndex++;
@@ -640,12 +680,11 @@ function nextQuestion() {
 }
 
 // ============================================
-// SHOW RESULTS
+// 🏆 SHOW RESULTS
 // ============================================
 function showResults() {
     showView('resultsView');
     currentView = 'results';
-
     hideAllSearchBars();
 
     const total = currentQuestions.length;
@@ -664,51 +703,52 @@ function showResults() {
 }
 
 // ============================================
-// NAVIGATION - Fixed back button functionality
+// 🔙 NAVIGATION - All back buttons working
 // ============================================
 function goBack(view) {
-    console.log("goBack called with view:", view);
-
     if (view === 'grades') {
-        // Clear all selections and go back to grades
+        // Reset all selections
         selectedGradeId = null;
         selectedGradeName = null;
         selectedSubjectId = null;
         selectedSubjectName = null;
         selectedTopicId = null;
-        currentTopicData = null;
         loadGrades();
-    } else if (view === 'subjects') {
-        // Go back to subjects list
+    }
+    else if (view === 'subjects') {
         if (selectedGradeId) {
             selectedSubjectId = null;
             selectedSubjectName = null;
             selectedTopicId = null;
-            currentTopicData = null;
             loadSubjects(selectedGradeId);
         } else {
-            // If no grade selected, go back to grades
             loadGrades();
         }
-    } else if (view === 'topics') {
-        // Go back to topics list
+    }
+    else if (view === 'topics') {
         if (selectedSubjectId) {
             selectedTopicId = null;
-            currentTopicData = null;
             loadTopics(selectedSubjectId);
         } else if (selectedGradeId) {
-            // If no subject selected but grade exists, go to subjects
             loadSubjects(selectedGradeId);
         } else {
-            // Fallback to grades
+            loadGrades();
+        }
+    }
+    else if (view === 'quiz') {
+        if (selectedTopicId) {
+            loadTopics(selectedSubjectId);
+        } else if (selectedSubjectId) {
+            loadSubjects(selectedGradeId);
+        } else if (selectedGradeId) {
             loadGrades();
         }
     }
 }
 
+// Restart practice from current level
 function restartPractice() {
     selectedTopicId = null;
-    currentTopicData = null;
     if (selectedSubjectId) {
         loadTopics(selectedSubjectId);
     } else if (selectedGradeId) {
@@ -719,52 +759,97 @@ function restartPractice() {
 }
 
 // ============================================
-// SEARCH - Fixed for all views
+// 🔍 SEARCH FUNCTIONALITY
 // ============================================
-function performSearch() {
-    let query = '';
+function setupSearchListeners() {
+    // Grades search
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch('grades');
+        });
+    }
 
-    if (currentView === 'grades') {
-        query = document.getElementById('searchInput').value.trim();
-        loadGrades(query);
-    } else if (currentView === 'subjects' && selectedGradeId) {
-        query = document.getElementById('searchInputSub').value.trim();
-        loadSubjects(selectedGradeId, query);
-    } else if (currentView === 'topics' && selectedSubjectId) {
-        query = document.getElementById('searchInputTop').value.trim();
-        loadTopics(selectedSubjectId, query);
+    // Subjects search
+    const searchInputSub = document.getElementById('searchInputSub');
+    if (searchInputSub) {
+        searchInputSub.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch('subjects');
+        });
+    }
+
+    // Topics search
+    const searchInputTop = document.getElementById('searchInputTop');
+    if (searchInputTop) {
+        searchInputTop.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch('topics');
+        });
     }
 }
 
+function performSearch(view) {
+    let query = '';
+
+    if (view === 'grades' || currentView === 'grades') {
+        query = document.getElementById('searchInput')?.value.trim() || '';
+        loadGrades(query);
+    }
+    else if (view === 'subjects' || currentView === 'subjects') {
+        query = document.getElementById('searchInputSub')?.value.trim() || '';
+        if (selectedGradeId) loadSubjects(selectedGradeId, query);
+    }
+    else if (view === 'topics' || currentView === 'topics') {
+        query = document.getElementById('searchInputTop')?.value.trim() || '';
+        if (selectedSubjectId) loadTopics(selectedSubjectId, query);
+    }
+}
+
+// Hide all search bars
+function hideAllSearchBars() {
+    ['searchBar', 'searchBarSub', 'searchBarTop'].forEach(barId => {
+        const bar = document.getElementById(barId);
+        if (bar) bar.classList.add('hidden');
+    });
+}
+
 // ============================================
-// FULLSCREEN MODAL - FIXED
+// 🖼️ FULLSCREEN MODAL
 // ============================================
 function openFullscreen(type, src, caption) {
     const modal = document.getElementById('fullscreenModal');
     const content = document.getElementById('fullscreenContent');
 
+    if (!modal || !content) return;
+
     if (type === 'youtube') {
         content.innerHTML = `<iframe src="https://www.youtube.com/embed/${src}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:90vw; height:80vh; border-radius:8px;"></iframe>`;
     } else if (type === 'image') {
-        content.innerHTML = `<img src="${src}" alt="${caption || ''}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
+        content.innerHTML = `<img src="${escapeHtml(src)}" alt="${escapeHtml(caption)}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
     }
 
-    if (modal) modal.classList.add('active');
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-function closeFullscreen(event) {
-    if (event && (event.target.id === 'fullscreenModal' || event.target.className === 'fullscreen-close' || !event)) {
-        const modal = document.getElementById('fullscreenModal');
-        const content = document.getElementById('fullscreenContent');
-        if (modal) modal.classList.remove('active');
-        if (content) content.innerHTML = '';
-        document.body.style.overflow = 'auto';
-    }
+function closeFullscreen() {
+    const modal = document.getElementById('fullscreenModal');
+    const content = document.getElementById('fullscreenContent');
+
+    if (modal) modal.classList.remove('active');
+    if (content) content.innerHTML = '';
+    document.body.style.overflow = 'auto';
 }
 
 // ============================================
-// UTILITIES
+// 🔐 LOGOUT
+// ============================================
+function handleLogout() {
+    clearStudentStorage();
+    window.location.href = 'login.html';
+}
+
+// ============================================
+// 🎨 VIEW MANAGEMENT
 // ============================================
 function showView(viewId) {
     const views = ['studentIdView', 'gradesView', 'subjectsView', 'topicsView', 'quizView', 'resultsView'];
@@ -777,11 +862,14 @@ function showView(viewId) {
     window.scrollTo(0, 0);
 }
 
+// ============================================
+// 🔧 UTILITIES
+// ============================================
 function extractYouTubeId(url) {
     if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]{11}).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return (match && match[2]?.length === 11) ? match[2] : null;
 }
 
 function escapeHtml(str) {
@@ -791,10 +879,10 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+        .replace(/'/g, '&#039;');
 }
 
-function handleLogout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
+// Export for testing (optional)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { escapeHtml, extractYouTubeId };
 }

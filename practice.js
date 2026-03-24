@@ -1,16 +1,16 @@
 // ============================================
-// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL)
+// PEER-2-PEER PRO: STUDENT PRACTICE QUESTIONS (FINAL - FIXED)
 // Endpoint: https://learneranswer.buhle-1ce.workers.dev
-// FIXED: Navigation, topic loading, and back button issues
+// FIXED: Topic intro, media display, student persistence, navigation
 // ============================================
 
 const API_BASE = "https://learneranswer.buhle-1ce.workers.dev";
 
-// Student identity from sessionStorage
-let studentNumber = sessionStorage.getItem('p2p_student_number') || '';
-let studentName = sessionStorage.getItem('p2p_name') || '';
-let studentEmail = sessionStorage.getItem('p2p_email') || '';
-let studentGrade = sessionStorage.getItem('p2p_grade') || '';
+// Student identity from localStorage (persistent across sessions)
+let studentNumber = localStorage.getItem('p2p_student_number') || '';
+let studentName = localStorage.getItem('p2p_name') || '';
+let studentEmail = localStorage.getItem('p2p_email') || '';
+let studentGrade = localStorage.getItem('p2p_grade') || '';
 
 // Navigation state
 let currentView = 'studentId';
@@ -19,6 +19,7 @@ let selectedGradeName = null;
 let selectedSubjectId = null;
 let selectedSubjectName = null;
 let selectedTopicId = null;
+let currentTopicData = null; // Store full topic data including intro and media
 
 // Quiz state
 let currentQuestions = [];
@@ -33,20 +34,23 @@ let currentSearchQuery = '';
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Global error handler for debugging
-    window.addEventListener('error', (e) => {
-        console.error('🚨 Global error:', e.message, 'at', e.filename + ':' + e.lineno);
-    });
-
+    // Check if student exists in localStorage
     if (studentNumber) {
         verifyStudentAndLoad();
     } else {
         showView('studentIdView');
         currentView = 'studentId';
-        const searchBar = document.getElementById('searchBar');
-        if (searchBar) searchBar.classList.add('hidden');
+        hideAllSearchBars();
     }
 });
+
+function hideAllSearchBars() {
+    const searchBars = ['searchBar', 'searchBarSub', 'searchBarTop'];
+    searchBars.forEach(barId => {
+        const bar = document.getElementById(barId);
+        if (bar) bar.classList.add('hidden');
+    });
+}
 
 // ============================================
 // STUDENT REGISTRATION
@@ -84,13 +88,14 @@ async function registerStudent(event) {
             studentEmail = data.student.email || '';
             studentGrade = data.student.grade || '';
 
-            sessionStorage.setItem('p2p_student_number', studentNumber);
-            sessionStorage.setItem('p2p_name', studentName);
-            sessionStorage.setItem('p2p_email', studentEmail);
-            sessionStorage.setItem('p2p_grade', studentGrade);
+            // Save to localStorage for persistence
+            localStorage.setItem('p2p_student_number', studentNumber);
+            localStorage.setItem('p2p_name', studentName);
+            localStorage.setItem('p2p_email', studentEmail);
+            localStorage.setItem('p2p_grade', studentGrade);
 
             if (data.message && data.message.includes('created')) {
-                alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}`);
+                alert(`Welcome ${data.student.first_name}! Your student ID is: ${studentNumber}\nPlease save this ID for future logins.`);
             }
 
             loadGrades();
@@ -123,20 +128,21 @@ async function verifyStudentAndLoad() {
             studentName = `${data.student.first_name} ${data.student.last_name}`;
             studentEmail = data.student.email || '';
             studentGrade = data.student.grade || '';
-            sessionStorage.setItem('p2p_name', studentName);
-            sessionStorage.setItem('p2p_email', studentEmail);
-            sessionStorage.setItem('p2p_grade', studentGrade);
+            localStorage.setItem('p2p_name', studentName);
+            localStorage.setItem('p2p_email', studentEmail);
+            localStorage.setItem('p2p_grade', studentGrade);
             loadGrades();
         } else {
-            sessionStorage.clear();
+            // Student not found, clear storage and show registration
+            localStorage.clear();
             studentNumber = '';
             showView('studentIdView');
             currentView = 'studentId';
-            const searchBar = document.getElementById('searchBar');
-            if (searchBar) searchBar.classList.add('hidden');
+            hideAllSearchBars();
         }
     } catch (e) {
         console.error("Verify error:", e);
+        // Try to load grades anyway, but show error if needed
         loadGrades();
     }
 }
@@ -161,27 +167,37 @@ async function loadGrades(searchQuery = '') {
 
     try {
         let url = `${API_BASE}/api/grades`;
-        if (searchQuery) url += `?search=${encodeURIComponent(searchQuery)}`;
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.grades && data.grades.length > 0) {
-            container.innerHTML = data.grades.map(g => `
-                <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${escapeHtml(g.grade_name)}">
-                    <h4>${escapeHtml(g.grade_name)}</h4>
-                    <p>Practice questions</p>
-                </div>
-            `).join('');
+            let filtered = data.grades;
+            if (searchQuery) {
+                filtered = data.grades.filter(g =>
+                    g.grade_name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
 
-            // Event delegation for grade clicks
-            container.onclick = (e) => {
-                const card = e.target.closest('.grade-card');
-                if (card) {
-                    const gradeId = card.dataset.gradeId;
-                    const gradeName = card.dataset.gradeName;
-                    selectGrade(gradeId, gradeName);
-                }
-            };
+            if (filtered.length > 0) {
+                container.innerHTML = filtered.map(g => `
+                    <div class="selection-item grade-card" data-grade-id="${g.id}" data-grade-name="${escapeHtml(g.grade_name)}">
+                        <h4>${escapeHtml(g.grade_name)}</h4>
+                        <p>Practice questions</p>
+                    </div>
+                `).join('');
+
+                // Event delegation for grade clicks
+                container.onclick = (e) => {
+                    const card = e.target.closest('.grade-card');
+                    if (card) {
+                        const gradeId = card.dataset.gradeId;
+                        const gradeName = card.dataset.gradeName;
+                        selectGrade(gradeId, gradeName);
+                    }
+                };
+            } else {
+                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching grades found</div>';
+            }
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No grades found</div>';
         }
@@ -221,27 +237,37 @@ async function loadSubjects(gradeId, searchQuery = '') {
 
     try {
         let url = `${API_BASE}/api/subjects?grade_id=${gradeId}`;
-        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.subjects && data.subjects.length > 0) {
-            container.innerHTML = data.subjects.map(s => `
-                <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${escapeHtml(s.subject_name)}">
-                    <h4>${escapeHtml(s.subject_name)}</h4>
-                    <p>${s.description ? escapeHtml(s.description.substring(0, 60)) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
-                </div>
-            `).join('');
+            let filtered = data.subjects;
+            if (searchQuery) {
+                filtered = data.subjects.filter(s =>
+                    s.subject_name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
 
-            // Event delegation for subject clicks
-            container.onclick = (e) => {
-                const card = e.target.closest('.subject-card');
-                if (card) {
-                    const subjectId = card.dataset.subjectId;
-                    const subjectName = card.dataset.subjectName;
-                    selectSubject(subjectId, subjectName);
-                }
-            };
+            if (filtered.length > 0) {
+                container.innerHTML = filtered.map(s => `
+                    <div class="selection-item subject-card" data-subject-id="${s.id}" data-subject-name="${escapeHtml(s.subject_name)}">
+                        <h4>${escapeHtml(s.subject_name)}</h4>
+                        <p>${s.description ? escapeHtml(s.description.substring(0, 60)) : 'Practice questions'}${s.description && s.description.length > 60 ? '...' : ''}</p>
+                    </div>
+                `).join('');
+
+                // Event delegation for subject clicks
+                container.onclick = (e) => {
+                    const card = e.target.closest('.subject-card');
+                    if (card) {
+                        const subjectId = card.dataset.subjectId;
+                        const subjectName = card.dataset.subjectName;
+                        selectSubject(subjectId, subjectName);
+                    }
+                };
+            } else {
+                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching subjects found</div>';
+            }
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No subjects found</div>';
         }
@@ -264,15 +290,16 @@ async function selectSubject(subjectId, subjectName) {
 }
 
 // ============================================
-// LOAD TOPICS - FIXED: Safe data attributes + event delegation
+// LOAD TOPICS - FIXED: Properly loads and displays topic intro and media
 // ============================================
 async function loadTopics(subjectId, searchQuery = '') {
     const container = document.getElementById('topicsList');
     container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">Loading...</div>';
 
-    const topicIntro = document.getElementById('topicIntro');
+    // Reset intro and media sections
+    const topicIntroEl = document.getElementById('topicIntro');
     const topicMediaSection = document.getElementById('topicMediaSection');
-    if (topicIntro) topicIntro.classList.add('hidden');
+    if (topicIntroEl) topicIntroEl.classList.add('hidden');
     if (topicMediaSection) topicMediaSection.classList.add('hidden');
 
     currentSearchQuery = searchQuery;
@@ -286,51 +313,53 @@ async function loadTopics(subjectId, searchQuery = '') {
 
     try {
         let url = `${API_BASE}/api/topics?subject_id=${subjectId}`;
-        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.success && data.topics && data.topics.length > 0) {
-            // Build HTML with safe data-* attributes
-            container.innerHTML = data.topics.map(t => {
-                const mediaCount = t.media ? t.media.length : 0;
-                // Escape for HTML attributes
-                const safeIntro = (t.intro || '').replace(/"/g, '&quot;').replace(/\n/g, '\\n');
-                const safeName = (t.topic_name || '').replace(/"/g, '&quot;');
-                const safeDescription = (t.description || '').replace(/"/g, '&quot;');
-                const safeMedia = JSON.stringify(t.media || []).replace(/"/g, '&quot;');
+            let filtered = data.topics;
+            if (searchQuery) {
+                filtered = data.topics.filter(t =>
+                    t.topic_name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
 
-                return `
-                    <div class="selection-item topic-card"
-                         data-topic-id="${t.id}"
-                         data-topic-name="${safeName}"
-                         data-topic-intro="${safeIntro}"
-                         data-topic-media="${safeMedia}">
-                        <h4>${escapeHtml(t.topic_name)}</h4>
-                        <p>${escapeHtml(t.description ? t.description.substring(0, 70) : 'Start practicing')}${t.description && t.description.length > 70 ? '...' : ''}</p>
-                        ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
-                    </div>
-                `;
-            }).join('');
+            if (filtered.length > 0) {
+                container.innerHTML = filtered.map(t => {
+                    const mediaCount = t.media ? t.media.length : 0;
+                    return `
+                        <div class="selection-item topic-card" 
+                             data-topic-id="${t.id}"
+                             data-topic-name="${escapeHtml(t.topic_name)}"
+                             data-topic-intro="${escapeHtml(t.intro || '')}"
+                             data-topic-media='${JSON.stringify(t.media || []).replace(/'/g, "&#39;")}'>
+                            <h4>${escapeHtml(t.topic_name)}</h4>
+                            <p>${escapeHtml(t.description ? t.description.substring(0, 70) : 'Start practicing')}${t.description && t.description.length > 70 ? '...' : ''}</p>
+                            ${mediaCount > 0 ? `<small style="color:#32cd32; display:block; margin-top:8px;">🎬 ${mediaCount} resource${mediaCount > 1 ? 's' : ''}</small>` : ''}
+                        </div>
+                    `;
+                }).join('');
 
-            // Event delegation for topic clicks
-            container.onclick = (e) => {
-                const card = e.target.closest('.topic-card');
-                if (card) {
-                    const topicId = card.dataset.topicId;
-                    const topicName = card.dataset.topicName;
-                    const topicIntro = card.dataset.topicIntro;
-                    let topicMedia = [];
-                    try {
-                        topicMedia = JSON.parse(card.dataset.topicMedia || '[]');
-                    } catch (err) {
-                        console.error("Error parsing media:", err);
-                        topicMedia = [];
+                // Event delegation for topic clicks
+                container.onclick = (e) => {
+                    const card = e.target.closest('.topic-card');
+                    if (card) {
+                        const topicId = parseInt(card.dataset.topicId);
+                        const topicName = card.dataset.topicName;
+                        const topicIntro = card.dataset.topicIntro;
+                        let topicMedia = [];
+                        try {
+                            topicMedia = JSON.parse(card.dataset.topicMedia.replace(/&#39;/g, "'")) || [];
+                        } catch (err) {
+                            console.error("Error parsing media:", err);
+                            topicMedia = [];
+                        }
+                        startQuiz(topicId, topicName, topicIntro, topicMedia);
                     }
-                    startQuiz(topicId, topicName, topicIntro, topicMedia);
-                }
-            };
-
+                };
+            } else {
+                container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No matching topics found</div>';
+            }
         } else {
             container.innerHTML = '<div style="padding:40px; text-align:center; color:#666;">No topics found</div>';
         }
@@ -341,38 +370,37 @@ async function loadTopics(subjectId, searchQuery = '') {
 }
 
 // ============================================
-// START QUIZ - FIXED: Null intro handling
+// START QUIZ - FIXED: Properly displays topic intro and media
 // ============================================
 async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
     selectedTopicId = topicId;
+    currentTopicData = { intro: topicIntro, media: topicMedia };
+
     showView('quizView');
     currentView = 'quiz';
 
-    // Hide search bars when in quiz
-    const searchBars = ['searchBar', 'searchBarSub', 'searchBarTop'];
-    searchBars.forEach(barId => {
-        const bar = document.getElementById(barId);
-        if (bar) bar.classList.add('hidden');
-    });
+    // Hide search bars
+    hideAllSearchBars();
 
-    // Safe intro display - handles null/empty
+    // Display topic intro if available
     const introEl = document.getElementById('topicIntro');
     if (introEl) {
         if (topicIntro && topicIntro.trim()) {
-            introEl.textContent = topicIntro;
+            introEl.innerHTML = `<strong>📖 ${topicName}</strong><br>${escapeHtml(topicIntro)}`;
             introEl.classList.remove('hidden');
         } else {
             introEl.classList.add('hidden');
         }
     }
 
-    // Media section
+    // Display topic media if available
     const mediaSection = document.getElementById('topicMediaSection');
-    if (topicMedia && topicMedia.length > 0) {
-        const mediaGrid = document.getElementById('topicMediaGrid');
-        if (mediaGrid) {
-            mediaGrid.innerHTML = topicMedia.map(m => {
-                const safeCaption = (m.caption || '').replace(/"/g, '&quot;');
+    const mediaGrid = document.getElementById('topicMediaGrid');
+
+    if (mediaGrid) {
+        if (topicMedia && topicMedia.length > 0) {
+            mediaGrid.innerHTML = topicMedia.map((m, idx) => {
+                const safeCaption = escapeHtml(m.caption || '');
 
                 if (m.media_type === 'youtube') {
                     const videoId = extractYouTubeId(m.media_url);
@@ -380,25 +408,25 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
                         return `
                             <div class="media-card" data-type="youtube" data-src="${videoId}" data-caption="${safeCaption}">
                                 <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen title="${safeCaption}"></iframe>
-                                <div class="play-icon">▶</div>
-                                ${m.caption ? `<div class="media-overlay">${escapeHtml(m.caption)}</div>` : ''}
+                                ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
                             </div>
                         `;
                     }
                 } else if (m.media_type === 'image') {
                     return `
-                        <div class="media-card" data-type="image" data-src="${m.media_url}" data-caption="${safeCaption}">
-                            <img src="${m.media_url}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'">
-                            ${m.caption ? `<div class="media-overlay">${escapeHtml(m.caption)}</div>` : ''}
+                        <div class="media-card" data-type="image" data-src="${escapeHtml(m.media_url)}" data-caption="${safeCaption}">
+                            <img src="${escapeHtml(m.media_url)}" alt="${safeCaption}" onerror="this.parentElement.style.display='none'">
+                            ${safeCaption ? `<div class="media-overlay">${safeCaption}</div>` : ''}
                         </div>
                     `;
                 }
                 return '';
             }).join('');
 
-            // Media click handlers
+            // Attach media click handlers
             document.querySelectorAll('.media-card').forEach(card => {
-                card.onclick = () => {
+                card.onclick = (e) => {
+                    e.stopPropagation();
                     const type = card.dataset.type;
                     const src = card.dataset.src;
                     const caption = card.dataset.caption;
@@ -407,9 +435,9 @@ async function startQuiz(topicId, topicName, topicIntro, topicMedia) {
             });
 
             if (mediaSection) mediaSection.classList.remove('hidden');
+        } else {
+            if (mediaSection) mediaSection.classList.add('hidden');
         }
-    } else {
-        if (mediaSection) mediaSection.classList.add('hidden');
     }
 
     // Load questions
@@ -478,6 +506,7 @@ function showQuestion() {
     if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.classList.remove('hidden');
+        submitBtn.textContent = "Submit Answer";
     }
     if (nextBtn) nextBtn.classList.add('hidden');
 }
@@ -498,11 +527,11 @@ function showHint() {
     const q = currentQuestions[currentQuestionIndex];
     if (q && q.hints) {
         const hintBox = document.getElementById('hintBox');
-        const hintBtn = document.getElementById('hintBtn');
         if (hintBox) {
             hintBox.textContent = '💡 ' + q.hints;
             hintBox.classList.remove('hidden');
         }
+        const hintBtn = document.getElementById('hintBtn');
         if (hintBtn) hintBtn.style.display = 'none';
     }
 }
@@ -560,10 +589,11 @@ async function submitAnswer() {
                 quizStats.points += result.points_earned;
             }
 
+            // Show correct/incorrect styling
             const answerOptions = document.querySelectorAll('.answer-option');
             answerOptions.forEach(opt => {
                 const input = opt.querySelector('input');
-                if (input) {
+                if (input && input.type === 'radio') {
                     const optId = parseInt(input.value);
                     const correctAnswer = q.answers ? q.answers.find(a => a.is_correct && a.id === optId) : null;
                     if (correctAnswer) opt.classList.add('correct');
@@ -616,11 +646,7 @@ function showResults() {
     showView('resultsView');
     currentView = 'results';
 
-    const searchBars = ['searchBar', 'searchBarSub', 'searchBarTop'];
-    searchBars.forEach(barId => {
-        const bar = document.getElementById(barId);
-        if (bar) bar.classList.add('hidden');
-    });
+    hideAllSearchBars();
 
     const total = currentQuestions.length;
     const correct = quizStats.correct;
@@ -642,7 +668,6 @@ function showResults() {
 // ============================================
 function goBack(view) {
     console.log("goBack called with view:", view);
-    console.log("Current state - selectedGradeId:", selectedGradeId, "selectedSubjectId:", selectedSubjectId);
 
     if (view === 'grades') {
         // Clear all selections and go back to grades
@@ -651,6 +676,7 @@ function goBack(view) {
         selectedSubjectId = null;
         selectedSubjectName = null;
         selectedTopicId = null;
+        currentTopicData = null;
         loadGrades();
     } else if (view === 'subjects') {
         // Go back to subjects list
@@ -658,6 +684,7 @@ function goBack(view) {
             selectedSubjectId = null;
             selectedSubjectName = null;
             selectedTopicId = null;
+            currentTopicData = null;
             loadSubjects(selectedGradeId);
         } else {
             // If no grade selected, go back to grades
@@ -667,6 +694,7 @@ function goBack(view) {
         // Go back to topics list
         if (selectedSubjectId) {
             selectedTopicId = null;
+            currentTopicData = null;
             loadTopics(selectedSubjectId);
         } else if (selectedGradeId) {
             // If no subject selected but grade exists, go to subjects
@@ -680,6 +708,7 @@ function goBack(view) {
 
 function restartPractice() {
     selectedTopicId = null;
+    currentTopicData = null;
     if (selectedSubjectId) {
         loadTopics(selectedSubjectId);
     } else if (selectedGradeId) {
@@ -697,30 +726,18 @@ function performSearch() {
 
     if (currentView === 'grades') {
         query = document.getElementById('searchInput').value.trim();
-        if (query) {
-            loadGrades(query);
-        } else {
-            loadGrades();
-        }
+        loadGrades(query);
     } else if (currentView === 'subjects' && selectedGradeId) {
         query = document.getElementById('searchInputSub').value.trim();
-        if (query) {
-            loadSubjects(selectedGradeId, query);
-        } else {
-            loadSubjects(selectedGradeId);
-        }
+        loadSubjects(selectedGradeId, query);
     } else if (currentView === 'topics' && selectedSubjectId) {
         query = document.getElementById('searchInputTop').value.trim();
-        if (query) {
-            loadTopics(selectedSubjectId, query);
-        } else {
-            loadTopics(selectedSubjectId);
-        }
+        loadTopics(selectedSubjectId, query);
     }
 }
 
 // ============================================
-// FULLSCREEN MODAL
+// FULLSCREEN MODAL - FIXED
 // ============================================
 function openFullscreen(type, src, caption) {
     const modal = document.getElementById('fullscreenModal');
@@ -729,7 +746,7 @@ function openFullscreen(type, src, caption) {
     if (type === 'youtube') {
         content.innerHTML = `<iframe src="https://www.youtube.com/embed/${src}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:90vw; height:80vh; border-radius:8px;"></iframe>`;
     } else if (type === 'image') {
-        content.innerHTML = `<img src="${src}" alt="${caption}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
+        content.innerHTML = `<img src="${src}" alt="${caption || ''}" style="max-width:100%; max-height:90vh; border-radius:8px;">`;
     }
 
     if (modal) modal.classList.add('active');
@@ -737,7 +754,7 @@ function openFullscreen(type, src, caption) {
 }
 
 function closeFullscreen(event) {
-    if (event.target.id === 'fullscreenModal' || event.target.className === 'fullscreen-close') {
+    if (event && (event.target.id === 'fullscreenModal' || event.target.className === 'fullscreen-close' || !event)) {
         const modal = document.getElementById('fullscreenModal');
         const content = document.getElementById('fullscreenContent');
         if (modal) modal.classList.remove('active');
@@ -778,6 +795,6 @@ function escapeHtml(str) {
 }
 
 function handleLogout() {
-    sessionStorage.clear();
+    localStorage.clear();
     window.location.href = 'login.html';
 }

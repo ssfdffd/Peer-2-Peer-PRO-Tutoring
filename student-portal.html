@@ -3,1354 +3,361 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal | Peer-2-Peer PRO</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="student.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <style>
-        /* ============================================
-           PEER-2-PEER PRO | ENHANCED VIBRANT DESIGN
-           Navy (#000033) · Green (#32cd32) · White (#ffffff)
-        ============================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --navy: #000033;
-            --navy-light: #1a1a4d;
-            --navy-soft: #e6e6f0;
-            --green: #32cd32;
-            --green-light: #7fff7f;
-            --green-dark: #28a428;
-            --green-soft: #e8fce8;
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-nav: #ffffff;
-            --bg-sidebar: #f1f5f9;
-            --text-primary: #0f172a;
-            --text-secondary: #334155;
-            --text-muted: #64748b;
-            --text-light: #ffffff;
-            --border: #e2e8f0;
-            --border-focus: #32cd32;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 51, 0.05);
-            --shadow-md: 0 4px 12px rgba(0, 0, 51, 0.08);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 51, 0.1);
-            --success: #32cd32;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --radius: 16px;
-            --radius-sm: 12px;
-            --radius-lg: 24px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-body);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* ===== NAVIGATION ===== */
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 14px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nav-logo {
-            height: 42px;
-            width: auto;
-            border-radius: 8px;
-        }
-
-        .logo-glow {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--navy);
-            letter-spacing: -0.5px;
-        }
-
-        .logo-glow .premium {
-            color: var(--green);
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 14px;
-            background: var(--bg-sidebar);
-            border-radius: 40px;
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .user-profile:hover {
-            border-color: var(--green);
-            box-shadow: 0 2px 8px rgba(50, 205, 50, 0.1);
-        }
-
-        .avatar-small {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--navy), var(--navy-light));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 51, 0.2);
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.3;
-        }
-
-        .user-info span:first-child {
-            font-weight: 700;
-            color: var(--navy);
-            font-size: 0.95rem;
-        }
-
-        .user-role {
-            font-size: 0.75rem;
-            color: var(--green);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .logout-minimal {
-            background: white;
-            border: 1.5px solid var(--border);
-            color: var(--text-muted);
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .logout-minimal:hover {
-            background: #fee2e2;
-            border-color: var(--danger);
-            color: var(--danger);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-        }
-
-        .logout-minimal:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            font-size: 1.5rem;
-            color: var(--navy);
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-
-        .mobile-menu-toggle:hover {
-            background: var(--bg-sidebar);
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            width: 100%;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-            padding: 20px;
-            z-index: 999;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .mobile-menu.active {
-            display: block;
-        }
-
-        .mobile-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .mobile-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--navy), var(--navy-light));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .mobile-user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mobile-user-name {
-            font-weight: 700;
-            color: var(--navy);
-            font-size: 1.1rem;
-        }
-
-        .mobile-user-role {
-            font-size: 0.85rem;
-            color: var(--green);
-            font-weight: 600;
-        }
-
-        .mobile-menu .nav-link {
-            display: block;
-            padding: 14px 16px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-            margin-bottom: 4px;
-        }
-
-        .mobile-menu .nav-link i {
-            width: 24px;
-            color: var(--navy);
-            margin-right: 12px;
-        }
-
-        .mobile-menu .nav-link.active {
-            background: var(--green-soft);
-            color: var(--navy);
-            font-weight: 600;
-        }
-
-        .mobile-menu .nav-link.active i {
-            color: var(--green);
-        }
-
-        .mobile-menu .nav-link:hover {
-            background: var(--bg-sidebar);
-        }
-
-        /* ===== HERO SECTION ===== */
-        .hero-section {
-            background: linear-gradient(135deg, #000033 0%, #0d0d3d 25%, #1a1a4d 50%, #0d0d3d 75%, #000033 100%);
-            position: relative;
-            overflow: hidden;
-            padding: 70px 32px 80px;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 15% 50%, rgba(50, 205, 50, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 85% 20%, rgba(127, 255, 127, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 90%, rgba(50, 205, 50, 0.12) 0%, transparent 50%);
-            animation: gradientShift 20s ease infinite alternate;
-        }
-
-        @keyframes gradientShift {
-            0% {
-                opacity: 0.8;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1.1);
-            }
-        }
-
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-image:
-                radial-gradient(2px 2px at 20% 30%, rgba(50, 205, 50, 0.5), transparent),
-                radial-gradient(2px 2px at 60% 70%, rgba(127, 255, 127, 0.4), transparent),
-                radial-gradient(1px 1px at 50% 50%, rgba(50, 205, 50, 0.4), transparent),
-                radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.5), transparent),
-                radial-gradient(2px 2px at 90% 60%, rgba(50, 205, 50, 0.3), transparent),
-                radial-gradient(1px 1px at 33% 80%, rgba(127, 255, 127, 0.4), transparent),
-                radial-gradient(2px 2px at 10% 90%, rgba(255, 255, 255, 0.3), transparent);
-            background-size: 200% 200%;
-            background-position: 0% 0%;
-            animation: particleFloat 25s ease infinite;
-        }
-
-        @keyframes particleFloat {
-
-            0%,
-            100% {
-                background-position: 0% 0%;
-                opacity: 0.8;
-            }
-
-            50% {
-                background-position: 100% 100%;
-                opacity: 1;
-            }
-        }
-
-        .hero-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 450px;
-            align-items: center;
-            gap: 80px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-content {
-            color: white;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 24px;
-            line-height: 1.15;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .hero-highlight {
-            color: var(--green-light);
-            position: relative;
-            display: inline-block;
-            animation: highlightGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes highlightGlow {
-
-            0%,
-            100% {
-                text-shadow: 0 0 20px rgba(50, 205, 50, 0.6), 0 0 40px rgba(50, 205, 50, 0.4), 0 4px 20px rgba(0, 0, 0, 0.4);
-            }
-
-            50% {
-                text-shadow: 0 0 30px rgba(50, 205, 50, 0.9), 0 0 60px rgba(50, 205, 50, 0.6), 0 4px 20px rgba(0, 0, 0, 0.4);
-            }
-        }
-
-        .hero-highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 0;
-            width: 100%;
-            height: 14px;
-            background: linear-gradient(90deg, rgba(50, 205, 50, 0.5) 0%, rgba(127, 255, 127, 0.7) 50%, rgba(50, 205, 50, 0.5) 100%);
-            z-index: -1;
-            border-radius: 7px;
-            animation: underlinePulse 2.5s ease-in-out infinite;
-            filter: blur(2px);
-        }
-
-        @keyframes underlinePulse {
-
-            0%,
-            100% {
-                transform: scaleX(1) scaleY(1);
-                opacity: 0.7;
-            }
-
-            50% {
-                transform: scaleX(1.05) scaleY(1.3);
-                opacity: 1;
-            }
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 36px;
-            max-width: 650px;
-            line-height: 1.75;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        /* stats grid — values removed, only labels remain */
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            max-width: 600px;
-        }
-
-        .hero-stat-item {
-            display: flex;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.12);
-            padding: 24px;
-            border-radius: 18px;
-            backdrop-filter: blur(15px);
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-stat-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(50, 205, 50, 0.1) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .hero-stat-item:hover::before {
-            opacity: 1;
-        }
-
-        .hero-stat-item:hover {
-            background: rgba(50, 205, 50, 0.2);
-            border-color: rgba(50, 205, 50, 0.5);
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(50, 205, 50, 0.25), 0 0 0 1px rgba(50, 205, 50, 0.1);
-        }
-
-        .hero-stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--green-light);
-            text-shadow: 0 2px 20px rgba(50, 205, 50, 0.5), 0 0 40px rgba(50, 205, 50, 0.3);
-            line-height: 1;
-            margin-bottom: 10px;
-            /* ensure numeric values are blank — using non-breaking space to preserve height */
-            visibility: hidden;
-            position: relative;
-        }
-
-        .hero-stat-value::before {
-            content: "\00A0\00A0";
-            /* two non-breaking spaces to keep height */
-            visibility: visible;
-        }
-
-        .hero-stat-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.85);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            font-weight: 600;
-        }
-
-        .hero-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .floating-elements {
-            position: relative;
-            width: 450px;
-            height: 450px;
-        }
-
-        .floating-element {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
-            backdrop-filter: blur(12px);
-            border-radius: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-            animation: float 7s ease-in-out infinite;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .floating-element:hover {
-            transform: scale(1.15) translateY(-15px) rotate(5deg);
-            background: linear-gradient(135deg, rgba(50, 205, 50, 0.35), rgba(50, 205, 50, 0.15));
-            border-color: rgba(50, 205, 50, 0.6);
-            box-shadow: 0 15px 50px rgba(50, 205, 50, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
-
-        .element-1 {
-            top: 40px;
-            left: 40px;
-            animation-delay: 0s;
-        }
-
-        .element-1 i {
-            color: var(--green-light);
-            filter: drop-shadow(0 0 15px rgba(50, 205, 50, 0.7));
-        }
-
-        .element-2 {
-            top: 120px;
-            right: 40px;
-            animation-delay: 0.7s;
-        }
-
-        .element-2 i {
-            color: #ffffff;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
-        }
-
-        .element-3 {
-            bottom: 120px;
-            left: 60px;
-            animation-delay: 1.4s;
-        }
-
-        .element-3 i {
-            color: var(--green-light);
-            filter: drop-shadow(0 0 15px rgba(50, 205, 50, 0.7));
-        }
-
-        .element-4 {
-            bottom: 40px;
-            right: 90px;
-            animation-delay: 2.1s;
-        }
-
-        .element-4 i {
-            color: #ffffff;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            25% {
-                transform: translateY(-25px) rotate(3deg);
-            }
-
-            50% {
-                transform: translateY(-15px) rotate(-3deg);
-            }
-
-            75% {
-                transform: translateY(-20px) rotate(2deg);
-            }
-        }
-
-        /* ===== MAIN PANELS ===== */
-        .main-panel {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 50px 32px;
-        }
-
-        .features-container {
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-        }
-
-        .features-section {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .features-section:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .section-icon {
-            font-size: 2rem;
-            color: var(--green);
-            background: linear-gradient(135deg, var(--green-soft), #d4f8d4);
-            width: 56px;
-            height: 56px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.15);
-        }
-
-        .section-title h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin: 0;
-        }
-
-        .section-description {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 28px;
-        }
-
-        .feature-card {
-            background: white;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            padding: 28px;
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--navy), var(--green));
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--green);
-            box-shadow: 0 12px 30px rgba(50, 205, 50, 0.15), 0 0 0 1px rgba(50, 205, 50, 0.1);
-        }
-
-        .feature-icon-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 22px;
-        }
-
-        .feature-icon {
-            width: 68px;
-            height: 68px;
-            background: linear-gradient(145deg, var(--navy-soft), #f0f0ff);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--navy);
-            border: 1px solid rgba(0, 0, 51, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 51, 0.08);
-        }
-
-        .feature-badge {
-            padding: 7px 16px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .feature-badge.live {
-            background: var(--green-soft);
-            color: var(--green-dark);
-            border: 1px solid rgba(50, 205, 50, 0.3);
-            box-shadow: 0 2px 8px rgba(50, 205, 50, 0.2);
-        }
-
-        .feature-badge.new {
-            background: #e6f0ff;
-            color: #0066cc;
-            border: 1px solid rgba(0, 102, 204, 0.3);
-            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.15);
-        }
-
-        .feature-content h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 14px;
-        }
-
-        .feature-content p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
-
-        .feature-progress {
-            margin: 18px 0;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        /* hide numeric progress but keep structure */
-        .progress-info span:last-child {
-            visibility: hidden;
-            position: relative;
-        }
-
-        .progress-info span:last-child::before {
-            content: "\00A0\00A0";
-            visibility: visible;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background: var(--bg-sidebar);
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--navy), var(--green));
-            border-radius: 5px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
-            width: 0% !important;
-            /* remove any default percentage */
-        }
-
-        .feature-cta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 18px;
-            color: var(--navy);
-            font-weight: 700;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .feature-cta i {
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover .feature-cta {
-            color: var(--green);
-        }
-
-        .feature-card:hover .feature-cta i {
-            transform: translateX(6px);
-        }
-
-        /* ===== ACTIVITY SECTION (empty items) ===== */
-        .activity-section {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 32px 50px;
-        }
-
-        .activity-container {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .activity-container h3 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            color: var(--navy);
-            margin-bottom: 28px;
-            font-weight: 700;
-        }
-
-        .activity-container h3 i {
-            color: var(--green);
-        }
-
-        .activity-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 20px;
-            background: var(--bg-body);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .activity-item:hover {
-            border-color: var(--green);
-            background: white;
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.1);
-        }
-
-        .activity-icon {
-            width: 52px;
-            height: 52px;
-            background: white;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--navy);
-            border: 1px solid var(--border);
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-            /* remove fake titles: make them empty */
-            visibility: hidden;
-            position: relative;
-        }
-
-        .activity-title::before {
-            content: "\00A0";
-            /* one non-breaking space keeps height */
-            visibility: visible;
-        }
-
-        .activity-time {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            visibility: hidden;
-            position: relative;
-        }
-
-        .activity-time::before {
-            content: "\00A0";
-            visibility: visible;
-        }
-
-        .btn-primary {
-            background: var(--navy);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 1px solid var(--navy);
-        }
-
-        .btn-primary:hover {
-            background: var(--green);
-            border-color: var(--green);
-            color: var(--navy);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(50, 205, 50, 0.4);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--navy);
-            border: 1px solid var(--border);
-            padding: 14px 32px;
-            border-radius: 40px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-sidebar);
-            border-color: var(--navy);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .badge-live {
-            background: var(--green-soft);
-            color: var(--green-dark);
-        }
-
-        .badge-upcoming {
-            background: #e6f0ff;
-            color: #0066cc;
-        }
-
-        .badge-completed {
-            background: #e6f7e6;
-            color: #166534;
-        }
-
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.08);
-            }
-        }
-
-        .loading-container {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 0, 51, 0.1);
-            border-top: 3px solid var(--green);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading-text {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* responsive (minimal copy) */
-        @media (max-width: 1023px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .nav-right {
-                display: none;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-        }
-    </style>
 </head>
 
 <body>
+    <!-- Navigation -->
     <nav class="glass-nav">
         <div class="nav-container">
             <div class="logo-container">
-                <img src="favicon.ico" alt="Logo">
-                <div class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></div>
+                <img src="logo.png" alt="P2P Logo" class="nav-logo">
+                <span class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></span>
             </div>
-            <div class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i></div>
+
             <div class="nav-right">
                 <div class="user-profile">
-                    <div class="avatar-small" id="userAvatar"><i class="fas fa-user-graduate"></i></div>
-                    <div class="user-info"><span id="studentNameDisplay">Loading...</span><span
-                            class="user-role">Learner</span></div>
+                    <div class="avatar-small" id="studentAvatar">S</div>
+                    <div class="user-info">
+                        <span id="studentNameDisplay">Loading...</span>
+                        <span class="user-role">Learner</span>
+                    </div>
                 </div>
-                <button class="logout-minimal" onclick="logout()" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>
-                    Logout</button>
+                <button class="logout-minimal" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
             </div>
         </div>
+
+        <!-- Mobile Menu -->
         <div class="mobile-menu" id="mobileMenu">
             <div class="mobile-user">
-                <div class="mobile-avatar" id="mobileAvatar"><i class="fas fa-user-graduate"></i></div>
-                <div class="mobile-user-info"><span class="mobile-user-name" id="mobileUserName">Loading...</span><span
-                        class="mobile-user-role">Learner</span></div>
+                <div class="mobile-avatar" id="mobileAvatar">S</div>
+                <div class="mobile-user-info">
+                    <span class="mobile-user-name" id="mobileStudentName">Loading...</span>
+                    <span class="mobile-user-role">Learner</span>
+                </div>
             </div>
             <a href="student-portal.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
             <a href="student-view.html" class="nav-link"><i class="fas fa-video"></i> Live Classes</a>
-            <a href="resources.html" class="nav-link"><i class="fas fa-book-open"></i> Resources Library</a>
-            <a href="forum.html" class="nav-link"><i class="fas fa-users"></i> Student Forum</a>
-            <a href="booking.html" class="nav-link"><i class="fas fa-calendar-check"></i> Book Tutoring</a>
+            <a href="resources.html" class="nav-link"><i class="fas fa-book"></i> Resources Library</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Student Forum</a>
+            <a href="booking.html" class="nav-link"><i class="fas fa-calendar"></i> Book Tutoring</a>
             <a href="progress-tracker.html" class="nav-link"><i class="fas fa-chart-line"></i> My Progress</a>
-            <a href="#" onclick="logout(); return false;" class="nav-link" style="color:#ef4444; margin-top:20px;"><i
-                    class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="#" class="nav-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-container">
-            <div class="hero-content">
-                <h1 class="hero-title">Welcome back, <span class="hero-highlight" id="studentNameHero">Student</span>!
+            <div class="hero-content fade-in">
+                <h1 class="hero-title">
+                    Welcome back, <span class="hero-highlight">Student!</span>
                 </h1>
-                <p class="hero-subtitle">Your personalized learning hub. Continue your journey with live sessions, study
-                    resources, and peer collaboration.</p>
+                <p class="hero-subtitle">
+                    Your personalized learning hub. Continue your journey with live sessions,
+                    study resources, and peer collaboration.
+                </p>
                 <div class="hero-stats">
-                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span class="hero-stat-label">Live
-                            Classes</span></div>
-                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span
-                            class="hero-stat-label">Resources</span></div>
-                    <div class="hero-stat-item"><span class="hero-stat-value"></span><span class="hero-stat-label">Forum
-                            Posts</span></div>
+                    <div class="hero-stat-item">
+                        <span class="hero-stat-value">3</span>
+                        <span class="hero-stat-label">Live Classes</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <span class="hero-stat-value">12</span>
+                        <span class="hero-stat-label">Resources</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <span class="hero-stat-value">5</span>
+                        <span class="hero-stat-label">Forum Posts</span>
+                    </div>
                 </div>
             </div>
-            <div class="hero-visual">
+            <div class="hero-visual fade-in">
                 <div class="floating-elements">
-                    <div class="floating-element element-1"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="floating-element element-2"><i class="fas fa-book-open"></i></div>
-                    <div class="floating-element element-3"><i class="fas fa-video"></i></div>
-                    <div class="floating-element element-4"><i class="fas fa-users"></i></div>
+                    <div class="floating-element element-1"><i class="fas fa-book"></i></div>
+                    <div class="floating-element element-2"><i class="fas fa-video"></i></div>
+                    <div class="floating-element element-3"><i class="fas fa-users"></i></div>
+                    <div class="floating-element element-4"><i class="fas fa-award"></i></div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Main Content -->
     <main class="main-panel">
         <div class="features-container">
-            <section class="features-section">
+            <!-- Learning Core Section -->
+            <section class="features-section fade-in">
                 <div class="section-header">
                     <div class="section-title">
-                        <div class="section-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="section-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
                         <h2>Learning Core</h2>
                     </div>
                     <p class="section-description">Your next live session and study materials</p>
                 </div>
+
                 <div class="features-grid">
-                    <!-- Live Interactive Classes Card -->
-                    <div class="feature-card" onclick="window.location.href='student-view.html'">
+                    <!-- Live Classes Card -->
+                    <div class="feature-card" onclick="openLiveClasses()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon pulse-animation"><i class="fas fa-video"></i></div>
-                            <div class="feature-badge live"><i class="fas fa-circle"
-                                    style="font-size:0.5rem; margin-right:4px;"></i> Live Now</div>
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <span class="feature-badge live">Live Now</span>
                         </div>
                         <div class="feature-content">
                             <h3>Live Interactive Classes</h3>
                             <p>Join real-time sessions with expert tutors and peers. Participate in discussions and get
                                 instant feedback.</p>
-                            <div style="margin-bottom:12px;"><span class="badge badge-live"
-                                    style="margin-right:8px;">Mathematics Gr12</span><span
-                                    class="badge badge-upcoming">10:30 AM</span></div>
+                            <div class="feature-progress">
+                                <div class="progress-info">
+                                    <span>Mathematics Gr12</span>
+                                    <span>10:30 AM</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="feature-cta"><span>Join Classroom</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>Join Classroom</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
-                    <!-- Study Materials Library Card -->
-                    <div class="feature-card" onclick="window.location.href='resources.html'">
+
+                    <!-- Study Materials Card -->
+                    <div class="feature-card" onclick="openStudyMaterials()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-book-open"></i></div>
-                            <div class="feature-badge new"><i class="fas fa-star"
-                                    style="font-size:0.7rem; margin-right:4px;"></i> New</div>
+                            <div class="feature-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <span class="feature-badge new">New</span>
                         </div>
                         <div class="feature-content">
                             <h3>Study Materials Library</h3>
                             <p>Access comprehensive notes, past papers, worksheets, and video tutorials. Curated by
                                 subject experts.</p>
-                            <div style="display:flex; gap:8px; margin-top:12px;">
-                                <span
-                                    style="background:#e6e6f0; color:#000033; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600;">Past
-                                    Papers</span>
-                                <span
-                                    style="background:#e8fce8; color:#32cd32; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600;">Videos</span>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-file-pdf"></i> Past Papers</span>
+                                <span><i class="fas fa-play-circle"></i> Videos</span>
                             </div>
                         </div>
-                        <div class="feature-cta"><span>Browse Library</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>Browse Library</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
-                    <!-- Student Forum Card -->
-                    <div class="feature-card" onclick="window.location.href='forum.html'">
+
+                    <!-- Forum Card -->
+                    <div class="feature-card" onclick="openForum()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-users"></i></div>
+                            <div class="feature-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
                         </div>
                         <div class="feature-content">
                             <h3>Student Forum</h3>
                             <p>Connect with peers, ask questions, and share knowledge in grade-specific discussion
                                 forums.</p>
-                            <div style="margin-top:12px; padding:10px; background:#f8fafc; border-radius:8px;"><i
-                                    class="fas fa-comments" style="color:#32cd32;"></i> <span
-                                    style="margin-left:8px; font-size:0.85rem; color:#64748b;">active discussions</span>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-users"></i> 24 active discussions</span>
                             </div>
                         </div>
-                        <div class="feature-cta"><span>Join Forum</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>Join Forum</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="features-section">
+            <!-- Tools & Progress Section -->
+            <section class="features-section fade-in">
                 <div class="section-header">
                     <div class="section-title">
-                        <div class="section-icon"><i class="fas fa-tools"></i></div>
+                        <div class="section-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
                         <h2>Tools & Progress</h2>
                     </div>
                     <p class="section-description">Track your learning journey</p>
                 </div>
+
                 <div class="features-grid">
-                    <!-- Book Tutoring Card -->
-                    <div class="feature-card" onclick="window.location.href='booking.html'">
+                    <!-- Tutoring Card -->
+                    <div class="feature-card" onclick="openTutoringRequests()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="feature-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
                         </div>
                         <div class="feature-content">
                             <h3>Book Tutoring Sessions</h3>
                             <p>Schedule one-on-one sessions with qualified tutors. Get personalized help when you need
                                 it most.</p>
-                            <div style="margin-top:12px;"><span class="badge badge-upcoming">Next: —</span></div>
+                            <div class="feature-stats">
+                                <span><i class="fas fa-clock"></i> Next: —</span>
+                            </div>
                         </div>
-                        <div class="feature-cta"><span>Book Session</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>Book Session</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
-                    <!-- Progress Tracker Card -->
-                    <div class="feature-card" onclick="window.location.href='practice.html'">
+
+                    <!-- Practice Tests Card -->
+                    <div class="feature-card" onclick="openPracticeTests()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                            <div class="feature-icon">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
                         </div>
                         <div class="feature-content">
                             <h3>Practice Questions</h3>
                             <p>Test your knowledge with grade-specific quizzes. Get instant feedback and detailed
                                 explanations.</p>
                             <div class="feature-progress">
-                                <div class="progress-info"><span>Overall Progress</span><span></span></div>
+                                <div class="progress-info">
+                                    <span>Overall Progress</span>
+                                    <span>68%</span>
+                                </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width:0%"></div>
+                                    <div class="progress-fill" style="width: 68%"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="feature-cta"><span>View Dashboard</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>View Dashboard</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
+
                     <!-- Study Planner Card -->
-                    <div class="feature-card" onclick="window.location.href='study-planner.html'">
+                    <div class="feature-card" onclick="openStudyGroups()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
                         </div>
                         <div class="feature-content">
                             <h3>Study Planner</h3>
                             <p>Organize your study schedule, set reminders, and track assignment deadlines.</p>
-                            <div
-                                style="margin-top:12px; padding:10px; background:#f8fafc; border-radius:8px; font-size:0.85rem;">
-                                <i class="fas fa-clock" style="color:#32cd32;"></i> Next deadline: —
+                            <div class="feature-stats">
+                                <span><i class="fas fa-exclamation-circle"></i> Next deadline: —</span>
                             </div>
                         </div>
-                        <div class="feature-cta"><span>Open Planner</span><i class="fas fa-arrow-right"></i></div>
+                        <div class="feature-cta">
+                            <span>Open Planner</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
-    </main>
 
-    <section class="activity-section">
-        <div class="activity-container">
-            <h3><i class="fas fa-history"></i> Recent Activity</h3>
-            <div class="activity-grid">
-                <div class="activity-item">
-                    <div class="activity-icon"><i class="fas fa-file-upload"></i></div>
-                    <div class="activity-content">
-                        <div class="activity-title"></div>
-                        <div class="activity-time"></div>
+        <!-- Activity Section -->
+        <section class="activity-section fade-in">
+            <div class="activity-container">
+                <h3>
+                    <i class="fas fa-history"></i>
+                    Recent Activity
+                </h3>
+                <div class="activity-grid">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4 class="activity-title">Joined Mathematics Class</h4>
+                            <p class="activity-time">2 hours ago</p>
+                        </div>
                     </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon"><i class="fas fa-comment"></i></div>
-                    <div class="activity-content">
-                        <div class="activity-title"></div>
-                        <div class="activity-time"></div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4 class="activity-title">Uploaded Study Notes</h4>
+                            <p class="activity-time">Yesterday</p>
+                        </div>
                     </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon"><i class="fas fa-video"></i></div>
-                    <div class="activity-content">
-                        <div class="activity-title"></div>
-                        <div class="activity-time"></div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4 class="activity-title">Posted in Forum</h4>
+                            <p class="activity-time">2 days ago</p>
+                        </div>
                     </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon"><i class="fas fa-trophy"></i></div>
-                    <div class="activity-content">
-                        <div class="activity-title"></div>
-                        <div class="activity-time"></div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4 class="activity-title">Completed Quiz</h4>
+                            <p class="activity-time">3 days ago</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
+    <script src="student.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const studentName = sessionStorage.getItem('p2p_name') || 'Student';
-            const nameDisplay = document.getElementById('studentNameDisplay');
-            const heroName = document.getElementById('studentNameHero');
-            const mobileUserName = document.getElementById('mobileUserName');
-            const userAvatar = document.getElementById('userAvatar');
-            const mobileAvatar = document.getElementById('mobileAvatar');
-
-            if (nameDisplay) nameDisplay.textContent = studentName;
-            if (heroName) heroName.textContent = studentName;
-            if (mobileUserName) mobileUserName.textContent = studentName;
-
-            const initials = studentName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-            if (userAvatar) userAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
-            if (mobileAvatar) mobileAvatar.innerHTML = initials || '<i class="fas fa-user-graduate"></i>';
-
-            // mobile menu toggle
-            const menuToggle = document.getElementById('mobileMenuToggle');
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
-            if (menuToggle && mobileMenu) {
-                menuToggle.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    mobileMenu.classList.toggle('active');
-                    const icon = this.querySelector('i');
-                    if (mobileMenu.classList.contains('active')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-                document.addEventListener('click', function (event) {
-                    if (!mobileMenu.contains(event.target) && !menuToggle.contains(event.target)) {
-                        mobileMenu.classList.remove('active');
-                        const icon = menuToggle.querySelector('i');
-                        if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
-                    }
-                });
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function (e) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (!mobileMenu.contains(e.target) && !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
             }
         });
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) { logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...'; logoutBtn.disabled = true; }
-                sessionStorage.clear();
-                localStorage.clear();
-                setTimeout(() => { window.location.href = 'login.html'; }, 800);
-            }
-        }
+        // Update mobile user info
+        document.addEventListener('DOMContentLoaded', function () {
+            const studentName = sessionStorage.getItem('p2p_name') || 'Student';
+            document.getElementById('mobileStudentName').textContent = studentName;
+            document.getElementById('mobileAvatar').textContent = studentName.charAt(0).toUpperCase();
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
     </script>
 </body>
 

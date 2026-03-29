@@ -1,0 +1,6 @@
+# Ignore sensitive or temporary files
+node_modules/
+.DS_Store
+Thumbs.db
+wrangler-debug.log
+.dev.vars

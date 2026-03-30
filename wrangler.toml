@@ -2,16 +2,32 @@ name = "damp-art-617fp2p-authentification-login"
 main = "worker.js"
 compatibility_date = "2024-04-01"
 
-# This line is likely what's missing to make your HTML/CSS visible:
+# Serve static assets (your HTML/CSS files)
 [assets]
-directory = "./" 
+directory = "./public"
 binding = "ASSETS"
 
+# Primary D1 Database (User Auth & Portal)
 [[d1_databases]]
 binding = "DB"
-database_name = "peer_db" 
+database_name = "peer_db"
 database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"
 
+# Secondary D1 Database (Quiz System)
+[[d1_databases]]
+binding = "DB"
+database_name = "quiz"
+database_id = "968a34a2-480e-4e7d-87a5-20bd1bf400df"
+
+# R2 Bucket for CAPS Documents
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "ai-files"
+
+# Environment Variables
 [vars]
 API_URL = "https://peer-2-peer.co.za"
 JWT_SECRET = "nqYvCP4%&^yMD^aMrwfv3U%HN8twKV27"
+
+# Secrets (Add these via Cloudflare Dashboard, NOT in this file)
+# GEMINI_API_KEY = "AIzaSyBwkALvEqh1-dhZ_Wo8O4Ehhcs0wU2n1M4"

@@ -200,6 +200,7 @@
             padding: 0.75rem 1rem;
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
+            color: #333;
         }
 
         .topic-suggestion-item:hover {
@@ -222,6 +223,8 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: white;
+            color: #333;
         }
 
         .type-option.selected {
@@ -245,6 +248,11 @@
 
         .btn-generate:hover {
             background: var(--primary-light);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .loading {
@@ -372,6 +380,7 @@
             resize: vertical;
             min-height: 100px;
             margin-bottom: 1.5rem;
+            background: white;
         }
 
         .btn-hint {
@@ -499,6 +508,16 @@
             font-size: 0.75rem;
             font-weight: 600;
             margin: 0.25rem;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+            text-align: center;
         }
 
         .footer {
@@ -652,7 +671,31 @@
 
         let currentQuestions = [], selectedType = 'MCQ', answers = {}, hintsUsed = {}, startTime = {}, correctCount = 0, incorrectCount = 0, totalScoreSum = 0;
 
-        document.addEventListener('DOMContentLoaded', () => { document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`; });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`;
+            // Test API connectivity on load
+            testAPIConnection();
+        });
+
+        async function testAPIConnection() {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const response = await fetch(WORKER_URL + "/health", {
+                    method: "GET",
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (response.ok) {
+                    console.log("✅ API connected successfully");
+                } else {
+                    console.warn("⚠️ API responded but with error:", response.status);
+                }
+            } catch (e) {
+                console.warn("⚠️ API connection test failed:", e.message);
+                // Don't show error to user yet, just log
+            }
+        }
 
         function loadSubjects() {
             const grade = document.getElementById('grade').value;
@@ -675,9 +718,23 @@
             topicInput.value = ''; topicInput.disabled = false; btnGen.disabled = true;
             if (!subject) { topicInput.disabled = true; return; }
             try {
-                const resp = await fetch(WORKER_URL + "/api/topics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ grade, subject }) });
-                if (resp.ok) { const data = await resp.json(); if (data.topics) topicInput.setAttribute('data-topics', JSON.stringify(data.topics)); }
-            } catch (e) { console.warn("topic fetch err", e); }
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const resp = await fetch(WORKER_URL + "/api/topics", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ grade, subject }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.topics) topicInput.setAttribute('data-topics', JSON.stringify(data.topics));
+                }
+            } catch (e) {
+                console.warn("topic fetch err", e);
+                topicInput.setAttribute('data-topics', '[]');
+            }
         }
 
         function showTopicSuggestions() {
@@ -689,7 +746,7 @@
             const saved = JSON.parse(inp.getAttribute('data-topics') || '[]');
             const filtered = saved.filter(t => t.toLowerCase().includes(val));
             if (filtered.length) { box.innerHTML = filtered.map(t => `<div class="topic-suggestion-item" onclick="selectTopic('${t.replace(/'/g, "\\'")}')">${t}</div>`).join(''); box.classList.add('active'); }
-            else { box.innerHTML = `<div class="topic-suggestion-item" style="color: var(--text-light);">+ Use "${inp.value}" as new topic</div>`; box.classList.add('active'); }
+            else { box.innerHTML = `<div class="topic-suggestion-item" style="color: #666;">+ Use "${inp.value}" as new topic</div>`; box.classList.add('active'); }
             btnGen.disabled = !inp.value.trim();
         }
         function selectTopic(topic) { document.getElementById('topic').value = topic; document.getElementById('topic-suggestions').classList.remove('active'); document.getElementById('btn-generate').disabled = false; }
@@ -700,30 +757,60 @@
             const subject = document.getElementById('subject').value;
             const topic = document.getElementById('topic').value.trim();
             if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic"); return; }
-            try { await fetch(WORKER_URL + "/api/save-topic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ grade, subject, topic }) }); } catch (e) { console.warn(e); }
+
+            // Show loading, hide form
             document.getElementById('quiz-form').style.display = 'none';
             document.getElementById('loading').classList.add('active');
             document.getElementById('quiz-area').classList.remove('active');
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
+
             try {
+                // First, try to save topic (optional, ignore errors)
+                try {
+                    await fetch(WORKER_URL + "/api/save-topic", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ grade, subject, topic }),
+                        signal: AbortSignal.timeout(5000)
+                    });
+                } catch (e) { console.log("Topic save skipped:", e.message); }
+
+                // Generate questions with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
                 const response = await fetch(WORKER_URL + "/api/generate", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject, topic, count: 5, type: selectedType, learnerId: LEARNER_ID })
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ grade, subject, topic, count: 5, type: selectedType, learnerId: LEARNER_ID }),
+                    signal: controller.signal
                 });
-                if (!response.ok) { const errBody = await response.text(); throw new Error(`API error: ${response.status} ${errBody}`); }
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API error (${response.status}): ${errorText.substring(0, 200)}`);
+                }
+
                 const data = await response.json();
-                if (!data.questions || !data.questions.length) throw new Error("No questions returned from AI.");
+                if (!data.questions || !data.questions.length) throw new Error("No questions returned from AI. Please try a different topic.");
+
                 currentQuestions = data.questions;
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-area').classList.add('active');
                 document.getElementById('progress-container').classList.add('active');
                 document.getElementById('btn-submit').style.display = 'block';
                 renderQuiz(data.questions, data.source || 'CAPS', data.cached || 0, data.new || data.questions.length);
+
             } catch (e) {
-                alert("❌ Error generating questions: " + e.message + "\n\nPlease check API connectivity or try again.");
-                console.error(e);
+                console.error("Generation error:", e);
+                let errorMsg = e.message;
+                if (e.name === 'AbortError') errorMsg = "Request timed out. The AI is taking too long. Please try again.";
+                if (errorMsg.includes('Failed to fetch')) errorMsg = "Cannot connect to the API server. Please check your internet connection and ensure the worker URL is correct.";
+
+                alert("❌ Error generating questions: " + errorMsg + "\n\n💡 Tip: Try a more specific topic or check the API connectivity.");
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-form').style.display = 'block';
             }
@@ -744,8 +831,8 @@
                     inputHtml = `<textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your answer here..."></textarea>`;
                 }
                 card.innerHTML = `
-                    <div class="question-header"><span class="question-number">Question ${idx + 1} of ${questions.length}</span><span class="question-type-badge">${q.question_type.replace('_', ' ')}</span></div>
-                    <p class="question-text">${q.question_text}</p>
+                    <div class="question-header"><span class="question-number">Question ${idx + 1} of ${questions.length}</span><span class="question-type-badge">${q.question_type?.replace('_', ' ') || 'Question'}</span></div>
+                    <p class="question-text">${q.question_text || q.question || 'Question text not available'}</p>
                     ${inputHtml}
                     <button class="btn-hint" onclick="getHint(${idx}, ${q.id || idx})">💡 Get Hint</button>
                     <div class="hint-box" id="hint-${idx}"></div>
@@ -767,12 +854,23 @@
             const hintBox = document.getElementById(`hint-${questionIdx}`);
             if (hintBox.classList.contains('active')) { hintBox.classList.remove('active'); return; }
             try {
-                const resp = await fetch(WORKER_URL + "/api/hint", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ questionId }) });
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const resp = await fetch(WORKER_URL + "/api/hint", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ questionId }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
                 const data = await resp.json();
                 hintBox.textContent = data.hint || "Review key concepts for this topic.";
                 hintBox.classList.add('active');
                 hintsUsed[questionIdx] = 1;
-            } catch (e) { hintBox.textContent = "Hint: Think about the core principles and examples."; hintBox.classList.add('active'); }
+            } catch (e) {
+                hintBox.textContent = "💡 Hint: Think about the core principles and examples related to this topic.";
+                hintBox.classList.add('active');
+            }
         }
 
         async function submitQuiz() {
@@ -794,16 +892,20 @@
                 }
                 try {
                     const timeSpent = Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
                     const resp = await fetch(WORKER_URL + "/api/submit", {
                         method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ learnerId: LEARNER_ID, questionId: q.id, answer: userAns, questionType: q.question_type, correctAnswer: q.correct_answer, timeSpent, hintUsed: hintsUsed[i] || 0 })
+                        body: JSON.stringify({ learnerId: LEARNER_ID, questionId: q.id, answer: userAns, questionType: q.question_type, correctAnswer: q.correct_answer, timeSpent, hintUsed: hintsUsed[i] || 0 }),
+                        signal: controller.signal
                     });
+                    clearTimeout(timeoutId);
                     if (resp.ok) {
                         const result = await resp.json();
                         if (result.isCorrect) { fbEl.className = "feedback correct active"; fbEl.innerHTML = `✅ ${result.feedback}<br><strong>Score: ${result.score}/10</strong>`; correctCount++; totalScoreSum += result.score; }
                         else { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = `❌ ${result.feedback}<br><strong>Correct Answer:</strong> ${result.correctAnswer || q.correct_answer}`; incorrectCount++; totalScoreSum += result.score || 0; }
                     } else { throw new Error("grading failed"); }
-                } catch (e) { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ Grading service error"; incorrectCount++; }
+                } catch (e) { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ Grading service error. Answer recorded."; incorrectCount++; }
             }
             const avgScore = currentQuestions.length ? Math.round(totalScoreSum / currentQuestions.length) : 0;
             document.getElementById('stat-correct').textContent = correctCount;
@@ -822,16 +924,31 @@
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
             currentQuestions = []; answers = {}; hintsUsed = {}; startTime = {};
-            document.getElementById('grade').value = ''; document.getElementById('subject').disabled = true; document.getElementById('topic').disabled = true;
+            document.getElementById('grade').value = '';
+            document.getElementById('subject').disabled = true;
+            document.getElementById('topic').disabled = true;
             document.getElementById('subject').innerHTML = '<option value="">Select Subject</option>';
-            document.getElementById('topic').value = ''; document.getElementById('btn-generate').disabled = true;
+            document.getElementById('topic').value = '';
+            document.getElementById('btn-generate').disabled = true;
         }
 
+        // Event listeners
         document.getElementById('grade').addEventListener('change', loadSubjects);
         document.getElementById('subject').addEventListener('change', loadTopics);
         document.getElementById('topic').addEventListener('input', showTopicSuggestions);
         document.addEventListener('click', (e) => { if (!e.target.closest('.topic-container')) document.getElementById('topic-suggestions').classList.remove('active'); });
-        window.selectOption = selectOption; window.selectTopic = selectTopic; window.getHint = getHint; window.generateQuestions = generateQuestions; window.submitQuiz = submitQuiz; window.resetQuiz = resetQuiz; window.selectType = selectType; window.loadSubjects = loadSubjects; window.loadTopics = loadTopics; window.showTopicSuggestions = showTopicSuggestions;
+
+        // Make functions globally available
+        window.selectOption = selectOption;
+        window.selectTopic = selectTopic;
+        window.getHint = getHint;
+        window.generateQuestions = generateQuestions;
+        window.submitQuiz = submitQuiz;
+        window.resetQuiz = resetQuiz;
+        window.selectType = selectType;
+        window.loadSubjects = loadSubjects;
+        window.loadTopics = loadTopics;
+        window.showTopicSuggestions = showTopicSuggestions;
     </script>
 </body>
 

@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Student Portal | Peer-2-Peer PRO</title>
-    <!-- External stylesheets & fonts -->
-    <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="favicon" href="favicon.ico">
 
 </head>
 
@@ -18,7 +15,7 @@
         <div class="nav-container">
             <div class="logo-container">
                 <img src="favicon.ico" alt="Logo" style="width:32px; height:32px; border-radius:8px;">
-                <span class="logo-glow">Peer-2-Peer // <span class="premium">PRO</span></span>
+                <span class="logo-glow">Peer-2-Peer <span class="premium">PRO</span></span>
             </div>
             <div class="nav-right">
                 <div class="user-profile">
@@ -33,7 +30,7 @@
                     <span>Logout</span>
                 </button>
             </div>
-            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                 <i class="fas fa-bars"></i>
             </div>
         </div>
@@ -57,25 +54,25 @@
 
     <section class="hero-section">
         <div class="hero-container">
-            <div class="hero-content fade-in">
-                <h1 class="hero-title">Welcome back, <span class="hero-highlight">Student!</span></h1>
-                <p class="hero-subtitle">Your personalized learning hub. Continue your journey with live sessions, study
-                    resources, and peer collaboration.</p>
-                <div class="hero-stats">
-                    <div class="hero-stat-item"><span class="hero-stat-value">3</span><span class="hero-stat-label">Live
-                            Classes</span></div>
-                    <div class="hero-stat-item"><span class="hero-stat-value">12</span><span
-                            class="hero-stat-label">Resources</span></div>
-                    <div class="hero-stat-item"><span class="hero-stat-value">5</span><span
-                            class="hero-stat-label">Forum Posts</span></div>
-                </div>
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Welcome back, <span class="hero-highlight" id="dynamicName">Student!</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Your personalized learning hub awaits. Join live sessions, explore resources,
+                    and collaborate with peers in real-time.
+                </p>
+                <button class="hero-cta" onclick="scrollToFeatures()">
+                    <span>Start Learning Journey</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
-            <div class="hero-visual fade-in">
+            <div class="hero-visual">
                 <div class="floating-elements">
-                    <div class="floating-element element-1"><i class="fas fa-book"></i></div>
-                    <div class="floating-element element-2"><i class="fas fa-video"></i></div>
-                    <div class="floating-element element-3"><i class="fas fa-users"></i></div>
-                    <div class="floating-element element-4"><i class="fas fa-award"></i></div>
+                    <div class="floating-element element-1"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="floating-element element-2"><i class="fas fa-rocket"></i></div>
+                    <div class="floating-element element-3"><i class="fas fa-brain"></i></div>
+                    <div class="floating-element element-4"><i class="fas fa-chart-line"></i></div>
                 </div>
             </div>
         </div>
@@ -83,42 +80,36 @@
 
     <main class="main-panel">
         <div class="features-container">
-            <section class="features-section fade-in">
+            <section class="features-section">
                 <div class="section-header">
                     <div class="section-title">
                         <div class="section-icon"><i class="fas fa-graduation-cap"></i></div>
                         <h2>Learning Core</h2>
                     </div>
-                    <p class="section-description">Your next live session and study materials</p>
+                    <p class="section-description">Your gateway to knowledge and growth</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card" onclick="openLiveClasses()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-video"></i></div><span
-                                class="feature-badge live">Live Now</span>
+                            <div class="feature-icon"><i class="fas fa-video"></i></div>
+                            <span class="feature-badge live">Live</span>
                         </div>
                         <div class="feature-content">
                             <h3>Live Interactive Classes</h3>
-                            <p>Join real-time sessions with expert tutors and peers.</p>
-                            <div class="feature-progress">
-                                <div class="progress-info"><span>Mathematics Gr12</span><span>10:30 AM</span></div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 75%"></div>
-                                </div>
-                            </div>
+                            <p>Join real-time sessions with expert tutors and peers. Participate in discussions and get
+                                instant feedback.</p>
                         </div>
                         <div class="feature-cta"><span>Join Classroom</span><i class="fas fa-arrow-right"></i></div>
                     </div>
                     <div class="feature-card" onclick="openStudyMaterials()">
                         <div class="feature-icon-wrapper">
-                            <div class="feature-icon"><i class="fas fa-book-open"></i></div><span
-                                class="feature-badge new">New</span>
+                            <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                            <span class="feature-badge new">New</span>
                         </div>
                         <div class="feature-content">
                             <h3>Study Materials Library</h3>
-                            <p>Access comprehensive notes, past papers, worksheets, and video tutorials.</p>
-                            <div class="feature-stats"><span><i class="fas fa-file-pdf"></i> Past Papers</span><span><i
-                                        class="fas fa-play-circle"></i> Videos</span></div>
+                            <p>Access comprehensive notes, past papers, worksheets, and video tutorials curated by
+                                experts.</p>
                         </div>
                         <div class="feature-cta"><span>Browse Library</span><i class="fas fa-arrow-right"></i></div>
                     </div>
@@ -128,21 +119,20 @@
                         </div>
                         <div class="feature-content">
                             <h3>Student Forum</h3>
-                            <p>Connect with peers, ask questions, and share knowledge.</p>
-                            <div class="feature-stats"><span><i class="fas fa-users"></i> 24 active discussions</span>
-                            </div>
+                            <p>Connect with peers, ask questions, and share knowledge in grade-specific discussions.</p>
                         </div>
                         <div class="feature-cta"><span>Join Forum</span><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
             </section>
-            <section class="features-section fade-in">
+
+            <section class="features-section">
                 <div class="section-header">
                     <div class="section-title">
                         <div class="section-icon"><i class="fas fa-tools"></i></div>
                         <h2>Tools & Progress</h2>
                     </div>
-                    <p class="section-description">Track your learning journey</p>
+                    <p class="section-description">Track your learning journey and achieve goals</p>
                 </div>
                 <div class="features-grid">
                     <div class="feature-card" onclick="openTutoringRequests()">
@@ -151,8 +141,7 @@
                         </div>
                         <div class="feature-content">
                             <h3>Book Tutoring Sessions</h3>
-                            <p>Schedule one-on-one sessions with qualified tutors.</p>
-                            <div class="feature-stats"><span><i class="fas fa-clock"></i> Next: —</span></div>
+                            <p>Schedule one-on-one sessions with qualified tutors for personalized help.</p>
                         </div>
                         <div class="feature-cta"><span>Book Session</span><i class="fas fa-arrow-right"></i></div>
                     </div>
@@ -162,13 +151,7 @@
                         </div>
                         <div class="feature-content">
                             <h3>Practice Questions</h3>
-                            <p>Test your knowledge with grade-specific quizzes.</p>
-                            <div class="feature-progress">
-                                <div class="progress-info"><span>Overall Progress</span><span>68%</span></div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 68%"></div>
-                                </div>
-                            </div>
+                            <p>Test your knowledge with grade-specific quizzes and get detailed explanations.</p>
                         </div>
                         <div class="feature-cta"><span>View Dashboard</span><i class="fas fa-arrow-right"></i></div>
                     </div>
@@ -178,45 +161,44 @@
                         </div>
                         <div class="feature-content">
                             <h3>Study Planner</h3>
-                            <p>Organize your study schedule, set reminders, and track deadlines.</p>
-                            <div class="feature-stats"><span><i class="fas fa-exclamation-circle"></i> Next deadline:
-                                    —</span></div>
+                            <p>Organize your study schedule, set reminders, and track assignment deadlines.</p>
                         </div>
                         <div class="feature-cta"><span>Open Planner</span><i class="fas fa-arrow-right"></i></div>
                     </div>
                 </div>
             </section>
         </div>
-        <section class="activity-section fade-in">
+
+        <section class="activity-section">
             <div class="activity-container">
-                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <h3><i class="fas fa-history"></i> Your Learning Journey</h3>
                 <div class="activity-grid">
                     <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-video"></i></div>
+                        <div class="activity-icon"><i class="fas fa-play-circle"></i></div>
                         <div class="activity-content">
-                            <h4 class="activity-title">Joined Mathematics Class</h4>
-                            <p class="activity-time">2 hours ago</p>
+                            <h4 class="activity-title">Ready to start?</h4>
+                            <p class="activity-time">Begin your first session</p>
                         </div>
                     </div>
                     <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-file-upload"></i></div>
+                        <div class="activity-icon"><i class="fas fa-book"></i></div>
                         <div class="activity-content">
-                            <h4 class="activity-title">Uploaded Study Notes</h4>
-                            <p class="activity-time">Yesterday</p>
+                            <h4 class="activity-title">Explore resources</h4>
+                            <p class="activity-time">Discover study materials</p>
                         </div>
                     </div>
                     <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-comment"></i></div>
+                        <div class="activity-icon"><i class="fas fa-users"></i></div>
                         <div class="activity-content">
-                            <h4 class="activity-title">Posted in Forum</h4>
-                            <p class="activity-time">2 days ago</p>
+                            <h4 class="activity-title">Join the community</h4>
+                            <p class="activity-time">Connect with peers</p>
                         </div>
                     </div>
                     <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-award"></i></div>
+                        <div class="activity-icon"><i class="fas fa-chart-simple"></i></div>
                         <div class="activity-content">
-                            <h4 class="activity-title">Completed Quiz</h4>
-                            <p class="activity-time">3 days ago</p>
+                            <h4 class="activity-title">Track progress</h4>
+                            <p class="activity-time">Monitor your growth</p>
                         </div>
                     </div>
                 </div>
@@ -228,16 +210,18 @@
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             const icon = document.querySelector('.mobile-menu-toggle i');
+            menu.classList.toggle('active');
             if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
-                if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
-                document.body.style.overflow = '';
-            } else {
-                menu.classList.add('active');
-                if (icon) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); }
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
                 document.body.style.overflow = 'hidden';
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = '';
             }
         }
+
         document.addEventListener('click', function (e) {
             const menu = document.getElementById('mobileMenu');
             const toggle = document.querySelector('.mobile-menu-toggle');
@@ -248,6 +232,7 @@
                 document.body.style.overflow = '';
             }
         });
+
         document.addEventListener('DOMContentLoaded', function () {
             const studentName = sessionStorage.getItem('p2p_name') || 'Student';
             const studentGrade = sessionStorage.getItem('p2p_grade') || 'Learner';
@@ -255,13 +240,18 @@
             document.getElementById('mobileAvatar') && (document.getElementById('mobileAvatar').textContent = studentName.charAt(0).toUpperCase());
             document.getElementById('studentNameDisplay') && (document.getElementById('studentNameDisplay').textContent = studentName);
             document.getElementById('studentAvatar') && (document.getElementById('studentAvatar').textContent = studentName.charAt(0).toUpperCase());
+            const dynamicSpan = document.getElementById('dynamicName');
+            if (dynamicSpan) dynamicSpan.textContent = studentName;
             document.querySelectorAll('.user-role, .mobile-user-role').forEach(el => el.textContent = studentGrade);
         });
-        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('animate-in'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-        const progressObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { const fill = entry.target; const w = fill.style.width; fill.style.width = '0'; setTimeout(() => { fill.style.width = w; }, 100); progressObserver.unobserve(fill); } }); }, { threshold: 0.3 });
-        document.querySelectorAll('.progress-fill').forEach(bar => progressObserver.observe(bar));
-        window.addEventListener('resize', function () { if (window.innerWidth > 768) { const menu = document.getElementById('mobileMenu'); if (menu && menu.classList.contains('active')) { menu.classList.remove('active'); const icon = document.querySelector('.mobile-menu-toggle i'); if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } document.body.style.overflow = ''; } } });
+
+        function scrollToFeatures() {
+            const features = document.querySelector('.features-section');
+            if (features) {
+                features.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         function openLiveClasses() { window.location.href = 'student-view.html'; }
         function openStudyMaterials() { window.location.href = 'resources.html'; }
@@ -269,6 +259,18 @@
         function openTutoringRequests() { window.location.href = 'booking.html'; }
         function openPracticeTests() { window.location.href = 'progress-tracker.html'; }
         function openStudyGroups() { window.location.href = 'progress-tracker.html'; }
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+                const menu = document.getElementById('mobileMenu');
+                if (menu && menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    const icon = document.querySelector('.mobile-menu-toggle i');
+                    if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
+                    document.body.style.overflow = '';
+                }
+            }
+        });
     </script>
 </body>
 

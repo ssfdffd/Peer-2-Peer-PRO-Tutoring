@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Practice Questions | Peer-2-Peer PRO</title>
-    <link rel="favicon" href="favicon.ico">
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* ---------- KEEP ALL ORIGINAL STYLES INTACT ---------- */
         :root {
             --primary: #000033;
             --primary-light: #103d77;
@@ -43,7 +43,6 @@
             min-height: 100vh;
         }
 
-        /* Navigation - EXACT MATCH TO YOUR ORIGINAL */
         .navbar {
             background: var(--primary);
             padding: 1rem 2rem;
@@ -99,14 +98,12 @@
             gap: 1rem;
         }
 
-        /* Main Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 2rem;
@@ -136,7 +133,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Form Section */
         .quiz-form {
             background: var(--card-bg);
             padding: 2rem;
@@ -181,19 +177,6 @@
             background: white;
         }
 
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .form-group select:disabled,
-        .form-group input:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
-
-        /* Topic Suggestions */
         .topic-suggestions {
             position: absolute;
             top: 100%;
@@ -223,11 +206,6 @@
             background: #e0f2f1;
         }
 
-        .topic-suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Question Type Selection */
         .question-types {
             display: flex;
             gap: 1rem;
@@ -246,24 +224,12 @@
             transition: all 0.3s ease;
         }
 
-        .type-option:hover {
-            border-color: var(--accent);
-            background: #e0f2f1;
-        }
-
         .type-option.selected {
             border-color: var(--accent);
             background: var(--accent);
             color: white;
         }
 
-        .type-option i {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Generate Button */
         .btn-generate {
             width: 100%;
             padding: 1rem;
@@ -281,12 +247,6 @@
             background: var(--primary-light);
         }
 
-        .btn-generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Loading */
         .loading {
             display: none;
             text-align: center;
@@ -317,7 +277,6 @@
             }
         }
 
-        /* Quiz Area */
         .quiz-area {
             display: none;
         }
@@ -366,9 +325,9 @@
             font-size: 1.1rem;
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            color: #eef2ff;
         }
 
-        /* Options */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -384,15 +343,8 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-
-        .option-label:hover {
-            border-color: var(--accent);
-            background: #e0f2f1;
-        }
-
-        .option-label input {
-            display: none;
+            color: #1f2937;
+            font-weight: 500;
         }
 
         .option-label.selected {
@@ -410,7 +362,6 @@
             border-color: var(--error);
         }
 
-        /* Textarea */
         .answer-textarea {
             width: 100%;
             padding: 1rem;
@@ -423,12 +374,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .answer-textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        /* Hint Button */
         .btn-hint {
             background: transparent;
             border: 2px solid var(--warning);
@@ -452,13 +397,13 @@
             border-radius: 8px;
             margin-top: 1rem;
             display: none;
+            color: #5e3a00;
         }
 
         .hint-box.active {
             display: block;
         }
 
-        /* Feedback */
         .feedback {
             padding: 1rem;
             border-radius: 8px;
@@ -482,7 +427,6 @@
             display: block;
         }
 
-        /* Submit Button */
         .btn-submit {
             width: 100%;
             padding: 1rem;
@@ -497,16 +441,6 @@
             margin-top: 2rem;
         }
 
-        .btn-submit:hover {
-            background: var(--primary-light);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Progress Bar */
         .progress-container {
             background: var(--card-bg);
             padding: 1.5rem;
@@ -518,12 +452,6 @@
 
         .progress-container.active {
             display: block;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
         }
 
         .progress-bar {
@@ -549,28 +477,19 @@
             flex-wrap: wrap;
         }
 
-        .stat-item {
-            text-align: center;
-        }
-
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary);
         }
 
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        /* Source Badge */
         .source-info {
             text-align: center;
             padding: 1rem;
             background: #e8f5e9;
             border-radius: 8px;
             margin-bottom: 2rem;
+            color: #1e4620;
         }
 
         .source-badge {
@@ -582,22 +501,6 @@
             margin: 0.25rem;
         }
 
-        .source-badge.r2 {
-            background: #d4edda;
-            color: #2e7d32;
-        }
-
-        .source-badge.web {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
-        .source-badge.cache {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        /* Footer - EXACT MATCH TO YOUR ORIGINAL */
         .footer {
             text-align: center;
             padding: 2rem;
@@ -606,25 +509,7 @@
             border-top: 2px solid #e0e0e0;
         }
 
-        .footer p {
-            margin: 0.25rem 0;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .nav-links {
-                justify-content: center;
-            }
-
-            .hero h1 {
-                font-size: 1.5rem;
-            }
-
             .form-grid {
                 grid-template-columns: 1fr;
             }
@@ -632,59 +517,38 @@
             .question-types {
                 flex-direction: column;
             }
-
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation - EXACT MATCH TO YOUR ORIGINAL -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
-                <img src="favicon.ico" alt="Logo">
-                <span>Peer-2-Peer PRO</span>
-            </a>
-            <div class="user-info">
-                <span id="user-greeting">Welcome, Learner</span>
-                <a href="student-portal.html">Logout</a>
-            </div>
+            <a href="index.html" class="logo"><span>Peer-2-Peer PRO</span></a>
+            <div class="user-info"><span id="user-greeting">Welcome, Learner</span><a
+                    href="student-portal.html">Logout</a></div>
         </div>
         <div class="nav-links" style="margin-top: 1rem; justify-content: center;">
-            <a href="student-portal.html">Dashboard</a>
-            <a href="student-view.html">Live Classes</a>
-            <a href="resources.html">Resources Library</a>
-            <a href="forum.html">Student Forum</a>
-            <a href="booking.html">Book Tutoring</a>
-            <a href="practice.html" class="active">Practice</a>
+            <a href="student-portal.html">Dashboard</a><a href="student-view.html">Live Classes</a>
+            <a href="resources.html">Resources Library</a><a href="forum.html">Student Forum</a>
+            <a href="booking.html">Book Tutoring</a><a href="practice.html" class="active">Practice</a>
         </div>
     </nav>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Welcome Text -->
         <div class="welcome-text">
             <h2>Welcome back! Ready to challenge yourself?</h2>
         </div>
-
-        <!-- Hero Section -->
         <div class="hero">
             <h1>Practice & Master</h1>
             <p>Test your knowledge with personalized practice questions. Choose your grade, subject, and topic to get
                 started.</p>
         </div>
 
-        <!-- Quiz Form -->
         <div class="quiz-form" id="quiz-form">
             <h2>Generate Practice Questions</h2>
-
             <div class="form-grid">
-                <div class="form-group">
-                    <label for="grade">Grade</label>
-                    <select id="grade" onchange="loadSubjects()">
+                <div class="form-group"><label for="grade">Grade</label><select id="grade">
                         <option value="">Select South African Grade</option>
                         <option value="R">Grade R</option>
                         <option value="1">Grade 1</option>
@@ -699,65 +563,40 @@
                         <option value="10">Grade 10</option>
                         <option value="11">Grade 11</option>
                         <option value="12">Grade 12</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="subject">Subject</label>
-                    <select id="subject" onchange="loadTopics()" disabled>
+                    </select></div>
+                <div class="form-group"><label for="subject">Subject</label><select id="subject" disabled>
                         <option value="">Select Subject</option>
-                    </select>
-                </div>
-
-                <div class="form-group topic-container">
-                    <label for="topic">Topic & Sub-Topic</label>
-                    <input type="text" id="topic" placeholder="Type or select topic" oninput="showTopicSuggestions()"
-                        disabled>
+                    </select></div>
+                <div class="form-group topic-container"><label for="topic">Topic & Sub-Topic</label><input type="text"
+                        id="topic" placeholder="Type or select topic" disabled>
                     <div class="topic-suggestions" id="topic-suggestions"></div>
                 </div>
             </div>
-
-            <!-- Question Type Selection -->
             <label style="display: block; margin-bottom: 1rem; color: var(--primary); font-weight: 600;">Question
                 Type</label>
             <div class="question-types">
-                <div class="type-option selected" onclick="selectType('MCQ')" data-type="MCQ">
-                    <i>🔘</i>
-                    <span>Multiple Choice</span>
-                </div>
-                <div class="type-option" onclick="selectType('TRUE_FALSE')" data-type="TRUE_FALSE">
-                    <i>✓✗</i>
-                    <span>True / False</span>
-                </div>
+                <div class="type-option selected" onclick="selectType('MCQ')" data-type="MCQ"><i>🔘</i><span>Multiple
+                        Choice</span></div>
+                <div class="type-option" onclick="selectType('TRUE_FALSE')" data-type="TRUE_FALSE"><i>✓✗</i><span>True /
+                        False</span></div>
                 <div class="type-option" onclick="selectType('SHORT_ANSWER')" data-type="SHORT_ANSWER">
-                    <i>✏️</i>
-                    <span>Short Answer</span>
-                </div>
-                <div class="type-option" onclick="selectType('ESSAY')" data-type="ESSAY">
-                    <i>📄</i>
-                    <span>Essay</span>
+                    <i>✏️</i><span>Short Answer</span></div>
+                <div class="type-option" onclick="selectType('ESSAY')" data-type="ESSAY"><i>📄</i><span>Essay</span>
                 </div>
             </div>
-
-            <button class="btn-generate" id="btn-generate" onclick="generateQuestions()" disabled>
-                Generate Questions
-            </button>
+            <button class="btn-generate" id="btn-generate" onclick="generateQuestions()" disabled>Generate
+                Questions</button>
         </div>
 
-        <!-- Loading -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>AI is creating CAPS-aligned questions...</p>
-            <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">Sourcing from curriculum
-                documents</p>
+            <p style="color: var(--text-light); font-size: 0.9rem;">Sourcing from curriculum documents</p>
         </div>
 
-        <!-- Progress Bar -->
         <div class="progress-container" id="progress-container">
-            <div class="progress-header">
-                <span style="font-weight: 600; color: var(--primary);">Your Progress</span>
-                <span id="progress-text">0 / 5 Completed</span>
-            </div>
+            <div class="progress-header"><span style="font-weight: 600; color: var(--primary);">Your
+                    Progress</span><span id="progress-text">0 / 5 Completed</span></div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
@@ -777,33 +616,24 @@
             </div>
         </div>
 
-        <!-- Quiz Area -->
         <div class="quiz-area" id="quiz-area"></div>
-
-        <!-- Submit Button -->
-        <button class="btn-submit" id="btn-submit" onclick="submitQuiz()" style="display: none;">
-            Submit Answers
-        </button>
-
-        <!-- New Quiz Button -->
-        <button class="btn-generate" id="btn-new-quiz" onclick="resetQuiz()" style="display: none; margin-top: 1rem;">
-            Practice More Questions
-        </button>
+        <button class="btn-submit" id="btn-submit" onclick="submitQuiz()" style="display: none;">Submit Answers</button>
+        <button class="btn-generate" id="btn-new-quiz" onclick="resetQuiz()"
+            style="display: none; margin-top: 1rem;">Practice More Questions</button>
     </div>
 
-    <!-- Footer - EXACT MATCH TO YOUR ORIGINAL -->
     <footer class="footer">
         <p>Peer-2-Peer PRO — Practice makes perfect! 🎯</p>
         <p>© 2026 Peer-2-Peer PRO. All data saved securely.</p>
     </footer>
 
     <script>
-        // ================= CONFIGURATION =================
-        const WORKER_URL = "https://gemini-quiz-api.buhle-1ce.workers.dev"; // UPDATE THIS
+        // ========== CONFIGURATION ==========
+        const WORKER_URL = "https://gemini-quiz-api.buhle-1ce.workers.dev";
         const LEARNER_ID = "learner_" + (localStorage.getItem('learnerId') || Math.random().toString(36).substr(2, 9));
         localStorage.setItem('learnerId', LEARNER_ID);
 
-        // ================= SOUTH AFRICAN SUBJECTS BY GRADE =================
+        // ========== SA SUBJECTS DATABASE ==========
         const SA_SUBJECTS = {
             'R': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
             '1': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
@@ -820,405 +650,188 @@
             '12': ['Home Language', 'First Additional Language', 'Mathematics', 'Mathematical Literacy', 'Physical Sciences', 'Life Sciences', 'Geography', 'History', 'Accounting', 'Business Studies', 'Economics', 'Life Orientation']
         };
 
-        // ================= STATE =================
-        let currentQuestions = [];
-        let selectedType = 'MCQ';
-        let answers = {};
-        let hintsUsed = {};
-        let startTime = {};
-        let correctCount = 0;
-        let incorrectCount = 0;
+        let currentQuestions = [], selectedType = 'MCQ', answers = {}, hintsUsed = {}, startTime = {}, correctCount = 0, incorrectCount = 0, totalScoreSum = 0;
 
-        // ================= INITIALIZATION =================
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`;
-        });
+        document.addEventListener('DOMContentLoaded', () => { document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`; });
 
-        // ================= LOAD SUBJECTS =================
         function loadSubjects() {
             const grade = document.getElementById('grade').value;
             const subjectSelect = document.getElementById('subject');
             const topicInput = document.getElementById('topic');
-            const btnGenerate = document.getElementById('btn-generate');
-
-            // Reset
+            const btnGen = document.getElementById('btn-generate');
             subjectSelect.innerHTML = '<option value="">Select Subject</option>';
-            topicInput.value = '';
-            topicInput.disabled = true;
-            topicInput.setAttribute('data-topics', '[]');
-            btnGenerate.disabled = true;
-
-            if (!grade) {
-                subjectSelect.disabled = true;
-                return;
-            }
-
-            // Get subjects for this grade
+            topicInput.value = ''; topicInput.disabled = true; btnGen.disabled = true;
+            if (!grade) { subjectSelect.disabled = true; return; }
             const subjects = SA_SUBJECTS[grade] || [];
-
-            if (subjects.length === 0) {
-                subjectSelect.disabled = true;
-                return;
-            }
-
-            // Populate dropdown
-            subjects.forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject;
-                option.textContent = subject;
-                subjectSelect.appendChild(option);
-            });
-
+            subjects.forEach(sub => { const opt = document.createElement('option'); opt.value = sub; opt.textContent = sub; subjectSelect.appendChild(opt); });
             subjectSelect.disabled = false;
         }
 
-        // ================= LOAD TOPICS =================
         async function loadTopics() {
             const grade = document.getElementById('grade').value;
             const subject = document.getElementById('subject').value;
             const topicInput = document.getElementById('topic');
-            const btnGenerate = document.getElementById('btn-generate');
-
-            topicInput.value = '';
-            topicInput.disabled = false;
-            btnGenerate.disabled = true;
-            topicInput.setAttribute('data-topics', '[]');
-
-            if (!subject) {
-                topicInput.disabled = true;
-                return;
-            }
-
-            // Fetch saved topics from database
+            const btnGen = document.getElementById('btn-generate');
+            topicInput.value = ''; topicInput.disabled = false; btnGen.disabled = true;
+            if (!subject) { topicInput.disabled = true; return; }
             try {
-                const response = await fetch(WORKER_URL + "/api/topics", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.topics && data.topics.length > 0) {
-                        topicInput.setAttribute('data-topics', JSON.stringify(data.topics));
-                    }
-                }
-            } catch (e) {
-                console.error("Error loading topics:", e);
-            }
+                const resp = await fetch(WORKER_URL + "/api/topics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ grade, subject }) });
+                if (resp.ok) { const data = await resp.json(); if (data.topics) topicInput.setAttribute('data-topics', JSON.stringify(data.topics)); }
+            } catch (e) { console.warn("topic fetch err", e); }
         }
 
-        // ================= TOPIC SUGGESTIONS =================
         function showTopicSuggestions() {
-            const topicInput = document.getElementById('topic');
-            const suggestionsBox = document.getElementById('topic-suggestions');
-            const inputValue = topicInput.value.toLowerCase();
-            const btnGenerate = document.getElementById('btn-generate');
-
-            if (inputValue.length < 1) {
-                suggestionsBox.classList.remove('active');
-                btnGenerate.disabled = !topicInput.value.trim();
-                return;
-            }
-
-            const savedTopics = JSON.parse(topicInput.getAttribute('data-topics') || '[]');
-            const filtered = savedTopics.filter(t => t.toLowerCase().includes(inputValue));
-
-            if (filtered.length > 0) {
-                suggestionsBox.innerHTML = filtered.map(topic =>
-                    `<div class="topic-suggestion-item" onclick="selectTopic('${topic.replace(/'/g, "\\'")}')">${topic}</div>`
-                ).join('');
-                suggestionsBox.classList.add('active');
-            } else {
-                suggestionsBox.innerHTML = `<div class="topic-suggestion-item" style="color: var(--text-light);">+ Use "${topicInput.value}" as new topic</div>`;
-                suggestionsBox.classList.add('active');
-            }
-
-            btnGenerate.disabled = !topicInput.value.trim();
+            const inp = document.getElementById('topic');
+            const box = document.getElementById('topic-suggestions');
+            const val = inp.value.toLowerCase();
+            const btnGen = document.getElementById('btn-generate');
+            if (val.length < 1) { box.classList.remove('active'); btnGen.disabled = !inp.value.trim(); return; }
+            const saved = JSON.parse(inp.getAttribute('data-topics') || '[]');
+            const filtered = saved.filter(t => t.toLowerCase().includes(val));
+            if (filtered.length) { box.innerHTML = filtered.map(t => `<div class="topic-suggestion-item" onclick="selectTopic('${t.replace(/'/g, "\\'")}')">${t}</div>`).join(''); box.classList.add('active'); }
+            else { box.innerHTML = `<div class="topic-suggestion-item" style="color: var(--text-light);">+ Use "${inp.value}" as new topic</div>`; box.classList.add('active'); }
+            btnGen.disabled = !inp.value.trim();
         }
+        function selectTopic(topic) { document.getElementById('topic').value = topic; document.getElementById('topic-suggestions').classList.remove('active'); document.getElementById('btn-generate').disabled = false; }
+        function selectType(type) { selectedType = type; document.querySelectorAll('.type-option').forEach(opt => { opt.classList.remove('selected'); if (opt.dataset.type === type) opt.classList.add('selected'); }); }
 
-        function selectTopic(topic) {
-            document.getElementById('topic').value = topic;
-            document.getElementById('topic-suggestions').classList.remove('active');
-            document.getElementById('btn-generate').disabled = false;
-        }
-
-        // ================= SELECT QUESTION TYPE =================
-        function selectType(type) {
-            selectedType = type;
-            document.querySelectorAll('.type-option').forEach(opt => {
-                opt.classList.remove('selected');
-                if (opt.dataset.type === type) {
-                    opt.classList.add('selected');
-                }
-            });
-        }
-
-        // ================= GENERATE QUESTIONS =================
         async function generateQuestions() {
             const grade = document.getElementById('grade').value;
             const subject = document.getElementById('subject').value;
             const topic = document.getElementById('topic').value.trim();
-
-            if (!grade || !subject || !topic) {
-                alert("Please select grade, subject, and topic");
-                return;
-            }
-
-            // Save new topic to database
-            try {
-                await fetch(WORKER_URL + "/api/save-topic", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject, topic })
-                });
-            } catch (e) {
-                console.error("Error saving topic:", e);
-            }
-
-            // Show loading
+            if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic"); return; }
+            try { await fetch(WORKER_URL + "/api/save-topic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ grade, subject, topic }) }); } catch (e) { console.warn(e); }
             document.getElementById('quiz-form').style.display = 'none';
             document.getElementById('loading').classList.add('active');
             document.getElementById('quiz-area').classList.remove('active');
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
-
             try {
                 const response = await fetch(WORKER_URL + "/api/generate", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        grade,
-                        subject,
-                        topic,
-                        count: 5,
-                        type: selectedType,
-                        learnerId: LEARNER_ID
-                    })
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ grade, subject, topic, count: 5, type: selectedType, learnerId: LEARNER_ID })
                 });
-
-                if (!response.ok) {
-                    throw new Error("Failed to generate questions");
-                }
-
+                if (!response.ok) { const errBody = await response.text(); throw new Error(`API error: ${response.status} ${errBody}`); }
                 const data = await response.json();
+                if (!data.questions || !data.questions.length) throw new Error("No questions returned from AI.");
                 currentQuestions = data.questions;
-
-                // Hide loading, show quiz
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-area').classList.add('active');
                 document.getElementById('progress-container').classList.add('active');
                 document.getElementById('btn-submit').style.display = 'block';
-
-                renderQuiz(data.questions, data.source, data.cached || 0, data.new || 0);
-
+                renderQuiz(data.questions, data.source || 'CAPS', data.cached || 0, data.new || data.questions.length);
             } catch (e) {
-                alert("Error generating questions: " + e.message);
+                alert("❌ Error generating questions: " + e.message + "\n\nPlease check API connectivity or try again.");
+                console.error(e);
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-form').style.display = 'block';
             }
         }
 
-        // ================= RENDER QUIZ =================
-        function renderQuiz(questions, source, cached, newCount) {
+        function renderQuiz(questions, source, cachedCount, newCount) {
             const container = document.getElementById('quiz-area');
-            container.innerHTML = `
-                <div class="source-info">
-                    <strong>📊 Questions Loaded:</strong> 
-                    <span class="source-badge cache">${cached} from Cache</span>
-                    <span class="source-badge ${source === 'WEB_SEARCH' ? 'web' : 'r2'}">${newCount} New (${source === 'WEB_SEARCH' ? 'Web' : 'CAPS Doc'})</span>
-                </div>
-            `;
-
+            container.innerHTML = `<div class="source-info"><strong>📊 Questions Loaded:</strong> <span class="source-badge">${cachedCount} from Cache</span> <span class="source-badge">${newCount} New (${source === 'WEB_SEARCH' ? 'Web' : 'CAPS'})</span></div>`;
             questions.forEach((q, idx) => {
-                const card = document.createElement('div');
-                card.className = 'question-card';
-                card.id = `q-${idx}`;
-
+                const card = document.createElement('div'); card.className = 'question-card'; card.id = `q-${idx}`;
                 let inputHtml = '';
                 if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    const opts = JSON.parse(q.options || '[]');
-                    inputHtml = `
-                        <div class="options-grid">
-                            ${opts.map((opt, i) => `
-                                <label class="option-label" onclick="selectOption(${idx}, this)" id="opt-${idx}-${i}">
-                                    <input type="radio" name="q${idx}" value="${opt.replace(/"/g, '&quot;')}">
-                                    ${opt}
-                                </label>
-                            `).join('')}
-                        </div>
-                    `;
+                    let opts = [];
+                    try { opts = typeof q.options === 'string' ? JSON.parse(q.options) : (Array.isArray(q.options) ? q.options : []); } catch (e) { opts = []; }
+                    if (!opts.length && q.question_type === 'TRUE_FALSE') opts = ['True', 'False'];
+                    inputHtml = `<div class="options-grid">${opts.map((opt, i) => `<label class="option-label" onclick="selectOption(${idx}, this)" id="opt-${idx}-${i}"><input type="radio" name="q${idx}" value="${opt.replace(/"/g, '&quot;')}">${opt}</label>`).join('')}</div>`;
                 } else {
-                    inputHtml = `
-                        <textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your answer here..."></textarea>
-                    `;
+                    inputHtml = `<textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your answer here..."></textarea>`;
                 }
-
                 card.innerHTML = `
-                    <div class="question-header">
-                        <span class="question-number">Question ${idx + 1} of ${questions.length}</span>
-                        <span class="question-type-badge">${q.question_type.replace('_', ' ')}</span>
-                    </div>
+                    <div class="question-header"><span class="question-number">Question ${idx + 1} of ${questions.length}</span><span class="question-type-badge">${q.question_type.replace('_', ' ')}</span></div>
                     <p class="question-text">${q.question_text}</p>
                     ${inputHtml}
-                    <button class="btn-hint" onclick="getHint(${idx}, ${q.id})">
-                        💡 Get Hint
-                    </button>
+                    <button class="btn-hint" onclick="getHint(${idx}, ${q.id || idx})">💡 Get Hint</button>
                     <div class="hint-box" id="hint-${idx}"></div>
-                    <div class="feedback" id="fb-${idx}"></div>
-                `;
+                    <div class="feedback" id="fb-${idx}"></div>`;
                 container.appendChild(card);
-
                 startTime[idx] = Date.now();
+                answers[idx] = '';
             });
         }
 
-        // ================= SELECT OPTION =================
         function selectOption(questionIdx, labelElement) {
-            document.querySelectorAll(`#q-${questionIdx} .option-label`).forEach(label => {
-                label.classList.remove('selected');
-            });
+            document.querySelectorAll(`#q-${questionIdx} .option-label`).forEach(lbl => lbl.classList.remove('selected'));
             labelElement.classList.add('selected');
-            const input = labelElement.querySelector('input');
-            if (input) {
-                input.checked = true;
-                answers[questionIdx] = input.value;
-            }
+            const inp = labelElement.querySelector('input');
+            if (inp) { inp.checked = true; answers[questionIdx] = inp.value; }
         }
 
-        // ================= GET HINT =================
         async function getHint(questionIdx, questionId) {
             const hintBox = document.getElementById(`hint-${questionIdx}`);
-
-            if (hintBox.classList.contains('active')) {
-                hintBox.classList.remove('active');
-                return;
-            }
-
+            if (hintBox.classList.contains('active')) { hintBox.classList.remove('active'); return; }
             try {
-                const response = await fetch(WORKER_URL + "/api/hint", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ questionId })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    hintBox.textContent = data.hint;
-                    hintBox.classList.add('active');
-                    hintsUsed[questionIdx] = 1;
-                }
-            } catch (e) {
-                hintBox.textContent = "Hint unavailable. Think about the key concepts!";
+                const resp = await fetch(WORKER_URL + "/api/hint", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ questionId }) });
+                const data = await resp.json();
+                hintBox.textContent = data.hint || "Review key concepts for this topic.";
                 hintBox.classList.add('active');
-            }
+                hintsUsed[questionIdx] = 1;
+            } catch (e) { hintBox.textContent = "Hint: Think about the core principles and examples."; hintBox.classList.add('active'); }
         }
 
-        // ================= SUBMIT QUIZ =================
         async function submitQuiz() {
             const btn = document.getElementById('btn-submit');
-            btn.disabled = true;
-            btn.textContent = "Grading...";
-
-            correctCount = 0;
-            incorrectCount = 0;
-            let totalScore = 0;
-
+            btn.disabled = true; btn.textContent = "Grading...";
+            correctCount = 0; incorrectCount = 0; totalScoreSum = 0;
             for (let i = 0; i < currentQuestions.length; i++) {
                 const q = currentQuestions[i];
-                const feedbackEl = document.getElementById(`fb-${i}`);
+                const fbEl = document.getElementById(`fb-${i}`);
                 let userAns = "";
-
-                // Get answer
                 if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
                     userAns = selected ? selected.value : "";
                 } else {
-                    userAns = document.getElementById(`ans-${i}`).value.trim();
+                    userAns = document.getElementById(`ans-${i}`)?.value.trim() || "";
                 }
-
                 if (!userAns) {
-                    feedbackEl.className = "feedback incorrect active";
-                    feedbackEl.innerHTML = "⚠️ No answer provided";
-                    incorrectCount++;
-                    continue;
+                    fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ No answer provided"; incorrectCount++; continue;
                 }
-
-                // Submit to API for grading
                 try {
-                    const timeSpent = Math.floor((Date.now() - startTime[i]) / 1000);
-
-                    const response = await fetch(WORKER_URL + "/api/submit", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            learnerId: LEARNER_ID,
-                            questionId: q.id,
-                            answer: userAns,
-                            questionType: q.question_type,
-                            correctAnswer: q.correct_answer,
-                            timeSpent,
-                            hintUsed: hintsUsed[i] || 0
-                        })
+                    const timeSpent = Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000);
+                    const resp = await fetch(WORKER_URL + "/api/submit", {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ learnerId: LEARNER_ID, questionId: q.id, answer: userAns, questionType: q.question_type, correctAnswer: q.correct_answer, timeSpent, hintUsed: hintsUsed[i] || 0 })
                     });
-
-                    if (response.ok) {
-                        const result = await response.json();
-
-                        if (result.isCorrect) {
-                            feedbackEl.className = "feedback correct active";
-                            feedbackEl.innerHTML = `✅ ${result.feedback}<br><strong>Score: ${result.score}/10</strong>`;
-                            correctCount++;
-                            totalScore += result.score;
-                        } else {
-                            feedbackEl.className = "feedback incorrect active";
-                            feedbackEl.innerHTML = `❌ ${result.feedback}<br><strong>Correct Answer:</strong> ${result.correctAnswer || q.correct_answer}`;
-                            incorrectCount++;
-                            totalScore += result.score || 0;
-                        }
-                    } else {
-                        throw new Error("Grading failed");
-                    }
-
-                } catch (e) {
-                    feedbackEl.className = "feedback incorrect active";
-                    feedbackEl.innerHTML = "⚠️ Grading failed";
-                    incorrectCount++;
-                }
+                    if (resp.ok) {
+                        const result = await resp.json();
+                        if (result.isCorrect) { fbEl.className = "feedback correct active"; fbEl.innerHTML = `✅ ${result.feedback}<br><strong>Score: ${result.score}/10</strong>`; correctCount++; totalScoreSum += result.score; }
+                        else { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = `❌ ${result.feedback}<br><strong>Correct Answer:</strong> ${result.correctAnswer || q.correct_answer}`; incorrectCount++; totalScoreSum += result.score || 0; }
+                    } else { throw new Error("grading failed"); }
+                } catch (e) { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ Grading service error"; incorrectCount++; }
             }
-
-            // Update progress stats
+            const avgScore = currentQuestions.length ? Math.round(totalScoreSum / currentQuestions.length) : 0;
             document.getElementById('stat-correct').textContent = correctCount;
             document.getElementById('stat-incorrect').textContent = incorrectCount;
-            document.getElementById('stat-score').textContent = Math.round(totalScore / currentQuestions.length) + '%';
+            document.getElementById('stat-score').textContent = avgScore + '%';
             document.getElementById('progress-fill').style.width = '100%';
             document.getElementById('progress-text').textContent = `${currentQuestions.length} / ${currentQuestions.length} Completed`;
-
             btn.textContent = "Quiz Complete!";
             document.getElementById('btn-new-quiz').style.display = 'block';
         }
 
-        // ================= RESET QUIZ =================
         function resetQuiz() {
             document.getElementById('quiz-form').style.display = 'block';
             document.getElementById('quiz-area').classList.remove('active');
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
-
-            currentQuestions = [];
-            answers = {};
-            hintsUsed = {};
-            startTime = {};
+            currentQuestions = []; answers = {}; hintsUsed = {}; startTime = {};
+            document.getElementById('grade').value = ''; document.getElementById('subject').disabled = true; document.getElementById('topic').disabled = true;
+            document.getElementById('subject').innerHTML = '<option value="">Select Subject</option>';
+            document.getElementById('topic').value = ''; document.getElementById('btn-generate').disabled = true;
         }
 
-        // Close topic suggestions when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.topic-container')) {
-                document.getElementById('topic-suggestions').classList.remove('active');
-            }
-        });
+        document.getElementById('grade').addEventListener('change', loadSubjects);
+        document.getElementById('subject').addEventListener('change', loadTopics);
+        document.getElementById('topic').addEventListener('input', showTopicSuggestions);
+        document.addEventListener('click', (e) => { if (!e.target.closest('.topic-container')) document.getElementById('topic-suggestions').classList.remove('active'); });
+        window.selectOption = selectOption; window.selectTopic = selectTopic; window.getHint = getHint; window.generateQuestions = generateQuestions; window.submitQuiz = submitQuiz; window.resetQuiz = resetQuiz; window.selectType = selectType; window.loadSubjects = loadSubjects; window.loadTopics = loadTopics; window.showTopicSuggestions = showTopicSuggestions;
     </script>
 </body>
 

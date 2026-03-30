@@ -175,6 +175,7 @@
             font-size: 1rem;
             transition: border-color 0.3s ease;
             background: white;
+            color: #333;
         }
 
         .topic-suggestions {
@@ -360,16 +361,6 @@
             border-color: var(--accent);
         }
 
-        .option-label.correct {
-            background: #d4edda;
-            border-color: var(--success);
-        }
-
-        .option-label.incorrect {
-            background: #f8d7da;
-            border-color: var(--error);
-        }
-
         .answer-textarea {
             width: 100%;
             padding: 1rem;
@@ -381,6 +372,7 @@
             min-height: 100px;
             margin-bottom: 1.5rem;
             background: white;
+            color: #333;
         }
 
         .btn-hint {
@@ -510,14 +502,34 @@
             margin: 0.25rem;
         }
 
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 1rem;
+        .api-status {
+            padding: 0.75rem;
             border-radius: 8px;
             margin-bottom: 1rem;
-            border: 1px solid #f5c6cb;
             text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .api-status.online {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+            border: 1px solid #c3e6cb;
+        }
+
+        .api-status.offline {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+            border: 1px solid #f5c6cb;
+        }
+
+        .api-status.checking {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+            border: 1px solid #ffeeba;
         }
 
         .footer {
@@ -563,6 +575,8 @@
             <p>Test your knowledge with personalized practice questions. Choose your grade, subject, and topic to get
                 started.</p>
         </div>
+
+        <div id="api-status" class="api-status checking">🔌 Checking API connection...</div>
 
         <div class="quiz-form" id="quiz-form">
             <h2>Generate Practice Questions</h2>
@@ -652,6 +666,8 @@
         const LEARNER_ID = "learner_" + (localStorage.getItem('learnerId') || Math.random().toString(36).substr(2, 9));
         localStorage.setItem('learnerId', LEARNER_ID);
 
+        let apiOnline = false;
+
         // ========== SA SUBJECTS DATABASE ==========
         const SA_SUBJECTS = {
             'R': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
@@ -673,27 +689,39 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`;
-            // Test API connectivity on load
             testAPIConnection();
         });
 
         async function testAPIConnection() {
+            const statusDiv = document.getElementById('api-status');
+            statusDiv.className = 'api-status checking';
+            statusDiv.textContent = '🔌 Checking API connection...';
+
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
                 const response = await fetch(WORKER_URL + "/health", {
                     method: "GET",
-                    signal: controller.signal
+                    signal: controller.signal,
+                    mode: 'cors'
                 });
                 clearTimeout(timeoutId);
+
                 if (response.ok) {
-                    console.log("✅ API connected successfully");
+                    const data = await response.json();
+                    apiOnline = true;
+                    statusDiv.className = 'api-status online';
+                    statusDiv.textContent = '✅ API connected successfully! Ready to generate questions.';
+                    console.log("API Status:", data);
+                    setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
                 } else {
-                    console.warn("⚠️ API responded but with error:", response.status);
+                    throw new Error(`HTTP ${response.status}`);
                 }
             } catch (e) {
-                console.warn("⚠️ API connection test failed:", e.message);
-                // Don't show error to user yet, just log
+                apiOnline = false;
+                statusDiv.className = 'api-status offline';
+                statusDiv.textContent = `⚠️ Cannot connect to API. Please check your internet or try again later. Error: ${e.message}`;
+                console.error("API Connection Error:", e);
             }
         }
 
@@ -717,6 +745,13 @@
             const btnGen = document.getElementById('btn-generate');
             topicInput.value = ''; topicInput.disabled = false; btnGen.disabled = true;
             if (!subject) { topicInput.disabled = true; return; }
+
+            if (!apiOnline) {
+                topicInput.setAttribute('data-topics', '[]');
+                topicInput.disabled = false;
+                return;
+            }
+
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -749,6 +784,7 @@
             else { box.innerHTML = `<div class="topic-suggestion-item" style="color: #666;">+ Use "${inp.value}" as new topic</div>`; box.classList.add('active'); }
             btnGen.disabled = !inp.value.trim();
         }
+
         function selectTopic(topic) { document.getElementById('topic').value = topic; document.getElementById('topic-suggestions').classList.remove('active'); document.getElementById('btn-generate').disabled = false; }
         function selectType(type) { selectedType = type; document.querySelectorAll('.type-option').forEach(opt => { opt.classList.remove('selected'); if (opt.dataset.type === type) opt.classList.add('selected'); }); }
 
@@ -758,7 +794,11 @@
             const topic = document.getElementById('topic').value.trim();
             if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic"); return; }
 
-            // Show loading, hide form
+            if (!apiOnline) {
+                alert("⚠️ API is not connected. Please check your internet connection and refresh the page.");
+                return;
+            }
+
             document.getElementById('quiz-form').style.display = 'none';
             document.getElementById('loading').classList.add('active');
             document.getElementById('quiz-area').classList.remove('active');
@@ -767,19 +807,15 @@
             document.getElementById('progress-container').classList.remove('active');
 
             try {
-                // First, try to save topic (optional, ignore errors)
-                try {
-                    await fetch(WORKER_URL + "/api/save-topic", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ grade, subject, topic }),
-                        signal: AbortSignal.timeout(5000)
-                    });
-                } catch (e) { console.log("Topic save skipped:", e.message); }
+                // Optional: save topic (don't wait for it)
+                fetch(WORKER_URL + "/api/save-topic", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ grade, subject, topic }),
+                }).catch(e => console.log("Topic save skipped:", e.message));
 
-                // Generate questions with timeout
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                const timeoutId = setTimeout(() => controller.abort(), 45000);
 
                 const response = await fetch(WORKER_URL + "/api/generate", {
                     method: "POST",
@@ -795,7 +831,9 @@
                 }
 
                 const data = await response.json();
-                if (!data.questions || !data.questions.length) throw new Error("No questions returned from AI. Please try a different topic.");
+                if (!data.questions || !data.questions.length) {
+                    throw new Error("No questions returned. Try a different topic or question type.");
+                }
 
                 currentQuestions = data.questions;
                 document.getElementById('loading').classList.remove('active');
@@ -807,10 +845,10 @@
             } catch (e) {
                 console.error("Generation error:", e);
                 let errorMsg = e.message;
-                if (e.name === 'AbortError') errorMsg = "Request timed out. The AI is taking too long. Please try again.";
-                if (errorMsg.includes('Failed to fetch')) errorMsg = "Cannot connect to the API server. Please check your internet connection and ensure the worker URL is correct.";
+                if (e.name === 'AbortError') errorMsg = "Request timed out. The server is taking too long. Please try again.";
+                if (errorMsg.includes('Failed to fetch')) errorMsg = "Cannot reach the API server. The worker might be down or the URL is incorrect.";
 
-                alert("❌ Error generating questions: " + errorMsg + "\n\n💡 Tip: Try a more specific topic or check the API connectivity.");
+                alert("❌ Error generating questions: " + errorMsg + "\n\n💡 Troubleshooting:\n• Check if your worker is deployed\n• Verify the worker URL is correct\n• Try a different topic (e.g., 'Addition', 'Photosynthesis')\n• Refresh the page and try again");
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-form').style.display = 'block';
             }
@@ -853,23 +891,27 @@
         async function getHint(questionIdx, questionId) {
             const hintBox = document.getElementById(`hint-${questionIdx}`);
             if (hintBox.classList.contains('active')) { hintBox.classList.remove('active'); return; }
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                const resp = await fetch(WORKER_URL + "/api/hint", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ questionId }),
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-                const data = await resp.json();
-                hintBox.textContent = data.hint || "Review key concepts for this topic.";
-                hintBox.classList.add('active');
-                hintsUsed[questionIdx] = 1;
-            } catch (e) {
-                hintBox.textContent = "💡 Hint: Think about the core principles and examples related to this topic.";
-                hintBox.classList.add('active');
+            hintBox.textContent = "💡 Hint: Review the key concepts from this topic. Think about examples and definitions.";
+            hintBox.classList.add('active');
+            hintsUsed[questionIdx] = 1;
+
+            // Try to get AI hint if API is online
+            if (apiOnline) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    const resp = await fetch(WORKER_URL + "/api/hint", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ questionId }),
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        if (data.hint) hintBox.textContent = data.hint;
+                    }
+                } catch (e) { console.log("Hint fetch failed, using default"); }
             }
         }
 
@@ -890,6 +932,23 @@
                 if (!userAns) {
                     fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ No answer provided"; incorrectCount++; continue;
                 }
+
+                // Local grading for MCQ/TrueFalse if API offline
+                if (!apiOnline && ['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
+                    const isCorrect = (userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase());
+                    if (isCorrect) {
+                        fbEl.className = "feedback correct active";
+                        fbEl.innerHTML = `✅ Correct! Well done!<br><strong>Score: 10/10</strong>`;
+                        correctCount++;
+                        totalScoreSum += 10;
+                    } else {
+                        fbEl.className = "feedback incorrect active";
+                        fbEl.innerHTML = `❌ Incorrect.<br><strong>Correct Answer:</strong> ${q.correct_answer || 'Not available'}`;
+                        incorrectCount++;
+                    }
+                    continue;
+                }
+
                 try {
                     const timeSpent = Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000);
                     const controller = new AbortController();
@@ -905,7 +964,11 @@
                         if (result.isCorrect) { fbEl.className = "feedback correct active"; fbEl.innerHTML = `✅ ${result.feedback}<br><strong>Score: ${result.score}/10</strong>`; correctCount++; totalScoreSum += result.score; }
                         else { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = `❌ ${result.feedback}<br><strong>Correct Answer:</strong> ${result.correctAnswer || q.correct_answer}`; incorrectCount++; totalScoreSum += result.score || 0; }
                     } else { throw new Error("grading failed"); }
-                } catch (e) { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ Grading service error. Answer recorded."; incorrectCount++; }
+                } catch (e) {
+                    fbEl.className = "feedback incorrect active";
+                    fbEl.innerHTML = "⚠️ Grading service error. Your answer has been recorded.";
+                    incorrectCount++;
+                }
             }
             const avgScore = currentQuestions.length ? Math.round(totalScoreSum / currentQuestions.length) : 0;
             document.getElementById('stat-correct').textContent = correctCount;
@@ -930,6 +993,7 @@
             document.getElementById('subject').innerHTML = '<option value="">Select Subject</option>';
             document.getElementById('topic').value = '';
             document.getElementById('btn-generate').disabled = true;
+            testAPIConnection(); // Re-check connection
         }
 
         // Event listeners

@@ -7,7 +7,7 @@
     <title>Practice Questions | Peer-2-Peer PRO</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* ---------- KEEP ALL ORIGINAL STYLES INTACT ---------- */
+        /* ---------- ORIGINAL CSS VARIABLES — UNTOUCHED ---------- */
         :root {
             --primary: #000033;
             --primary-light: #103d77;
@@ -30,6 +30,218 @@
             --warning: #ff9800;
         }
 
+        /* ========== FUTURISTIC ANIMATION ADDITIONS (no color changes) ========== */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(50, 205, 50, 0.4), 0 0 20px rgba(50, 205, 50, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 18px rgba(50, 205, 50, 0.8), 0 0 40px rgba(50, 205, 50, 0.3);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scanline {
+            0% {
+                top: -4px;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        @keyframes orbitRing {
+            from {
+                transform: rotateX(65deg) rotateZ(0deg);
+            }
+
+            to {
+                transform: rotateX(65deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes blink-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes matrix-rain {
+            0% {
+                transform: translateY(-100%);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes card-in {
+            from {
+                opacity: 0;
+                transform: scale(0.93) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes progress-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes correct-bounce {
+            0% {
+                transform: scale(1);
+            }
+
+            30% {
+                transform: scale(1.04);
+            }
+
+            60% {
+                transform: scale(0.97);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes wrong-shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        @keyframes neon-border {
+
+            0%,
+            100% {
+                border-color: var(--accent);
+                box-shadow: 0 0 6px rgba(50, 205, 50, 0.5);
+            }
+
+            50% {
+                border-color: var(--sky-blue);
+                box-shadow: 0 0 16px rgba(127, 223, 240, 0.6);
+            }
+        }
+
+        @keyframes hero-bg-shift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes loading-text {
+            0% {
+                content: 'Sourcing CAPS curriculum documents';
+            }
+
+            33% {
+                content: 'Consulting AI question bank';
+            }
+
+            66% {
+                content: 'Crafting your practice set';
+            }
+
+            100% {
+                content: 'Almost ready…';
+            }
+        }
+
+        /* ========== BASE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -41,15 +253,30 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* ===== PARTICLE CANVAS (background effect) ===== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.18;
+        }
+
+        /* ===== NAVBAR ===== */
         .navbar {
             background: var(--primary);
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(50, 205, 50, 0.2), 0 2px 10px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(50, 205, 50, 0.2);
         }
 
         .nav-container {
@@ -70,6 +297,11 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--accent);
         }
 
         .nav-links {
@@ -83,12 +315,16 @@
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 5px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
         }
 
         .nav-links a:hover,
         .nav-links a.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(50, 205, 50, 0.15);
+            border-color: rgba(50, 205, 50, 0.4);
+            color: var(--accent);
         }
 
         .user-info {
@@ -98,25 +334,61 @@
             gap: 1rem;
         }
 
+        /* ===== MAIN CONTAINER ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
+        /* ===== HERO ===== */
         .hero {
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(50, 205, 50, 0.15), 0 2px 10px rgba(0, 0, 0, 0.3);
             margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(50, 205, 50, 0.2);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(90deg, transparent, rgba(50, 205, 50, 0.08), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Scanline effect */
+        .hero::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(127, 223, 240, 0.6), transparent);
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
         }
 
         .hero h1 {
-            color: var(--primary);
-            font-size: 2rem;
+            color: var(--accent);
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
+            letter-spacing: 2px;
+            animation: float 5s ease-in-out infinite;
         }
 
         .hero p {
@@ -124,29 +396,70 @@
             font-size: 1rem;
         }
 
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), #1aaa1a);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===== WELCOME STRIP ===== */
         .welcome-text {
             background: var(--primary);
             color: white;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
             border-radius: 10px;
             text-align: center;
             margin-bottom: 2rem;
+            border: 1px solid rgba(127, 223, 240, 0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 51, 0.5);
         }
 
+        .welcome-text h2 {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        /* ===== QUIZ FORM CARD ===== */
         .quiz-form {
             background: var(--card-bg);
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
             margin-bottom: 2rem;
+            border: 1px solid rgba(50, 205, 50, 0.15);
+            animation: fadeSlideIn 0.6s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: shimmer 2.5s linear infinite;
         }
 
         .quiz-form h2 {
-            color: var(--primary);
+            color: var(--accent);
             margin-bottom: 1.5rem;
             text-align: center;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
+        /* ===== FORM GRID ===== */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -161,21 +474,47 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: var(--primary);
+            color: var(--text-light);
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .form-group select,
         .form-group input {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(50, 205, 50, 0.2);
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
-            background: white;
-            color: #333;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 51, 0.8);
+            color: white;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(50, 205, 50, 0.3);
+            animation: neon-border 2s ease infinite;
+        }
+
+        .form-group select option {
+            background: var(--primary);
+            color: white;
+        }
+
+        .form-group select:disabled,
+        .form-group input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ===== TOPIC SUGGESTIONS ===== */
+        .topic-container {
+            position: relative;
         }
 
         .topic-suggestions {
@@ -183,109 +522,339 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: white;
+            background: var(--primary);
             border: 2px solid var(--accent);
             border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
-            z-index: 10;
+            z-index: 100;
             display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(50, 205, 50, 0.2);
         }
 
         .topic-suggestions.active {
             display: block;
+            animation: fadeSlideIn 0.2s ease;
         }
 
         .topic-suggestion-item {
             padding: 0.75rem 1rem;
             cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
+            border-bottom: 1px solid rgba(50, 205, 50, 0.1);
+            color: var(--text-light);
+            font-size: 0.95rem;
+            transition: all 0.2s;
         }
 
         .topic-suggestion-item:hover {
-            background: #e0f2f1;
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--accent);
+            padding-left: 1.5rem;
+        }
+
+        /* ===== QUESTION TYPES ===== */
+        .qt-label {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .question-types {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
             margin-bottom: 2rem;
         }
 
         .type-option {
             flex: 1;
-            min-width: 120px;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            min-width: 110px;
+            padding: 0.9rem 0.5rem;
+            border: 2px solid rgba(50, 205, 50, 0.2);
+            border-radius: 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: white;
-            color: #333;
+            background: rgba(0, 0, 51, 0.6);
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .type-option::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(50, 205, 50, 0.08) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .type-option:hover::after {
+            opacity: 1;
+        }
+
+        .type-option:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
         }
 
         .type-option.selected {
             border-color: var(--accent);
-            background: var(--accent);
-            color: white;
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 14px rgba(50, 205, 50, 0.3);
         }
 
+        .type-option i {
+            display: block;
+            font-style: normal;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ===== BUTTONS ===== */
         .btn-generate {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #1aaa1a 100%);
+            color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-generate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-generate:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(50, 205, 50, 0.5);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-submit {
             width: 100%;
             padding: 1rem;
             background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 8px;
+            border: 2px solid var(--accent);
+            border-radius: 10px;
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            letter-spacing: 1px;
         }
 
-        .btn-generate:hover {
-            background: var(--primary-light);
+        .btn-submit:hover:not(:disabled) {
+            background: rgba(50, 205, 50, 0.15);
+            box-shadow: 0 0 20px rgba(50, 205, 50, 0.4);
+            transform: translateY(-2px);
         }
 
-        .btn-generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
+        /* ===== LOADING ===== */
         .loading {
             display: none;
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 2rem;
         }
 
         .loading.active {
             display: block;
+            animation: fadeSlideIn 0.4s ease;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e0e0e0;
-            border-top: 4px solid var(--accent);
+        /* Orbital loader */
+        .orbital-loader {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .orbit-ring {
+            position: absolute;
             border-radius: 50%;
-            margin: 0 auto 1rem;
+            border: 2px solid transparent;
+        }
+
+        .orbit-ring:nth-child(1) {
+            inset: 0;
+            border-top-color: var(--accent);
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+        .orbit-ring:nth-child(2) {
+            inset: 12px;
+            border-right-color: var(--sky-blue);
+            animation: spin 1.5s linear infinite reverse;
         }
 
+        .orbit-ring:nth-child(3) {
+            inset: 24px;
+            border-bottom-color: var(--accent);
+            animation: spin 2s linear infinite;
+        }
+
+        .orbit-core {
+            position: absolute;
+            inset: 34px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+
+        .loading-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 51, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(50, 205, 50, 0.1);
+            color: var(--text-light);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .loading-step.active {
+            opacity: 1;
+            border-color: rgba(50, 205, 50, 0.4);
+            color: var(--accent);
+        }
+
+        .loading-step.done {
+            opacity: 0.6;
+            border-color: rgba(50, 205, 50, 0.2);
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            animation: blink-dot 1s ease infinite;
+        }
+
+        .loading-step.done .step-dot {
+            animation: none;
+            background: var(--success);
+        }
+
+        /* ===== PROGRESS CONTAINER ===== */
+        .progress-container {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            display: none;
+            border: 1px solid rgba(50, 205, 50, 0.15);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-header span {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--sky-blue));
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.4);
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 12px rgba(50, 205, 50, 0.4);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== QUIZ AREA ===== */
         .quiz-area {
             display: none;
         }
@@ -294,13 +863,79 @@
             display: block;
         }
 
+        /* SOURCE INFO */
+        .source-info {
+            text-align: center;
+            padding: 0.9rem 1rem;
+            background: rgba(0, 0, 51, 0.7);
+            border: 1px solid rgba(50, 205, 50, 0.2);
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            animation: fadeSlideIn 0.4s ease;
+        }
+
+        .source-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin: 0.2rem;
+            background: rgba(50, 205, 50, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(50, 205, 50, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .source-badge.r2 {
+            background: rgba(127, 223, 240, 0.1);
+            color: var(--sky-blue);
+            border-color: rgba(127, 223, 240, 0.3);
+        }
+
+        /* ===== QUESTION CARDS ===== */
         .question-card {
             background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.75rem;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
             margin-bottom: 1.5rem;
-            border-left: 5px solid var(--accent);
+            border-left: 4px solid var(--accent);
+            border-top: 1px solid rgba(50, 205, 50, 0.1);
+            border-right: 1px solid rgba(50, 205, 50, 0.05);
+            border-bottom: 1px solid rgba(50, 205, 50, 0.05);
+            animation: card-in 0.5s ease both;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(50, 205, 50, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 8px 32px rgba(50, 205, 50, 0.15), 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .question-card.correct-anim {
+            animation: correct-bounce 0.5s ease;
+            border-left-color: var(--success);
+        }
+
+        .question-card.wrong-anim {
+            animation: wrong-shake 0.5s ease;
+            border-left-color: var(--error);
         }
 
         .question-header {
@@ -313,233 +948,230 @@
         }
 
         .question-number {
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, var(--accent), #1aaa1a);
+            color: var(--primary);
+            padding: 0.25rem 0.85rem;
             border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85rem;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
         }
 
         .question-type-badge {
-            background: #e0f2f1;
-            color: var(--primary);
+            background: rgba(127, 223, 240, 0.1);
+            color: var(--sky-blue);
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(127, 223, 240, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .question-text {
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 1.05rem;
+            line-height: 1.7;
             margin-bottom: 1.5rem;
             color: #eef2ff;
         }
 
+        /* ===== OPTIONS ===== */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
 
         .option-label {
-            display: block;
-            padding: 1rem;
-            background: #f5f5f5;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            color: #1f2937;
+            transition: all 0.25s ease;
+            color: #d0d8ff;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-label input[type="radio"] {
+            display: none;
+        }
+
+        .option-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(50, 205, 50, 0.4);
+            flex-shrink: 0;
+            transition: all 0.25s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            border-color: rgba(50, 205, 50, 0.4);
+            background: rgba(50, 205, 50, 0.06);
+            transform: translateX(4px);
         }
 
         .option-label.selected {
-            background: #e0f2f1;
+            background: rgba(50, 205, 50, 0.12);
             border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 12px rgba(50, 205, 50, 0.2);
+        }
+
+        .option-label.selected .option-dot {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(50, 205, 50, 0.5);
+        }
+
+        .option-label.correct-opt {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: var(--success);
+            color: #a8ffab;
+        }
+
+        .option-label.wrong-opt {
+            background: rgba(244, 67, 54, 0.12);
+            border-color: var(--error);
+            color: #ffb3b3;
         }
 
         .answer-textarea {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: 2px solid rgba(50, 205, 50, 0.2);
+            border-radius: 10px;
             font-size: 1rem;
             font-family: inherit;
             resize: vertical;
-            min-height: 100px;
+            min-height: 110px;
             margin-bottom: 1.5rem;
-            background: white;
-            color: #333;
+            background: rgba(0, 0, 51, 0.6);
+            color: #eef2ff;
+            transition: all 0.3s;
         }
 
+        .answer-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(50, 205, 50, 0.2);
+        }
+
+        /* ===== HINT ===== */
         .btn-hint {
             background: transparent;
             border: 2px solid var(--warning);
             color: var(--warning);
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.1rem;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s ease;
+            font-size: 0.85rem;
         }
 
         .btn-hint:hover {
             background: var(--warning);
-            color: white;
+            color: var(--primary);
+            box-shadow: 0 0 14px rgba(255, 152, 0, 0.4);
         }
 
         .hint-box {
-            background: #fff3e0;
+            background: rgba(255, 152, 0, 0.08);
             border-left: 4px solid var(--warning);
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             border-radius: 8px;
             margin-top: 1rem;
             display: none;
-            color: #5e3a00;
+            color: #ffe0a0;
+            font-size: 0.95rem;
+            animation: fadeSlideIn 0.3s ease;
         }
 
         .hint-box.active {
             display: block;
         }
 
+        /* ===== FEEDBACK ===== */
         .feedback {
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
             margin-top: 1rem;
             display: none;
+            font-weight: 600;
+            line-height: 1.6;
         }
 
         .feedback.correct {
-            background: #d4edda;
+            background: rgba(76, 175, 80, 0.12);
             border: 2px solid var(--success);
-            color: #155724;
+            color: #a8ffab;
+            animation: correct-bounce 0.5s ease;
         }
 
         .feedback.incorrect {
-            background: #f8d7da;
+            background: rgba(244, 67, 54, 0.1);
             border: 2px solid var(--error);
-            color: #721c24;
+            color: #ffb3b3;
+            animation: wrong-shake 0.4s ease;
         }
 
         .feedback.active {
             display: block;
         }
 
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 2rem;
-        }
-
-        .progress-container {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .progress-container.active {
-            display: block;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-
-        .progress-stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .source-info {
-            text-align: center;
-            padding: 1rem;
-            background: #e8f5e9;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            color: #1e4620;
-        }
-
-        .source-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin: 0.25rem;
-        }
-
+        /* ===== API STATUS ===== */
         .api-status {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             text-align: center;
             font-size: 0.9rem;
             display: none;
+            font-weight: 600;
         }
 
         .api-status.online {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(76, 175, 80, 0.15);
+            color: #a8ffab;
             display: block;
-            border: 1px solid #c3e6cb;
+            border: 1px solid rgba(76, 175, 80, 0.3);
         }
 
         .api-status.offline {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(244, 67, 54, 0.12);
+            color: #ffb3b3;
             display: block;
-            border: 1px solid #f5c6cb;
+            border: 1px solid rgba(244, 67, 54, 0.3);
         }
 
         .api-status.checking {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
             display: block;
-            border: 1px solid #ffeeba;
+            border: 1px solid rgba(255, 152, 0, 0.3);
         }
 
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             padding: 2rem;
             color: var(--text-light);
             margin-top: 3rem;
-            border-top: 2px solid #e0e0e0;
+            border-top: 1px solid rgba(50, 205, 50, 0.15);
+            opacity: 0.8;
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -548,40 +1180,59 @@
             .question-types {
                 flex-direction: column;
             }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Particle canvas for background effect -->
+    <canvas id="particle-canvas"></canvas>
+
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo"><span>Peer-2-Peer PRO</span></a>
-            <div class="user-info"><span id="user-greeting">Welcome, Learner</span><a
-                    href="student-portal.html">Logout</a></div>
+            <a href="index.html" class="logo">Peer-2-Peer <span>PRO</span></a>
+            <div class="user-info">
+                <span id="user-greeting">Welcome, Learner</span>
+                <a href="student-portal.html"
+                    style="color: var(--text-light); text-decoration: none; font-size:0.9rem;">Logout</a>
+            </div>
         </div>
         <div class="nav-links" style="margin-top: 1rem; justify-content: center;">
-            <a href="student-portal.html">Dashboard</a><a href="student-view.html">Live Classes</a>
-            <a href="resources.html">Resources Library</a><a href="forum.html">Student Forum</a>
-            <a href="booking.html">Book Tutoring</a><a href="practice.html" class="active">Practice</a>
+            <a href="student-portal.html">Dashboard</a>
+            <a href="student-view.html">Live Classes</a>
+            <a href="resources.html">Resources Library</a>
+            <a href="forum.html">Student Forum</a>
+            <a href="booking.html">Book Tutoring</a>
+            <a href="practice.html" class="active">Practice</a>
         </div>
     </nav>
 
     <div class="container">
+
         <div class="welcome-text">
-            <h2>Welcome back! Ready to challenge yourself?</h2>
+            <h2>Welcome back! Ready to challenge yourself? 🚀</h2>
         </div>
+
         <div class="hero">
-            <h1>Practice & Master</h1>
-            <p>Test your knowledge with personalized practice questions. Choose your grade, subject, and topic to get
-                started.</p>
+            <div class="hero-badge">CAPS-Aligned · AI-Powered</div>
+            <h1>⚡ Practice & Master</h1>
+            <p>South African CAPS curriculum questions sourced from official documents & past papers.<br>
+                Choose your grade, subject, and topic to begin your practice session.</p>
         </div>
 
-        <div id="api-status" class="api-status checking">🔌 Checking API connection...</div>
+        <div id="api-status" class="api-status checking">🔌 Checking API connection…</div>
 
+        <!-- ===== QUIZ FORM ===== -->
         <div class="quiz-form" id="quiz-form">
-            <h2>Generate Practice Questions</h2>
+            <h2>⚙ Generate Practice Questions</h2>
             <div class="form-grid">
-                <div class="form-group"><label for="grade">Grade</label><select id="grade">
+                <div class="form-group">
+                    <label for="grade">Grade</label>
+                    <select id="grade">
                         <option value="">Select South African Grade</option>
                         <option value="R">Grade R</option>
                         <option value="1">Grade 1</option>
@@ -596,40 +1247,76 @@
                         <option value="10">Grade 10</option>
                         <option value="11">Grade 11</option>
                         <option value="12">Grade 12</option>
-                    </select></div>
-                <div class="form-group"><label for="subject">Subject</label><select id="subject" disabled>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" disabled>
                         <option value="">Select Subject</option>
-                    </select></div>
-                <div class="form-group topic-container"><label for="topic">Topic & Sub-Topic</label><input type="text"
-                        id="topic" placeholder="Type or select topic" disabled>
+                    </select>
+                </div>
+                <div class="form-group topic-container">
+                    <label for="topic">Topic / Sub-Topic</label>
+                    <input type="text" id="topic" placeholder="Type or search a topic…" disabled>
                     <div class="topic-suggestions" id="topic-suggestions"></div>
                 </div>
             </div>
-            <label style="display: block; margin-bottom: 1rem; color: var(--primary); font-weight: 600;">Question
-                Type</label>
+
+            <label class="qt-label">Question Type</label>
             <div class="question-types">
-                <div class="type-option selected" onclick="selectType('MCQ')" data-type="MCQ"><i>🔘</i><span>Multiple
-                        Choice</span></div>
-                <div class="type-option" onclick="selectType('TRUE_FALSE')" data-type="TRUE_FALSE"><i>✓✗</i><span>True /
-                        False</span></div>
+                <div class="type-option selected" onclick="selectType('MCQ')" data-type="MCQ">
+                    <i>🔘</i><span>Multiple Choice</span>
+                </div>
+                <div class="type-option" onclick="selectType('TRUE_FALSE')" data-type="TRUE_FALSE">
+                    <i>✓✗</i><span>True / False</span>
+                </div>
                 <div class="type-option" onclick="selectType('SHORT_ANSWER')" data-type="SHORT_ANSWER">
-                    <i>✏️</i><span>Short Answer</span></div>
-                <div class="type-option" onclick="selectType('ESSAY')" data-type="ESSAY"><i>📄</i><span>Essay</span>
+                    <i>✏️</i><span>Short Answer</span>
+                </div>
+                <div class="type-option" onclick="selectType('ESSAY')" data-type="ESSAY">
+                    <i>📄</i><span>Essay</span>
                 </div>
             </div>
-            <button class="btn-generate" id="btn-generate" onclick="generateQuestions()" disabled>Generate
-                Questions</button>
+
+            <button class="btn-generate" id="btn-generate" onclick="generateQuestions()" disabled>
+                ⚡ Generate Questions
+            </button>
         </div>
 
+        <!-- ===== LOADING ===== -->
         <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>AI is creating CAPS-aligned questions...</p>
-            <p style="color: var(--text-light); font-size: 0.9rem;">Sourcing from curriculum documents</p>
+            <div class="orbital-loader">
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring"></div>
+                <div class="orbit-core"></div>
+            </div>
+            <p
+                style="color: var(--accent); font-size: 1.1rem; font-weight: 700; letter-spacing:1px; margin-bottom: 1.5rem;">
+                Generating CAPS-Aligned Questions…
+            </p>
+            <div class="loading-steps" id="loading-steps">
+                <div class="loading-step" id="ls-1">
+                    <div class="step-dot"></div>🔍 Searching R2 curriculum documents
+                </div>
+                <div class="loading-step" id="ls-2">
+                    <div class="step-dot"></div>🧠 Consulting AI question bank
+                </div>
+                <div class="loading-step" id="ls-3">
+                    <div class="step-dot"></div>📚 Applying CAPS standards
+                </div>
+                <div class="loading-step" id="ls-4">
+                    <div class="step-dot"></div>✅ Finalising your practice set
+                </div>
+            </div>
         </div>
 
+        <!-- ===== PROGRESS ===== -->
         <div class="progress-container" id="progress-container">
-            <div class="progress-header"><span style="font-weight: 600; color: var(--primary);">Your
-                    Progress</span><span id="progress-text">0 / 5 Completed</span></div>
+            <div class="progress-header">
+                <span>📊 Your Progress</span>
+                <span id="progress-text">0 / 5 Completed</span>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
@@ -644,29 +1331,36 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="stat-score">0%</div>
-                    <div class="stat-label">Average Score</div>
+                    <div class="stat-label">Score</div>
                 </div>
             </div>
         </div>
 
+        <!-- ===== QUIZ AREA ===== -->
         <div class="quiz-area" id="quiz-area"></div>
-        <button class="btn-submit" id="btn-submit" onclick="submitQuiz()" style="display: none;">Submit Answers</button>
-        <button class="btn-generate" id="btn-new-quiz" onclick="resetQuiz()"
-            style="display: none; margin-top: 1rem;">Practice More Questions</button>
+        <button class="btn-submit" id="btn-submit" onclick="submitQuiz()" style="display:none;">
+            🎯 Submit Answers
+        </button>
+        <button class="btn-generate" id="btn-new-quiz" onclick="resetQuiz()" style="display:none; margin-top:1rem;">
+            🔄 Practice More Questions
+        </button>
     </div>
 
     <footer class="footer">
         <p>Peer-2-Peer PRO — Practice makes perfect! 🎯</p>
         <p>© 2026 Peer-2-Peer PRO. All data saved securely.</p>
     </footer>
-
+    <script src="quiz.js"></script>
     <script>
         // ========== CONFIGURATION ==========
         const WORKER_URL = "https://gemini-quiz-api.buhle-1ce.workers.dev";
         const LEARNER_ID = "learner_" + (localStorage.getItem('learnerId') || Math.random().toString(36).substr(2, 9));
-        localStorage.setItem('learnerId', LEARNER_ID);
+        localStorage.setItem('learnerId', LEARNER_ID.replace('learner_learner_', 'learner_'));
 
         let apiOnline = false;
+        let currentQuestions = [], selectedType = 'MCQ';
+        let answers = {}, hintsUsed = {}, startTime = {};
+        let correctCount = 0, incorrectCount = 0, totalScoreSum = 0;
 
         // ========== SA SUBJECTS DATABASE ==========
         const SA_SUBJECTS = {
@@ -685,8 +1379,88 @@
             '12': ['Home Language', 'First Additional Language', 'Mathematics', 'Mathematical Literacy', 'Physical Sciences', 'Life Sciences', 'Geography', 'History', 'Accounting', 'Business Studies', 'Economics', 'Life Orientation']
         };
 
-        let currentQuestions = [], selectedType = 'MCQ', answers = {}, hintsUsed = {}, startTime = {}, correctCount = 0, incorrectCount = 0, totalScoreSum = 0;
+        // ========== PARTICLE CANVAS ==========
+        (function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+                    r: Math.random() * 1.8 + 0.4,
+                    color: Math.random() > 0.5 ? '#32cd32' : '#7fdff0',
+                    alpha: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fill();
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                });
+                // Draw connecting lines
+                ctx.globalAlpha = 0.05;
+                particles.forEach((a, i) => {
+                    particles.slice(i + 1).forEach(b => {
+                        const d = Math.hypot(a.x - b.x, a.y - b.y);
+                        if (d < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+                            ctx.strokeStyle = '#32cd32';
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    });
+                });
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
 
+        // ========== LOADING STEPS ANIMATION ==========
+        let loadingInterval = null;
+        function startLoadingSteps() {
+            const steps = ['ls-1', 'ls-2', 'ls-3', 'ls-4'];
+            let current = 0;
+            steps.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.classList.remove('active', 'done'); }
+            });
+            clearInterval(loadingInterval);
+            loadingInterval = setInterval(() => {
+                if (current > 0) {
+                    const prev = document.getElementById(steps[current - 1]);
+                    if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+                }
+                if (current < steps.length) {
+                    const cur = document.getElementById(steps[current]);
+                    if (cur) cur.classList.add('active');
+                    current++;
+                } else {
+                    clearInterval(loadingInterval);
+                }
+            }, 1800);
+        }
+        function stopLoadingSteps() {
+            clearInterval(loadingInterval);
+            ['ls-1', 'ls-2', 'ls-3', 'ls-4'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.classList.remove('active'); el.classList.add('done'); }
+            });
+        }
+
+        // ========== INIT ==========
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`;
             testAPIConnection();
@@ -695,109 +1469,105 @@
         async function testAPIConnection() {
             const statusDiv = document.getElementById('api-status');
             statusDiv.className = 'api-status checking';
-            statusDiv.textContent = '🔌 Checking API connection...';
-
+            statusDiv.textContent = '🔌 Checking API connection…';
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
-                const response = await fetch(WORKER_URL + "/health", {
-                    method: "GET",
-                    signal: controller.signal,
-                    mode: 'cors'
-                });
-                clearTimeout(timeoutId);
-
-                if (response.ok) {
-                    const data = await response.json();
+                const ctrl = new AbortController();
+                const tid = setTimeout(() => ctrl.abort(), 8000);
+                const resp = await fetch(WORKER_URL + "/health", { signal: ctrl.signal, mode: 'cors' });
+                clearTimeout(tid);
+                if (resp.ok) {
+                    const data = await resp.json();
                     apiOnline = true;
                     statusDiv.className = 'api-status online';
-                    statusDiv.textContent = '✅ API connected successfully! Ready to generate questions.';
-                    console.log("API Status:", data);
-                    setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
-                } else {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+                    const r2 = data.r2 ? '✅ R2' : '⚠️ R2 missing';
+                    const db = data.db ? '✅ DB' : '⚠️ DB missing';
+                    const ai = data.gemini ? '✅ AI' : '⚠️ AI key missing';
+                    statusDiv.textContent = `✅ Connected — ${db} · ${r2} · ${ai}`;
+                    setTimeout(() => { statusDiv.style.display = 'none'; }, 6000);
+                } else { throw new Error(`HTTP ${resp.status}`); }
             } catch (e) {
                 apiOnline = false;
                 statusDiv.className = 'api-status offline';
-                statusDiv.textContent = `⚠️ Cannot connect to API. Please check your internet or try again later. Error: ${e.message}`;
-                console.error("API Connection Error:", e);
+                statusDiv.textContent = `⚠️ Cannot connect to API. Check worker deployment. (${e.message})`;
             }
         }
 
         function loadSubjects() {
             const grade = document.getElementById('grade').value;
-            const subjectSelect = document.getElementById('subject');
-            const topicInput = document.getElementById('topic');
-            const btnGen = document.getElementById('btn-generate');
-            subjectSelect.innerHTML = '<option value="">Select Subject</option>';
-            topicInput.value = ''; topicInput.disabled = true; btnGen.disabled = true;
-            if (!grade) { subjectSelect.disabled = true; return; }
-            const subjects = SA_SUBJECTS[grade] || [];
-            subjects.forEach(sub => { const opt = document.createElement('option'); opt.value = sub; opt.textContent = sub; subjectSelect.appendChild(opt); });
-            subjectSelect.disabled = false;
+            const subSel = document.getElementById('subject');
+            const topicIn = document.getElementById('topic');
+            const btn = document.getElementById('btn-generate');
+            subSel.innerHTML = '<option value="">Select Subject</option>';
+            topicIn.value = ''; topicIn.disabled = true; btn.disabled = true;
+            if (!grade) { subSel.disabled = true; return; }
+            (SA_SUBJECTS[grade] || []).forEach(s => {
+                const o = document.createElement('option'); o.value = s; o.textContent = s; subSel.appendChild(o);
+            });
+            subSel.disabled = false;
         }
 
         async function loadTopics() {
             const grade = document.getElementById('grade').value;
             const subject = document.getElementById('subject').value;
-            const topicInput = document.getElementById('topic');
-            const btnGen = document.getElementById('btn-generate');
-            topicInput.value = ''; topicInput.disabled = false; btnGen.disabled = true;
-            if (!subject) { topicInput.disabled = true; return; }
-
-            if (!apiOnline) {
-                topicInput.setAttribute('data-topics', '[]');
-                topicInput.disabled = false;
-                return;
-            }
-
+            const topicIn = document.getElementById('topic');
+            const btn = document.getElementById('btn-generate');
+            topicIn.value = ''; topicIn.disabled = false; btn.disabled = true;
+            if (!subject) { topicIn.disabled = true; return; }
+            if (!apiOnline) { topicIn.setAttribute('data-topics', '[]'); return; }
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const ctrl = new AbortController();
+                const tid = setTimeout(() => ctrl.abort(), 8000);
                 const resp = await fetch(WORKER_URL + "/api/topics", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject }),
-                    signal: controller.signal
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ grade, subject }), signal: ctrl.signal
                 });
-                clearTimeout(timeoutId);
+                clearTimeout(tid);
                 if (resp.ok) {
                     const data = await resp.json();
-                    if (data.topics) topicInput.setAttribute('data-topics', JSON.stringify(data.topics));
+                    topicIn.setAttribute('data-topics', JSON.stringify(data.topics || []));
                 }
-            } catch (e) {
-                console.warn("topic fetch err", e);
-                topicInput.setAttribute('data-topics', '[]');
-            }
+            } catch (e) { topicIn.setAttribute('data-topics', '[]'); }
         }
 
         function showTopicSuggestions() {
             const inp = document.getElementById('topic');
             const box = document.getElementById('topic-suggestions');
+            const btn = document.getElementById('btn-generate');
             const val = inp.value.toLowerCase();
-            const btnGen = document.getElementById('btn-generate');
-            if (val.length < 1) { box.classList.remove('active'); btnGen.disabled = !inp.value.trim(); return; }
+            btn.disabled = !inp.value.trim();
+            if (val.length < 1) { box.classList.remove('active'); return; }
             const saved = JSON.parse(inp.getAttribute('data-topics') || '[]');
             const filtered = saved.filter(t => t.toLowerCase().includes(val));
-            if (filtered.length) { box.innerHTML = filtered.map(t => `<div class="topic-suggestion-item" onclick="selectTopic('${t.replace(/'/g, "\\'")}')">${t}</div>`).join(''); box.classList.add('active'); }
-            else { box.innerHTML = `<div class="topic-suggestion-item" style="color: #666;">+ Use "${inp.value}" as new topic</div>`; box.classList.add('active'); }
-            btnGen.disabled = !inp.value.trim();
+            if (filtered.length) {
+                box.innerHTML = filtered.map(t =>
+                    `<div class="topic-suggestion-item" onclick="selectTopic('${t.replace(/'/g, "\\'")}')">📌 ${t}</div>`
+                ).join('');
+            } else {
+                box.innerHTML = `<div class="topic-suggestion-item" style="color:var(--accent);">➕ Use "<strong>${inp.value}</strong>" as new topic</div>`;
+            }
+            box.classList.add('active');
         }
 
-        function selectTopic(topic) { document.getElementById('topic').value = topic; document.getElementById('topic-suggestions').classList.remove('active'); document.getElementById('btn-generate').disabled = false; }
-        function selectType(type) { selectedType = type; document.querySelectorAll('.type-option').forEach(opt => { opt.classList.remove('selected'); if (opt.dataset.type === type) opt.classList.add('selected'); }); }
+        function selectTopic(t) {
+            document.getElementById('topic').value = t;
+            document.getElementById('topic-suggestions').classList.remove('active');
+            document.getElementById('btn-generate').disabled = false;
+        }
+
+        function selectType(type) {
+            selectedType = type;
+            document.querySelectorAll('.type-option').forEach(o => {
+                o.classList.remove('selected');
+                if (o.dataset.type === type) o.classList.add('selected');
+            });
+        }
 
         async function generateQuestions() {
             const grade = document.getElementById('grade').value;
             const subject = document.getElementById('subject').value;
             const topic = document.getElementById('topic').value.trim();
-            if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic"); return; }
-
-            if (!apiOnline) {
-                alert("⚠️ API is not connected. Please check your internet connection and refresh the page.");
-                return;
-            }
+            if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic."); return; }
+            if (!apiOnline) { alert("⚠️ API offline. Please check your connection and refresh."); return; }
 
             document.getElementById('quiz-form').style.display = 'none';
             document.getElementById('loading').classList.add('active');
@@ -805,32 +1575,31 @@
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
+            startLoadingSteps();
+
+            // Fire-and-forget topic save
+            fetch(WORKER_URL + "/api/save-topic", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ grade, subject, topic })
+            }).catch(() => { });
 
             try {
-                // Optional: save topic (don't wait for it)
-                fetch(WORKER_URL + "/api/save-topic", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject, topic }),
-                }).catch(e => console.log("Topic save skipped:", e.message));
-
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 45000);
-
-                const response = await fetch(WORKER_URL + "/api/generate", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const ctrl = new AbortController();
+                const tid = setTimeout(() => ctrl.abort(), 50000);
+                const resp = await fetch(WORKER_URL + "/api/generate", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ grade, subject, topic, count: 5, type: selectedType, learnerId: LEARNER_ID }),
-                    signal: controller.signal
+                    signal: ctrl.signal
                 });
-                clearTimeout(timeoutId);
+                clearTimeout(tid);
+                stopLoadingSteps();
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`API error (${response.status}): ${errorText.substring(0, 200)}`);
+                if (!resp.ok) {
+                    const errText = await resp.text();
+                    throw new Error(`API error (${resp.status}): ${errText.substring(0, 200)}`);
                 }
 
-                const data = await response.json();
+                const data = await resp.json();
                 if (!data.questions || !data.questions.length) {
                     throw new Error("No questions returned. Try a different topic or question type.");
                 }
@@ -843,141 +1612,246 @@
                 renderQuiz(data.questions, data.source || 'CAPS', data.cached || 0, data.new || data.questions.length);
 
             } catch (e) {
-                console.error("Generation error:", e);
-                let errorMsg = e.message;
-                if (e.name === 'AbortError') errorMsg = "Request timed out. The server is taking too long. Please try again.";
-                if (errorMsg.includes('Failed to fetch')) errorMsg = "Cannot reach the API server. The worker might be down or the URL is incorrect.";
-
-                alert("❌ Error generating questions: " + errorMsg + "\n\n💡 Troubleshooting:\n• Check if your worker is deployed\n• Verify the worker URL is correct\n• Try a different topic (e.g., 'Addition', 'Photosynthesis')\n• Refresh the page and try again");
+                stopLoadingSteps();
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('quiz-form').style.display = 'block';
+                let msg = e.message;
+                if (e.name === 'AbortError') msg = "Request timed out. Please try again.";
+                if (msg.includes('Failed to fetch')) msg = "Cannot reach API server. Check worker deployment.";
+                alert("❌ Error: " + msg);
             }
         }
 
         function renderQuiz(questions, source, cachedCount, newCount) {
             const container = document.getElementById('quiz-area');
-            container.innerHTML = `<div class="source-info"><strong>📊 Questions Loaded:</strong> <span class="source-badge">${cachedCount} from Cache</span> <span class="source-badge">${newCount} New (${source === 'WEB_SEARCH' ? 'Web' : 'CAPS'})</span></div>`;
+            const sourceLabel = source === 'R2_CAPS' ? '📂 CAPS Documents' : source === 'CACHE' ? '🗄️ Database Cache' : '🌐 AI Web Search';
+            container.innerHTML = `
+        <div class="source-info">
+          <strong>📊 Questions Loaded:</strong>
+          <span class="source-badge r2">${sourceLabel}</span>
+          <span class="source-badge">${cachedCount} Cached</span>
+          <span class="source-badge">${newCount} New</span>
+        </div>`;
+
             questions.forEach((q, idx) => {
-                const card = document.createElement('div'); card.className = 'question-card'; card.id = `q-${idx}`;
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-${idx}`;
+                card.style.animationDelay = `${idx * 0.1}s`;
+
+                let opts = [];
+                try { opts = typeof q.options === 'string' ? JSON.parse(q.options) : (Array.isArray(q.options) ? q.options : []); }
+                catch (e) { opts = []; }
+                if (!opts.length && q.question_type === 'TRUE_FALSE') opts = ['True', 'False'];
+
                 let inputHtml = '';
                 if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    let opts = [];
-                    try { opts = typeof q.options === 'string' ? JSON.parse(q.options) : (Array.isArray(q.options) ? q.options : []); } catch (e) { opts = []; }
-                    if (!opts.length && q.question_type === 'TRUE_FALSE') opts = ['True', 'False'];
-                    inputHtml = `<div class="options-grid">${opts.map((opt, i) => `<label class="option-label" onclick="selectOption(${idx}, this)" id="opt-${idx}-${i}"><input type="radio" name="q${idx}" value="${opt.replace(/"/g, '&quot;')}">${opt}</label>`).join('')}</div>`;
+                    inputHtml = `<div class="options-grid">${opts.map((opt, i) =>
+                        `<label class="option-label" onclick="selectOption(${idx}, this)" id="opt-${idx}-${i}">
+              <input type="radio" name="q${idx}" value="${opt.replace(/"/g, '&quot;')}">
+              <div class="option-dot"></div>
+              <span>${opt}</span>
+            </label>`
+                    ).join('')}</div>`;
                 } else {
-                    inputHtml = `<textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your answer here..."></textarea>`;
+                    inputHtml = `<textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your detailed answer here…"></textarea>`;
                 }
+
                 card.innerHTML = `
-                    <div class="question-header"><span class="question-number">Question ${idx + 1} of ${questions.length}</span><span class="question-type-badge">${q.question_type?.replace('_', ' ') || 'Question'}</span></div>
-                    <p class="question-text">${q.question_text || q.question || 'Question text not available'}</p>
-                    ${inputHtml}
-                    <button class="btn-hint" onclick="getHint(${idx}, ${q.id || idx})">💡 Get Hint</button>
-                    <div class="hint-box" id="hint-${idx}"></div>
-                    <div class="feedback" id="fb-${idx}"></div>`;
+          <div class="question-header">
+            <span class="question-number">Q${idx + 1} / ${questions.length}</span>
+            <span class="question-type-badge">${(q.question_type || 'MCQ').replace('_', ' ')}</span>
+          </div>
+          <p class="question-text">${q.question_text || q.question || 'Question text unavailable'}</p>
+          ${inputHtml}
+          <button class="btn-hint" onclick="getHint(${idx}, ${q.id || idx}, '${(q.question_text || q.question || '').replace(/'/g, "\\'")}')">💡 Show Hint</button>
+          <div class="hint-box" id="hint-${idx}"></div>
+          <div class="feedback" id="fb-${idx}"></div>`;
+
                 container.appendChild(card);
                 startTime[idx] = Date.now();
                 answers[idx] = '';
             });
+
+            document.getElementById('progress-text').textContent = `0 / ${questions.length} Completed`;
         }
 
-        function selectOption(questionIdx, labelElement) {
-            document.querySelectorAll(`#q-${questionIdx} .option-label`).forEach(lbl => lbl.classList.remove('selected'));
-            labelElement.classList.add('selected');
-            const inp = labelElement.querySelector('input');
-            if (inp) { inp.checked = true; answers[questionIdx] = inp.value; }
+        function selectOption(qIdx, lbl) {
+            document.querySelectorAll(`#q-${qIdx} .option-label`).forEach(l => l.classList.remove('selected'));
+            lbl.classList.add('selected');
+            const inp = lbl.querySelector('input');
+            if (inp) { inp.checked = true; answers[qIdx] = inp.value; }
+            updateProgress();
         }
 
-        async function getHint(questionIdx, questionId) {
-            const hintBox = document.getElementById(`hint-${questionIdx}`);
-            if (hintBox.classList.contains('active')) { hintBox.classList.remove('active'); return; }
-            hintBox.textContent = "💡 Hint: Review the key concepts from this topic. Think about examples and definitions.";
-            hintBox.classList.add('active');
-            hintsUsed[questionIdx] = 1;
+        function updateProgress() {
+            const answered = Object.values(answers).filter(a => a && a.toString().trim()).length;
+            const pct = Math.round((answered / Math.max(currentQuestions.length, 1)) * 100);
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = `${answered} / ${currentQuestions.length} Answered`;
+        }
 
-            // Try to get AI hint if API is online
-            if (apiOnline) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-                    const resp = await fetch(WORKER_URL + "/api/hint", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ questionId }),
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        if (data.hint) hintBox.textContent = data.hint;
-                    }
-                } catch (e) { console.log("Hint fetch failed, using default"); }
+        async function getHint(qIdx, qId, qText) {
+            const box = document.getElementById(`hint-${qIdx}`);
+            if (box.classList.contains('active')) { box.classList.remove('active'); return; }
+            box.innerHTML = '💡 <em>Loading hint…</em>';
+            box.classList.add('active');
+            hintsUsed[qIdx] = 1;
+            try {
+                const ctrl = new AbortController();
+                setTimeout(() => ctrl.abort(), 6000);
+                const resp = await fetch(WORKER_URL + "/api/hint", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ questionId: qId, questionText: qText }),
+                    signal: ctrl.signal
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.hint) box.textContent = '💡 Hint: ' + data.hint;
+                }
+            } catch (e) {
+                box.textContent = '💡 Hint: Review the key CAPS concepts for this topic. Think about definitions, examples, and applications.';
             }
         }
 
         async function submitQuiz() {
             const btn = document.getElementById('btn-submit');
-            btn.disabled = true; btn.textContent = "Grading...";
+            btn.disabled = true; btn.textContent = "⏳ Grading…";
             correctCount = 0; incorrectCount = 0; totalScoreSum = 0;
+
             for (let i = 0; i < currentQuestions.length; i++) {
                 const q = currentQuestions[i];
                 const fbEl = document.getElementById(`fb-${i}`);
+                const card = document.getElementById(`q-${i}`);
                 let userAns = "";
+
                 if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                    userAns = selected ? selected.value : "";
+                    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+                    userAns = sel ? sel.value : "";
                 } else {
                     userAns = document.getElementById(`ans-${i}`)?.value.trim() || "";
                 }
-                if (!userAns) {
-                    fbEl.className = "feedback incorrect active"; fbEl.innerHTML = "⚠️ No answer provided"; incorrectCount++; continue;
-                }
 
-                // Local grading for MCQ/TrueFalse if API offline
-                if (!apiOnline && ['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    const isCorrect = (userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase());
-                    if (isCorrect) {
-                        fbEl.className = "feedback correct active";
-                        fbEl.innerHTML = `✅ Correct! Well done!<br><strong>Score: 10/10</strong>`;
-                        correctCount++;
-                        totalScoreSum += 10;
-                    } else {
-                        fbEl.className = "feedback incorrect active";
-                        fbEl.innerHTML = `❌ Incorrect.<br><strong>Correct Answer:</strong> ${q.correct_answer || 'Not available'}`;
-                        incorrectCount++;
-                    }
+                if (!userAns) {
+                    fbEl.className = "feedback incorrect active";
+                    fbEl.innerHTML = "⚠️ No answer provided.";
+                    incorrectCount++;
+                    card.classList.add('wrong-anim');
+                    setTimeout(() => card.classList.remove('wrong-anim'), 600);
                     continue;
                 }
 
-                try {
-                    const timeSpent = Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000);
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000);
-                    const resp = await fetch(WORKER_URL + "/api/submit", {
-                        method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ learnerId: LEARNER_ID, questionId: q.id, answer: userAns, questionType: q.question_type, correctAnswer: q.correct_answer, timeSpent, hintUsed: hintsUsed[i] || 0 }),
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
-                    if (resp.ok) {
-                        const result = await resp.json();
-                        if (result.isCorrect) { fbEl.className = "feedback correct active"; fbEl.innerHTML = `✅ ${result.feedback}<br><strong>Score: ${result.score}/10</strong>`; correctCount++; totalScoreSum += result.score; }
-                        else { fbEl.className = "feedback incorrect active"; fbEl.innerHTML = `❌ ${result.feedback}<br><strong>Correct Answer:</strong> ${result.correctAnswer || q.correct_answer}`; incorrectCount++; totalScoreSum += result.score || 0; }
-                    } else { throw new Error("grading failed"); }
-                } catch (e) {
-                    fbEl.className = "feedback incorrect active";
-                    fbEl.innerHTML = "⚠️ Grading service error. Your answer has been recorded.";
-                    incorrectCount++;
+                // Local grading for MCQ/TF when API is available but as fallback
+                if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
+                    let isCorrect = false, score = 0, feedback = "";
+                    if (apiOnline) {
+                        try {
+                            const ctrl = new AbortController();
+                            const tid = setTimeout(() => ctrl.abort(), 10000);
+                            const resp = await fetch(WORKER_URL + "/api/submit", {
+                                method: "POST", headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    learnerId: LEARNER_ID, questionId: q.id, answer: userAns,
+                                    questionType: q.question_type, correctAnswer: q.correct_answer,
+                                    timeSpent: Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000),
+                                    hintUsed: hintsUsed[i] || 0
+                                }), signal: ctrl.signal
+                            });
+                            clearTimeout(tid);
+                            if (resp.ok) {
+                                const result = await resp.json();
+                                isCorrect = !!result.isCorrect;
+                                score = result.score || 0;
+                                feedback = result.feedback || (isCorrect ? "✅ Correct!" : `❌ Incorrect. Answer: ${q.correct_answer}`);
+                            } else { throw new Error("grading failed"); }
+                        } catch (e) {
+                            // Fallback local
+                            isCorrect = userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase();
+                            score = isCorrect ? 10 : 0;
+                            feedback = isCorrect ? "✅ Correct! Well done!" : `❌ Incorrect. Correct answer: ${q.correct_answer}`;
+                        }
+                    } else {
+                        isCorrect = userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase();
+                        score = isCorrect ? 10 : 0;
+                        feedback = isCorrect ? "✅ Correct! Well done!" : `❌ Incorrect. Correct answer: ${q.correct_answer}`;
+                    }
+
+                    if (isCorrect) {
+                        fbEl.className = "feedback correct active";
+                        fbEl.innerHTML = `${feedback}<br><strong>Score: ${score}/10</strong>`;
+                        correctCount++; totalScoreSum += score;
+                        card.classList.add('correct-anim');
+                        setTimeout(() => card.classList.remove('correct-anim'), 600);
+                        // Highlight correct option
+                        highlightOption(i, userAns, q.correct_answer, true);
+                    } else {
+                        fbEl.className = "feedback incorrect active";
+                        fbEl.innerHTML = `${feedback}`;
+                        incorrectCount++;
+                        card.classList.add('wrong-anim');
+                        setTimeout(() => card.classList.remove('wrong-anim'), 600);
+                        highlightOption(i, userAns, q.correct_answer, false);
+                    }
+                } else {
+                    // Subjective
+                    fbEl.className = "feedback active";
+                    fbEl.style.background = "rgba(127,223,240,0.08)";
+                    fbEl.style.border = "2px solid var(--sky-blue)";
+                    fbEl.style.color = "var(--sky-blue)";
+                    fbEl.innerHTML = "⏳ AI is grading your response…";
+                    try {
+                        const ctrl = new AbortController();
+                        const tid = setTimeout(() => ctrl.abort(), 15000);
+                        const resp = await fetch(WORKER_URL + "/api/submit", {
+                            method: "POST", headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                learnerId: LEARNER_ID, questionId: q.id, answer: userAns,
+                                questionType: q.question_type, correctAnswer: q.correct_answer,
+                                timeSpent: Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000),
+                                hintUsed: hintsUsed[i] || 0
+                            }), signal: ctrl.signal
+                        });
+                        clearTimeout(tid);
+                        if (resp.ok) {
+                            const result = await resp.json();
+                            const isC = !!result.isCorrect;
+                            fbEl.className = isC ? "feedback correct active" : "feedback incorrect active";
+                            fbEl.style = "";
+                            fbEl.innerHTML = `${result.feedback}<br><strong>Score: ${result.score}/10</strong>`;
+                            if (isC) { correctCount++; totalScoreSum += result.score; } else { incorrectCount++; totalScoreSum += result.score || 0; }
+                        } else { throw new Error("grading failed"); }
+                    } catch (e) {
+                        fbEl.className = "feedback active";
+                        fbEl.style.background = "rgba(255,152,0,0.08)";
+                        fbEl.style.border = "2px solid var(--warning)";
+                        fbEl.style.color = "#ffe0a0";
+                        fbEl.innerHTML = "⚠️ Could not grade automatically. Your answer was recorded. Review the model answer:<br><br><em>" + (q.correct_answer || "") + "</em>";
+                        incorrectCount++;
+                    }
                 }
             }
+
             const avgScore = currentQuestions.length ? Math.round(totalScoreSum / currentQuestions.length) : 0;
             document.getElementById('stat-correct').textContent = correctCount;
             document.getElementById('stat-incorrect').textContent = incorrectCount;
             document.getElementById('stat-score').textContent = avgScore + '%';
             document.getElementById('progress-fill').style.width = '100%';
             document.getElementById('progress-text').textContent = `${currentQuestions.length} / ${currentQuestions.length} Completed`;
-            btn.textContent = "Quiz Complete!";
+            btn.textContent = "🎉 Quiz Complete!";
             document.getElementById('btn-new-quiz').style.display = 'block';
+        }
+
+        function highlightOption(qIdx, userAns, correctAns, isCorrect) {
+            document.querySelectorAll(`#q-${qIdx} .option-label`).forEach(lbl => {
+                const inp = lbl.querySelector('input');
+                if (!inp) return;
+                const val = inp.value;
+                if (val.trim().toLowerCase() === correctAns?.trim().toLowerCase()) {
+                    lbl.classList.add('correct-opt');
+                } else if (val.trim().toLowerCase() === userAns?.trim().toLowerCase() && !isCorrect) {
+                    lbl.classList.add('wrong-opt');
+                }
+            });
         }
 
         function resetQuiz() {
@@ -986,23 +1860,35 @@
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('btn-new-quiz').style.display = 'none';
             document.getElementById('progress-container').classList.remove('active');
+            document.getElementById('btn-submit').disabled = false;
+            document.getElementById('btn-submit').textContent = '🎯 Submit Answers';
             currentQuestions = []; answers = {}; hintsUsed = {}; startTime = {};
+            correctCount = 0; incorrectCount = 0; totalScoreSum = 0;
+            document.getElementById('stat-correct').textContent = '0';
+            document.getElementById('stat-incorrect').textContent = '0';
+            document.getElementById('stat-score').textContent = '0%';
+            document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('grade').value = '';
             document.getElementById('subject').disabled = true;
-            document.getElementById('topic').disabled = true;
             document.getElementById('subject').innerHTML = '<option value="">Select Subject</option>';
             document.getElementById('topic').value = '';
+            document.getElementById('topic').disabled = true;
             document.getElementById('btn-generate').disabled = true;
-            testAPIConnection(); // Re-check connection
+            testAPIConnection();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Event listeners
+        // ========== EVENT LISTENERS ==========
         document.getElementById('grade').addEventListener('change', loadSubjects);
         document.getElementById('subject').addEventListener('change', loadTopics);
         document.getElementById('topic').addEventListener('input', showTopicSuggestions);
-        document.addEventListener('click', (e) => { if (!e.target.closest('.topic-container')) document.getElementById('topic-suggestions').classList.remove('active'); });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.topic-container')) {
+                document.getElementById('topic-suggestions').classList.remove('active');
+            }
+        });
 
-        // Make functions globally available
+        // Expose globals
         window.selectOption = selectOption;
         window.selectTopic = selectTopic;
         window.getHint = getHint;

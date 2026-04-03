@@ -4,177 +4,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peer-2-Peer PRO | Join Us</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Peer-2-Peer PRO | Login & Register</title>
   <link rel="stylesheet" href="login.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-  <script type="text/javascript">
-    (function () {
-      if (typeof emailjs !== 'undefined') {
-        emailjs.init("1MGUTlF8hOxhOc27a");
-      }
-    })();
-  </script>
 </head>
 
 <body>
 
   <nav id="navbar">
-    <div class="logo">
-      <img src="favicon.ico" alt="Logo" style="height:25px; margin-right:8px;">
-      Peer-2-Peer <span>PRO</span>
-    </div>
-    <div class="nav-right">
-      <li><a href="index.html"><span>Home</span></a></li>
-      <span id="openNav" class="menu-toggle">☰</span>
-    </div>
+    <a href="index.html" class="logo">Peer-2-Peer<span>PRO</span></a>
+    <ul class="nav-right">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
   </nav>
 
   <div class="split-screen-wrapper">
-    <div class="auth-section login-side">
-      <div class="form-box">
+    <!-- LOGIN SECTION -->
+    <section class="auth-section login-side">
+      <form id="loginForm" class="form-box">
         <h2>Welcome Back</h2>
         <p>Log in to your Peer-2-Peer account</p>
-        <form id="loginForm">
-          <div class="input-group">
-            <label><i class="fas fa-envelope"></i> Email Address</label>
-            <input type="email" name="email" placeholder="email@example.com" required>
-          </div>
-          <div class="input-group">
-            <label><i class="fas fa-lock"></i> Password</label>
-            <input type="password" name="password" placeholder="••••••••" required>
-          </div>
-          <div class="forgot-link">
-            <a href="#" onclick="showForgotModal()"
-              style="font-size: 0.8rem; color: #6e8efb; text-decoration: none; display: block; margin-top: 5px;">Forgot
-              Password?</a>
-          </div>
-          <button type="submit" class="auth-btn login-btn">Login</button>
-        </form>
-      </div>
-    </div>
 
-    <div class="auth-section signup-side">
-      <div class="form-box">
+        <div class="input-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" name="email" required placeholder="you@example.com">
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" required placeholder="••••••••">
+        </div>
+
+        <div class="forgot-link">
+          <a href="#" id="resetPasswordLink">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="auth-btn login-btn">Login</button>
+      </form>
+    </section>
+
+    <!-- SIGNUP SECTION -->
+    <section class="auth-section signup-side">
+      <form id="signupForm" class="form-box">
         <h2>Create Account</h2>
-        <form id="signupForm">
-          <div class="form-grid">
-            <div class="input-group">
-              <label>First Name</label>
-              <input type="text" name="firstName" required>
-            </div>
-            <div class="input-group">
-              <label>Surname</label>
-              <input type="text" name="lastName" required>
-            </div>
-          </div>
+        <p>Join Peer-2-Peer PRO and start learning or teaching.</p>
 
-          <div class="form-grid">
-            <div class="input-group">
-              <label>Age</label>
-              <input type="number" name="age" required>
-            </div>
-            <div class="input-group">
-              <label>Grade/Level</label>
-              <input type="text" name="grade" placeholder="e.g. 12">
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="input-group">
-              <label>Phone Number</label>
-              <input type="tel" name="phone" required>
-            </div>
-            <div class="input-group">
-              <label>Backup Phone</label>
-              <input type="tel" name="backupPhone">
-            </div>
-          </div>
-
+        <div class="form-grid">
           <div class="input-group">
-            <label>School Name</label>
-            <input type="text" name="schoolName" required>
+            <label for="signupFirstName">First Name</label>
+            <input type="text" id="signupFirstName" name="firstName" required>
           </div>
-
-          <div class="form-grid">
-            <div class="input-group">
-              <label>User Type</label>
-              <select name="userType" id="userType" required>
-                <option value="student">Student (Learner)</option>
-                <option value="tutor">Tutor (Teacher)</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label>School Code (Optional)</label>
-              <input type="text" name="schoolCode">
-            </div>
-          </div>
-
           <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" name="email" required>
+            <label for="signupLastName">Surname</label>
+            <input type="text" id="signupLastName" name="lastName" required>
           </div>
-
           <div class="input-group">
-            <label>Create Password</label>
-            <input type="password" name="password" required>
+            <label for="signupUserType">User Type</label>
+            <select id="signupUserType" name="userType" required>
+              <option value="">Select...</option>
+              <option value="student">Student (Learner)</option>
+              <option value="tutor">Tutor (Teacher)</option>
+            </select>
           </div>
-
-          <div class="tc-container">
-            <details>
-              <summary><i class="fas fa-file-contract"></i> Legal & Data Use Agreement</summary>
-              <div class="tc-content">
-                <h4>1. Intellectual Property & Branding</h4>
-                <p>The "Peer-2-Peer PRO" name and logo are exclusive property.</p>
-                <h4>2. Commercial Data Consent</h4>
-                <p>You consent to anonymized data processing for commercial purposes as a condition of use.</p>
-              </div>
-            </details>
-            <label class="checkbox-label">
-              <input type="checkbox" name="agreeTerms" required>
-              <span>I agree to the terms and lawful commercial use of my data.</span>
-            </label>
+          <div class="input-group">
+            <label for="signupGrade">Grade/Level</label>
+            <input type="text" id="signupGrade" name="grade" placeholder="e.g. 10, Matric, N/A">
           </div>
+          <div class="input-group">
+            <label for="signupPhone">Phone Number</label>
+            <input type="tel" id="signupPhone" name="phone" required>
+          </div>
+          <div class="input-group">
+            <label for="signupSchoolName">School Name</label>
+            <input type="text" id="signupSchoolName" name="schoolName">
+          </div>
+        </div>
 
-          <button type="submit" class="auth-btn signup-btn">Register & Agree</button>
-        </form>
-      </div>
-    </div>
+        <div class="input-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" name="email" required>
+        </div>
+        <div class="input-group">
+          <label for="signupPassword">Create Password</label>
+          <input type="password" id="signupPassword" name="password" minlength="6" required>
+        </div>
+
+        <!-- MANDATORY TERMS & CONDITIONS -->
+        <div class="tc-container">
+          <details>
+            <summary>📜 Legal & Data Use Agreement (Click to Read)</summary>
+            <div class="tc-content">
+              <h4>1. Intellectual Property & Branding</h4>
+              <p>The "Peer-2-Peer PRO" name and logo are exclusive property. Unauthorized use is prohibited.</p>
+              <h4>2. Commercial Data Consent</h4>
+              <p>You explicitly consent to the anonymized processing of your usage data for platform improvement and
+                commercial purposes as a mandatory condition of account creation.</p>
+              <h4>3. Account Responsibility</h4>
+              <p>You are responsible for maintaining the confidentiality of your credentials and all activities under
+                your account.</p>
+            </div>
+          </details>
+          <label class="checkbox-label">
+            <input type="checkbox" name="agreeTerms" id="agreeTerms" required>
+            I have read and agree to the Terms & Conditions and commercial data use policy.
+          </label>
+        </div>
+
+        <button type="submit" class="auth-btn signup-btn">Register & Agree</button>
+      </form>
+    </section>
   </div>
 
-  <div id="forgotModal"
-    style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
-    <div
-      style="background:#1a1a2e; padding:30px; border-radius:15px; width:90%; max-width:400px; border:1px solid #6e8efb;">
-      <h3>Reset Password</h3>
-      <p style="color: #ccc; font-size: 0.9rem;">Enter your email for a secure recovery link.</p>
-      <input type="email" id="forgotEmail" placeholder="email@example.com"
-        style="width:100%; padding:12px; margin:15px 0; background:#0f0f23; border:1px solid #333; color:white; border-radius:5px;">
-      <button onclick="handleForgotSubmit()" id="forgotBtn"
-        style="width:100%; padding:12px; background:#6e8efb; border:none; color:white; border-radius:5px; cursor:pointer; font-weight:bold;">Send
-        Recovery Link</button>
-      <button onclick="closeForgotModal()"
-        style="width:100%; margin-top:10px; background:transparent; border:none; color:#888; cursor:pointer;">Close</button>
+  <!-- RESET PASSWORD MODAL (Simple Implementation) -->
+  <dialog id="resetModal"
+    style="padding: 20px; border-radius: 8px; border: none; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <h3>Reset Password</h3>
+    <p>Enter your registered email to receive a recovery link.</p>
+    <input type="email" id="resetEmailInput" placeholder="your@email.com"
+      style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;">
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button onclick="document.getElementById('resetModal').close()"
+        style="padding: 8px 16px; border: none; background: #eee; cursor: pointer;">Cancel</button>
+      <button id="sendResetBtn"
+        style="padding: 8px 16px; border: none; background: var(--pro-green); color: var(--navy-bg); font-weight: bold; cursor: pointer;">Send
+        Link</button>
     </div>
-  </div>
+  </dialog>
 
   <script src="login.js"></script>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-box">
-        <h4>Contact</h4>
-        <p>Support: <a href="mailto:admin@peer-2-peer.co.za">admin@peer-2-peer.co.za</a></p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      &copy; 2026 Peer-2-Peer PRO| Empowering Education Through Seamless Connection| All Rights Reserved.
-    </div>
-  </footer>
-
+  <script>
+    document.getElementById('resetPasswordLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('resetModal').showModal();
+    });
+    document.getElementById('sendResetBtn').addEventListener('click', () => {
+      alert("Password reset functionality is currently in development. Contact admin for immediate access.");
+      document.getElementById('resetModal').close();
+    });
+  </script>
 </body>
 
 </html>

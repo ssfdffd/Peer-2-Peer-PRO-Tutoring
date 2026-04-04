@@ -1,21 +1,21 @@
 name = "damp-art-617fp2p-authentification-login"
-main = "quiz.js" # Matches your file name
+main = "quiz.js"
 compatibility_date = "2024-04-01"
 
-# If your HTML files are in a folder named 'public':
-# directory = "./public"
-# If your HTML files are in the SAME folder as quiz.js:
-directory = "./" 
-
+# All files (quiz.js, quiz.html, styles.css etc.) are in the SAME folder.
+# The [assets] block tells Wrangler to serve everything in "./" as static files
+# and binds them to env.ASSETS so the Worker can call env.ASSETS.fetch(request).
+[assets]
+directory = "./"
 binding = "ASSETS"
 
-# Database 1 (Auth - if you still need it)
+# Database 1 — Auth (peer_db)
 [[d1_databases]]
 binding = "AUTH_DB"
 database_name = "peer_db"
 database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"
 
-# Database 2 (Quiz - MUST match 'env.QUIZ_DB' in code)
+# Database 2 — Quiz (QUIZ_DB) — matches env.QUIZ_DB in quiz.js
 [[d1_databases]]
 binding = "QUIZ_DB"
 database_name = "quiz"
@@ -27,4 +27,4 @@ bucket_name = "ai-files"
 
 [vars]
 API_URL = "https://peer-2-peer.co.za"
-# Do NOT put GEMINI_API_KEY here! Use 'wrangler secret put'
+# NEVER put GEMINI_API_KEY here — use: wrangler secret put GEMINI_API_KEY

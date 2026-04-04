@@ -8,7 +8,7 @@ compatibility_date = "2024-04-01"
 directory = "./"
 binding = "ASSETS"
 
-# Primary D1 Database (User Auth & Portal)
+# Primary D1 Database (User Auth & Portal)                                                                      
 [[d1_databases]]
 binding = "AUTH_DB"
 database_name = "peer_db"

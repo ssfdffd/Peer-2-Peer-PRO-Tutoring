@@ -1,12 +1,6 @@
-/**
- * Peer-2-Peer PRO - Quiz Frontend (Final Optimized)
- * This file runs in the browser and connects to your Cloudflare AI Worker.
- */
-
-// 1. UPDATE THIS URL to your actual AI Worker .workers.dev address
+// UPDATE THIS to your actual Worker URL
 const API_BASE = 'https://gemini-quiz-api.buhle-1ce.workers.dev';
 
-// State management
 const AppState = {
     learnerId: localStorage.getItem('learnerId') || `learner_${Date.now()}`,
     currentQuestions: [],
@@ -16,26 +10,36 @@ const AppState = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Quiz frontend loading...');
+    console.log('Frontend initialized');
     localStorage.setItem('learnerId', AppState.learnerId);
 
-    // Initial health check
-    checkApiHealth();
+    // Setup Grade -> Subject cascade
+    const gradeSelect = document.getElementById('grade');
+    const subjectSelect = document.getElementById('subject');
+    const topicInput = document.getElementById('topic');
 
-    // Setup the main action button
-    const generateBtn = document.getElementById('btn-generate');
-    if (generateBtn) {
-        generateBtn.addEventListener('click', generateQuestions);
+    if (gradeSelect) {
+        gradeSelect.addEventListener('change', () => {
+            subjectSelect.disabled = false;
+            // You can populate subjects dynamically here if needed
+            subjectSelect.innerHTML = '<option value="">Select Subject</option><option value="Mathematics">Mathematics</option><option value="Physical Science">Physical Science</option>';
+        });
     }
+
+    if (subjectSelect) {
+        subjectSelect.addEventListener('change', () => {
+            topicInput.disabled = false;
+        });
+    }
+
+    checkApiHealth();
 });
 
-/**
- * Checks if the Worker API is reachable and databases are connected
- */
 async function checkApiHealth() {
     const statusEl = document.getElementById('api-status');
     if (!statusEl) return;
 
+    statusEl.className = "api-status checking";
     statusEl.innerHTML = "🔍 Checking API connection...";
 
     try {
@@ -43,42 +47,47 @@ async function checkApiHealth() {
         const data = await response.json();
 
         if (data.status === "OK") {
+            statusEl.className = "api-status online";
             statusEl.innerHTML = "🟢 API Connected";
-            statusEl.style.color = "#32cd32"; // Pro Green
             AppState.isApiOnline = true;
+
+            // Enable the generate button once connected
+            document.getElementById('btn-generate').disabled = false;
         } else {
             throw new Error("Services not ready");
         }
     } catch (err) {
-        statusEl.innerHTML = "🔴 API Offline - Check Worker Deployment";
-        statusEl.style.color = "#ff4444";
+        statusEl.className = "api-status offline";
+        statusEl.innerHTML = "🔴 API Offline - Check Deployment";
         console.error("Health check failed:", err);
     }
 }
 
-/**
- * Sends request to Worker to generate CAPS-aligned questions
- */
 async function generateQuestions() {
     if (!AppState.isApiOnline) {
-        alert("API is offline. Please ensure your AI worker is deployed.");
+        alert("API is offline. Cannot generate questions.");
         return;
     }
 
-    const grade = document.getElementById('grade')?.value;
-    const subject = document.getElementById('subject')?.value;
-    const topic = document.getElementById('topic')?.value;
-    const loader = document.getElementById('loader');
-    const questionsContainer = document.getElementById('questionsContainer');
+    const grade = document.getElementById('grade').value;
+    const subject = document.getElementById('subject').value;
+    const topic = document.getElementById('topic').value;
+    const type = document.querySelector('.type-option.selected')?.dataset.type || 'MCQ';
+
+    // UI Elements
+    const quizForm = document.getElementById('quiz-form');
+    const loading = document.getElementById('loading');
+    const quizArea = document.getElementById('quiz-area');
 
     if (!grade || !subject || !topic) {
-        alert("Please fill in Grade, Subject, and Topic.");
+        alert("Please select Grade, Subject, and Topic.");
         return;
     }
 
-    // UI Feedback
-    loader.style.display = "block";
-    questionsContainer.innerHTML = "";
+    // Show Loading
+    quizForm.style.display = 'none';
+    loading.classList.add('active');
+    animateLoadingSteps();
 
     try {
         const response = await fetch(`${API_BASE}/api/generate`, {
@@ -89,6 +98,7 @@ async function generateQuestions() {
                 subject,
                 topic,
                 count: 5,
+                type,
                 learnerId: AppState.learnerId
             })
         });
@@ -98,52 +108,143 @@ async function generateQuestions() {
         if (data.error) throw new Error(data.error);
 
         AppState.currentQuestions = data.questions;
-        renderQuestions(data.questions);
+
+        // Hide Loading, Show Quiz
+        loading.classList.remove('active');
+        quizArea.classList.add('active');
+        document.getElementById('progress-container').classList.add('active');
+
+        renderQuestions(data.questions, data.source);
 
     } catch (err) {
         alert("Error: " + err.message);
-        console.error("Generation failed:", err);
-    } finally {
-        loader.style.display = "none";
+        console.error(err);
+        // Reset UI
+        loading.classList.remove('active');
+        quizForm.style.display = 'block';
     }
 }
 
-/**
- * Renders the questions into the HTML
- */
-function renderQuestions(questions) {
-    const container = document.getElementById('questionsContainer');
-    if (!container) return;
-
-    container.innerHTML = `<h3>Generated Questions for ${document.getElementById('topic').value}</h3>`;
+function renderQuestions(questions, source) {
+    const container = document.getElementById('quiz-area');
+    container.innerHTML = `
+        <div class="source-info">
+            Source: <span class="source-badge">${source || 'AI_WEB'}</span>
+        </div>
+    `;
 
     questions.forEach((q, index) => {
         const card = document.createElement('div');
         card.className = 'question-card';
+        card.dataset.index = index;
         card.innerHTML = `
-            <p><strong>Question ${index + 1}:</strong> ${q.question_text || q.question}</p>
-            <div class="options-grid">
-                ${(q.options || []).map(opt => `
-                    <label class="option-label">
-                        <input type="radio" name="q${index}" value="${opt}">
-                        <span>${opt}</span>
-                    </label>
-                `).join('')}
+            <div class="question-header">
+                <span class="question-number">Q${index + 1}</span>
+                <span class="question-type-badge">${q.question_type || 'MCQ'}</span>
             </div>
-            <p class="hint-text">💡 <em>Hint: ${q.hint || "Think about the core concept."}</em></p>
+            <p class="question-text">${q.question_text || q.question}</p>
+            <div class="options-grid">
+                ${renderOptions(q, index)}
+            </div>
+            <button class="btn-hint" onclick="showHint(${index})">💡 Show Hint</button>
+            <div class="hint-box" id="hint-${index}">${q.hint || 'No hint available.'}</div>
+            <div class="feedback" id="feedback-${index}"></div>
         `;
         container.appendChild(card);
     });
 
-    // Add a submit button at the end
-    const submitBtn = document.createElement('button');
-    submitBtn.textContent = "Check Answers";
-    submitBtn.className = "btn-primary";
-    submitBtn.style.marginTop = "20px";
-    submitBtn.onclick = checkResults;
-    container.appendChild(submitBtn);
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.style.display = 'block';
 }
 
-function checkResults() {
-    alert("This would now validate against the Worker. Your questions are ready!");
+function renderOptions(q, index) {
+    if (q.question_type === 'SHORT_ANSWER' || q.question_type === 'ESSAY') {
+        return `<textarea class="answer-textarea" id="answer-${index}" placeholder="Type your answer here..."></textarea>`;
+    }
+
+    return (q.options || []).map(opt => `
+        <label class="option-label" onclick="selectOption(this, ${index})">
+            <input type="radio" name="q${index}" value="${opt}">
+            <span class="option-dot"></span>
+            <span>${opt}</span>
+        </label>
+    `).join('');
+}
+
+function selectOption(label, index) {
+    // Remove selected class from siblings
+    const parent = label.parentElement;
+    parent.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+    label.classList.add('selected');
+}
+
+function showHint(index) {
+    const hintBox = document.getElementById(`hint-${index}`);
+    hintBox.classList.toggle('active');
+}
+
+function submitQuiz() {
+    let correctCount = 0;
+    let answeredCount = 0;
+
+    AppState.currentQuestions.forEach((q, index) => {
+        let answer;
+        const type = q.question_type;
+
+        if (type === 'SHORT_ANSWER' || type === 'ESSAY') {
+            answer = document.getElementById(`answer-${index}`).value;
+        } else {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (selected) answer = selected.value;
+        }
+
+        if (answer) {
+            answeredCount++;
+            const isCorrect = (answer.trim().toLowerCase() === q.correct_answer.trim().toLowerCase());
+
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const cardEl = document.querySelector(`[data-index="${index}"]`);
+
+            feedbackEl.classList.add('active');
+
+            if (isCorrect) {
+                correctCount++;
+                feedbackEl.className = "feedback active correct";
+                feedbackEl.innerHTML = `✅ Correct! ${q.explanation || ''}`;
+                cardEl.classList.add('correct-anim');
+            } else {
+                feedbackEl.className = "feedback active incorrect";
+                feedbackEl.innerHTML = `❌ Incorrect. Correct Answer: ${q.correct_answer}.<br>${q.explanation || ''}`;
+                cardEl.classList.add('wrong-anim');
+            }
+        }
+    });
+
+    // Update Progress
+    document.getElementById('stat-correct').textContent = correctCount;
+    document.getElementById('stat-incorrect').textContent = answeredCount - correctCount;
+    document.getElementById('stat-score').textContent = `${Math.round((correctCount / answeredCount) * 100)}%`;
+    document.getElementById('progress-fill').style.width = '100%';
+
+    // Hide Submit, Show Reset
+    document.getElementById('btn-submit').style.display = 'none';
+    document.getElementById('btn-new-quiz').style.display = 'block';
+}
+
+function resetQuiz() {
+    document.getElementById('quiz-form').style.display = 'block';
+    document.getElementById('quiz-area').classList.remove('active');
+    document.getElementById('progress-container').classList.remove('active');
+    document.getElementById('btn-new-quiz').style.display = 'none';
+    document.getElementById('quiz-area').innerHTML = '';
+}
+
+function animateLoadingSteps() {
+    const steps = document.querySelectorAll('.loading-step');
+    steps.forEach((step, i) => {
+        setTimeout(() => {
+            step.classList.add('active');
+            if (i > 0) steps[i - 1].classList.add('done');
+        }, i * 800);
+    });
 }

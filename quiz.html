@@ -1,84 +1,479 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-ZA">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Practice Questions | Peer-2-Peer PRO</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="CAPS-aligned practice questions for South African learners" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* ---------- ORIGINAL CSS VARIABLES — UNTOUCHED ---------- */
-        :root {
-            --primary: #000033;
-            --primary-light: #103d77;
-            --secondary-color: #32cd32;
-            --text-light: #7fdff0;
-            --text: #ffffff;
-            --accent: #32cd32;
-            --transition-speed: 0.3s;
-            --overlay-dark: rgba(0, 0, 0, 0.6);
-            --bg: #f4f7f9;
-            --border-color: #e1e5eb;
-            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.12);
-            --card-bg: #000033;
-            --pro-green: #32cd32;
-            --sky-blue: #7fdff0;
-            --white: #ffffff;
-            --success: #4caf50;
-            --error: #f44336;
-            --warning: #ff9800;
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        /* ========== FUTURISTIC ANIMATION ADDITIONS (no color changes) ========== */
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+        html {
+            scroll-behavior: smooth;
         }
 
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 8px rgba(50, 205, 50, 0.4), 0 0 20px rgba(50, 205, 50, 0.1);
-            }
-
-            50% {
-                box-shadow: 0 0 18px rgba(50, 205, 50, 0.8), 0 0 40px rgba(50, 205, 50, 0.3);
-            }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%);
+            color: #1f2937;
+            line-height: 1.6;
+            min-height: 100vh;
         }
 
-        @keyframes shimmer {
-            0% {
-                background-position: -200% center;
-            }
-
-            100% {
-                background-position: 200% center;
-            }
+        /* ===== HEADER & NAV ===== */
+        header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-6px);
-            }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @keyframes fadeSlideIn {
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #1f2937;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo span {
+            color: #7c3aed;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #7c3aed;
+            border-bottom-color: #7c3aed;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-menu a {
+            background: #7c3aed;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .user-menu a:hover {
+            background: #6d28d9;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #f3f4f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f9fafb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #a78bfa;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== STATUS & LOADER ===== */
+        #apiStatus {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin: 1rem 0;
+            padding: 0.75rem 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #9ca3af;
+        }
+
+        #apiStatus.success {
+            background: #ecfdf5;
+            border-left-color: #22c55e;
+            color: #065f46;
+        }
+
+        #apiStatus.error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+            color: #991b1b;
+        }
+
+        #loader {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+            color: #6b7280;
+        }
+
+        .loader-steps {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .loader-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .loader-step.active {
+            opacity: 1;
+            font-weight: 500;
+            color: #7c3aed;
+        }
+
+        .loader-step.done {
+            opacity: 1;
+            color: #22c55e;
+        }
+
+        /* ===== QUESTIONS CONTAINER ===== */
+        #questionsContainer {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .question-number {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .hint-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .hint-btn:hover {
+            background: #2563eb;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin: 0.75rem 0 1.25rem;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f9fafb;
+        }
+
+        .option-label:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .option-label input {
+            margin-top: 0.2rem;
+            accent-color: #7c3aed;
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            color: #374151;
+        }
+
+        .short-answer-input,
+        .essay-input {
+            width: 100%;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f9fafb;
+            transition: border-color 0.2s;
+            resize: vertical;
+            min-height: 48px;
+        }
+
+        .essay-input {
+            min-height: 100px;
+        }
+
+        .short-answer-input:focus,
+        .essay-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .question-actions {
+            margin-top: 1.25rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .check-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .check-btn:hover {
+            background: #059669;
+        }
+
+        .feedback {
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+        }
+
+        .feedback.correct {
+            color: #065f46;
+        }
+
+        .feedback.incorrect {
+            color: #991b1b;
+        }
+
+        .feedback.hint {
+            color: #1e40af;
+        }
+
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95rem;
+            color: #1e3a8a;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(24px);
+                transform: translateY(-10px);
             }
 
             to {
@@ -87,1152 +482,301 @@
             }
         }
 
-        @keyframes scanline {
-            0% {
-                top: -4px;
-            }
-
-            100% {
-                top: 100%;
-            }
-        }
-
-        @keyframes orbitRing {
-            from {
-                transform: rotateX(65deg) rotateZ(0deg);
-            }
-
-            to {
-                transform: rotateX(65deg) rotateZ(360deg);
-            }
-        }
-
-        @keyframes blink-dot {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        @keyframes matrix-rain {
-            0% {
-                transform: translateY(-100%);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(100vh);
-                opacity: 0;
-            }
-        }
-
-        @keyframes card-in {
-            from {
-                opacity: 0;
-                transform: scale(0.93) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes progress-pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        @keyframes correct-bounce {
-            0% {
-                transform: scale(1);
-            }
-
-            30% {
-                transform: scale(1.04);
-            }
-
-            60% {
-                transform: scale(0.97);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes wrong-shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20% {
-                transform: translateX(-6px);
-            }
-
-            40% {
-                transform: translateX(6px);
-            }
-
-            60% {
-                transform: translateX(-4px);
-            }
-
-            80% {
-                transform: translateX(4px);
-            }
-        }
-
-        @keyframes neon-border {
-
-            0%,
-            100% {
-                border-color: var(--accent);
-                box-shadow: 0 0 6px rgba(50, 205, 50, 0.5);
-            }
-
-            50% {
-                border-color: var(--sky-blue);
-                box-shadow: 0 0 16px rgba(127, 223, 240, 0.6);
-            }
-        }
-
-        @keyframes hero-bg-shift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        @keyframes loading-text {
-            0% {
-                content: 'Sourcing CAPS curriculum documents';
-            }
-
-            33% {
-                content: 'Consulting AI question bank';
-            }
-
-            66% {
-                content: 'Crafting your practice set';
-            }
-
-            100% {
-                content: 'Almost ready…';
-            }
-        }
-
-        /* ========== BASE ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ===== PARTICLE CANVAS (background effect) ===== */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.18;
-        }
-
-        /* ===== NAVBAR ===== */
-        .navbar {
-            background: var(--primary);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(50, 205, 50, 0.2), 0 2px 10px rgba(0, 0, 0, 0.4);
-            border-bottom: 1px solid rgba(50, 205, 50, 0.2);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            letter-spacing: 1px;
-        }
-
-        .logo span {
-            color: var(--accent);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            border: 1px solid transparent;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            background: rgba(50, 205, 50, 0.15);
-            border-color: rgba(50, 205, 50, 0.4);
-            color: var(--accent);
-        }
-
-        .user-info {
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* ===== MAIN CONTAINER ===== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ===== HERO ===== */
-        .hero {
+        /* ===== FOOTER ACTIONS ===== */
+        .quiz-footer {
             text-align: center;
-            padding: 2.5rem 2rem;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(50, 205, 50, 0.15), 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(50, 205, 50, 0.2);
-            animation: pulse-glow 4s ease-in-out infinite;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            background: linear-gradient(90deg, transparent, rgba(50, 205, 50, 0.08), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 3s linear infinite;
-            pointer-events: none;
-        }
-
-        /* Scanline effect */
-        .hero::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(127, 223, 240, 0.6), transparent);
-            animation: scanline 4s linear infinite;
-            pointer-events: none;
-        }
-
-        .hero h1 {
-            color: var(--accent);
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
-            letter-spacing: 2px;
-            animation: float 5s ease-in-out infinite;
-        }
-
-        .hero p {
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent), #1aaa1a);
-            color: var(--primary);
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* ===== WELCOME STRIP ===== */
-        .welcome-text {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(127, 223, 240, 0.2);
-            box-shadow: 0 0 20px rgba(0, 0, 51, 0.5);
-        }
-
-        .welcome-text h2 {
-            font-size: 1.1rem;
-            color: var(--text-light);
-        }
-
-        /* ===== QUIZ FORM CARD ===== */
-        .quiz-form {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
-            border: 1px solid rgba(50, 205, 50, 0.15);
-            animation: fadeSlideIn 0.6s ease forwards;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quiz-form::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            animation: shimmer 2.5s linear infinite;
-        }
-
-        .quiz-form h2 {
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-size: 1.3rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* ===== FORM GRID ===== */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid rgba(50, 205, 50, 0.2);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: rgba(0, 0, 51, 0.8);
-            color: white;
-        }
-
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 12px rgba(50, 205, 50, 0.3);
-            animation: neon-border 2s ease infinite;
-        }
-
-        .form-group select option {
-            background: var(--primary);
-            color: white;
-        }
-
-        .form-group select:disabled,
-        .form-group input:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* ===== TOPIC SUGGESTIONS ===== */
-        .topic-container {
-            position: relative;
-        }
-
-        .topic-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--primary);
-            border: 2px solid var(--accent);
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 8px 24px rgba(50, 205, 50, 0.2);
-        }
-
-        .topic-suggestions.active {
-            display: block;
-            animation: fadeSlideIn 0.2s ease;
-        }
-
-        .topic-suggestion-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(50, 205, 50, 0.1);
-            color: var(--text-light);
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        .topic-suggestion-item:hover {
-            background: rgba(50, 205, 50, 0.15);
-            color: var(--accent);
-            padding-left: 1.5rem;
-        }
-
-        /* ===== QUESTION TYPES ===== */
-        .qt-label {
-            display: block;
-            margin-bottom: 1rem;
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .question-types {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .type-option {
-            flex: 1;
-            min-width: 110px;
-            padding: 0.9rem 0.5rem;
-            border: 2px solid rgba(50, 205, 50, 0.2);
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(0, 0, 51, 0.6);
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 0.85rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .type-option::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent 40%, rgba(50, 205, 50, 0.08) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .type-option:hover::after {
-            opacity: 1;
-        }
-
-        .type-option:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .type-option.selected {
-            border-color: var(--accent);
-            background: rgba(50, 205, 50, 0.15);
-            color: var(--accent);
-            box-shadow: 0 0 14px rgba(50, 205, 50, 0.3);
-        }
-
-        .type-option i {
-            display: block;
-            font-style: normal;
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn-generate {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--accent) 0%, #1aaa1a 100%);
-            color: var(--primary);
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-generate::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-generate:hover:not(:disabled)::before {
-            left: 100%;
-        }
-
-        .btn-generate:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(50, 205, 50, 0.5);
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
-            color: white;
-            border: 2px solid var(--accent);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 2rem;
-            letter-spacing: 1px;
-        }
-
-        .btn-submit:hover:not(:disabled) {
-            background: rgba(50, 205, 50, 0.15);
-            box-shadow: 0 0 20px rgba(50, 205, 50, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* ===== LOADING ===== */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .loading.active {
-            display: block;
-            animation: fadeSlideIn 0.4s ease;
-        }
-
-        /* Orbital loader */
-        .orbital-loader {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 2rem;
-            position: relative;
-        }
-
-        .orbit-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 2px solid transparent;
-        }
-
-        .orbit-ring:nth-child(1) {
-            inset: 0;
-            border-top-color: var(--accent);
-            animation: spin 1s linear infinite;
-        }
-
-        .orbit-ring:nth-child(2) {
-            inset: 12px;
-            border-right-color: var(--sky-blue);
-            animation: spin 1.5s linear infinite reverse;
-        }
-
-        .orbit-ring:nth-child(3) {
-            inset: 24px;
-            border-bottom-color: var(--accent);
-            animation: spin 2s linear infinite;
-        }
-
-        .orbit-core {
-            position: absolute;
-            inset: 34px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse-glow 1.5s ease-in-out infinite;
-        }
-
-        .loading-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-width: 320px;
-            margin: 0 auto;
-        }
-
-        .loading-step {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 1rem;
-            background: rgba(0, 0, 51, 0.5);
-            border-radius: 8px;
-            border: 1px solid rgba(50, 205, 50, 0.1);
-            color: var(--text-light);
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: all 0.5s ease;
-        }
-
-        .loading-step.active {
-            opacity: 1;
-            border-color: rgba(50, 205, 50, 0.4);
-            color: var(--accent);
-        }
-
-        .loading-step.done {
-            opacity: 0.6;
-            border-color: rgba(50, 205, 50, 0.2);
-        }
-
-        .step-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            flex-shrink: 0;
-            animation: blink-dot 1s ease infinite;
-        }
-
-        .loading-step.done .step-dot {
-            animation: none;
-            background: var(--success);
-        }
-
-        /* ===== PROGRESS CONTAINER ===== */
-        .progress-container {
-            background: var(--card-bg);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            margin-bottom: 2rem;
-            display: none;
-            border: 1px solid rgba(50, 205, 50, 0.15);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
         }
 
-        .progress-container.active {
-            display: block;
-            animation: fadeSlideIn 0.5s ease;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .submit-all-btn {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             margin-bottom: 1rem;
         }
 
-        .progress-header span {
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 0.9rem;
+        .submit-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
+        }
+
+        .progress-summary {
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 1rem;
         }
 
         .progress-bar {
-            width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background: #e5e7eb;
+            border-radius: 9999px;
             overflow: hidden;
+            margin: 0.5rem 0;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--sky-blue));
-            border-radius: 10px;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 0%;
-            box-shadow: 0 0 10px rgba(50, 205, 50, 0.4);
+            background: linear-gradient(90deg, #22c55e, #10b981);
+            border-radius: 9999px;
+            transition: width 0.4s ease;
         }
 
-        .progress-stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--accent);
-            text-shadow: 0 0 12px rgba(50, 205, 50, 0.4);
-        }
-
-        .stat-label {
-            color: var(--text-light);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* ===== QUIZ AREA ===== */
-        .quiz-area {
-            display: none;
-        }
-
-        .quiz-area.active {
-            display: block;
-        }
-
-        /* SOURCE INFO */
-        .source-info {
-            text-align: center;
-            padding: 0.9rem 1rem;
-            background: rgba(0, 0, 51, 0.7);
-            border: 1px solid rgba(50, 205, 50, 0.2);
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            animation: fadeSlideIn 0.4s ease;
-        }
-
-        .source-badge {
-            display: inline-block;
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin: 0.2rem;
-            background: rgba(50, 205, 50, 0.15);
-            color: var(--accent);
-            border: 1px solid rgba(50, 205, 50, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .source-badge.r2 {
-            background: rgba(127, 223, 240, 0.1);
-            color: var(--sky-blue);
-            border-color: rgba(127, 223, 240, 0.3);
-        }
-
-        /* ===== QUESTION CARDS ===== */
-        .question-card {
-            background: var(--card-bg);
-            padding: 1.75rem;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--accent);
-            border-top: 1px solid rgba(50, 205, 50, 0.1);
-            border-right: 1px solid rgba(50, 205, 50, 0.05);
-            border-bottom: 1px solid rgba(50, 205, 50, 0.05);
-            animation: card-in 0.5s ease both;
-            position: relative;
-            overflow: hidden;
-            transition: box-shadow 0.3s;
-        }
-
-        .question-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, rgba(50, 205, 50, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .question-card:hover {
-            box-shadow: 0 8px 32px rgba(50, 205, 50, 0.15), 0 4px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .question-card.correct-anim {
-            animation: correct-bounce 0.5s ease;
-            border-left-color: var(--success);
-        }
-
-        .question-card.wrong-anim {
-            animation: wrong-shake 0.5s ease;
-            border-left-color: var(--error);
-        }
-
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .question-number {
-            background: linear-gradient(135deg, var(--accent), #1aaa1a);
-            color: var(--primary);
-            padding: 0.25rem 0.85rem;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        .question-type-badge {
-            background: rgba(127, 223, 240, 0.1);
-            color: var(--sky-blue);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border: 1px solid rgba(127, 223, 240, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .question-text {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            color: #eef2ff;
-        }
-
-        /* ===== OPTIONS ===== */
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .option-label {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.9rem 1rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            color: #d0d8ff;
+        .practice-more-btn {
+            background: white;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            padding: 0.7rem 1.8rem;
+            border-radius: 8px;
             font-weight: 500;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .option-label input[type="radio"] {
-            display: none;
-        }
-
-        .option-dot {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid rgba(50, 205, 50, 0.4);
-            flex-shrink: 0;
-            transition: all 0.25s;
-            position: relative;
-        }
-
-        .option-label:hover {
-            border-color: rgba(50, 205, 50, 0.4);
-            background: rgba(50, 205, 50, 0.06);
-            transform: translateX(4px);
-        }
-
-        .option-label.selected {
-            background: rgba(50, 205, 50, 0.12);
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 12px rgba(50, 205, 50, 0.2);
-        }
-
-        .option-label.selected .option-dot {
-            background: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 0 8px rgba(50, 205, 50, 0.5);
-        }
-
-        .option-label.correct-opt {
-            background: rgba(76, 175, 80, 0.15);
-            border-color: var(--success);
-            color: #a8ffab;
-        }
-
-        .option-label.wrong-opt {
-            background: rgba(244, 67, 54, 0.12);
-            border-color: var(--error);
-            color: #ffb3b3;
-        }
-
-        .answer-textarea {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid rgba(50, 205, 50, 0.2);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 110px;
-            margin-bottom: 1.5rem;
-            background: rgba(0, 0, 51, 0.6);
-            color: #eef2ff;
-            transition: all 0.3s;
-        }
-
-        .answer-textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 12px rgba(50, 205, 50, 0.2);
-        }
-
-        /* ===== HINT ===== */
-        .btn-hint {
-            background: transparent;
-            border: 2px solid var(--warning);
-            color: var(--warning);
-            padding: 0.5rem 1.1rem;
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
+            transition: all 0.2s;
         }
 
-        .btn-hint:hover {
-            background: var(--warning);
-            color: var(--primary);
-            box-shadow: 0 0 14px rgba(255, 152, 0, 0.4);
+        .practice-more-btn:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
         }
 
-        .hint-box {
-            background: rgba(255, 152, 0, 0.08);
-            border-left: 4px solid var(--warning);
-            padding: 1rem 1.25rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            color: #ffe0a0;
-            font-size: 0.95rem;
-            animation: fadeSlideIn 0.3s ease;
-        }
-
-        .hint-box.active {
-            display: block;
-        }
-
-        /* ===== FEEDBACK ===== */
-        .feedback {
-            padding: 1rem 1.25rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            display: none;
-            font-weight: 600;
-            line-height: 1.6;
-        }
-
-        .feedback.correct {
-            background: rgba(76, 175, 80, 0.12);
-            border: 2px solid var(--success);
-            color: #a8ffab;
-            animation: correct-bounce 0.5s ease;
-        }
-
-        .feedback.incorrect {
-            background: rgba(244, 67, 54, 0.1);
-            border: 2px solid var(--error);
-            color: #ffb3b3;
-            animation: wrong-shake 0.4s ease;
-        }
-
-        .feedback.active {
-            display: block;
-        }
-
-        /* ===== API STATUS ===== */
-        .api-status {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-size: 0.9rem;
-            display: none;
-            font-weight: 600;
-        }
-
-        .api-status.online {
-            background: rgba(76, 175, 80, 0.15);
-            color: #a8ffab;
-            display: block;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-        }
-
-        .api-status.offline {
-            background: rgba(244, 67, 54, 0.12);
-            color: #ffb3b3;
-            display: block;
-            border: 1px solid rgba(244, 67, 54, 0.3);
-        }
-
-        .api-status.checking {
-            background: rgba(255, 152, 0, 0.1);
-            color: var(--warning);
-            display: block;
-            border: 1px solid rgba(255, 152, 0, 0.3);
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
+        /* ===== FINAL SUMMARY ===== */
+        .final-summary {
             text-align: center;
             padding: 2rem;
-            color: var(--text-light);
-            margin-top: 3rem;
-            border-top: 1px solid rgba(50, 205, 50, 0.15);
-            opacity: 0.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .final-summary h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-display {
+            margin: 1.5rem 0;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: conic-gradient(#22c55e calc(var(--p, 0) * 1%), #e5e7eb 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 115px;
+            height: 115px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .score-circle span {
+            position: relative;
+            z-index: 1;
+            color: #1f2937;
+        }
+
+        .final-summary p {
+            margin: 0.5rem 0;
+            opacity: 0.95;
+        }
+
+        .restart-btn {
+            margin-top: 1.5rem;
+            background: white;
+            color: #7c3aed;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== SOURCE BADGE ===== */
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f3f4f6;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .source-badge.caps {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .source-badge.ai {
+            background: #f3e8ff;
+            color: #6b21a8;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
+            header {
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            nav {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            main {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .hero {
+                padding: 1.5rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .question-types {
+            .form-actions {
                 flex-direction: column;
+                align-items: stretch;
             }
 
-            .hero h1 {
-                font-size: 1.5rem;
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
+
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .question-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .check-btn,
+            .submit-all-btn {
+                width: 100%;
+            }
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* Focus visible for keyboard navigation */
+        :focus-visible {
+            outline: 2px solid #7c3aed;
+            outline-offset: 2px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Particle canvas for background effect -->
-    <canvas id="particle-canvas"></canvas>
-
-    <nav class="navbar">
+    <!-- ===== HEADER ===== -->
+    <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">Peer-2-Peer <span>PRO</span></a>
-            <div class="user-info">
-                <span id="user-greeting">Welcome, Learner</span>
-                <a href="student-portal.html"
-                    style="color: var(--text-light); text-decoration: none; font-size:0.9rem;">Logout</a>
+            <a href="index.html" class="logo">
+                <span>🎓</span> Peer-2-Peer <span>PRO</span>
+            </a>
+            <nav>
+                <a href="student-portal.html">Dashboard</a>
+                <a href="student-view.html">Live Classes</a>
+                <a href="resources.html">Resources</a>
+                <a href="forum.html">Forum</a>
+                <a href="booking.html">Book Tutoring</a>
+                <a href="practice.html" class="active">Practice</a>
+            </nav>
+            <div class="user-menu">
+                <span id="userName">Welcome, Learner</span>
+                <a href="student-portal.html">Logout</a>
             </div>
         </div>
-        <div class="nav-links" style="margin-top: 1rem; justify-content: center;">
-            <a href="student-portal.html">Dashboard</a>
-            <a href="student-view.html">Live Classes</a>
-            <a href="resources.html">Resources Library</a>
-            <a href="forum.html">Student Forum</a>
-            <a href="booking.html">Book Tutoring</a>
-            <a href="practice.html" class="active">Practice</a>
-        </div>
-    </nav>
+    </header>
 
-    <div class="container">
-
-        <div class="welcome-text">
-            <h2>Welcome back! Ready to challenge yourself? 🚀</h2>
-        </div>
-
-        <div class="hero">
-            <div class="hero-badge">CAPS-Aligned · AI-Powered</div>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="badge">🇿🇦 CAPS-Aligned · AI-Powered</div>
             <h1>⚡ Practice & Master</h1>
-            <p>South African CAPS curriculum questions sourced from official documents & past papers.<br>
-                Choose your grade, subject, and topic to begin your practice session.</p>
-        </div>
+            <p>South African CAPS curriculum questions sourced from official documents & past papers.<br />Choose your
+                grade, subject, and topic to begin your practice session.</p>
+            <div id="apiStatus">🔌 Checking API connection…</div>
+        </section>
 
-        <div id="api-status" class="api-status checking">🔌 Checking API connection…</div>
+        <!-- Generate Form -->
+        <section class="form-card">
+            <h2 style="margin-bottom: 1.25rem; color: #1f2937;">⚙ Generate Practice Questions</h2>
 
-        <!-- ===== QUIZ FORM ===== -->
-        <div class="quiz-form" id="quiz-form">
-            <h2>⚙ Generate Practice Questions</h2>
             <div class="form-grid">
                 <div class="form-group">
                     <label for="grade">Grade</label>
-                    <select id="grade">
+                    <select id="grade" required>
                         <option value="">Select South African Grade</option>
                         <option value="R">Grade R</option>
                         <option value="1">Grade 1</option>
@@ -1249,656 +793,90 @@
                         <option value="12">Grade 12</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="subject">Subject</label>
-                    <select id="subject" disabled>
+                    <select id="subject" required>
                         <option value="">Select Subject</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Mathematical Literacy">Mathematical Literacy</option>
+                        <option value="Physical Sciences">Physical Sciences</option>
+                        <option value="Life Sciences">Life Sciences</option>
+                        <option value="English Home Language">English Home Language</option>
+                        <option value="Afrikaans Home Language">Afrikaans Home Language</option>
+                        <option value="History">History</option>
+                        <option value="Geography">Geography</option>
+                        <option value="Business Studies">Business Studies</option>
+                        <option value="Accounting">Accounting</option>
+                        <option value="Economics">Economics</option>
                     </select>
                 </div>
-                <div class="form-group topic-container">
+
+                <div class="form-group">
                     <label for="topic">Topic / Sub-Topic</label>
-                    <input type="text" id="topic" placeholder="Type or search a topic…" disabled>
-                    <div class="topic-suggestions" id="topic-suggestions"></div>
+                    <select id="topic" required>
+                        <option value="">Select a topic first…</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Question Type</label>
+                    <select id="type">
+                        <option value="MCQ">🔘 Multiple Choice</option>
+                        <option value="TRUE_FALSE">✓✗ True / False</option>
+                        <option value="SHORT_ANSWER">✏️ Short Answer</option>
+                        <option value="ESSAY">📄 Essay</option>
+                    </select>
                 </div>
             </div>
 
-            <label class="qt-label">Question Type</label>
-            <div class="question-types">
-                <div class="type-option selected" onclick="selectType('MCQ')" data-type="MCQ">
-                    <i>🔘</i><span>Multiple Choice</span>
-                </div>
-                <div class="type-option" onclick="selectType('TRUE_FALSE')" data-type="TRUE_FALSE">
-                    <i>✓✗</i><span>True / False</span>
-                </div>
-                <div class="type-option" onclick="selectType('SHORT_ANSWER')" data-type="SHORT_ANSWER">
-                    <i>✏️</i><span>Short Answer</span>
-                </div>
-                <div class="type-option" onclick="selectType('ESSAY')" data-type="ESSAY">
-                    <i>📄</i><span>Essay</span>
-                </div>
+            <div class="form-actions">
+                <button id="generateBtn" class="btn btn-primary">
+                    ⚡ Generate Questions
+                </button>
+                <button id="practiceMoreBtn" class="btn btn-secondary" style="display:none">
+                    🔄 Practice More Questions
+                </button>
             </div>
+        </section>
 
-            <button class="btn-generate" id="btn-generate" onclick="generateQuestions()" disabled>
-                ⚡ Generate Questions
+        <!-- Loading State -->
+        <div id="loader">
+            <p style="font-weight: 500; margin-bottom: 0.75rem;">🧠 Generating CAPS-Aligned Questions…</p>
+            <div class="loader-steps">
+                <div class="loader-step" id="step1">🔍 Searching R2 curriculum documents</div>
+                <div class="loader-step" id="step2">🤖 Consulting AI question bank</div>
+                <div class="loader-step" id="step3">📚 Applying CAPS standards</div>
+                <div class="loader-step" id="step4">✅ Finalising your practice set</div>
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <div id="questionsContainer"></div>
+
+        <!-- Footer Actions -->
+        <div class="quiz-footer" id="quizFooter" style="display:none">
+            <button id="submitAllBtn" class="submit-all-btn">
+                🎯 Submit All Answers
             </button>
-        </div>
-
-        <!-- ===== LOADING ===== -->
-        <div class="loading" id="loading">
-            <div class="orbital-loader">
-                <div class="orbit-ring"></div>
-                <div class="orbit-ring"></div>
-                <div class="orbit-ring"></div>
-                <div class="orbit-core"></div>
-            </div>
-            <p
-                style="color: var(--accent); font-size: 1.1rem; font-weight: 700; letter-spacing:1px; margin-bottom: 1.5rem;">
-                Generating CAPS-Aligned Questions…
-            </p>
-            <div class="loading-steps" id="loading-steps">
-                <div class="loading-step" id="ls-1">
-                    <div class="step-dot"></div>🔍 Searching R2 curriculum documents
-                </div>
-                <div class="loading-step" id="ls-2">
-                    <div class="step-dot"></div>🧠 Consulting AI question bank
-                </div>
-                <div class="loading-step" id="ls-3">
-                    <div class="step-dot"></div>📚 Applying CAPS standards
-                </div>
-                <div class="loading-step" id="ls-4">
-                    <div class="step-dot"></div>✅ Finalising your practice set
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== PROGRESS ===== -->
-        <div class="progress-container" id="progress-container">
-            <div class="progress-header">
-                <span>📊 Your Progress</span>
-                <span id="progress-text">0 / 5 Completed</span>
+            <div class="progress-summary" id="progressSummary">
+                0 / 5 Answered • Score: 0
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-            <div class="progress-stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="stat-correct">0</div>
-                    <div class="stat-label">Correct</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="stat-incorrect">0</div>
-                    <div class="stat-label">To Review</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="stat-score">0%</div>
-                    <div class="stat-label">Score</div>
-                </div>
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
         </div>
-
-        <!-- ===== QUIZ AREA ===== -->
-        <div class="quiz-area" id="quiz-area"></div>
-        <button class="btn-submit" id="btn-submit" onclick="submitQuiz()" style="display:none;">
-            🎯 Submit Answers
-        </button>
-        <button class="btn-generate" id="btn-new-quiz" onclick="resetQuiz()" style="display:none; margin-top:1rem;">
-            🔄 Practice More Questions
-        </button>
-    </div>
-
-    <footer class="footer">
+    </main>
+    <script src="quiz.js"></script>
+    <!-- ===== FOOTER ===== -->
+    <footer style="text-align: center; padding: 2rem 1rem; color: #6b7280; font-size: 0.9rem;">
         <p>Peer-2-Peer PRO — Practice makes perfect! 🎯</p>
         <p>© 2026 Peer-2-Peer PRO. All data saved securely.</p>
     </footer>
-    <script>
-        // ========== CONFIGURATION ==========
-        const WORKER_URL = "https://gemini-quiz-api.buhle-1ce.workers.dev";
-        const LEARNER_ID = "learner_" + (localStorage.getItem('learnerId') || Math.random().toString(36).substr(2, 9));
-        localStorage.setItem('learnerId', LEARNER_ID.replace('learner_learner_', 'learner_'));
 
-        let apiOnline = false;
-        let currentQuestions = [], selectedType = 'MCQ';
-        let answers = {}, hintsUsed = {}, startTime = {};
-        let correctCount = 0, incorrectCount = 0, totalScoreSum = 0;
 
-        // ========== SA SUBJECTS DATABASE ==========
-        const SA_SUBJECTS = {
-            'R': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
-            '1': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
-            '2': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
-            '3': ['Home Language', 'First Additional Language', 'Mathematics', 'Life Skills'],
-            '4': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts'],
-            '5': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts'],
-            '6': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts'],
-            '7': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts', 'Technology'],
-            '8': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts', 'Technology', 'EMS'],
-            '9': ['Home Language', 'First Additional Language', 'Mathematics', 'Natural Sciences', 'Social Sciences', 'Life Skills', 'Creative Arts', 'Technology', 'EMS'],
-            '10': ['Home Language', 'First Additional Language', 'Mathematics', 'Mathematical Literacy', 'Physical Sciences', 'Life Sciences', 'Geography', 'History', 'Accounting', 'Business Studies', 'Economics', 'Life Orientation'],
-            '11': ['Home Language', 'First Additional Language', 'Mathematics', 'Mathematical Literacy', 'Physical Sciences', 'Life Sciences', 'Geography', 'History', 'Accounting', 'Business Studies', 'Economics', 'Life Orientation'],
-            '12': ['Home Language', 'First Additional Language', 'Mathematics', 'Mathematical Literacy', 'Physical Sciences', 'Life Sciences', 'Geography', 'History', 'Accounting', 'Business Studies', 'Economics', 'Life Orientation']
-        };
-
-        // ========== PARTICLE CANVAS ==========
-        (function initParticles() {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            resize();
-            window.addEventListener('resize', resize);
-            for (let i = 0; i < 60; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-                    r: Math.random() * 1.8 + 0.4,
-                    color: Math.random() > 0.5 ? '#32cd32' : '#7fdff0',
-                    alpha: Math.random() * 0.5 + 0.2
-                });
-            }
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.alpha;
-                    ctx.fill();
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                });
-                // Draw connecting lines
-                ctx.globalAlpha = 0.05;
-                particles.forEach((a, i) => {
-                    particles.slice(i + 1).forEach(b => {
-                        const d = Math.hypot(a.x - b.x, a.y - b.y);
-                        if (d < 120) {
-                            ctx.beginPath();
-                            ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-                            ctx.strokeStyle = '#32cd32';
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
-                    });
-                });
-                ctx.globalAlpha = 1;
-                requestAnimationFrame(draw);
-            }
-            draw();
-        })();
-
-        // ========== LOADING STEPS ANIMATION ==========
-        let loadingInterval = null;
-        function startLoadingSteps() {
-            const steps = ['ls-1', 'ls-2', 'ls-3', 'ls-4'];
-            let current = 0;
-            steps.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.classList.remove('active', 'done'); }
-            });
-            clearInterval(loadingInterval);
-            loadingInterval = setInterval(() => {
-                if (current > 0) {
-                    const prev = document.getElementById(steps[current - 1]);
-                    if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
-                }
-                if (current < steps.length) {
-                    const cur = document.getElementById(steps[current]);
-                    if (cur) cur.classList.add('active');
-                    current++;
-                } else {
-                    clearInterval(loadingInterval);
-                }
-            }, 1800);
-        }
-        function stopLoadingSteps() {
-            clearInterval(loadingInterval);
-            ['ls-1', 'ls-2', 'ls-3', 'ls-4'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.classList.remove('active'); el.classList.add('done'); }
-            });
-        }
-
-        // ========== INIT ==========
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('user-greeting').textContent = `Welcome, ${LEARNER_ID}`;
-            testAPIConnection();
-        });
-
-        async function testAPIConnection() {
-            const statusDiv = document.getElementById('api-status');
-            statusDiv.className = 'api-status checking';
-            statusDiv.textContent = '🔌 Checking API connection…';
-            try {
-                const ctrl = new AbortController();
-                const tid = setTimeout(() => ctrl.abort(), 8000);
-                const resp = await fetch(WORKER_URL + "/health", { signal: ctrl.signal, mode: 'cors' });
-                clearTimeout(tid);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    apiOnline = true;
-                    statusDiv.className = 'api-status online';
-                    const r2 = data.r2 ? '✅ R2' : '⚠️ R2 missing';
-                    const db = data.db ? '✅ DB' : '⚠️ DB missing';
-                    const ai = data.gemini ? '✅ AI' : '⚠️ AI key missing';
-                    statusDiv.textContent = `✅ Connected — ${db} · ${r2} · ${ai}`;
-                    setTimeout(() => { statusDiv.style.display = 'none'; }, 6000);
-                } else { throw new Error(`HTTP ${resp.status}`); }
-            } catch (e) {
-                apiOnline = false;
-                statusDiv.className = 'api-status offline';
-                statusDiv.textContent = `⚠️ Cannot connect to API. Check worker deployment. (${e.message})`;
-            }
-        }
-
-        function loadSubjects() {
-            const grade = document.getElementById('grade').value;
-            const subSel = document.getElementById('subject');
-            const topicIn = document.getElementById('topic');
-            const btn = document.getElementById('btn-generate');
-            subSel.innerHTML = '<option value="">Select Subject</option>';
-            topicIn.value = ''; topicIn.disabled = true; btn.disabled = true;
-            if (!grade) { subSel.disabled = true; return; }
-            (SA_SUBJECTS[grade] || []).forEach(s => {
-                const o = document.createElement('option'); o.value = s; o.textContent = s; subSel.appendChild(o);
-            });
-            subSel.disabled = false;
-        }
-
-        async function loadTopics() {
-            const grade = document.getElementById('grade').value;
-            const subject = document.getElementById('subject').value;
-            const topicIn = document.getElementById('topic');
-            const btn = document.getElementById('btn-generate');
-            topicIn.value = ''; topicIn.disabled = false; btn.disabled = true;
-            if (!subject) { topicIn.disabled = true; return; }
-            if (!apiOnline) { topicIn.setAttribute('data-topics', '[]'); return; }
-            try {
-                const ctrl = new AbortController();
-                const tid = setTimeout(() => ctrl.abort(), 8000);
-                const resp = await fetch(WORKER_URL + "/api/topics", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject }), signal: ctrl.signal
-                });
-                clearTimeout(tid);
-                if (resp.ok) {
-                    const data = await resp.json();
-                    topicIn.setAttribute('data-topics', JSON.stringify(data.topics || []));
-                }
-            } catch (e) { topicIn.setAttribute('data-topics', '[]'); }
-        }
-
-        function showTopicSuggestions() {
-            const inp = document.getElementById('topic');
-            const box = document.getElementById('topic-suggestions');
-            const btn = document.getElementById('btn-generate');
-            const val = inp.value.toLowerCase();
-            btn.disabled = !inp.value.trim();
-            if (val.length < 1) { box.classList.remove('active'); return; }
-            const saved = JSON.parse(inp.getAttribute('data-topics') || '[]');
-            const filtered = saved.filter(t => t.toLowerCase().includes(val));
-            if (filtered.length) {
-                box.innerHTML = filtered.map(t =>
-                    `<div class="topic-suggestion-item" onclick="selectTopic('${t.replace(/'/g, "\\'")}')">📌 ${t}</div>`
-                ).join('');
-            } else {
-                box.innerHTML = `<div class="topic-suggestion-item" style="color:var(--accent);">➕ Use "<strong>${inp.value}</strong>" as new topic</div>`;
-            }
-            box.classList.add('active');
-        }
-
-        function selectTopic(t) {
-            document.getElementById('topic').value = t;
-            document.getElementById('topic-suggestions').classList.remove('active');
-            document.getElementById('btn-generate').disabled = false;
-        }
-
-        function selectType(type) {
-            selectedType = type;
-            document.querySelectorAll('.type-option').forEach(o => {
-                o.classList.remove('selected');
-                if (o.dataset.type === type) o.classList.add('selected');
-            });
-        }
-
-        async function generateQuestions() {
-            const grade = document.getElementById('grade').value;
-            const subject = document.getElementById('subject').value;
-            const topic = document.getElementById('topic').value.trim();
-            if (!grade || !subject || !topic) { alert("Please select grade, subject, and topic."); return; }
-            if (!apiOnline) { alert("⚠️ API offline. Please check your connection and refresh."); return; }
-
-            document.getElementById('quiz-form').style.display = 'none';
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('quiz-area').classList.remove('active');
-            document.getElementById('btn-submit').style.display = 'none';
-            document.getElementById('btn-new-quiz').style.display = 'none';
-            document.getElementById('progress-container').classList.remove('active');
-            startLoadingSteps();
-
-            // Fire-and-forget topic save
-            fetch(WORKER_URL + "/api/save-topic", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ grade, subject, topic })
-            }).catch(() => { });
-
-            try {
-                const ctrl = new AbortController();
-                const tid = setTimeout(() => ctrl.abort(), 50000);
-                const resp = await fetch(WORKER_URL + "/api/generate", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ grade, subject, topic, count: 5, type: selectedType, learnerId: LEARNER_ID }),
-                    signal: ctrl.signal
-                });
-                clearTimeout(tid);
-                stopLoadingSteps();
-
-                if (!resp.ok) {
-                    const errText = await resp.text();
-                    throw new Error(`API error (${resp.status}): ${errText.substring(0, 200)}`);
-                }
-
-                const data = await resp.json();
-                if (!data.questions || !data.questions.length) {
-                    throw new Error("No questions returned. Try a different topic or question type.");
-                }
-
-                currentQuestions = data.questions;
-                document.getElementById('loading').classList.remove('active');
-                document.getElementById('quiz-area').classList.add('active');
-                document.getElementById('progress-container').classList.add('active');
-                document.getElementById('btn-submit').style.display = 'block';
-                renderQuiz(data.questions, data.source || 'CAPS', data.cached || 0, data.new || data.questions.length);
-
-            } catch (e) {
-                stopLoadingSteps();
-                document.getElementById('loading').classList.remove('active');
-                document.getElementById('quiz-form').style.display = 'block';
-                let msg = e.message;
-                if (e.name === 'AbortError') msg = "Request timed out. Please try again.";
-                if (msg.includes('Failed to fetch')) msg = "Cannot reach API server. Check worker deployment.";
-                alert("❌ Error: " + msg);
-            }
-        }
-
-        function renderQuiz(questions, source, cachedCount, newCount) {
-            const container = document.getElementById('quiz-area');
-            const sourceLabel = source === 'R2_CAPS' ? '📂 CAPS Documents' : source === 'CACHE' ? '🗄️ Database Cache' : '🌐 AI Web Search';
-            container.innerHTML = `
-        <div class="source-info">
-          <strong>📊 Questions Loaded:</strong>
-          <span class="source-badge r2">${sourceLabel}</span>
-          <span class="source-badge">${cachedCount} Cached</span>
-          <span class="source-badge">${newCount} New</span>
-        </div>`;
-
-            questions.forEach((q, idx) => {
-                const card = document.createElement('div');
-                card.className = 'question-card';
-                card.id = `q-${idx}`;
-                card.style.animationDelay = `${idx * 0.1}s`;
-
-                let opts = [];
-                try { opts = typeof q.options === 'string' ? JSON.parse(q.options) : (Array.isArray(q.options) ? q.options : []); }
-                catch (e) { opts = []; }
-                if (!opts.length && q.question_type === 'TRUE_FALSE') opts = ['True', 'False'];
-
-                let inputHtml = '';
-                if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    inputHtml = `<div class="options-grid">${opts.map((opt, i) =>
-                        `<label class="option-label" onclick="selectOption(${idx}, this)" id="opt-${idx}-${i}">
-              <input type="radio" name="q${idx}" value="${opt.replace(/"/g, '&quot;')}">
-              <div class="option-dot"></div>
-              <span>${opt}</span>
-            </label>`
-                    ).join('')}</div>`;
-                } else {
-                    inputHtml = `<textarea class="answer-textarea" id="ans-${idx}" placeholder="Type your detailed answer here…"></textarea>`;
-                }
-
-                card.innerHTML = `
-          <div class="question-header">
-            <span class="question-number">Q${idx + 1} / ${questions.length}</span>
-            <span class="question-type-badge">${(q.question_type || 'MCQ').replace('_', ' ')}</span>
-          </div>
-          <p class="question-text">${q.question_text || q.question || 'Question text unavailable'}</p>
-          ${inputHtml}
-          <button class="btn-hint" onclick="getHint(${idx}, ${q.id || idx}, '${(q.question_text || q.question || '').replace(/'/g, "\\'")}')">💡 Show Hint</button>
-          <div class="hint-box" id="hint-${idx}"></div>
-          <div class="feedback" id="fb-${idx}"></div>`;
-
-                container.appendChild(card);
-                startTime[idx] = Date.now();
-                answers[idx] = '';
-            });
-
-            document.getElementById('progress-text').textContent = `0 / ${questions.length} Completed`;
-        }
-
-        function selectOption(qIdx, lbl) {
-            document.querySelectorAll(`#q-${qIdx} .option-label`).forEach(l => l.classList.remove('selected'));
-            lbl.classList.add('selected');
-            const inp = lbl.querySelector('input');
-            if (inp) { inp.checked = true; answers[qIdx] = inp.value; }
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const answered = Object.values(answers).filter(a => a && a.toString().trim()).length;
-            const pct = Math.round((answered / Math.max(currentQuestions.length, 1)) * 100);
-            document.getElementById('progress-fill').style.width = pct + '%';
-            document.getElementById('progress-text').textContent = `${answered} / ${currentQuestions.length} Answered`;
-        }
-
-        async function getHint(qIdx, qId, qText) {
-            const box = document.getElementById(`hint-${qIdx}`);
-            if (box.classList.contains('active')) { box.classList.remove('active'); return; }
-            box.innerHTML = '💡 <em>Loading hint…</em>';
-            box.classList.add('active');
-            hintsUsed[qIdx] = 1;
-            try {
-                const ctrl = new AbortController();
-                setTimeout(() => ctrl.abort(), 6000);
-                const resp = await fetch(WORKER_URL + "/api/hint", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ questionId: qId, questionText: qText }),
-                    signal: ctrl.signal
-                });
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (data.hint) box.textContent = '💡 Hint: ' + data.hint;
-                }
-            } catch (e) {
-                box.textContent = '💡 Hint: Review the key CAPS concepts for this topic. Think about definitions, examples, and applications.';
-            }
-        }
-
-        async function submitQuiz() {
-            const btn = document.getElementById('btn-submit');
-            btn.disabled = true; btn.textContent = "⏳ Grading…";
-            correctCount = 0; incorrectCount = 0; totalScoreSum = 0;
-
-            for (let i = 0; i < currentQuestions.length; i++) {
-                const q = currentQuestions[i];
-                const fbEl = document.getElementById(`fb-${i}`);
-                const card = document.getElementById(`q-${i}`);
-                let userAns = "";
-
-                if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    const sel = document.querySelector(`input[name="q${i}"]:checked`);
-                    userAns = sel ? sel.value : "";
-                } else {
-                    userAns = document.getElementById(`ans-${i}`)?.value.trim() || "";
-                }
-
-                if (!userAns) {
-                    fbEl.className = "feedback incorrect active";
-                    fbEl.innerHTML = "⚠️ No answer provided.";
-                    incorrectCount++;
-                    card.classList.add('wrong-anim');
-                    setTimeout(() => card.classList.remove('wrong-anim'), 600);
-                    continue;
-                }
-
-                // Local grading for MCQ/TF when API is available but as fallback
-                if (['MCQ', 'TRUE_FALSE'].includes(q.question_type)) {
-                    let isCorrect = false, score = 0, feedback = "";
-                    if (apiOnline) {
-                        try {
-                            const ctrl = new AbortController();
-                            const tid = setTimeout(() => ctrl.abort(), 10000);
-                            const resp = await fetch(WORKER_URL + "/api/submit", {
-                                method: "POST", headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    learnerId: LEARNER_ID, questionId: q.id, answer: userAns,
-                                    questionType: q.question_type, correctAnswer: q.correct_answer,
-                                    timeSpent: Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000),
-                                    hintUsed: hintsUsed[i] || 0
-                                }), signal: ctrl.signal
-                            });
-                            clearTimeout(tid);
-                            if (resp.ok) {
-                                const result = await resp.json();
-                                isCorrect = !!result.isCorrect;
-                                score = result.score || 0;
-                                feedback = result.feedback || (isCorrect ? "✅ Correct!" : `❌ Incorrect. Answer: ${q.correct_answer}`);
-                            } else { throw new Error("grading failed"); }
-                        } catch (e) {
-                            // Fallback local
-                            isCorrect = userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase();
-                            score = isCorrect ? 10 : 0;
-                            feedback = isCorrect ? "✅ Correct! Well done!" : `❌ Incorrect. Correct answer: ${q.correct_answer}`;
-                        }
-                    } else {
-                        isCorrect = userAns.trim().toLowerCase() === (q.correct_answer || "").trim().toLowerCase();
-                        score = isCorrect ? 10 : 0;
-                        feedback = isCorrect ? "✅ Correct! Well done!" : `❌ Incorrect. Correct answer: ${q.correct_answer}`;
-                    }
-
-                    if (isCorrect) {
-                        fbEl.className = "feedback correct active";
-                        fbEl.innerHTML = `${feedback}<br><strong>Score: ${score}/10</strong>`;
-                        correctCount++; totalScoreSum += score;
-                        card.classList.add('correct-anim');
-                        setTimeout(() => card.classList.remove('correct-anim'), 600);
-                        // Highlight correct option
-                        highlightOption(i, userAns, q.correct_answer, true);
-                    } else {
-                        fbEl.className = "feedback incorrect active";
-                        fbEl.innerHTML = `${feedback}`;
-                        incorrectCount++;
-                        card.classList.add('wrong-anim');
-                        setTimeout(() => card.classList.remove('wrong-anim'), 600);
-                        highlightOption(i, userAns, q.correct_answer, false);
-                    }
-                } else {
-                    // Subjective
-                    fbEl.className = "feedback active";
-                    fbEl.style.background = "rgba(127,223,240,0.08)";
-                    fbEl.style.border = "2px solid var(--sky-blue)";
-                    fbEl.style.color = "var(--sky-blue)";
-                    fbEl.innerHTML = "⏳ AI is grading your response…";
-                    try {
-                        const ctrl = new AbortController();
-                        const tid = setTimeout(() => ctrl.abort(), 15000);
-                        const resp = await fetch(WORKER_URL + "/api/submit", {
-                            method: "POST", headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                learnerId: LEARNER_ID, questionId: q.id, answer: userAns,
-                                questionType: q.question_type, correctAnswer: q.correct_answer,
-                                timeSpent: Math.floor((Date.now() - (startTime[i] || Date.now())) / 1000),
-                                hintUsed: hintsUsed[i] || 0
-                            }), signal: ctrl.signal
-                        });
-                        clearTimeout(tid);
-                        if (resp.ok) {
-                            const result = await resp.json();
-                            const isC = !!result.isCorrect;
-                            fbEl.className = isC ? "feedback correct active" : "feedback incorrect active";
-                            fbEl.style = "";
-                            fbEl.innerHTML = `${result.feedback}<br><strong>Score: ${result.score}/10</strong>`;
-                            if (isC) { correctCount++; totalScoreSum += result.score; } else { incorrectCount++; totalScoreSum += result.score || 0; }
-                        } else { throw new Error("grading failed"); }
-                    } catch (e) {
-                        fbEl.className = "feedback active";
-                        fbEl.style.background = "rgba(255,152,0,0.08)";
-                        fbEl.style.border = "2px solid var(--warning)";
-                        fbEl.style.color = "#ffe0a0";
-                        fbEl.innerHTML = "⚠️ Could not grade automatically. Your answer was recorded. Review the model answer:<br><br><em>" + (q.correct_answer || "") + "</em>";
-                        incorrectCount++;
-                    }
-                }
-            }
-
-            const avgScore = currentQuestions.length ? Math.round(totalScoreSum / currentQuestions.length) : 0;
-            document.getElementById('stat-correct').textContent = correctCount;
-            document.getElementById('stat-incorrect').textContent = incorrectCount;
-            document.getElementById('stat-score').textContent = avgScore + '%';
-            document.getElementById('progress-fill').style.width = '100%';
-            document.getElementById('progress-text').textContent = `${currentQuestions.length} / ${currentQuestions.length} Completed`;
-            btn.textContent = "🎉 Quiz Complete!";
-            document.getElementById('btn-new-quiz').style.display = 'block';
-        }
-
-        function highlightOption(qIdx, userAns, correctAns, isCorrect) {
-            document.querySelectorAll(`#q-${qIdx} .option-label`).forEach(lbl => {
-                const inp = lbl.querySelector('input');
-                if (!inp) return;
-                const val = inp.value;
-                if (val.trim().toLowerCase() === correctAns?.trim().toLowerCase()) {
-                    lbl.classList.add('correct-opt');
-                } else if (val.trim().toLowerCase() === userAns?.trim().toLowerCase() && !isCorrect) {
-                    lbl.classList.add('wrong-opt');
-                }
-            });
-        }
-
-        function resetQuiz() {
-            document.getElementById('quiz-form').style.display = 'block';
-            document.getElementById('quiz-area').classList.remove('active');
-            document.getElementById('btn-submit').style.display = 'none';
-            document.getElementById('btn-new-quiz').style.display = 'none';
-            document.getElementById('progress-container').classList.remove('active');
-            document.getElementById('btn-submit').disabled = false;
-            document.getElementById('btn-submit').textContent = '🎯 Submit Answers';
-            currentQuestions = []; answers = {}; hintsUsed = {}; startTime = {};
-            correctCount = 0; incorrectCount = 0; totalScoreSum = 0;
-            document.getElementById('stat-correct').textContent = '0';
-            document.getElementById('stat-incorrect').textContent = '0';
-            document.getElementById('stat-score').textContent = '0%';
-            document.getElementById('progress-fill').style.width = '0%';
-            document.getElementById('grade').value = '';
-            document.getElementById('subject').disabled = true;
-            document.getElementById('subject').innerHTML = '<option value="">Select Subject</option>';
-            document.getElementById('topic').value = '';
-            document.getElementById('topic').disabled = true;
-            document.getElementById('btn-generate').disabled = true;
-            testAPIConnection();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // ========== EVENT LISTENERS ==========
-        document.getElementById('grade').addEventListener('change', loadSubjects);
-        document.getElementById('subject').addEventListener('change', loadTopics);
-        document.getElementById('topic').addEventListener('input', showTopicSuggestions);
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.topic-container')) {
-                document.getElementById('topic-suggestions').classList.remove('active');
-            }
-        });
-
-        // Expose globals
-        window.selectOption = selectOption;
-        window.selectTopic = selectTopic;
-        window.getHint = getHint;
-        window.generateQuestions = generateQuestions;
-        window.submitQuiz = submitQuiz;
-        window.resetQuiz = resetQuiz;
-        window.selectType = selectType;
-        window.loadSubjects = loadSubjects;
-        window.loadTopics = loadTopics;
-        window.showTopicSuggestions = showTopicSuggestions;
-    </script>
+    <!-- Optional: External frontend JS file (if you prefer to separate) -->
+    <!-- <script src="quiz-frontend.js"></script> -->
 </body>
 
 </html>

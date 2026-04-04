@@ -1,0 +1,13 @@
+# wrangler.ai.toml
+name = "gemini-quiz-api"
+main = "quiz.js" # Ensure this points to the worker code you just shared
+compatibility_date = "2024-04-01"
+
+[[d1_databases]]
+binding = "QUIZ_DB" # This MUST match the code (const quizDB = env.QUIZ_DB)
+database_name = "quiz"
+database_id = "968a34a2-480e-4e7d-87a5-20bd1bf400df"
+
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "ai-files"

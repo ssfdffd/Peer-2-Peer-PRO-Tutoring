@@ -1,33 +1,33 @@
 # wrangler.toml
 name = "damp-art-617fp2p-authentification-login"
-main = "login.js"  # <--- CRITICAL: Points to your actual JS file
+main = "worker.js"
 compatibility_date = "2024-04-01"
 
-# Serve static assets from the SAME folder as this file
 [assets]
 directory = "./"
 binding = "ASSETS"
 
-# Primary D1 Database (User Auth & Portal)                                                                      
+# ✅ Auth Database (users, sessions)
 [[d1_databases]]
-binding = "AUTH_DB"
+binding = "AUTH_DB"              # ← This is what we'll use in code
 database_name = "peer_db"
 database_id = "f868485b-bba1-4158-b8f5-76b98fec8c79"
 
-# Secondary D1 Database (Quiz System)
+# ✅ Quiz Database (questions, attempts)
 [[d1_databases]]
 binding = "QUIZ_DB"
 database_name = "quiz"
 database_id = "968a34a2-480e-4e7d-87a5-20bd1bf400df"
 
-# R2 Bucket for CAPS Documents
+# ✅ R2 Buckets
 [[r2_buckets]]
 binding = "MY_BUCKET"
+bucket_name = "p2p-resources"
+
+[[r2_buckets]]
+binding = "AI_FILES"             # ← Optional: separate bucket for AI content
 bucket_name = "ai-files"
 
-# Non-secret environment variables ONLY
 [vars]
 API_URL = "https://peer-2-peer.co.za"
-
-# ⚠️ IMPORTANT: Do NOT put GEMINI_API_KEY here!
-# Run: wrangler secret put GEMINI_API_KEY
+# ⚠️ DO NOT put GEMINI_API_KEY here – use secrets (Step 3)

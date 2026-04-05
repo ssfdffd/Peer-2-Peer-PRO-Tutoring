@@ -1,5 +1,5 @@
 // UPDATE THIS to your actual Worker URL
-const API_BASE = 'https://gemini-quiz-api.buhle-1ce.workers.dev';
+const API_BASE = 'https://damp-art-617fp2p-authentification-login.buhle-1ce.workers.dev';
 
 const AppState = {
     learnerId: localStorage.getItem('learnerId') || `learner_${Date.now()}`,

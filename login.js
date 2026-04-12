@@ -50,7 +50,7 @@ async function handleLogin(e) {
             // Redirect based on role
             const target = result.role === 'admin' ? 'admin-portal.html'
                 : result.role === 'tutor' ? 'tutor-portal.html'
-                    : 'student-portal.html';
+                    : result.role === 'student' ? 'student-portal.html';
             window.location.href = target;
         } else {
             alert(`Login Failed: ${result.error || "Invalid credentials"}`);

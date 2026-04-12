@@ -7,14 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
 
-    // Auto-logout on tab/window close
-    window.addEventListener('beforeunload', () => {
-        const email = sessionStorage.getItem('p2p_email');
-        const sessionId = sessionStorage.getItem('p2p_sessionId');
-        if (email && sessionId) {
-            navigator.sendBeacon(`${API_BASE}/api/logout`, JSON.stringify({ email, sessionId }));
-        }
-    });
+    // NOTE: beforeunload auto-logout removed — it was firing during
+    // page navigation (login → portal), clearing the session before
+    // the portal could read it. Logout is handled explicitly via handleLogout().
 });
 
 async function handleLogin(e) {
@@ -48,9 +43,18 @@ async function handleLogin(e) {
             sessionStorage.setItem('p2p_sessionId', result.sessionId);
 
             // Redirect based on role
-            const target = result.role === 'admin' ? 'admin-portal.html'
-                : result.role === 'tutor' ? 'tutor-portal.html'
-                    : result.role === 'student' ? 'student-portal.html';
+            const portalMap = {
+                admin: 'admin-portal.html',
+                tutor: 'tutor-portal.html',
+                student: 'student-portal.html'
+            };
+            const role = (result.role || '').toLowerCase().trim();
+            const target = portalMap[role];
+            if (!target) {
+                console.error(`Unknown role received from server: "${result.role}"`);
+                alert(`Login error: unrecognised role "${result.role}". Please contact support.`);
+                return;
+            }
             window.location.href = target;
         } else {
             alert(`Login Failed: ${result.error || "Invalid credentials"}`);

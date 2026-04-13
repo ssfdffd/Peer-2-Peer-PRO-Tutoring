@@ -2,32 +2,34 @@ const API_BASE = "https://damp-art-617fp2p-authentification-login.buhle-1ce.work
 
 function checkTutorSession() {
     const email = sessionStorage.getItem('p2p_email');
-    const name = sessionStorage.getItem('p2p_name'); // This comes from your database via the Worker
-    const userType = sessionStorage.getItem('p2p_userType');
+    const name = sessionStorage.getItem('p2p_name');
+    // FIX: login.js stores the role under 'p2p_role', not 'p2p_userType'
+    const role = (sessionStorage.getItem('p2p_role') || '').toLowerCase().trim();
 
-    if (!email || userType !== 'tutor') {
+    if (!email || role !== 'tutor') {
         window.location.href = "login.html";
         return;
     }
 
-    // Update UI with the actual database name
     const displayElement = document.getElementById('tutorNameDisplay');
     const welcomeElement = document.getElementById('welcomeName');
-
     if (displayElement) displayElement.innerText = name || "Tutor";
     if (welcomeElement) welcomeElement.innerText = name || "Tutor";
 }
 
 function logout() {
-    if (confirm("Logout of Peer-2-Peer Pro?")) {
-        sessionStorage.clear();
-        window.location.href = "login.html";
-    }
+    sessionStorage.clear();
+    window.location.href = 'login.html';
 }
-// Run immediately
-document.addEventListener('DOMContentLoaded', checkTutorSession);
+
+// Single DOMContentLoaded listener
+document.addEventListener('DOMContentLoaded', () => {
+    checkTutorSession();
+    loadMyMeetings();
+});
+
 /**
- * 2. Schedule Class to D1 via Worker
+ * Schedule Class to D1 via Worker
  */
 async function scheduleClass() {
     const topic = document.getElementById('classTopic').value.trim();
@@ -43,7 +45,6 @@ async function scheduleClass() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, topic, description: desc, grade })
         });
-
         const result = await response.json();
         if (result.success) {
             alert(`✅ ${topic} scheduled for ${grade}`);
@@ -56,11 +57,12 @@ async function scheduleClass() {
 }
 
 /**
- * 3. Fetch Classes from Worker
+ * Fetch Classes from Worker
  */
 async function loadMyMeetings() {
     const email = sessionStorage.getItem('p2p_email');
     const listContainer = document.getElementById('myMeetingsList');
+    if (!listContainer) return;
 
     try {
         const response = await fetch(`${API_BASE}/api/get-classes?email=${email}`);
@@ -83,10 +85,9 @@ async function loadMyMeetings() {
                         <span style="font-size: 0.8rem; display:block; margin-bottom: 10px; color: ${cls.status === 'live' ? '#32cd32' : '#999'}">
                             ● ${cls.status.toUpperCase()}
                         </span>
-                        ${cls.status === 'scheduled' ?
-                `<button onclick="goLive(${cls.id})" class="btn-deploy" style="padding: 5px 15px; background: #ff4757;">Start Lesson</button>`
-                : `<button class="btn-deploy" style="padding: 5px 15px; background: #ccc;" disabled>Lesson Active</button>`
-            }
+                        ${cls.status === 'scheduled'
+                ? `<button onclick="goLive(${cls.id})" class="btn-deploy" style="padding: 5px 15px; background: #ff4757;">Start Lesson</button>`
+                : `<button class="btn-deploy" style="padding: 5px 15px; background: #ccc;" disabled>Lesson Active</button>`}
                     </div>
                 </div>
             </div>
@@ -97,7 +98,7 @@ async function loadMyMeetings() {
 }
 
 /**
- * 4. Launch Jitsi Meeting
+ * Launch Jitsi Meeting
  */
 async function goLive(classId) {
     const email = sessionStorage.getItem('p2p_email');
@@ -109,7 +110,6 @@ async function goLive(classId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, classId })
         });
-
         const result = await response.json();
         if (result.success) {
             document.getElementById('live-setup-section').style.display = 'none';
@@ -129,14 +129,4 @@ async function goLive(classId) {
     } catch (err) {
         alert("Launch failed.");
     }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    checkTutorSession();
-    loadMyMeetings();
-});
-
-function logout() {
-    sessionStorage.clear();
-    window.location.href = 'login.html';
 }

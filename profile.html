@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer-2-Peer PRO - Official Company Profile</title>
+    <style>
+        :root {
+            --primary-color: #0d2b45;
+            --secondary-color: #203c56;
+            --accent-color: #3a86c8;
+            --bg-light: #f4f7f6;
+            --bg-card: #ffffff;
+            --text-dark: #222222;
+            --text-muted: #555555;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Hero / Header Section */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        header h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-links a {
+            color: #d1e8ff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .hero-links a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        aside h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        aside ul {
+            list-style: none;
+        }
+
+        aside ul li {
+            margin-bottom: 12px;
+        }
+
+        aside ul li a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.2s;
+            display: block;
+        }
+
+        aside ul li a:hover {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        /* Main Content Sections */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        section {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            anchor-name: inherit;
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+        }
+
+        section h3 {
+            color: var(--secondary-color);
+            margin: 20px 0 10px;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            text-align: justify;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: var(--text-dark);
+        }
+
+        /* Unique Section Components */
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .solution-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .milestones {
+            background: #fdfdfd;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+
+        .vision-box {
+            background: linear-gradient(to right, #edf4fc, #ffffff);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tech-badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tech-badge {
+            background: #e2e8f0;
+            color: var(--primary-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .pillar-card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #fafbfb;
+        }
+
+        .testimonial {
+            background: italic;
+            border-left: 3px solid #cbd5e1;
+            padding-left: 20px;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: block;
+            margin-top: 8px;
+            font-weight: bold;
+            font-style: normal;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .member-card {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 8px;
+            border-bottom: 4px solid var(--secondary-color);
+        }
+
+        .member-card h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .member-title {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            background: var(--primary-color);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .contact-info a {
+            color: #acd2ff;
+        }
+
+        .contact-info p {
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                position: relative;
+                top: 0;
+            }
+            header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Hero Section -->
+    <header>
+        <div class="hero-badge">Official Company Profile</div>
+        <h1>PEER-2-PEER PRO</h1>
+        <div class="hero-tagline">Innovating Digital Education Across Africa | 2026</div>
+        <div class="hero-links">
+            <a href="http://peer-2-peer.co.za" target="_blank">peer-2-peer.co.za</a> | 
+            <a href="http://elite.peer-2-peer.co.za" target="_blank">elite.peer-2-peer.co.za</a> | 
+            <a href="mailto:admin@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="container">
+        
+        <!-- Table of Contents Navigation -->
+        <aside>
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#welcome">Welcome & Executive Summary</a></li>
+                <li><a href="#story">Our Story & Heritage</a></li>
+                <li><a href="#vision">Vision, Mission & Core Values</a></li>
+                <li><a href="#platform">How Our Platform Works</a></li>
+                <li><a href="#tech-stack">Our Core Technology Stack</a></li>
+                <li><a href="#security">Trust & Security (The Shield)</a></li>
+                <li><a href="#success-stories">Client Success Stories</a></li>
+                <li><a href="#leadership">Meet the Leadership Team</a></li>
+                <li><a href="#contact">Contact & Partnering</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Profiles -->
+        <main>
+            
+            <!-- Welcome & Executive Summary -->
+            <section id="welcome">
+                <h2>Welcome & Executive Summary</h2>
+                <h3>Welcome to Peer-2-Peer PRO</h3>
+                <p>At Peer-2-Peer PRO, we believe that education should adapt to the learner, not the other way around. Our mission is simple: to make high-quality learning accessible, deeply customized, and completely stress-free. By merging cutting-edge educational technology with top-tier academic guidance, we provide a safe, secure, and highly engaging online environment where students can thrive from the absolute comfort of their homes—all at affordable prices.</p>
+                <p>We don't just help students pass; we equip them with the tools, resources, and community they need to truly master their studies and build lifelong academic confidence.</p>
+                
+                <h3>Executive Summary</h3>
+                <p><strong>Who We Serve:</strong> Peer-2-Peer PRO actively serves primary and high school learners, delivering foundational support and targeted curriculum mastery. Looking ahead, we are expanding our impact: by the end of July 2026, our platform will officially launch dedicated online assistance for tertiary modules. This upcoming expansion will focus on providing specialized university-level insights and practical academic tips that are rarely discussed in crowded lecture halls, making it easier for tertiary students to successfully finish their degrees.</p>
+                
+                <h3>Our Core Solutions & Value Proposition</h3>
+                <div class="solutions-grid">
+                    <div class="solution-card">
+                        <strong>Expert-Led Instruction</strong>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Specialized 1-on-1 lessons and exam preparation tracks taught by fully qualified teachers. Temporary, high-caliber tutors only step in during unforeseen emergencies.</p>
+                    </div>
+                    <div class="solution-card">
+                        <strong>Collaborative Group Classes</strong>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Structured, small-group online classes (ranging from 4 to 12 learners) that foster healthy collaborative problem-solving without overwhelming the student.</p>
+                    </div>
+                    <div class="solution-card">
+                        <strong>All-in-One Learning Portal</strong>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Access to a secure dashboard to track schedules, join paid sessions, use custom study tracking tools, and access a wide academic resource library.</p>
+                    </div>
+                    <div class="solution-card">
+                        <strong>Monitored Student Forums</strong>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Regulated, actively monitored forums where students safely connect across different grades to solve tricky academic questions together.</p>
+                    </div>
+                </div>
+
+                <h3>Tech-Driven Infrastructure & Roadmap</h3>
+                <p>Peer-2-Peer PRO is built on independent, modern architecture. We utilize custom WebRTC technology to host our online classes. Because we do not rely on standard third-party video platforms, our lessons are completely unconstrained by strict session time limits, all while remaining closely monitored by our administrative team for safety and quality assurance.</p>
+                <ul>
+                    <li><strong>Proprietary WebRTC (Current Phase):</strong> We are currently halfway through the development stage of our own tailored WebRTC video engine, built specifically to optimize our web application's performance.</li>
+                    <li><strong>Mobile App Launch (Q4 2026):</strong> Within the next three months (by October 2026), official development will begin on our native mobile application, allowing students to download Peer-2-Peer PRO directly onto their smartphones and tablets for on-the-go learning.</li>
+                </ul>
+            </section>
+
+            <!-- Our Story & Heritage -->
+            <section id="story">
+                <h2>Our Story & Heritage</h2>
+                <h3>The Spark: A Vision for Accessible Education</h3>
+                <p>The foundation of Peer-2-Peer PRO was laid when our founder, Buhle Manyike, completed high school and observed a glaring gap in the educational landscape. It became clear that while countless students genuinely desired and benefited from extra academic support—especially when highly tailored to their specific needs—the cost of premium tutoring was prohibitively high. Parents were eager to see their children's grades improve but were frequently priced out by traditional tutoring services. Recognizing that personalized, high-quality education should not be a luxury, Buhle set out to build a platform that balanced premium, customized learning with true affordability.</p>
+                
+                <h3>The Technical Journey: Built from the Ground Up</h3>
+                <p>Driven by a deep, lifelong passion for software engineering and programming, Buhle took on the ambitious challenge of designing and engineering the entire platform independently. Building a robust, secure web application from scratch is a massive undertaking, but through dedication and technical expertise, the entire core architecture was developed over a focused three-month period.</p>
+                <p>This journey was not just about deploying code; creating the Peer-2-Peer PRO platform served as a powerful catalyst for the founder to sharpen their technical skills, mastering advanced web architecture and modern real-time communication tools. Every line of code was written with a single goal in mind: creating a safe, seamless digital environment optimized for learning.</p>
+
+                <h3>Overcoming Early Challenges & Gaining Momentum</h3>
+                <p>Like many innovative startups, the early days of Peer-2-Peer PRO required resilience. The initial launch faced minor delays, which impacted early customer acquisition numbers. When the platform first opened, interest was exceptionally high, but converting that initial curiosity into paying clients proved to be a slow process.</p>
+                <p>However, perseverance paid off. By March 2026, the business successfully gained momentum. While our growth remains measured and intentional rather than massive overnight inflation, Peer-2-Peer PRO has achieved a highly stable, consistent, and reliable operational track. Our steady influx of dedicated students is a testament to the fact that our model works and delivers real value.</p>
+
+                <div class="milestones">
+                    <strong>Key Milestones Achieved:</strong>
+                    <ul style="margin-top: 10px; margin-bottom: 0;">
+                        <li><strong>Engineering the Architecture:</strong> Successfully developing and launching the first complete version of our custom web application.</li>
+                        <li><strong>First Cohort:</strong> Welcoming our very first group of dedicated students to the platform, proving the viability of our online learning model.</li>
+                        <li><strong>Academic Expansion:</strong> Expanding our curriculum footprint beyond our initial high school target audience to officially offer specialized academic support down to primary school learners.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Vision, Mission, and Core Values -->
+            <section id="vision">
+                <h2>Vision, Mission, and Core Values</h2>
+                <h3>Our Vision</h3>
+                <div class="vision-box">
+                    <strong>The 5-Year Horizon (By 2031):</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">Peer-2-Peer PRO aims to become the premier online learning and tutoring platform in South Africa. Our goal is to transform the educational sector by integrating our platform directly with existing South African schools to bridge learning gaps seamlessly. Moving away from the volatile freelance model, we intend to become a major employer that offers full-time financial security and stable monthly salaries to qualified educators. Mechanically, by next year (2027), we will introduce an integrated AI system designed entirely in-house by our founder. This proprietary AI will focus on a sustainable, eco-friendly footprint that minimizes environmental impact while massively optimizing personalized student learning and tutoring diagnostics.</p>
+                </div>
+                <div class="vision-box">
+                    <strong>The 10-Year Horizon (By 2036):</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">Within the next decade, Peer-2-Peer PRO will expand its footprint to become one of the definitive leaders in digital education and tutoring across the African continent. Beyond academic curriculum support, our ecosystem will evolve to offer comprehensive tutoring pathways and specialized internship programs for youth. These programs will empower the next generation by providing hands-on training and career entry points into the rapidly growing education field, technology ecosystems, and robotics industries.</p>
+                </div>
+
+                <h3>Our Mission</h3>
+                <p>To provide top-tier, stress-free academic support that directly translates into improved results, deep conceptual understanding, and long-term academic confidence for every learner we serve.</p>
+
+                <h3>Core Values</h3>
+                <ul>
+                    <li><strong>Innovation & Eco-Conscious Tech:</strong> Continually building proprietary tools—such as our custom WebRTC video engine—to optimize digital learning. We are committed to developing in-house, green AI technologies that drive educational excellence without compromising the environment.</li>
+                    <li><strong>Accessibility & Affordability:</strong> Breaking down historical and financial barriers to ensure that premium, individualized academic support is within reach for every child.</li>
+                    <li><strong>Safety & Security:</strong> Maintaining strict administrative protocols and highly monitored online environments to guarantee a safe, trusted, and productive digital space for learners.</li>
+                    <li><strong>Academic Excellence:</strong> Ensuring top-tier, qualified educational guidance that genuinely elevates student performance, critical thinking, and exam readiness.</li>
+                    <li><strong>Student-Centric Support:</strong> Designing every component of our platform around the comfort, unique learning pace, and individual needs of the student.</li>
+                </ul>
+            </section>
+
+            <!-- How Our Platform Works -->
+            <section id="platform">
+                <h2>How Our Platform Works</h2>
+                <p>Peer-2-Peer PRO bridges the gap between complex academics and modern technology through a seamless, secure, four-step ecosystem designed around student comfort and flexibility.</p>
+                
+                <div class="step-container">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div>
+                            <strong>Discovery & Onboarding</strong>
+                            <p style="margin-top: 5px; margin-bottom: 0;">Parents or learners create an account on our centralized web application and customize their learning profile by selecting their academic grade (Primary or High School) and preferred learning format (1-on-1 instruction, small-group sessions of 4-12 learners, or exam preparation tracks).</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div>
+                            <strong>Portal Access & Secure Payment</strong>
+                            <p style="margin-top: 5px; margin-bottom: 0;">Creating an account unlocks the student learning portal immediately. Learners can access their personal portal, study tools, and resource libraries at any time without upfront payments. To attend live online lessons, payment must be processed securely through the web application.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div>
+                            <strong>Entering the Virtual Classroom</strong>
+                            <p style="margin-top: 5px; margin-bottom: 0;">When a paid lesson is scheduled, the student logs into their dashboard and enters the virtual classroom with a single click. Lessons run on our custom WebRTC video framework, structured and measured strictly by hours. All classrooms are continuously monitored in the background by our administration team.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div>
+                            <strong>Continuous Learning & Self-Management Tools</strong>
+                            <p style="margin-top: 5px; margin-bottom: 0;">Inside the portal, students have 24/7 access to comprehensive digital tools, including a custom Study Tool to plan schedules, a Resource Center packed with academic materials, and a Regulated Student Forum where learners collaborate safely.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Our Core Technology Stack -->
+            <section id="tech-stack">
+                <h2>Our Core Technology Stack</h2>
+                <p><strong>Engineered for Speed, Scalability, and Security:</strong> Peer-2-Peer PRO is built on a highly modern, serverless infrastructure designed to deliver lightning-fast performance, low-latency video streaming, and robust data protection.</p>
+                
+                <ul>
+                    <li><strong>Front-End Architecture:</strong> Built using a foundational stack of JavaScript (JS), HTML5, and CSS3 to ensure rapid page loading times and a highly responsive dashboard interface. For our upcoming native mobile application, Java will be utilized to deliver an optimized and stable experience for Android platforms.</li>
+                    <li><strong>Back-End & Database Ecosystem:</strong> Powered by Cloudflare Workers, our application logic executes at the network edge closest to the user, eliminating traditional server overhead. Data logs are safely managed using Cloudflare D1, a native serverless SQL database.</li>
+                    <li><strong>Real-Time Communication Video Infrastructure:</strong> We currently utilize Jitsi Meet to power stable video interactions. In parallel, we are actively custom-building our own tailored WebRTC video architecture via Cloudflare's new real-time communication kits.</li>
+                    <li><strong>Enterprise-Grade Security:</strong> We rely directly on Cloudflare's built-in enterprise systems, implementing an advanced Web Application Firewall (WAF), institutional DDoS protection, and automated SSL/TLS encryption.</li>
+                </ul>
+
+                <div class="tech-badge-container">
+                    <span class="tech-badge">HTML5 / CSS3</span>
+                    <span class="tech-badge">JavaScript (ES6+)</span>
+                    <span class="tech-badge">Cloudflare Workers</span>
+                    <span class="tech-badge">Cloudflare D1 SQL</span>
+                    <span class="tech-badge">WebRTC Frameworks</span>
+                    <span class="tech-badge">Java (Mobile Roadmap)</span>
+                    <span class="tech-badge">Enterprise WAF & SSL</span>
+                </div>
+            </section>
+
+            <!-- Trust & Security (The Shield) -->
+            <section id="security">
+                <h2>Trust & Security (The Shield)</h2>
+                <p>The shield in our logo represents our unwavering commitment to creating an elite, highly secure digital environment. We understand the trust parents place in us when enrolling their children. To honor that trust, we have implemented rigorous human-in-the-loop oversight, strict cross-verification protocols, and ironclad account management to guarantee that our digital spaces remain safe, professional, and entirely focused on academic growth.</p>
+                
+                <h3>The Three Pillars of The Shield</h3>
+                <div class="pillar-card">
+                    <strong>1. Proactive Live Lesson Monitoring & Accountability</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">Freelance educators contractually notify the platform administrator the exact moment a session begins, and students do the same upon logging in. If technical glitches occur, the administrator steps in instantly to push alternative links. Furthermore, the administrator retains full access overrides to randomly join and audit any live WebRTC video classroom at any moment without prior warning.</p>
+                </div>
+                <div class="pillar-card">
+                    <strong>2. Multi-Layered Content Regulation & Parent Integration</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">Our student forums undergo meticulous daily text audits, and any harmful or malicious messages are permanently deleted immediately. Because we require parent contact details during registration, cyberbullying results in immediate direct outreach to parents. Additionally, educator portals remain completely locked by default and are only unlocked by administrative approval during scheduled class times.</p>
+                </div>
+                <div class="pillar-card">
+                    <strong>3. Rigorous Background Vetting & Verification</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">Although educators currently operate on a freelance basis as we transition toward full employment models, they must formally submit a copy of their Identity Document (ID), comprehensive CV, verified teaching qualifications, and a valid, official Police Clearance Certificate. Only highly credible, vetted professionals are permitted onto the platform.</p>
+                </div>
+            </section>
+
+            <!-- Client Success Stories -->
+            <section id="success-stories">
+                <h2>Client Success Stories</h2>
+                <p><strong>Real Impact, Measurable Success:</strong> Since gaining steady operational momentum, Peer-2-Peer PRO has transformed from an innovative digital platform into a trusted academic partner for families. By removing the stress of traditional travel and delivering highly customized instruction, we have empowered learners to reverse poor academic trends, take full control of their studies, and build lasting confidence.</p>
+                
+                <h3>Parent & Learner Testimonials</h3>
+                <div class="testimonial">
+                    "As a parent, the logistical stress of driving to extra classes after a long workday is completely gone. But more importantly, Peer-2-Peer PRO gives me total peace of mind. Knowing my child is accessing world-class instruction right from our living room means I never have to worry about their safety or whereabouts outside of school hours. It is convenience and security wrapped into one."
+                    <span class="testimonial-author">— Parent of a High School Learner</span>
+                </div>
+                <div class="testimonial">
+                    "Before joining Peer-2-Peer PRO, my child was consistently failing a core subject and losing all academic motivation. The shift has been incredible. Not only are they now passing subjects they used to completely fail, but their entire attitude toward schoolwork has changed. Seeing them look forward to their online sessions is the greatest return on investment we could have asked for."
+                    <span class="testimonial-author">— Parent of a Primary School Student</span>
+                </div>
+                <div class="testimonial">
+                    "Exam season used to cause me so much stress, and I always felt overwhelmed trying to cram everything at the last minute. The targeted exam preparation sessions on the platform completely changed how I prepare. Breaking down difficult concepts 1-on-1 with a qualified teacher made me feel entirely equipped. I went into my last exam block feeling calm, prepared, and confident and my marks proved it!"
+                    <span class="testimonial-author">— Grade 11 Student</span>
+                </div>
+            </section>
+
+            <!-- Meet the Leadership Team -->
+            <section id="leadership">
+                <h2>Meet the Leadership Team</h2>
+                <p>The Minds Behind the Innovation: Peer-2-Peer PRO is guided by a lean, highly efficient leadership team that bridges the gap between technical innovation and strategic educational deployment.</p>
+                
+                <div class="team-grid">
+                    <div class="member-card">
+                        <h4>Buhle Manyike</h4>
+                        <span class="member-title">Founder, Lead Architect & Chief Executive Officer</span>
+                        <p>Buhle Manyike is the visionary force, sole software engineer, and primary driver behind Peer-2-Peer PRO. With a profound passion for software engineering and programming dating back to the age of thirteen, Buhle brings an advanced technical foundation to the digital education landscape. As a college student specializing in web development and business management modules, Buhle possesses a unique, firsthand understanding of modern student requirements and digital architecture.</p>
+                        <p>Demonstrating exceptional dedication and technical agility, Buhle independently engineered the entire Peer-2-Peer PRO web application from scratch over a focused three-month period. Managing 98% of the company's daily operations—including core serverless infrastructure coding, database management via Cloudflare D1, real-time WebRTC architecture refinement, and daily administrative moderation—Buhle ensures the platform functions seamlessly to deliver top-tier academic outcomes.</p>
+                    </div>
+                    <div class="member-card">
+                        <h4>Sipho Manyike</h4>
+                        <span class="member-title">Co-Founder & Strategic Advisor</span>
+                        <p>Sipho Manyike serves as the Co-Founder of Peer-2-Peer PRO, providing crucial collaborative support and high-level strategic alignment during the company's foundational growth. Working alongside the executive team, Sipho supports the long-term vision of integrating the platform into the broader South African school network and advancing corporate scalability goals across the continent.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact & Partnering -->
+            <section id="contact">
+                <h2>Contact & Partnering</h2>
+                
+                <div class="contact-info">
+                    <h3>Connect With Us</h3>
+                    <p><strong>Official Website:</strong> <a href="http://peer-2-peer.co.za" target="_blank">peer-2-peer.co.za</a></p>
+                    <p><strong>Tertiary Platform (Elite Subdomain):</strong> <a href="http://elite.peer-2-peer.co.za" target="_blank">elite.peer-2-peer.co.za</a></p>
+                    <p><strong>Administrative Email:</strong> <a href="mailto:admin@peer-2-peer.co.za">admin@peer-2-peer.co.za</a></p>
+                    <p><strong>Headquarters Address:</strong> 1587 Mofolo North, Soweto, 1801</p>
+                </div>
+
+                <h3>Institutional Partnering & Integration</h3>
+                <p>Peer-2-Peer PRO is actively looking to expand its footprint across the South African educational ecosystem. We are openly inviting School Principals, Institutional Board Members, and Tertiary Academic Departments to reach out for collaborative partnerships.</p>
+                
+                <ul>
+                    <li><strong>Classroom Integration:</strong> We can custom-tailor our serverless learning portal and regulated peer forums to align directly with your school's existing curriculum.</li>
+                    <li><strong>Scalable Academic Support:</strong> Provide your students with access to our secure, administrative-monitored WebRTC online classrooms for automated homework tracking and qualified instruction.</li>
+                    <li><strong>Performance Metrics:</strong> Utilize our custom study tools to help monitor independent learner progress and measure study engagement levels outside the classroom.</li>
+                </ul>
+                <p style="margin-top: 20px;"><strong>Partnership Inquiries:</strong> Please direct all institutional collaboration, school pilot programs, and integration proposals to our executive desk at <a href="mailto:admin@peer-2-peer.co.za">admin@peer-2-peer.co.za</a>.</p>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Peer-2-Peer PRO. All Rights Reserved. Innovating Digital Education Across Africa.</p>
+    </footer>
+
+</body>
+</html>
